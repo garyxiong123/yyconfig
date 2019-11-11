@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ASMIdeaPluginConfiguration">
+    <asm skipDebug="false" skipFrames="false" skipCode="false" expandFrames="false" />
+    <groovy codeStyle="LEGACY" />
+  </component>
+  <component name="ASMPluginConfiguration">
+    <asm skipDebug="false" skipFrames="false" skipCode="false" expandFrames="false" />
+    <groovy codeStyle="LEGACY" />
+  </component>
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/pom.xml" />
+      </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/OA/pom.xml" />
+        <option value="$PROJECT_DIR$/ata-ops-table/pom.xml" />
+        <option value="$PROJECT_DIR$/ata-pms-backup/pom.xml" />
+        <option value="$PROJECT_DIR$/crm-openApi/pom.xml" />
+        <option value="$PROJECT_DIR$/h2-webconsole/pom.xml" />
+        <option value="$PROJECT_DIR$/ibm-crud/pom.xml" />
+        <option value="$PROJECT_DIR$/initial-value-generator/pom.xml" />
+        <option value="$PROJECT_DIR$/many-to-many-extra-columns/pom.xml" />
+        <option value="$PROJECT_DIR$/many-to-many/pom.xml" />
+        <option value="$PROJECT_DIR$/one-to-many/pom.xml" />
+        <option value="$PROJECT_DIR$/one-to-one-foreignkey/pom.xml" />
+        <option value="$PROJECT_DIR$/one-to-one-primarykey/pom.xml" />
+        <option value="$PROJECT_DIR$/payment/pom.xml" />
+        <option value="$PROJECT_DIR$/payment4OORefactor/pom.xml" />
+        <option value="$PROJECT_DIR$/promotion/pom.xml" />
+        <option value="$PROJECT_DIR$/user-jpa-mybatis/pom.xml" />
+        <option value="$PROJECT_DIR$/user-permission-allclass/pom.xml" />
+        <option value="$PROJECT_DIR$/user-permission-join/pom.xml" />
+        <option value="$PROJECT_DIR$/user-permission-per/pom.xml" />
+        <option value="$PROJECT_DIR$/user-permission-perclass/pom.xml" />
+        <option value="$PROJECT_DIR$/user-permission-table-perClass/pom.xml" />
+        <option value="$PROJECT_DIR$/user-permission-table-perclass/pom.xml" />
+      </set>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/classes" />
+  </component>
+</project>

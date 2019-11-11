@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ata-ops-upms-refactor" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/upms-common" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/upms-domain" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/upms-domain/upms-domain-api" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/upms-domain/upms-domain-biz" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/upms-main" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/upms-permissonFramework" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/upms-permissonFramework/upms-permissonFramework-shiro" charset="UTF-8" />
+  </component>
+</project>

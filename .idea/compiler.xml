@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="upms-common" />
+        <module name="upms-domain-api" />
+        <module name="upms-domain-biz" />
+        <module name="upms-main" />
+        <module name="upms-permissonFramework-shiro" />
+        <module name="user-permission-domain" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="ata-ops-common" target="1.8" />
+      <module name="ata-ops-strategy" target="1.8" />
+      <module name="ata-ops-table" target="1.8" />
+      <module name="ata-ops-upms-refactor" target="1.8" />
+      <module name="ata-ops-upms-refactor (1)" target="1.8" />
+      <module name="ata-pms-backup" target="1.8" />
+      <module name="crm-openApi" target="1.8" />
+      <module name="h2-webconsole" target="1.8" />
+      <module name="ibm-crud" target="1.8" />
+      <module name="initial-value-generator" target="1.8" />
+      <module name="many-to-many" target="1.8" />
+      <module name="many-to-many-extra-columns" target="1.8" />
+      <module name="OA" target="1.8" />
+      <module name="one-to-many" target="1.8" />
+      <module name="one-to-one-foreignkey" target="1.8" />
+      <module name="one-to-one-primarykey" target="1.8" />
+      <module name="one-to-one-primarykey-ss" target="1.8" />
+      <module name="payment" target="1.8" />
+      <module name="payment4OORefactor" target="1.8" />
+      <module name="promotion" target="1.8" />
+      <module name="upms" target="1.8" />
+      <module name="upms-common" target="1.8" />
+      <module name="upms-domain" target="1.8" />
+      <module name="upms-domain-api" target="1.8" />
+      <module name="upms-domain-biz" target="1.8" />
+      <module name="upms-main" target="1.8" />
+      <module name="upms-permissonFramework" target="1.8" />
+      <module name="upms-permissonFramework-shiro" target="1.8" />
+      <module name="user-jpa-mybatis" target="1.8" />
+      <module name="user-permission (1)" target="1.8" />
+      <module name="user-permission-allclass" target="1.8" />
+      <module name="user-permission-domain" target="1.8" />
+      <module name="user-permission-join" target="1.8" />
+      <module name="user-permission-per" target="1.8" />
+      <module name="user-permission-perc" target="1.8" />
+      <module name="user-permission-perclass" target="1.8" />
+      <module name="user-permission-table-perClass" target="1.8" />
+      <module name="user-permission-table-perclass" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
