@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
     @Autowired(required=false)
     private ShiroProperties shiroProperties;
 
-    @Autowired
+    @Autowired(required=false)
     private UpmsLoginLogoutRealm shiroAuthRealm;
 
     @Override

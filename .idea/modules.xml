@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/apollo/apollo.iml" filepath="$PROJECT_DIR$/apollo/apollo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/apollo/apollo-domain/apollo-domain.iml" filepath="$PROJECT_DIR$/apollo/apollo-domain/apollo-domain.iml" />
       <module fileurl="file://$PROJECT_DIR$/upms.iml" filepath="$PROJECT_DIR$/upms.iml" />
       <module fileurl="file://$PROJECT_DIR$/upms-common/upms-common.iml" filepath="$PROJECT_DIR$/upms-common/upms-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/upms-domain/upms-domain.iml" filepath="$PROJECT_DIR$/upms-domain/upms-domain.iml" />

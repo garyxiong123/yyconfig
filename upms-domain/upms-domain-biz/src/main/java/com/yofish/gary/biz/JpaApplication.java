@@ -18,5 +18,5 @@ public class JpaApplication {
         System.out.println(run);
 
     }
+    }
 
-}

@@ -6,6 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="apollo-domain" />
         <module name="upms-common" />
         <module name="upms-domain-api" />
         <module name="upms-domain-biz" />
@@ -15,6 +16,8 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="apollo" target="1.8" />
+      <module name="apollo-domain" target="1.8" />
       <module name="ata-ops-common" target="1.8" />
       <module name="ata-ops-strategy" target="1.8" />
       <module name="ata-ops-table" target="1.8" />
