@@ -11,11 +11,15 @@ Bazooka 从本质上解决的问题如下：<br/>
 
 
 # 领域模型设计
-#### [领域模型图]
-![logo](./img/Bazooka_Domain.png)
 
-#### [发布流程图]
-![logo](./img/Bazooka_Deploy_Flow.png)
+#### [用例图]
+![logo](./img/Bazooka_User_Case.png)
+
+#### [领域模型图]
+![logo](./img/apollo-domain.png)
+
+#### [模块依赖]
+![logo](./img/apollo-module-dependency.png)
 
 #### [发布状态机]
 ![logo](./img/Bazooka_Deploy_Status.png)
@@ -23,6 +27,5 @@ Bazooka 从本质上解决的问题如下：<br/>
 #### [发布活动图]
 ![logo](./img/Bazooka_Deploy_Activity.png)
 
-#### [用例图]
-![logo](./img/Bazooka_User_Case.png)
+
 
