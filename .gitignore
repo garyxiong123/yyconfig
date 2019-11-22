@@ -40,3 +40,17 @@ upms-main/src/test/
 upms-permissonFramework/upms-permissonFramework-shiro/src/main/resources/
 upms-permissonFramework/upms-permissonFramework-shiro/src/test/
 /upms.iml
+
+# dependencies
+/node_modules
+/npm-debug.log*
+/yarn-error.log
+/yarn.lock
+/package-lock.json
+
+# misc
+.DS_Store
+
+# umi
+.umi
+.umi-production
