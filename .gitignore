@@ -25,3 +25,16 @@ target
 
 # git
 *.orig
+.travis.yml
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+apollo/apollo-domain/src/test/java/com/yofish/apollo/repository/
+ata-ops-upms-refactor/src/main/java/jpa/status/
+ata-ops-upms-refactor/src/main/java/jpa/strategy/session/
+upms-common/src/main/resources/
+upms-common/src/test/
+upms-domain/upms-domain-api/src/main/resources/
+upms-domain/upms-domain-api/src/test/
+upms-main/src/test/
+upms-permissonFramework/upms-permissonFramework-shiro/src/main/resources/
+upms-permissonFramework/upms-permissonFramework-shiro/src/test/

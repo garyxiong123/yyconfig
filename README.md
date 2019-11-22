@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/logo/logo-simple.png" alt="apollo-logo" width="60%">
+[English](./index_en.md) | [官网](https://atayun.net)  | [社区](xxxxx) · [论坛](xxxxx) | [设计文档](docs/design.md) | [使用文档](./user_guide.md) | [安装文档](install.md) | [版本更新](./releases.md)
 
 # Apollo - A reliable configuration management system
 
@@ -122,11 +122,11 @@ Java客户端不依赖任何框架，能够运行于所有Java运行时环境，
   * [部署&开发遇到的常见问题](https://github.com/ctripcorp/apollo/wiki/%E9%83%A8%E7%BD%B2&%E5%BC%80%E5%8F%91%E9%81%87%E5%88%B0%E7%9A%84%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
 
 # Presentation
-  * [携程开源配置中心Apollo的设计与实现](http://www.itdks.com/dakalive/detail/3420)
+  * [携程开源配置中心Apollo的设计与实现](docs/design.md) 
   * [Slides](http://techshow.ctrip.com/wp-content/uploads/2017/08/%E5%BC%80%E6%BA%90%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83Apollo%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0-%E6%90%BA%E7%A8%8B%E5%AE%8B%E9%A1%BA.pdf)
 
 # Publication
-  * [开源配置中心Apollo的设计与实现](http://www.infoq.com/cn/articles/open-source-configuration-center-apollo)
+  * [开源配置中心Apollo的设计与实现](docs/design.md) 
 
 # Support
 <table>
