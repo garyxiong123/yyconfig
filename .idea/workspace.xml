@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="292c6f58-6b23-4c41-a617-7a3e6c3bc496" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-    </list>
+    <list default="true" id="292c6f58-6b23-4c41-a617-7a3e6c3bc496" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/target/" />
     <ignored path="$PROJECT_DIR$/initial-value-generator/target/" />
     <ignored path="$PROJECT_DIR$/many-to-many/target/" />
@@ -107,8 +103,8 @@
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="15">
-                <caret line="1" selection-start-line="1" selection-end-line="1" />
+              <first_editor relative-caret-position="150">
+                <caret line="124" column="43" selection-start-line="124" selection-start-column="43" selection-end-line="124" selection-end-column="43" />
               </first_editor>
               <second_editor />
             </state>
@@ -119,7 +115,7 @@
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="165">
-              <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+              <caret line="11" selection-start-line="11" selection-end-line="11" />
             </state>
           </provider>
         </entry>
@@ -369,6 +365,11 @@
               <item name="upms" type="b2602c69:ProjectViewProjectNode" />
               <item name="upms" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="upms" type="b2602c69:ProjectViewProjectNode" />
+              <item name="upms" type="462c0819:PsiDirectoryNode" />
+              <item name="doc" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -429,11 +430,11 @@
       <recent name="$PROJECT_DIR$/ata-ops-table/src/main/java/jpa/repository" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/doc" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/apollo/apollo-domain/src/main/java/com/yofish/apollo/component" />
       <recent name="$PROJECT_DIR$/apollo/apollo-domain/src/main/java/com/yofish/apollo/model" />
       <recent name="$PROJECT_DIR$/apollo" />
-      <recent name="$PROJECT_DIR$/apollo/apollo-domain/src/main/resources" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="com.yofish.apollo.bo" />
@@ -688,7 +689,7 @@
       <workItem from="1574046165667" duration="1895000" />
       <workItem from="1574048129559" duration="3009000" />
       <workItem from="1574059087137" duration="6683000" />
-      <workItem from="1574346549430" duration="2295000" />
+      <workItem from="1574346549430" duration="2550000" />
     </task>
     <servers />
   </component>
@@ -725,11 +726,10 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="278009000" />
+    <option name="totallyTimeSpent" value="278264000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info anchor="right" id="Key Promoter X" order="14" />
       <window_info anchor="right" id="Palette" order="4" />
@@ -762,8 +762,8 @@
       <window_info anchor="bottom" id="Version Control" order="15" weight="0.3292011" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.42060605" />
       <window_info anchor="bottom" id="Spring" order="9" />
-      <window_info anchor="bottom" id="Terminal" order="10" visible="true" weight="0.35636362" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.13805436" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.35636362" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.10586552" />
       <window_info anchor="right" id="Bean Validation" order="11" />
       <window_info id="Web" order="5" side_tool="true" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.2" />
@@ -1573,15 +1573,15 @@
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
-          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+          <caret line="11" selection-start-line="11" selection-end-line="11" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="15">
-            <caret line="1" selection-start-line="1" selection-end-line="1" />
+          <first_editor relative-caret-position="150">
+            <caret line="124" column="43" selection-start-line="124" selection-start-column="43" selection-end-line="124" selection-end-column="43" />
           </first_editor>
           <second_editor />
         </state>
