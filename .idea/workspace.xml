@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="292c6f58-6b23-4c41-a617-7a3e6c3bc496" name="Default" comment="" />
+    <list default="true" id="292c6f58-6b23-4c41-a617-7a3e6c3bc496" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <ignored path="$PROJECT_DIR$/initial-value-generator/target/" />
     <ignored path="$PROJECT_DIR$/many-to-many/target/" />
@@ -99,12 +101,12 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="150">
-                <caret line="124" column="43" selection-start-line="124" selection-start-column="43" selection-end-line="124" selection-end-column="43" />
+              <first_editor relative-caret-position="-14">
+                <caret line="128" column="28" lean-forward="true" selection-start-line="128" selection-start-column="28" selection-end-line="128" selection-end-column="28" />
               </first_editor>
               <second_editor />
             </state>
@@ -120,13 +122,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ClusterNamespaceRepository.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/apollo/apollo-domain/src/main/java/com/yofish/apollo/repository/ClusterNamespaceRepository.java">
+      <file leaf-file-name="pom.xml" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/pom.xml">
+          <provider editor-type-id="MavenHelperPluginDependencyAnalyzer" />
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="18" column="21" selection-start-line="18" selection-start-column="21" selection-end-line="18" selection-end-column="21" />
+            <state relative-caret-position="105">
+              <caret line="7" column="25" selection-start-line="7" selection-start-column="25" selection-end-line="7" selection-end-column="25" />
             </state>
           </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="yy-common-1.0.0-SNAPSHOT.pom" pinned="false" current-in-tab="false">
+        <entry file="file://$MAVEN_REPOSITORY$/com/yofish/gary/yy-common/1.0.0-SNAPSHOT/yy-common-1.0.0-SNAPSHOT.pom">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file leaf-file-name="ClusterNamespace.java" pinned="false" current-in-tab="false">
@@ -143,15 +151,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="163">
               <caret line="20" column="13" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ClusterRepository.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/apollo/apollo-domain/src/main/java/com/yofish/apollo/repository/ClusterRepository.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="14" column="17" selection-start-line="14" selection-start-column="17" selection-end-line="14" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -217,6 +216,7 @@
       <find>upms-domain-c</find>
       <find>countByIframeUrl</find>
       <find>test</find>
+      <find>docs</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -284,8 +284,8 @@
         <option value="$PROJECT_DIR$/apollo/apollo-domain/src/main/java/com/yofish/apollo/repository/ClusterNamespaceRepository.java" />
         <option value="$PROJECT_DIR$/apollo/apollo-domain/src/main/java/com/yofish/apollo/repository/ItemRepository.java" />
         <option value="$PROJECT_DIR$/apollo/apollo-domain/src/main/java/com/yofish/apollo/service/ItemService.java" />
-        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -364,11 +364,6 @@
             <path>
               <item name="upms" type="b2602c69:ProjectViewProjectNode" />
               <item name="upms" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="upms" type="b2602c69:ProjectViewProjectNode" />
-              <item name="upms" type="462c0819:PsiDirectoryNode" />
-              <item name="doc" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -689,7 +684,7 @@
       <workItem from="1574046165667" duration="1895000" />
       <workItem from="1574048129559" duration="3009000" />
       <workItem from="1574059087137" duration="6683000" />
-      <workItem from="1574346549430" duration="2550000" />
+      <workItem from="1574346549430" duration="3313000" />
     </task>
     <servers />
   </component>
@@ -726,7 +721,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="278264000" />
+    <option name="totallyTimeSpent" value="279027000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
@@ -762,8 +757,8 @@
       <window_info anchor="bottom" id="Version Control" order="15" weight="0.3292011" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.42060605" />
       <window_info anchor="bottom" id="Spring" order="9" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.35636362" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.10586552" />
+      <window_info anchor="bottom" id="Terminal" order="10" visible="true" weight="0.2860606" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23319027" />
       <window_info anchor="right" id="Bean Validation" order="11" />
       <window_info id="Web" order="5" side_tool="true" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.2" />
@@ -1223,20 +1218,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/upms-permissonFramework/upms-permissonFramework-shiro/src/main/java/com/yofish/gary/component/config/ShiroCorsConfiguration.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="35" column="13" selection-start-line="35" selection-start-column="13" selection-end-line="35" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/upms-permissonFramework/upms-permissonFramework-shiro/src/main/java/com/yofish/gary/component/filter/ShiroUrlPathMatchingFilter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="53" column="13" selection-start-line="53" selection-start-column="13" selection-end-line="53" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/upms-permissonFramework/upms-permissonFramework-shiro/src/main/java/com/yofish/gary/component/realm/ShiroAuthRealm.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="525">
@@ -1570,6 +1551,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="-14">
+            <caret line="128" column="28" lean-forward="true" selection-start-line="128" selection-start-column="28" selection-end-line="128" selection-end-column="28" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
@@ -1577,13 +1568,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="150">
-            <caret line="124" column="43" selection-start-line="124" selection-start-column="43" selection-end-line="124" selection-end-column="43" />
-          </first_editor>
-          <second_editor />
+    <entry file="file://$MAVEN_REPOSITORY$/com/yofish/gary/yy-common/1.0.0-SNAPSHOT/yy-common-1.0.0-SNAPSHOT.pom">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider editor-type-id="MavenHelperPluginDependencyAnalyzer" />
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="25" selection-start-line="7" selection-start-column="25" selection-end-line="7" selection-end-column="25" />
         </state>
       </provider>
     </entry>

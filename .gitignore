@@ -38,3 +38,4 @@ upms-domain/upms-domain-api/src/test/
 upms-main/src/test/
 upms-permissonFramework/upms-permissonFramework-shiro/src/main/resources/
 upms-permissonFramework/upms-permissonFramework-shiro/src/test/
+/upms.iml
