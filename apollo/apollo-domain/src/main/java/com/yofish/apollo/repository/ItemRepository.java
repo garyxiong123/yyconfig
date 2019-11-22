@@ -18,5 +18,5 @@ import java.util.List;
 public interface ItemRepository  extends JpaRepository<Item, Long> {
 
 
-    List<Item> findByNamespaceIdAndEnv(long namespaceId, String name);
+//    List<Item> findItemsByClusterNamespace_IdNamespaceAndClusterNamespace_NameNamespace(Long namespaceId, String name);
 }

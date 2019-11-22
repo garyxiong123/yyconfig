@@ -71,14 +71,15 @@ public class ItemService {
 
         ConfigTextResolver resolver = findResolver(model.getFormat());
 
-        List<Item> items = itemRepository.findByNamespaceIdAndEnv(namespaceId, env.name());
+//        List<Item> items = itemRepository.findItemsByClusterNamespace_IdNamespaceAndClusterNamespace_NameNamespace(namespaceId, env.name());
+        List<Item> items = null;
         ItemChangeSets changeSets = resolver.resolve(namespaceId, configText, items);
         if (changeSets.isEmpty()) {
             return;
         }
 
-        ClusterNamespace clusterNamespace = clusterNamespaceRepository.findByAppIdAndEnvAndClusterNameAndnamespaceName(appId, env, clusterName, namespaceName);
-
+//        ClusterNamespace clusterNamespace = clusterNamespaceRepository.findByAppIdAndEnvAndClusterNameAndnamespaceName(appId, env.name(), clusterName, namespaceName);
+        ClusterNamespace clusterNamespace = null;
         updateItems(clusterNamespace, changeSets);
 
         Commit commit = Commit.builder().clusterNamespace(clusterNamespace).changeSets(toJSONString(changeSets)).build();

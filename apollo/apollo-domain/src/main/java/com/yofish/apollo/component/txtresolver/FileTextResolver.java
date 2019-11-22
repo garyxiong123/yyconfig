@@ -34,10 +34,10 @@ public class FileTextResolver implements ConfigTextResolver {
   private Item createItem(long namespaceId, long itemId, String value) {
     Item item = new Item();
     item.setId(itemId);
-    item.setNamespaceId(namespaceId);
-    item.setValue(value);
-    item.setLineNum(1);
-    item.setKey(ConfigConsts.CONFIG_FILE_CONTENT_KEY);
+//    item.setNamespaceId(namespaceId);
+//    item.setValue(value);
+//    item.setLineNum(1);
+//    item.setKey(ConfigConsts.CONFIG_FILE_CONTENT_KEY);
     return item;
   }
 }

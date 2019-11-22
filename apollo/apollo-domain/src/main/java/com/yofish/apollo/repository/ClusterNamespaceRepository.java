@@ -5,6 +5,7 @@ import com.yofish.apollo.domain.ClusterNamespace;
 import com.yofish.apollo.domain.Namespace;
 import com.yofish.apollo.enums.Envs;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,8 +15,8 @@ import org.springframework.stereotype.Component;
  * @since 1.0
  */
 public interface ClusterNamespaceRepository extends JpaRepository<ClusterNamespace, Long> {
-
-    ClusterNamespace findByAppIdAndEnvAndClusterNameAndnamespaceName(String appId, Envs env, String clusterName, String namespaceName);
+//    @Query
+//    ClusterNamespace findByAppIdAndEnvAndClusterNameAndnamespaceName(String appId, String env, String clusterName, String namespaceName);
 
 
 
