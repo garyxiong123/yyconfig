@@ -9,13 +9,12 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>apollo</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>upms</artifactId>
+
     <modules>
-        <module>apollo-biz</module>
-        <module>apollo-api</module>
-        <module>apollo-common</module>
-        <module>apollo-client</module>
+        <module>upms-domain</module>
+        <module>upms-common</module>
+        <module>upms-permissonFramework</module>
     </modules>
 
 
