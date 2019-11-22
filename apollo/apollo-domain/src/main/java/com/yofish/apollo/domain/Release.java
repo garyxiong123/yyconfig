@@ -16,6 +16,7 @@ import javax.persistence.*;
 @Setter
 @Getter
 @Entity
+@Table(name="releases")
 public class Release extends BaseEntity {
 
 

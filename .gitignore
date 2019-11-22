@@ -20,7 +20,8 @@ target
 .settings
 
 # Idea
-.idea
+.idea/*
+.idea/workspace.xml
 *.iml
 
 # git
