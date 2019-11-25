@@ -12,11 +12,8 @@
     <artifactId>yyconfig</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <modules>
-        <!--<module>ata-ops-upms-refactor</module>-->
-        <module>upms-domain</module>
-        <module>upms-permissonFramework</module>
         <module>yyconfig-main</module>
-        <module>upms-common</module>
+        <module>upms</module>
         <module>apollo</module>
         <module>upms</module>
     </modules>
