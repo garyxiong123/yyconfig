@@ -3,20 +3,26 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>yyconfig</artifactId>
+        <artifactId>apollo</artifactId>
         <groupId>com.yofish.gary</groupId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>apollo</artifactId>
+    <artifactId>apollo-config</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>apollo-common</module>
-        <module>apollo-client</module>
-        <module>apollo-portal</module>
-        <module>apollo-config</module>
+        <module>apollo-config-api</module>
+        <module>apollo-config-biz</module>
     </modules>
+
+<dependencies>
+    <dependency>
+        <artifactId>apollo-common</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <groupId>com.yofish.gary</groupId>
+    </dependency>
+</dependencies>
 
 
 </project>
