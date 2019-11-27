@@ -1,6 +1,6 @@
 package common.utils;
 
-import com.ctrip.framework.apollo.common.exception.BeanUtilsException;
+import common.exception.BeanUtilsException;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.util.CollectionUtils;

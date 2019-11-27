@@ -1,6 +1,7 @@
 package apollo.internals;
 
-import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
+
+import framework.apollo.core.enums.ConfigFileFormat;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

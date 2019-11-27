@@ -1,9 +1,10 @@
 package apollo.build;
 
-import com.ctrip.framework.apollo.exceptions.ApolloConfigException;
-import com.ctrip.framework.apollo.internals.Injector;
-import com.ctrip.framework.apollo.tracer.Tracer;
-import com.ctrip.framework.foundation.internals.ServiceBootstrap;
+
+import apollo.exceptions.ApolloConfigException;
+import apollo.internals.Injector;
+import framework.apollo.tracer.Tracer;
+import framework.foundation.internals.ServiceBootstrap;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

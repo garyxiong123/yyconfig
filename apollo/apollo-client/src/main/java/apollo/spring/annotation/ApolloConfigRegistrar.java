@@ -1,8 +1,8 @@
 package apollo.spring.annotation;
 
-import com.ctrip.framework.apollo.spring.config.PropertySourcesProcessor;
-import com.ctrip.framework.apollo.spring.property.SpringValueDefinitionProcessor;
-import com.ctrip.framework.apollo.spring.util.BeanRegistrationUtil;
+import apollo.spring.config.PropertySourcesProcessor;
+import apollo.spring.property.SpringValueDefinitionProcessor;
+import apollo.spring.util.BeanRegistrationUtil;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;

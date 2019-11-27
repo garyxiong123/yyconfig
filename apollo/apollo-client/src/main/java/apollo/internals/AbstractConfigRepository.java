@@ -1,8 +1,8 @@
 package apollo.internals;
 
-import com.ctrip.framework.apollo.tracer.Tracer;
-import com.ctrip.framework.apollo.util.ExceptionUtil;
+import apollo.util.ExceptionUtil;
 import com.google.common.collect.Lists;
+import framework.apollo.tracer.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

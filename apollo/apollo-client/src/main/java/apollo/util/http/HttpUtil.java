@@ -1,9 +1,9 @@
 package apollo.util.http;
 
-import com.ctrip.framework.apollo.build.ApolloInjector;
-import com.ctrip.framework.apollo.exceptions.ApolloConfigException;
-import com.ctrip.framework.apollo.exceptions.ApolloConfigStatusCodeException;
-import com.ctrip.framework.apollo.util.ConfigUtil;
+import apollo.build.ApolloInjector;
+import apollo.exceptions.ApolloConfigException;
+import apollo.exceptions.ApolloConfigStatusCodeException;
+import apollo.util.ConfigUtil;
 import com.google.common.base.Function;
 import com.google.common.io.CharStreams;
 import com.google.gson.Gson;

@@ -1,7 +1,7 @@
-package apollo.controller;
+package controller;
 
-import com.ctrip.framework.apollo.Apollo;
-import com.ctrip.framework.foundation.Foundation;
+import framework.apollo.Apollo;
+import framework.foundation.Foundation;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

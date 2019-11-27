@@ -1,6 +1,6 @@
 package apollo;
 
-import com.ctrip.framework.apollo.enums.ConfigSourceType;
+import apollo.enums.ConfigSourceType;
 import com.google.common.base.Function;
 
 import java.util.Date;

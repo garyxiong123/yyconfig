@@ -1,7 +1,8 @@
 package apollo.spring.config;
 
-import com.ctrip.framework.apollo.Config;
-import com.ctrip.framework.apollo.ConfigChangeListener;
+
+import apollo.Config;
+import apollo.ConfigChangeListener;
 import org.springframework.core.env.EnumerablePropertySource;
 
 import java.util.Set;

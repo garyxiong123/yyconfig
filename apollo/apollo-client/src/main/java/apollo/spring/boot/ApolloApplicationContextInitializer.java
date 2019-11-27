@@ -1,13 +1,13 @@
 package apollo.spring.boot;
 
-import com.ctrip.framework.apollo.Config;
-import com.ctrip.framework.apollo.ConfigService;
-import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.ctrip.framework.apollo.spring.config.ConfigPropertySourceFactory;
-import com.ctrip.framework.apollo.spring.config.PropertySourcesConstants;
-import com.ctrip.framework.apollo.spring.util.SpringInjector;
+import apollo.Config;
+import apollo.ConfigService;
+import apollo.spring.config.ConfigPropertySourceFactory;
+import apollo.spring.config.PropertySourcesConstants;
+import apollo.spring.util.SpringInjector;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import framework.apollo.core.ConfigConsts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;

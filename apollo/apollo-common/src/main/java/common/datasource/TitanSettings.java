@@ -1,8 +1,8 @@
 package common.datasource;
 
-import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.core.enums.EnvUtils;
-import com.ctrip.framework.foundation.Foundation;
+import framework.apollo.core.enums.Env;
+import framework.apollo.core.enums.EnvUtils;
+import framework.foundation.Foundation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

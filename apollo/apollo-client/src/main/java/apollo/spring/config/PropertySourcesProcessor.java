@@ -1,11 +1,11 @@
 package apollo.spring.config;
 
-import com.ctrip.framework.apollo.Config;
-import com.ctrip.framework.apollo.ConfigService;
-import com.ctrip.framework.apollo.build.ApolloInjector;
-import com.ctrip.framework.apollo.spring.property.AutoUpdateConfigChangeListener;
-import com.ctrip.framework.apollo.spring.util.SpringInjector;
-import com.ctrip.framework.apollo.util.ConfigUtil;
+import apollo.Config;
+import apollo.ConfigService;
+import apollo.build.ApolloInjector;
+import apollo.spring.property.AutoUpdateConfigChangeListener;
+import apollo.spring.util.SpringInjector;
+import apollo.util.ConfigUtil;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;

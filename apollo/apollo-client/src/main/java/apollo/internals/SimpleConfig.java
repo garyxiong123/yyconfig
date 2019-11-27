@@ -1,12 +1,12 @@
 package apollo.internals;
 
-import com.ctrip.framework.apollo.enums.ConfigSourceType;
-import com.ctrip.framework.apollo.model.ConfigChange;
-import com.ctrip.framework.apollo.model.ConfigChangeEvent;
-import com.ctrip.framework.apollo.tracer.Tracer;
-import com.ctrip.framework.apollo.util.ExceptionUtil;
+import apollo.enums.ConfigSourceType;
+import apollo.model.ConfigChange;
+import apollo.model.ConfigChangeEvent;
+import apollo.util.ExceptionUtil;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
+import framework.apollo.tracer.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,12 +1,12 @@
 package apollo.internals;
 
-import com.ctrip.framework.apollo.Config;
-import com.ctrip.framework.apollo.ConfigFile;
-import com.ctrip.framework.apollo.build.ApolloInjector;
-import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
-import com.ctrip.framework.apollo.spi.ConfigFactory;
-import com.ctrip.framework.apollo.spi.ConfigFactoryManager;
+import apollo.Config;
+import apollo.ConfigFile;
+import apollo.build.ApolloInjector;
+import apollo.spi.ConfigFactory;
+import apollo.spi.ConfigFactoryManager;
 import com.google.common.collect.Maps;
+import framework.apollo.core.enums.ConfigFileFormat;
 
 import java.util.Map;
 

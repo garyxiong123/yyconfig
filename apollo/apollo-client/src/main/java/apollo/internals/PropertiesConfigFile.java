@@ -1,10 +1,10 @@
 package apollo.internals;
 
-import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
-import com.ctrip.framework.apollo.core.utils.PropertiesUtil;
-import com.ctrip.framework.apollo.exceptions.ApolloConfigException;
-import com.ctrip.framework.apollo.tracer.Tracer;
-import com.ctrip.framework.apollo.util.ExceptionUtil;
+import apollo.exceptions.ApolloConfigException;
+import apollo.util.ExceptionUtil;
+import framework.apollo.core.enums.ConfigFileFormat;
+import framework.apollo.core.utils.PropertiesUtil;
+import framework.apollo.tracer.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

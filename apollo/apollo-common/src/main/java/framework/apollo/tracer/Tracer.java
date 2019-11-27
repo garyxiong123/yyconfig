@@ -1,10 +1,10 @@
 package framework.apollo.tracer;
 
-import com.ctrip.framework.apollo.tracer.internals.NullMessageProducerManager;
-import com.ctrip.framework.apollo.tracer.spi.MessageProducer;
-import com.ctrip.framework.apollo.tracer.spi.MessageProducerManager;
-import com.ctrip.framework.apollo.tracer.spi.Transaction;
-import com.ctrip.framework.foundation.internals.ServiceBootstrap;
+import framework.apollo.tracer.internals.NullMessageProducerManager;
+import framework.apollo.tracer.spi.MessageProducer;
+import framework.apollo.tracer.spi.MessageProducerManager;
+import framework.apollo.tracer.spi.Transaction;
+import framework.foundation.internals.ServiceBootstrap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

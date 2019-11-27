@@ -1,8 +1,8 @@
 package apollo.util.function;
 
-import com.ctrip.framework.apollo.exceptions.ApolloConfigException;
-import com.ctrip.framework.apollo.util.parser.ParserException;
-import com.ctrip.framework.apollo.util.parser.Parsers;
+import apollo.exceptions.ApolloConfigException;
+import apollo.util.parser.ParserException;
+import apollo.util.parser.Parsers;
 import com.google.common.base.Function;
 
 import java.util.Date;

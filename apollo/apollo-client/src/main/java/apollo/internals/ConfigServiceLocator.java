@@ -1,16 +1,11 @@
 package apollo.internals;
 
-import com.ctrip.framework.apollo.build.ApolloInjector;
-import com.ctrip.framework.apollo.core.ServiceNameConsts;
-import com.ctrip.framework.apollo.core.dto.ServiceDTO;
-import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
-import com.ctrip.framework.apollo.exceptions.ApolloConfigException;
-import com.ctrip.framework.apollo.tracer.Tracer;
-import com.ctrip.framework.apollo.util.ConfigUtil;
-import com.ctrip.framework.apollo.util.http.HttpRequest;
-import com.ctrip.framework.apollo.util.http.HttpResponse;
-import com.ctrip.framework.apollo.util.http.HttpUtil;
-import com.ctrip.framework.foundation.Foundation;
+import apollo.build.ApolloInjector;
+import apollo.exceptions.ApolloConfigException;
+import apollo.util.ConfigUtil;
+import apollo.util.http.HttpRequest;
+import apollo.util.http.HttpResponse;
+import apollo.util.http.HttpUtil;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -18,6 +13,11 @@ import com.google.common.collect.Maps;
 import com.google.common.escape.Escaper;
 import com.google.common.net.UrlEscapers;
 import com.google.gson.reflect.TypeToken;
+import framework.apollo.core.ServiceNameConsts;
+import framework.apollo.core.dto.ServiceDTO;
+import framework.apollo.core.utils.ApolloThreadFactory;
+import framework.apollo.tracer.Tracer;
+import framework.foundation.Foundation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

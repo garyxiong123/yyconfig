@@ -1,6 +1,7 @@
 package framework.apollo.core.enums;
 
-import com.ctrip.framework.apollo.core.utils.StringUtils;
+
+import framework.apollo.core.utils.StringUtils;
 
 public final class EnvUtils {
 

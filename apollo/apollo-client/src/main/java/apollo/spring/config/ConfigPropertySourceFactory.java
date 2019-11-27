@@ -1,6 +1,6 @@
 package apollo.spring.config;
 
-import com.ctrip.framework.apollo.Config;
+import apollo.Config;
 import com.google.common.collect.Lists;
 
 import java.util.List;

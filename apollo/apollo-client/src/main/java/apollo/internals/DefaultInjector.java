@@ -1,13 +1,14 @@
 package apollo.internals;
 
-import com.ctrip.framework.apollo.exceptions.ApolloConfigException;
-import com.ctrip.framework.apollo.spi.*;
-import com.ctrip.framework.apollo.tracer.Tracer;
-import com.ctrip.framework.apollo.util.ConfigUtil;
-import com.ctrip.framework.apollo.util.http.HttpUtil;
+
+import apollo.exceptions.ApolloConfigException;
+import apollo.spi.*;
+import apollo.util.ConfigUtil;
+import apollo.util.http.HttpUtil;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Singleton;
+import framework.apollo.tracer.Tracer;
 
 /**
  * Guice injector

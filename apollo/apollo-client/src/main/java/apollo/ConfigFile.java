@@ -1,7 +1,8 @@
 package apollo;
 
-import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
-import com.ctrip.framework.apollo.enums.ConfigSourceType;
+
+import apollo.enums.ConfigSourceType;
+import framework.apollo.core.enums.ConfigFileFormat;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

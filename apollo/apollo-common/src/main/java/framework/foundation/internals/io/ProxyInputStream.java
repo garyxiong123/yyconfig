@@ -16,7 +16,8 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static com.ctrip.framework.foundation.internals.io.IOUtils.EOF;
+import static framework.foundation.internals.io.IOUtils.EOF;
+
 
 /**
  * A Proxy stream which acts as expected, that is it passes the method calls on to the proxied stream and doesn't change

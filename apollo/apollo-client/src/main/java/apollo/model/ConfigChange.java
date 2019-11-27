@@ -1,7 +1,7 @@
 package apollo.model;
 
 
-import com.ctrip.framework.apollo.enums.PropertyChangeType;
+import apollo.enums.PropertyChangeType;
 
 /**
  * Holds the information for a config change.

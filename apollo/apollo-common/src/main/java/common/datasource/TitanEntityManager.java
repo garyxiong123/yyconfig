@@ -1,6 +1,6 @@
 package common.datasource;
 
-import com.ctrip.framework.apollo.tracer.Tracer;
+import framework.apollo.tracer.Tracer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;

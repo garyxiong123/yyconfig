@@ -1,6 +1,6 @@
 package apollo.spi;
 
-import com.ctrip.framework.apollo.build.ApolloInjector;
+import apollo.build.ApolloInjector;
 import com.google.common.collect.Maps;
 
 import java.util.Map;

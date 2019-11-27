@@ -1,6 +1,7 @@
 package framework.apollo.tracer.internals.cat;
 
-import com.ctrip.framework.apollo.tracer.spi.Transaction;
+
+import framework.apollo.tracer.spi.Transaction;
 
 import java.lang.reflect.Method;
 

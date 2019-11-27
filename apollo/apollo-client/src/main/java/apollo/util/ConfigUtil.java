@@ -1,11 +1,11 @@
 package apollo.util;
 
-import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.ctrip.framework.apollo.core.MetaDomainConsts;
-import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.core.enums.EnvUtils;
-import com.ctrip.framework.foundation.Foundation;
 import com.google.common.base.Strings;
+import framework.apollo.core.ConfigConsts;
+import framework.apollo.core.MetaDomainConsts;
+import framework.apollo.core.enums.Env;
+import framework.apollo.core.enums.EnvUtils;
+import framework.foundation.Foundation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

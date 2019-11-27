@@ -1,11 +1,12 @@
 package apollo;
 
-import com.ctrip.framework.apollo.build.ApolloInjector;
-import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
-import com.ctrip.framework.apollo.internals.ConfigManager;
-import com.ctrip.framework.apollo.spi.ConfigFactory;
-import com.ctrip.framework.apollo.spi.ConfigRegistry;
+
+import apollo.build.ApolloInjector;
+import apollo.internals.ConfigManager;
+import apollo.spi.ConfigFactory;
+import apollo.spi.ConfigRegistry;
+import framework.apollo.core.ConfigConsts;
+import framework.apollo.core.enums.ConfigFileFormat;
 
 /**
  * Entry point for client config use

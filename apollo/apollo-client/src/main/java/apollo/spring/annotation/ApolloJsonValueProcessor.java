@@ -1,11 +1,11 @@
 package apollo.spring.annotation;
 
-import com.ctrip.framework.apollo.build.ApolloInjector;
-import com.ctrip.framework.apollo.spring.property.PlaceholderHelper;
-import com.ctrip.framework.apollo.spring.property.SpringValue;
-import com.ctrip.framework.apollo.spring.property.SpringValueRegistry;
-import com.ctrip.framework.apollo.spring.util.SpringInjector;
-import com.ctrip.framework.apollo.util.ConfigUtil;
+import apollo.build.ApolloInjector;
+import apollo.spring.property.PlaceholderHelper;
+import apollo.spring.property.SpringValue;
+import apollo.spring.property.SpringValueRegistry;
+import apollo.spring.util.SpringInjector;
+import apollo.util.ConfigUtil;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import org.slf4j.Logger;

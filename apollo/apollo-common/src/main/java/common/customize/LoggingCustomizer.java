@@ -2,9 +2,9 @@ package common.customize;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.Appender;
-import com.ctrip.framework.apollo.tracer.Tracer;
-import com.ctrip.framework.foundation.Foundation;
 import com.google.common.base.Strings;
+import framework.apollo.tracer.Tracer;
+import framework.foundation.Foundation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;

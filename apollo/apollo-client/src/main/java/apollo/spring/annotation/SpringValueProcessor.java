@@ -1,9 +1,9 @@
 package apollo.spring.annotation;
 
-import com.ctrip.framework.apollo.build.ApolloInjector;
-import com.ctrip.framework.apollo.spring.property.*;
-import com.ctrip.framework.apollo.spring.util.SpringInjector;
-import com.ctrip.framework.apollo.util.ConfigUtil;
+import apollo.build.ApolloInjector;
+import apollo.spring.property.*;
+import apollo.spring.util.SpringInjector;
+import apollo.util.ConfigUtil;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import org.slf4j.Logger;

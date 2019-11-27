@@ -1,11 +1,11 @@
 package apollo.spi;
 
-import com.ctrip.framework.apollo.Config;
-import com.ctrip.framework.apollo.ConfigFile;
-import com.ctrip.framework.apollo.build.ApolloInjector;
-import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
-import com.ctrip.framework.apollo.internals.*;
-import com.ctrip.framework.apollo.util.ConfigUtil;
+import apollo.Config;
+import apollo.ConfigFile;
+import apollo.build.ApolloInjector;
+import apollo.internals.*;
+import apollo.util.ConfigUtil;
+import framework.apollo.core.enums.ConfigFileFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,6 +1,7 @@
 package apollo.internals;
 
-import com.ctrip.framework.apollo.core.ConfigConsts;
+
+import framework.apollo.core.ConfigConsts;
 
 import java.util.Properties;
 

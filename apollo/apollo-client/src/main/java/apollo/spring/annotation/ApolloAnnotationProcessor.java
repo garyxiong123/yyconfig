@@ -1,9 +1,9 @@
 package apollo.spring.annotation;
 
-import com.ctrip.framework.apollo.Config;
-import com.ctrip.framework.apollo.ConfigChangeListener;
-import com.ctrip.framework.apollo.ConfigService;
-import com.ctrip.framework.apollo.model.ConfigChangeEvent;
+import apollo.Config;
+import apollo.ConfigChangeListener;
+import apollo.ConfigService;
+import apollo.model.ConfigChangeEvent;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import org.springframework.core.annotation.AnnotationUtils;

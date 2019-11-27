@@ -1,6 +1,6 @@
 package apollo.spring.annotation;
 
-import com.ctrip.framework.apollo.core.ConfigConsts;
+import framework.apollo.core.ConfigConsts;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 

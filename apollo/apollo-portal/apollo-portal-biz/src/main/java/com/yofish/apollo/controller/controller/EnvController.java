@@ -1,7 +1,6 @@
 package com.yofish.apollo.controller.controller;
 
-import com.ctrip.framework.apollo.component.PortalSettings;
-import com.ctrip.framework.apollo.core.enums.Env;
+import com.yofish.apollo.domain.Env;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

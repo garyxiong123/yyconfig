@@ -1,15 +1,15 @@
 package apollo.internals;
 
-import com.ctrip.framework.apollo.ConfigChangeListener;
-import com.ctrip.framework.apollo.ConfigFile;
-import com.ctrip.framework.apollo.ConfigFileChangeListener;
-import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
-import com.ctrip.framework.apollo.enums.ConfigSourceType;
-import com.ctrip.framework.apollo.enums.PropertyChangeType;
-import com.ctrip.framework.apollo.model.ConfigFileChangeEvent;
-import com.ctrip.framework.apollo.tracer.Tracer;
-import com.ctrip.framework.apollo.util.ExceptionUtil;
+import apollo.ConfigChangeListener;
+import apollo.ConfigFile;
+import apollo.ConfigFileChangeListener;
+import apollo.enums.ConfigSourceType;
+import apollo.enums.PropertyChangeType;
+import apollo.model.ConfigFileChangeEvent;
+import apollo.util.ExceptionUtil;
 import com.google.common.collect.Lists;
+import framework.apollo.core.utils.ApolloThreadFactory;
+import framework.apollo.tracer.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

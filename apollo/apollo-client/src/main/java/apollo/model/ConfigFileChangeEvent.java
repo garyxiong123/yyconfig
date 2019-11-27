@@ -1,6 +1,7 @@
 package apollo.model;
 
-import com.ctrip.framework.apollo.enums.PropertyChangeType;
+
+import apollo.enums.PropertyChangeType;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

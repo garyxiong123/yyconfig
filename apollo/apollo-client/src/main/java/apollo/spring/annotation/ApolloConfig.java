@@ -1,6 +1,7 @@
 package apollo.spring.annotation;
 
-import com.ctrip.framework.apollo.core.ConfigConsts;
+
+import framework.apollo.core.ConfigConsts;
 
 import java.lang.annotation.*;
 

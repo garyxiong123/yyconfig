@@ -1,10 +1,10 @@
 package apollo.spring.config;
 
-import com.ctrip.framework.apollo.spring.annotation.ApolloAnnotationProcessor;
-import com.ctrip.framework.apollo.spring.annotation.ApolloJsonValueProcessor;
-import com.ctrip.framework.apollo.spring.annotation.SpringValueProcessor;
-import com.ctrip.framework.apollo.spring.property.SpringValueDefinitionProcessor;
-import com.ctrip.framework.apollo.spring.util.BeanRegistrationUtil;
+import apollo.spring.annotation.ApolloAnnotationProcessor;
+import apollo.spring.annotation.ApolloJsonValueProcessor;
+import apollo.spring.annotation.SpringValueProcessor;
+import apollo.spring.property.SpringValueDefinitionProcessor;
+import apollo.spring.util.BeanRegistrationUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;

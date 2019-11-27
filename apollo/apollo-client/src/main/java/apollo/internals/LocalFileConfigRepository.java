@@ -1,16 +1,16 @@
 package apollo.internals;
 
-import com.ctrip.framework.apollo.build.ApolloInjector;
-import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.ctrip.framework.apollo.core.utils.ClassLoaderUtil;
-import com.ctrip.framework.apollo.enums.ConfigSourceType;
-import com.ctrip.framework.apollo.exceptions.ApolloConfigException;
-import com.ctrip.framework.apollo.tracer.Tracer;
-import com.ctrip.framework.apollo.tracer.spi.Transaction;
-import com.ctrip.framework.apollo.util.ConfigUtil;
-import com.ctrip.framework.apollo.util.ExceptionUtil;
+import apollo.build.ApolloInjector;
+import apollo.enums.ConfigSourceType;
+import apollo.exceptions.ApolloConfigException;
+import apollo.util.ConfigUtil;
+import apollo.util.ExceptionUtil;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
+import framework.apollo.core.ConfigConsts;
+import framework.apollo.core.utils.ClassLoaderUtil;
+import framework.apollo.tracer.Tracer;
+import framework.apollo.tracer.spi.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

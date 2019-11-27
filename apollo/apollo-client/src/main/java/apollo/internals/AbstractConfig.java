@@ -1,18 +1,15 @@
 package apollo.internals;
 
-import com.ctrip.framework.apollo.Config;
-import com.ctrip.framework.apollo.ConfigChangeListener;
-import com.ctrip.framework.apollo.build.ApolloInjector;
-import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
-import com.ctrip.framework.apollo.enums.PropertyChangeType;
-import com.ctrip.framework.apollo.exceptions.ApolloConfigException;
-import com.ctrip.framework.apollo.model.ConfigChange;
-import com.ctrip.framework.apollo.model.ConfigChangeEvent;
-import com.ctrip.framework.apollo.tracer.Tracer;
-import com.ctrip.framework.apollo.tracer.spi.Transaction;
-import com.ctrip.framework.apollo.util.ConfigUtil;
-import com.ctrip.framework.apollo.util.function.Functions;
-import com.ctrip.framework.apollo.util.parser.Parsers;
+import apollo.Config;
+import apollo.ConfigChangeListener;
+import apollo.build.ApolloInjector;
+import apollo.enums.PropertyChangeType;
+import apollo.exceptions.ApolloConfigException;
+import apollo.model.ConfigChange;
+import apollo.model.ConfigChangeEvent;
+import apollo.util.ConfigUtil;
+import apollo.util.function.Functions;
+import apollo.util.parser.Parsers;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.cache.Cache;
@@ -20,6 +17,9 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import framework.apollo.core.utils.ApolloThreadFactory;
+import framework.apollo.tracer.Tracer;
+import framework.apollo.tracer.spi.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

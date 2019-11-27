@@ -1,7 +1,8 @@
 package framework.apollo.tracer.internals;
 
-import com.ctrip.framework.apollo.tracer.spi.MessageProducer;
-import com.ctrip.framework.apollo.tracer.spi.Transaction;
+
+import framework.apollo.tracer.spi.MessageProducer;
+import framework.apollo.tracer.spi.Transaction;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

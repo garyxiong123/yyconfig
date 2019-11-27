@@ -1,10 +1,10 @@
 package apollo.spring.property;
 
-import com.ctrip.framework.apollo.ConfigChangeListener;
-import com.ctrip.framework.apollo.enums.PropertyChangeType;
-import com.ctrip.framework.apollo.model.ConfigChange;
-import com.ctrip.framework.apollo.model.ConfigChangeEvent;
-import com.ctrip.framework.apollo.spring.util.SpringInjector;
+import apollo.ConfigChangeListener;
+import apollo.enums.PropertyChangeType;
+import apollo.model.ConfigChange;
+import apollo.model.ConfigChangeEvent;
+import apollo.spring.util.SpringInjector;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ import java.util.Set;
 /**
  * Create by zhangzheng on 2018/3/6
  */
-public class AutoUpdateConfigChangeListener implements ConfigChangeListener{
+public class AutoUpdateConfigChangeListener implements ConfigChangeListener {
   private static final Logger logger = LoggerFactory.getLogger(AutoUpdateConfigChangeListener.class);
 
   private final boolean typeConverterHasConvertIfNecessaryWithFieldParameter;

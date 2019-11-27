@@ -1,8 +1,9 @@
 package apollo.spi;
 
-import com.ctrip.framework.apollo.Config;
-import com.ctrip.framework.apollo.ConfigFile;
-import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
+
+import apollo.Config;
+import apollo.ConfigFile;
+import framework.apollo.core.enums.ConfigFileFormat;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

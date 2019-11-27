@@ -1,14 +1,14 @@
 package apollo.spring.util;
 
-import com.ctrip.framework.apollo.exceptions.ApolloConfigException;
-import com.ctrip.framework.apollo.spring.config.ConfigPropertySourceFactory;
-import com.ctrip.framework.apollo.spring.property.PlaceholderHelper;
-import com.ctrip.framework.apollo.spring.property.SpringValueRegistry;
-import com.ctrip.framework.apollo.tracer.Tracer;
+import apollo.exceptions.ApolloConfigException;
+import apollo.spring.config.ConfigPropertySourceFactory;
+import apollo.spring.property.PlaceholderHelper;
+import apollo.spring.property.SpringValueRegistry;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import framework.apollo.tracer.Tracer;
 
 public class SpringInjector {
   private static volatile Injector s_injector;

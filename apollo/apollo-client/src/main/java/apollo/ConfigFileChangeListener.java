@@ -1,6 +1,7 @@
 package apollo;
 
-import com.ctrip.framework.apollo.model.ConfigFileChangeEvent;
+
+import apollo.model.ConfigFileChangeEvent;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

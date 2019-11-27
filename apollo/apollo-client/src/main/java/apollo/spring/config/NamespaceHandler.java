@@ -1,8 +1,8 @@
 package apollo.spring.config;
 
-import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import framework.apollo.core.ConfigConsts;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
