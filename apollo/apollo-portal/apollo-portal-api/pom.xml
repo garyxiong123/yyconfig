@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>apollo-api</artifactId>
+    <artifactId>apollo-portal-api</artifactId>
 
     <dependencies>
         <dependency>
