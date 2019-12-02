@@ -22,8 +22,6 @@ public class SampleProviderApplication {
         System.setProperty("apollo.meta", "http://10.0.33.18:7243");
         ConfigurableApplicationContext run = SpringApplication.run(SampleProviderApplication.class, args);
         System.out.println(run);
-        System.out.println(run);
-        System.out.println("test Context");
     }
 
 }
