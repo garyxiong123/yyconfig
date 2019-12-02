@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 public interface AppRepository extends JpaRepository<App, Long> {
 
 
+    App findByAppId(String appId);
 
 
 }
