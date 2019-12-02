@@ -20,6 +20,7 @@ import com.yofish.gary.api.dto.req.RoleDeleteReqDTO;
 import com.yofish.gary.api.dto.req.RoleEditReqDTO;
 import com.yofish.gary.api.dto.req.RoleQueryReqDTO;
 import com.yofish.gary.api.dto.rsp.RoleQueryRspDTO;
+import com.yofish.gary.biz.domain.Role;
 import com.youyu.common.api.PageData;
 
 /**
@@ -58,4 +59,6 @@ public interface RoleService {
      * @return
      */
     PageData<RoleQueryRspDTO> getPage(RoleQueryReqDTO roleQueryReqDTO);
+
+    Role findByRoleName(String roleName);
 }

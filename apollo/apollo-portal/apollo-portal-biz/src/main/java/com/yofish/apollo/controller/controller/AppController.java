@@ -4,6 +4,8 @@ package com.yofish.apollo.controller.controller;
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.model.AppModel;
 import com.yofish.apollo.service.AppService;
+import com.yofish.apollo.util.RoleUtils;
+import com.youyu.common.helper.YyRequestInfoHelper;
 import common.exception.BadRequestException;
 import common.utils.InputValidator;
 import common.utils.RequestPrecondition;
@@ -41,14 +43,12 @@ public class AppController {
 
     App createdApp = appService.createAppInLocal(app);
 
-    publisher.publishEvent(new AppCreationEvent(createdApp));
-
-    Set<String> admins = appModel.getAdmins();
+    /*Set<String> admins = appModel.getAdmins();
     if (!CollectionUtils.isEmpty(admins)) {
       rolePermissionService
-              .assignRoleToUsers(RoleUtils.buildAppMasterRoleName(createdApp.getAppId()),
-                      admins, userInfoHolder.getUser().getUserId());
-    }
+              .assignRoleToUsers(RoleUtils.buildAppMasterRoleName(createdApp.getAppCode()),
+                      admins, YyRequestInfoHelper.getCurrentUserId());
+    }*/
 
     return createdApp;
   }
@@ -67,11 +67,11 @@ public class AppController {
           String.format("AppId格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
     }
     return App.builder()
-        .appId(appId)
+//        .appId(appId)
         .name(appName)
-            .ownerName(ownerName)
-            .orgId(orgId)
-            .orgName(orgName)
+//            .ownerName(ownerName)
+//            .orgId(orgId)
+//            .orgName(orgName)
         .build();
 
   }

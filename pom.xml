@@ -15,7 +15,6 @@
         <module>yyconfig-main</module>
         <module>upms</module>
         <module>apollo</module>
-        <module>upms</module>
     </modules>
     <packaging>pom</packaging>
     <properties>

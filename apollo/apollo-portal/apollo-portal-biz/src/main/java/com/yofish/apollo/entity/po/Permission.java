@@ -1,6 +1,7 @@
 package com.yofish.apollo.entity.po;
 
-import com.ctrip.framework.apollo.common.entity.BaseEntity;
+import com.yofish.gary.entity.BaseEntity;
+import lombok.Data;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -11,6 +12,7 @@ import javax.persistence.Table;
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
+@Data
 @Entity
 @Table(name = "Permission")
 @SQLDelete(sql = "Update Permission set isDeleted = 1 where id = ?")
@@ -22,19 +24,4 @@ public class Permission extends BaseEntity {
   @Column(name = "TargetId", nullable = false)
   private String targetId;
 
-  public String getPermissionType() {
-    return permissionType;
-  }
-
-  public void setPermissionType(String permissionType) {
-    this.permissionType = permissionType;
-  }
-
-  public String getTargetId() {
-    return targetId;
-  }
-
-  public void setTargetId(String targetId) {
-    this.targetId = targetId;
-  }
 }

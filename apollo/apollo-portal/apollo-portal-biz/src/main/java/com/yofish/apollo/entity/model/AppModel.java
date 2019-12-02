@@ -1,7 +1,7 @@
 package com.yofish.apollo.entity.model;
 
 
-import com.ctrip.framework.apollo.common.utils.InputValidator;
+import common.utils.InputValidator;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;

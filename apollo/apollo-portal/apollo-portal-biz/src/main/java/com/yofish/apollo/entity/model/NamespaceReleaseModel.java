@@ -1,8 +1,8 @@
 package com.yofish.apollo.entity.model;
 
 
-import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.core.utils.StringUtils;
+import framework.apollo.core.enums.Env;
+import framework.apollo.core.utils.StringUtils;
 
 public class NamespaceReleaseModel implements Verifiable {
 

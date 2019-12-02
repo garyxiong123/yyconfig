@@ -1,19 +1,11 @@
 package com.yofish.apollo.controller.controller;
 
 
-import com.ctrip.framework.apollo.component.PermissionValidator;
-import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.model.bo.ReleaseHistoryBO;
-import com.ctrip.framework.apollo.service.ReleaseHistoryService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Collections;
-import java.util.List;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ReleaseHistoryController {
-
+/*
   @Autowired
   private ReleaseHistoryService releaseHistoryService;
   @Autowired
@@ -33,6 +25,6 @@ public class ReleaseHistoryController {
     }
 
    return releaseHistoryService.findNamespaceReleaseHistory(appId, Env.valueOf(env), clusterName ,namespaceName, page, size);
-  }
+  }*/
 
 }

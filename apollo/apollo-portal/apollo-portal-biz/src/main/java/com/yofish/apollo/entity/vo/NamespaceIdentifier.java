@@ -1,8 +1,9 @@
 package com.yofish.apollo.entity.vo;
 
-import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.core.utils.StringUtils;
-import com.ctrip.framework.apollo.portal.entity.model.Verifiable;
+
+import com.yofish.apollo.entity.model.Verifiable;
+import framework.apollo.core.enums.Env;
+import framework.apollo.core.utils.StringUtils;
 
 public class NamespaceIdentifier implements Verifiable {
   private String appId;

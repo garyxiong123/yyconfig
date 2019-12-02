@@ -96,6 +96,10 @@ public class RoleServiceImpl implements RoleService {
         return null;
     }
 
+    @Override
+    public Role findByRoleName(String roleName) {
+        return this.roleRepository.findRoleByRoleName(roleName);
+    }
 
     /**
      * 检查角色名是否已经存在
