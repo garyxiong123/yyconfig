@@ -27,8 +27,8 @@ import java.util.List;
 public class SystemInfoController {
 
   private static final Logger logger = LoggerFactory.getLogger(SystemInfoController.class);
-  private static final String CONFIG_SERVICE_URL_PATH = "/services/config";
-  private static final String ADMIN_SERVICE_URL_PATH = "/services/admin";
+  private static final String CONFIG_SERVICE_URL_PATH = "/META-INF/services/config";
+  private static final String ADMIN_SERVICE_URL_PATH = "/META-INF/services/admin";
 
   private RestTemplate restTemplate;
 

@@ -27,7 +27,11 @@
             <version>1.10.19</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <artifactId>apollo-common</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <groupId>com.yofish.gary</groupId>
+        </dependency>
         <dependency>
             <artifactId>apollo-config-api</artifactId>
             <version>1.0.0-SNAPSHOT</version>

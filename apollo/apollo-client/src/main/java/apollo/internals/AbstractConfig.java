@@ -419,7 +419,8 @@ public abstract class AbstractConfig implements Config {
     }
   }
 
-  protected void fireConfigChange(final ConfigChangeEvent changeEvent) {
+  @Override
+  public void fireConfigChange(final ConfigChangeEvent changeEvent) {
     for (final ConfigChangeListener listener : m_listeners) {
       // check whether the listener is interested in this change event
       if (!isConfigChangeListenerInterested(listener, changeEvent)) {

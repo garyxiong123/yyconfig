@@ -177,7 +177,7 @@ public class ConfigServiceLocator {
             queryParams.put("ip", queryParamEscaper.escape(localIp));
         }
 
-        return domainName + "/services/config?" + MAP_JOINER.join(queryParams);
+        return domainName + "/META-INF/services/config?" + MAP_JOINER.join(queryParams);
     }
 
     private void logConfigServices(List<ServiceDTO> serviceDtos) {

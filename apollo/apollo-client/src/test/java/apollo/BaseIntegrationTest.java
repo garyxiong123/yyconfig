@@ -104,7 +104,7 @@ public abstract class BaseIntegrationTest{
     someServiceDTO.setHomepageUrl(configServiceURL);
     final AtomicInteger counter = new AtomicInteger(0);
 
-    ContextHandler context = new ContextHandler("/services/config");
+    ContextHandler context = new ContextHandler("/META-INF/services/config");
     context.setHandler(new AbstractHandler() {
       @Override
       public void handle(String target, Request baseRequest, HttpServletRequest request,

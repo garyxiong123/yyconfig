@@ -1,15 +1,18 @@
+import apollo.spring.annotation.EnableApolloConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.scheduling.annotation.EnableAsync;
+//import tk.mybatis.spring.annotation.MapperScan;
 
 /**
  * Created by xiongchengwei on 2018/8/20.
  */
 
-
+@EnableApolloConfig
 @EnableAsync
+@EntityScan(basePackages = {"com.youyu.platform.sample.dal.entity"})
 @SpringBootApplication
 public class SampleProviderApplication {
 

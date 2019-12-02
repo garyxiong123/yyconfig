@@ -8,7 +8,7 @@ import java.util.Properties;
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
-public interface ConfigRepository {
+public interface ConfigRepository extends RepositoryChangePublisher{
   /**
    * Get the config from this repository.
    * @return config
@@ -21,17 +21,7 @@ public interface ConfigRepository {
    */
   public void setUpstreamRepository(ConfigRepository upstreamConfigRepository);
 
-  /**
-   * Add change listener.
-   * @param listener the listener to observe the changes
-   */
-  public void addChangeListener(RepositoryChangeListener listener);
 
-  /**
-   * Remove change listener.
-   * @param listener the listener to remove
-   */
-  public void removeChangeListener(RepositoryChangeListener listener);
 
   /**
    * Return the config's source type, i.e. where is the config loaded from
