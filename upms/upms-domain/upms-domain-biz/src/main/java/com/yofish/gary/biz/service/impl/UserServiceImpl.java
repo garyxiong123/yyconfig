@@ -57,10 +57,10 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PermissionRepository permissionRepository;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     private ShiroProperties shiroProperties;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     private UpmsLoginLogoutRealm shiroAuthRealm;
 
     @Override
@@ -169,9 +169,7 @@ public class UserServiceImpl implements UserService {
     public Boolean isAdmin(Long userId) {
         userId = isNull(userId) ? getUserId() : userId;
         User user = getUser(userId);
-//        Integer count = userRoleMapper.countByUserIdRoleType(user.getId(), ADMIN.getCode());
-        Integer count = 1;
-        return count > 0 ? true : false;
+        return user.isAdmin();
     }
 
     /**

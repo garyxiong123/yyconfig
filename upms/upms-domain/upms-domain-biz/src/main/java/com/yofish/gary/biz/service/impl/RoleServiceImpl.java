@@ -54,11 +54,6 @@ public class RoleServiceImpl implements RoleService {
 
     @Autowired
     private PermissionRepository permissionRepository;
-//    private RoleMapper roleMapper;
-//    @Autowired
-//    private RolePermissionMapper rolePermissionMapper;
-//    @Autowired
-//    private PermissionMapper permissionMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)

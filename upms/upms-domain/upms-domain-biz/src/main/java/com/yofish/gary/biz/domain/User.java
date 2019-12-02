@@ -19,9 +19,11 @@ import com.yofish.gary.api.ShiroSimpleHashStrategy;
 import com.yofish.gary.api.dto.req.UserAddReqDTO;
 import com.yofish.gary.api.dto.req.UserEditReqDTO;
 import com.yofish.gary.api.dto.req.UserModifyPasswordReqDTO;
+import com.yofish.gary.api.enums.RoleTypeEnum;
 import com.yofish.gary.biz.repository.RoleRepository;
 import com.yofish.gary.entity.BaseEntity;
 import lombok.*;
+import org.springframework.util.ObjectUtils;
 
 import javax.persistence.*;
 import java.util.HashMap;
@@ -117,11 +119,6 @@ public class User extends BaseEntity {
 
     private HashMap extInfo;
 
-    public Boolean isAdmin(){
-        Role admin = getBeanInstance(RoleRepository.class).findRoleByRoleName("admin");
-
-        return admin.getUsers().contains(this);
-    }
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
@@ -166,6 +163,16 @@ public class User extends BaseEntity {
     public void checkStatus() {
         exception2MatchingExpression(eq(status, INVALID.getCode()), USER_STATUS_INVALID);
 
+    }
+
+    public boolean isAdmin() {
+        RoleRepository roleRepository = getBeanInstance(RoleRepository.class);
+        Role roleByRoleName = roleRepository.findRoleByRoleName(RoleTypeEnum.ADMIN.name());
+        if (ObjectUtils.isEmpty(roleByRoleName) || ObjectUtils.isEmpty(roleByRoleName.getUsers())) {
+            return false;
+        } else {
+            return roleByRoleName.getUsers().contains(this);
+        }
     }
 
     /**
