@@ -15,18 +15,13 @@
         <module>yyconfig-main</module>
         <module>upms</module>
         <module>apollo</module>
-        <module>upms</module>
     </modules>
     <packaging>pom</packaging>
     <properties>
         <project-version>1.0.0-SNAPSHOT</project-version>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>com.yofish.gary</groupId>
-            <artifactId>yy-basic</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
+
      <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -60,6 +55,11 @@
             <dependency>
                 <groupId>com.yofish.gary</groupId>
                 <artifactId>yy-basic</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yofish.gary</groupId>
+                <artifactId>yy-dao</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
             </dependency>
         </dependencies>

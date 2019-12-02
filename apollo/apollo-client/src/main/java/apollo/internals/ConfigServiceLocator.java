@@ -66,10 +66,12 @@ public class ConfigServiceLocator {
         this.tryUpdateConfigServices();
         this.schedulePeriodicRefresh();
     }
+
     //获取配置服务的地址， 配置到一个server中
     private List<ServiceDTO> getCustomizedConfigService() {
         // 1. Get from System Property
         String configServices = System.getProperty("apollo.meta");
+//        configServices = "http://10.0.33.18:7243";
         if (Strings.isNullOrEmpty(configServices)) {
             // 2. Get from OS environment variable
             configServices = System.getenv("apollo_meta");
