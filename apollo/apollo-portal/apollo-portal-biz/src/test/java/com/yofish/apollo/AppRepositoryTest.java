@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import com.yofish.apollo.domain.*;
 import com.yofish.apollo.repository.*;
 import com.yofish.gary.biz.domain.User;
+import framework.apollo.core.enums.Env;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -104,7 +105,7 @@ public class AppRepositoryTest {
 
     private Cluster createCluster() {
         App app = createApp();
-        Env env = Env.builder().name("test").build();
+        Env env = Env.TEST;
         return Cluster.builder().app(app).env(env).build();
     }
 

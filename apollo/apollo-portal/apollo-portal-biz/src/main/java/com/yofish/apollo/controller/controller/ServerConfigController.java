@@ -1,27 +1,14 @@
 package com.yofish.apollo.controller.controller;
 
 
-import com.ctrip.framework.apollo.common.utils.BeanUtils;
-import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
-import com.ctrip.framework.apollo.config.UserInfoHolder;
-import com.ctrip.framework.apollo.model.entity.ServerConfig;
-import com.ctrip.framework.apollo.repository.ServerConfigRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Objects;
-
-import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
 
 /**
  * 配置中心本身需要一些配置,这些配置放在数据库里面
  */
 @RestController
 public class ServerConfigController {
+/*
 
   @Autowired
   private ServerConfigRepository serverConfigRepository;
@@ -56,5 +43,6 @@ public class ServerConfigController {
   public ServerConfig loadServerConfig(@PathVariable String key) {
     return serverConfigRepository.findByKey(key);
   }
+*/
 
 }

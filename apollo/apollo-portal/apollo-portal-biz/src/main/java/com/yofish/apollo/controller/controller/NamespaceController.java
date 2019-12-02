@@ -1,47 +1,14 @@
 package com.yofish.apollo.controller.controller;
 
-import com.ctrip.framework.apollo.common.dto.AppNamespaceDTO;
-import com.ctrip.framework.apollo.common.entity.AppNamespace;
-import com.ctrip.framework.apollo.common.exception.BadRequestException;
-import com.ctrip.framework.apollo.common.utils.BeanUtils;
-import com.ctrip.framework.apollo.common.utils.InputValidator;
-import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
-import com.ctrip.framework.apollo.component.PermissionValidator;
-import com.ctrip.framework.apollo.config.PortalConfig;
-import com.ctrip.framework.apollo.config.UserInfoHolder;
-import com.ctrip.framework.apollo.constant.RoleType;
-import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.listener.AppNamespaceCreationEvent;
-import com.ctrip.framework.apollo.listener.AppNamespaceDeletionEvent;
-import com.ctrip.framework.apollo.model.NamespaceCreationModel;
-import com.ctrip.framework.apollo.model.bo.NamespaceBO;
-import com.ctrip.framework.apollo.model.entity.Namespace;
-import com.ctrip.framework.apollo.service.AppNamespaceService;
-import com.ctrip.framework.apollo.service.NamespaceService;
-import com.ctrip.framework.apollo.service.RoleInitializationService;
-import com.ctrip.framework.apollo.service.RolePermissionService;
-import com.ctrip.framework.apollo.tracer.Tracer;
-import com.ctrip.framework.apollo.util.RoleUtils;
-import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
-
-import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class NamespaceController {
 
   private static final Logger logger = LoggerFactory.getLogger(NamespaceController.class);
-
+/*
   @Autowired
   private ApplicationEventPublisher publisher;
   @Autowired
@@ -193,13 +160,13 @@ public class NamespaceController {
     return createdAppNamespace;
   }
 
-  /**
+  *//**
    * env -> cluster -> cluster has not published namespace?
    * Example:
    * dev ->
    *  default -> true   (default cluster has not published namespace)
    *  customCluster -> false (customCluster cluster's all namespaces had published)
-   */
+   *//*
   @RequestMapping(value = "/apps/{appId}/namespaces/publish_info", method = RequestMethod.GET)
   public Map<String, Map<String, Boolean>> getNamespacesPublishInfo(@PathVariable String appId) {
     return namespaceService.getNamespacesPublishInfo(appId);
@@ -225,5 +192,5 @@ public class NamespaceController {
     rolePermissionService
         .assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, RoleType.RELEASE_NAMESPACE),
                            Sets.newHashSet(operator), operator);
-  }
+  }*/
 }

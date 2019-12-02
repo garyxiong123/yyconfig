@@ -1,36 +1,21 @@
 package com.yofish.apollo.controller.controller;
 
-import com.ctrip.framework.apollo.Apollo;
-import com.ctrip.framework.apollo.component.PortalSettings;
-import com.ctrip.framework.apollo.component.RestTemplateFactory;
-import com.ctrip.framework.apollo.core.MetaDomainConsts;
-import com.ctrip.framework.apollo.core.dto.ServiceDTO;
-import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.model.vo.EnvironmentInfo;
-import com.ctrip.framework.apollo.model.vo.SystemInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-
-import javax.annotation.PostConstruct;
-import java.util.List;
 
 @RestController
 @RequestMapping("/system-info")
 public class SystemInfoController {
 
   private static final Logger logger = LoggerFactory.getLogger(SystemInfoController.class);
-  private static final String CONFIG_SERVICE_URL_PATH = "/services/config";
-  private static final String ADMIN_SERVICE_URL_PATH = "/services/admin";
+  private static final String CONFIG_SERVICE_URL_PATH = "/META-INF/services/config";
+  private static final String ADMIN_SERVICE_URL_PATH = "/META-INF/services/admin";
 
   private RestTemplate restTemplate;
+/*
 
   @Autowired
   private PortalSettings portalSettings;
@@ -90,6 +75,7 @@ public class SystemInfoController {
     String url = metaServerAddress + path;
     return restTemplate.getForObject(url, ServiceDTO[].class);
   }
+*/
 
   private boolean isValidVersion(String version) {
     return !version.equals("java-null");

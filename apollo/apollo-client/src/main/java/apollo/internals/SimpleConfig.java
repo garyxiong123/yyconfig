@@ -15,7 +15,7 @@ import java.util.*;
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
-public class SimpleConfig extends AbstractConfig implements RepositoryChangeListener {
+public class SimpleConfig extends AbstractConfig{
   private static final Logger logger = LoggerFactory.getLogger(SimpleConfig.class);
   private final String m_namespace;
   private final ConfigRepository m_configRepository;

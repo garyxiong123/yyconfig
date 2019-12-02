@@ -117,12 +117,12 @@ public abstract class AbstractSpringIntegrationTest {
   private static class MockConfigManager implements ConfigManager {
 
     @Override
-    public Config getConfig(String namespace) {
+    public Config getOrCreateConfig(String namespace) {
       return CONFIG_REGISTRY.get(namespace);
     }
 
     @Override
-    public ConfigFile getConfigFile(String namespace, ConfigFileFormat configFileFormat) {
+    public ConfigFile getOrCreateConfigFile(String namespace, ConfigFileFormat configFileFormat) {
       return null;
     }
   }

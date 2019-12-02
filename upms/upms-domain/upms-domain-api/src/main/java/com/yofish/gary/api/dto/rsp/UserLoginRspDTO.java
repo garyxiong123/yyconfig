@@ -41,4 +41,7 @@ public class UserLoginRspDTO implements Serializable {
     @ApiModelProperty("用户名")
     private String username;
 
+    @ApiModelProperty("是否管理员")
+    private boolean isAdmin;
+
 }

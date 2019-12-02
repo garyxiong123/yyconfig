@@ -1,11 +1,14 @@
 package com.yofish.apollo.domain;
 
 import com.yofish.gary.biz.domain.User;
-import com.yofish.gary.entity.BaseEntity;
+import com.yofish.gary.dao.entity.BaseEntity;
 import lombok.*;
 
-import javax.persistence.*;
-import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
@@ -15,21 +18,31 @@ import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Setter
 @Getter
 @Entity
 public class App extends BaseEntity {
 
+    private String appCode;
     private String name;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Department department;
 
-    @OneToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
-    private Set<User> appAdmins;
-
     @ManyToOne(cascade = CascadeType.ALL)
     private User appOwner;
 
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<User> appAdmins;
+
+
+    @Builder
+    public App(Long id, String createAuthor, LocalDateTime createTime, String updateAuthor, LocalDateTime updateTime, String appCode, String name, Department department, Set<User> appAdmins, User appOwner) {
+        super(id, createAuthor, createTime, updateAuthor, updateTime);
+        this.appCode = appCode;
+        this.name = name;
+        this.department = department;
+        this.appAdmins = appAdmins;
+        this.appOwner = appOwner;
+    }
 }

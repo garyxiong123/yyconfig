@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost/test1
-    username: root
-    password: 123456
+    url: jdbc:mysql://localhost:3306/apollo-upms?useUnicode=true&characterEncoding=UTF-8
+    username: apollo_upms
+    password: apollo_upms
     driver-class-name: com.mysql.jdbc.Driver
   jpa:
     show-sql: true

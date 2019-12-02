@@ -1,6 +1,7 @@
 package com.yofish.apollo.domain;
 
-import com.yofish.gary.entity.BaseEntity;
+import com.yofish.gary.dao.entity.BaseEntity;
+import framework.apollo.core.enums.Env;
 import lombok.*;
 
 import javax.persistence.CascadeType;
@@ -22,7 +23,7 @@ public class Cluster extends BaseEntity {
 
     private String name;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+//    @ManyToOne(cascade = CascadeType.ALL)
     private Env env;
 
     @ManyToOne(cascade = CascadeType.ALL)

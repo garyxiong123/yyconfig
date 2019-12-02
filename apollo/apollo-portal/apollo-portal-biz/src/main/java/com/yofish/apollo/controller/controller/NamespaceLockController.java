@@ -1,9 +1,7 @@
 package com.yofish.apollo.controller.controller;
 
-import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.model.entity.NamespaceLock;
-import com.ctrip.framework.apollo.model.vo.LockInfo;
-import com.ctrip.framework.apollo.service.NamespaceLockService;
+import com.yofish.apollo.entity.vo.LockInfo;
+import framework.apollo.core.enums.Env;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class NamespaceLockController {
+/*
 
   @Autowired
   private NamespaceLockService namespaceLockService;
@@ -31,6 +30,7 @@ public class NamespaceLockController {
     return namespaceLockService.getNamespaceLockInfo(appId, Env.fromString(env), clusterName, namespaceName);
 
   }
+*/
 
 
 }

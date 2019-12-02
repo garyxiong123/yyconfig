@@ -54,11 +54,6 @@ public class RoleServiceImpl implements RoleService {
 
     @Autowired
     private PermissionRepository permissionRepository;
-//    private RoleMapper roleMapper;
-//    @Autowired
-//    private RolePermissionMapper rolePermissionMapper;
-//    @Autowired
-//    private PermissionMapper permissionMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -101,6 +96,10 @@ public class RoleServiceImpl implements RoleService {
         return null;
     }
 
+    @Override
+    public Role findByRoleName(String roleName) {
+        return this.roleRepository.findRoleByRoleName(roleName);
+    }
 
     /**
      * 检查角色名是否已经存在

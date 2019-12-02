@@ -1,6 +1,5 @@
 package com.yofish.apollo.service;
 
-import com.alibaba.fastjson.JSON;
 import com.yofish.apollo.bo.ItemChangeSets;
 import com.yofish.apollo.component.txtresolver.ConfigTextResolver;
 import com.yofish.apollo.domain.ClusterNamespace;
@@ -8,19 +7,19 @@ import com.yofish.apollo.domain.Commit;
 import com.yofish.apollo.domain.Item;
 import com.yofish.apollo.dto.CreateItemReq;
 import com.yofish.apollo.dto.UpdateItemReq;
-import com.yofish.apollo.enums.ConfigFileFormat;
 import com.yofish.apollo.enums.Envs;
 import com.yofish.apollo.model.NamespaceTextModel;
 import com.yofish.apollo.repository.ClusterNamespaceRepository;
 import com.yofish.apollo.repository.CommitRepository;
 import com.yofish.apollo.repository.ItemRepository;
+import framework.apollo.core.enums.ConfigFileFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.alibaba.fastjson.JSON.*;
+import static com.alibaba.fastjson.JSON.toJSONString;
 
 /**
  * @Author: xiongchengwei

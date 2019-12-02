@@ -11,6 +11,7 @@ import framework.apollo.core.enums.ConfigFileFormat;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Properties;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -105,6 +106,11 @@ public class ConfigServiceTest {
     @Override
     public ConfigSourceType getSourceType() {
       return null;
+    }
+
+    @Override
+    public void onRepositoryChange(String namespace, Properties newProperties) {
+
     }
   }
 

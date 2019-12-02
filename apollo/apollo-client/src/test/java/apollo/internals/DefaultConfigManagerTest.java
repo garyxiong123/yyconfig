@@ -40,8 +40,8 @@ public class DefaultConfigManagerTest {
     String someNamespace = "someName";
     String anotherNamespace = "anotherName";
     String someKey = "someKey";
-    Config config = defaultConfigManager.getConfig(someNamespace);
-    Config anotherConfig = defaultConfigManager.getConfig(anotherNamespace);
+    Config config = defaultConfigManager.getOrCreateConfig(someNamespace);
+    Config anotherConfig = defaultConfigManager.getOrCreateConfig(anotherNamespace);
 
     assertEquals(someNamespace + ":" + someKey, config.getProperty(someKey, null));
     assertEquals(anotherNamespace + ":" + someKey, anotherConfig.getProperty(someKey, null));
@@ -50,8 +50,8 @@ public class DefaultConfigManagerTest {
   @Test
   public void testGetConfigMultipleTimesWithSameNamespace() throws Exception {
     String someNamespace = "someName";
-    Config config = defaultConfigManager.getConfig(someNamespace);
-    Config anotherConfig = defaultConfigManager.getConfig(someNamespace);
+    Config config = defaultConfigManager.getOrCreateConfig(someNamespace);
+    Config anotherConfig = defaultConfigManager.getOrCreateConfig(someNamespace);
 
     assertThat(
         "Get config multiple times with the same namespace should return the same config instance",
@@ -64,7 +64,7 @@ public class DefaultConfigManagerTest {
     ConfigFileFormat someConfigFileFormat = ConfigFileFormat.Properties;
 
     ConfigFile configFile =
-        defaultConfigManager.getConfigFile(someNamespace, someConfigFileFormat);
+        defaultConfigManager.getOrCreateConfigFile(someNamespace, someConfigFileFormat);
 
     assertEquals(someConfigFileFormat, configFile.getConfigFileFormat());
     assertEquals(someConfigContent, configFile.getContent());
@@ -76,9 +76,9 @@ public class DefaultConfigManagerTest {
     ConfigFileFormat someConfigFileFormat = ConfigFileFormat.Properties;
 
     ConfigFile someConfigFile =
-        defaultConfigManager.getConfigFile(someNamespace, someConfigFileFormat);
+        defaultConfigManager.getOrCreateConfigFile(someNamespace, someConfigFileFormat);
     ConfigFile anotherConfigFile =
-        defaultConfigManager.getConfigFile(someNamespace, someConfigFileFormat);
+        defaultConfigManager.getOrCreateConfigFile(someNamespace, someConfigFileFormat);
 
     assertThat(
         "Get config file multiple times with the same namespace should return the same config file instance",
@@ -94,6 +94,11 @@ public class DefaultConfigManagerTest {
         @Override
         public Config create(final String namespace) {
           return new AbstractConfig() {
+            @Override
+            public void onRepositoryChange(String namespace, Properties newProperties) {
+
+            }
+
             @Override
             public String getProperty(String key, String defaultValue) {
               return namespace + ":" + key;

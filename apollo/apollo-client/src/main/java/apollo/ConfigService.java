@@ -59,11 +59,11 @@ public class ConfigService {
    * @return config instance
    */
   public static Config getConfig(String namespace) {
-    return s_instance.getManager().getConfig(namespace);
+    return s_instance.getManager().getOrCreateConfig(namespace);
   }
 
   public static ConfigFile getConfigFile(String namespace, ConfigFileFormat configFileFormat) {
-    return s_instance.getManager().getConfigFile(namespace, configFileFormat);
+    return s_instance.getManager().getOrCreateConfigFile(namespace, configFileFormat);
   }
 
   static void setConfig(Config config) {

@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>apollo-portal</artifactId>
+    <packaging>pom</packaging>
 
     <modules>
         <module>apollo-portal-biz</module>

@@ -24,7 +24,7 @@ public class DefaultConfigManager implements ConfigManager {
   }
 
   @Override
-  public Config getConfig(String namespace) {
+  public Config getOrCreateConfig(String namespace) {
     Config config = m_configs.get(namespace);
 
     if (config == null) {
@@ -44,7 +44,7 @@ public class DefaultConfigManager implements ConfigManager {
   }
 
   @Override
-  public ConfigFile getConfigFile(String namespace, ConfigFileFormat configFileFormat) {
+  public ConfigFile getOrCreateConfigFile(String namespace, ConfigFileFormat configFileFormat) {
     String namespaceFileName = String.format("%s.%s", namespace, configFileFormat.getValue());
     ConfigFile configFile = m_configFiles.get(namespaceFileName);
 

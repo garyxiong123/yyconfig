@@ -1,6 +1,7 @@
 package apollo;
 
 import apollo.enums.ConfigSourceType;
+import apollo.internals.RepositoryChangeListener;
 import com.google.common.base.Function;
 
 import java.util.Date;
@@ -10,7 +11,7 @@ import java.util.Set;
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
-public interface Config {
+public interface Config extends ConfigChangePublisher, RepositoryChangeListener {
   /**
    * Return the property value with the given key, or {@code defaultValue} if the key doesn't exist.
    *
@@ -169,27 +170,7 @@ public interface Config {
    *
    * @param listener the config change listener
    */
-  public void addChangeListener(ConfigChangeListener listener);
 
-  /**
-   * Add change listener to this config instance, will only be notified when any of the interested keys is changed in this namespace.
-   *
-   * @param listener the config change listener
-   * @param interestedKeys the keys interested by the listener
-   *
-   * @since 1.0.0
-   */
-  public void addChangeListener(ConfigChangeListener listener, Set<String> interestedKeys);
-
-  /**
-   * Remove the change listener
-   *
-   * @param listener the specific config change listener to remove
-   * @return true if the specific config change listener is found and removed
-   *
-   * @since 1.1.0
-   */
-  public boolean removeChangeListener(ConfigChangeListener listener);
 
   /**
    * Return a set of the property names
