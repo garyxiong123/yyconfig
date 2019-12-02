@@ -1,7 +1,8 @@
 package com.yofish.apollo.entity.vo;
 
-import com.ctrip.framework.apollo.core.dto.ServiceDTO;
-import com.ctrip.framework.apollo.core.enums.Env;
+
+import framework.apollo.core.dto.ServiceDTO;
+import framework.apollo.core.enums.Env;
 
 public class EnvironmentInfo {
 

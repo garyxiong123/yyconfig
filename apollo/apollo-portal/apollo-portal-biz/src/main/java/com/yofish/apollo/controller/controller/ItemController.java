@@ -1,32 +1,23 @@
 package com.yofish.apollo.controller.controller;
 
-import com.ctrip.framework.apollo.common.exception.BadRequestException;
-import com.ctrip.framework.apollo.component.PermissionValidator;
-import com.ctrip.framework.apollo.config.UserInfoHolder;
-import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.core.utils.StringUtils;
-import com.ctrip.framework.apollo.model.NamespaceSyncModel;
-import com.ctrip.framework.apollo.model.NamespaceTextModel;
-import com.ctrip.framework.apollo.model.bo.ItemChangeSets;
-import com.ctrip.framework.apollo.model.entity.Item;
-import com.ctrip.framework.apollo.model.vo.ItemDiffs;
-import com.ctrip.framework.apollo.model.vo.NamespaceIdentifier;
-import com.ctrip.framework.apollo.service.ItemService;
+import com.yofish.apollo.entity.model.NamespaceTextModel;
+import com.yofish.apollo.service.ItemService;
+import com.yofish.apollo.spi.UserInfoHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
+import static common.utils.RequestPrecondition.checkModel;
+
 
 @RestController
 public class ItemController {
+/*
 
   @Autowired
   private ItemService configService;
@@ -185,6 +176,7 @@ public class ItemController {
   private boolean isValidItem(Item item) {
     return Objects.nonNull(item) && !StringUtils.isContainEmpty(item.getKey());
   }
+*/
 
 
 }

@@ -1,6 +1,7 @@
 package com.yofish.apollo.entity.vo;
 
-import com.ctrip.framework.apollo.common.dto.ItemChangeSets;
+
+import com.yofish.apollo.bo.ItemChangeSets;
 
 public class ItemDiffs {
   private NamespaceIdentifier namespace;

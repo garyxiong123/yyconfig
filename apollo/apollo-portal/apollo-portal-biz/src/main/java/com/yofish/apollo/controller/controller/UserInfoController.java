@@ -1,24 +1,10 @@
 package com.yofish.apollo.controller.controller;
 
-import com.ctrip.framework.apollo.common.exception.BadRequestException;
-import com.ctrip.framework.apollo.config.LogoutHandler;
-import com.ctrip.framework.apollo.config.UserInfoHolder;
-import com.ctrip.framework.apollo.config.UserService;
-import com.ctrip.framework.apollo.config.springsecurity.SpringSecurityUserService;
-import com.ctrip.framework.apollo.core.utils.StringUtils;
-import com.ctrip.framework.apollo.model.bo.UserInfo;
-import com.ctrip.framework.apollo.model.entity.UserPO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class UserInfoController {
+/*
 
   @Autowired
   private UserInfoHolder userInfoHolder;
@@ -66,5 +52,6 @@ public class UserInfoController {
     return userService.findByUserId(userId);
   }
 
+*/
 
 }

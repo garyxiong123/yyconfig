@@ -1,40 +1,14 @@
 package com.yofish.apollo.controller.controller;
 
-import com.ctrip.framework.apollo.common.dto.InstanceConfigDTO;
-import com.ctrip.framework.apollo.common.dto.InstanceDTO;
-import com.ctrip.framework.apollo.common.dto.PageDTO;
-import com.ctrip.framework.apollo.common.exception.BadRequestException;
-import com.ctrip.framework.apollo.common.exception.NotFoundException;
-import com.ctrip.framework.apollo.common.utils.BeanUtils;
-import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.model.entity.Instance;
-import com.ctrip.framework.apollo.model.entity.InstanceConfig;
-import com.ctrip.framework.apollo.model.entity.Release;
-import com.ctrip.framework.apollo.service.InstanceService;
-import com.ctrip.framework.apollo.service.ReleaseService;
 import com.google.common.base.Splitter;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class InstanceController {
 
     private static final Splitter RELEASES_SPLITTER = Splitter.on(",").omitEmptyStrings()
         .trimResults();
+/*
 
     @Autowired
     private InstanceService instanceService;
@@ -127,6 +101,7 @@ public class InstanceController {
 
         return instanceService.getByReleasesNotIn(Env.valueOf(env), appId, clusterName, namespaceName, releaseIdSet);
     }
+*/
 
 
 }

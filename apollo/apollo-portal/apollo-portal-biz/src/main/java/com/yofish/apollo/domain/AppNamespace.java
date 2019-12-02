@@ -1,31 +1,34 @@
 package com.yofish.apollo.domain;
 
 import com.yofish.gary.entity.BaseEntity;
-import framework.apollo.core.enums.Env;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
 /**
- * @Author: xiongchengwei
- * @Date: 2019/11/12 上午10:50
+ * @author WangSongJun
+ * @date 2019-12-02
  */
-
+@Entity
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Setter
-@Getter
-@Entity
-public class Cluster extends BaseEntity {
+public class AppNamespace extends BaseEntity {
 
     private String name;
 
-//    @ManyToOne(cascade = CascadeType.ALL)
-    private Env env;
-
     @ManyToOne(cascade = CascadeType.ALL)
     private App app;
+
+    private String format;
+
+    private boolean isPublic = false;
+
+    private String comment;
 }

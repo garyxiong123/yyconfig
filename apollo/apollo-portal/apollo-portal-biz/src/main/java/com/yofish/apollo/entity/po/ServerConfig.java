@@ -1,6 +1,6 @@
 package com.yofish.apollo.entity.po;
 
-import com.ctrip.framework.apollo.common.entity.BaseEntity;
+import com.yofish.gary.entity.BaseEntity;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -50,9 +50,5 @@ public class ServerConfig extends BaseEntity {
 
   public void setComment(String comment) {
     this.comment = comment;
-  }
-
-  public String toString() {
-    return toStringHelper().add("key", key).add("value", value).add("comment", comment).toString();
   }
 }

@@ -1,32 +1,8 @@
 package com.yofish.apollo.controller.controller;
 
-import com.ctrip.framework.apollo.common.entity.AppNamespace;
-import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.ctrip.framework.apollo.core.dto.ApolloConfig;
-import com.ctrip.framework.apollo.core.dto.ApolloNotificationMessages;
-import com.ctrip.framework.apollo.model.entity.Release;
-import com.ctrip.framework.apollo.service.AppNamespaceServiceWithCache;
-import com.ctrip.framework.apollo.service.config.ConfigService;
-import com.ctrip.framework.apollo.tracer.Tracer;
-import com.ctrip.framework.apollo.util.InstanceConfigAuditUtil;
-import com.ctrip.framework.apollo.util.NamespaceUtil;
 import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -36,7 +12,7 @@ import java.util.stream.Collectors;
 public class ConfigController {
   private static final Splitter X_FORWARDED_FOR_SPLITTER = Splitter.on(",").omitEmptyStrings()
       .trimResults();
-  @Autowired
+  /*@Autowired
   private ConfigService configService;
   @Autowired
   private AppNamespaceServiceWithCache appNamespaceService;
@@ -141,11 +117,11 @@ public class ConfigController {
     return appNamespace != null;
   }
 
-  /**
+  *//**
    * @param clientAppId the application which uses public config
    * @param namespace   the namespace
    * @param dataCenter  the datacenter
-   */
+   *//*
   private Release findPublicConfig(String clientAppId, String clientIp, String clusterName,
                                    String namespace, String dataCenter, ApolloNotificationMessages clientMessages) {
     AppNamespace appNamespace = appNamespaceService.findPublicNamespaceByName(namespace);
@@ -161,10 +137,10 @@ public class ConfigController {
         clientMessages);
   }
 
-  /**
+  *//**
    * Merge configurations of releases.
    * Release in lower index override those in higher index
-   */
+   *//*
   Map<String, String> mergeReleaseConfigurations(List<Release> releases) {
     Map<String, String> result = Maps.newHashMap();
     for (Release release : Lists.reverse(releases)) {
@@ -213,5 +189,5 @@ public class ConfigController {
     }
 
     return notificationMessages;
-  }
+  }*/
 }

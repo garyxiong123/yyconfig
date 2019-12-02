@@ -1,70 +1,64 @@
 package com.yofish.apollo.service;
 
 
-import com.google.common.collect.Lists;
+import com.yofish.apollo.constant.TracerEventType;
 import com.yofish.apollo.domain.App;
-import com.yofish.apollo.entity.bo.UserInfo;
-import com.yofish.apollo.entity.vo.EnvClusterInfo;
 import com.yofish.apollo.repository.AppRepository;
-import com.yofish.apollo.spi.UserInfoHolder;
-import com.yofish.gary.api.feign.UserApi;
+import com.yofish.gary.biz.domain.User;
 import com.yofish.gary.biz.service.UserService;
-import common.dto.AppDTO;
-import common.dto.PageDTO;
+import com.youyu.common.helper.YyRequestInfoHelper;
 import common.exception.BadRequestException;
-import common.utils.BeanUtils;
-import framework.apollo.core.enums.Env;
 import framework.apollo.tracer.Tracer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 
 @Service
 public class AppService {
 
-  @Autowired
-  private AppRepository appRepository;
-  @Autowired
-  private UserService userService;
+    @Autowired
+    private AppRepository appRepository;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private AppNamespaceService appNamespaceService;
+    @Autowired
+    private RoleInitializationService roleInitializationService;
 
 
+    @Transactional
+    public App createAppInLocal(App app) {
+        String appCode = app.getAppCode();
 
+        App managedApp = appRepository.findByAppCode(appCode);
 
-  @Transactional
-  public App createAppInLocal(App app) {
-    String appId = app.getAppId();
+        if (managedApp != null) {
+            throw new BadRequestException(String.format("App already exists. AppCode = %s", appCode));
+        }
 
-    App managedApp = appRepository.findByAppId(appId);
+        com.yofish.gary.api.dto.rsp.UserDetailRspDTO userDetail = userService.getUserDetail(app.getAppOwner().getId());
+        if (userDetail == null) {
+            throw new BadRequestException("Application's owner not exist.");
+        }
+        User user = new User();
+        user.setId(userDetail.getUserId());
 
-    if (managedApp != null) {
-      throw new BadRequestException(String.format("App already exists. AppId = %s", appId));
+        app.setAppOwner(user);
+
+        String operator = YyRequestInfoHelper.getCurrentUserRealName();
+        app.setCreateAuthor(operator);
+        app.setUpdateAuthor(operator);
+
+        App createdApp = appRepository.save(app);
+
+        appNamespaceService.createDefaultAppNamespace(createdApp.getId());
+        // TODO: 2019-12-02 还要继续写
+        roleInitializationService.initAppRoles(createdApp);
+
+        Tracer.logEvent(TracerEventType.CREATE_APP, appCode);
+
+        return createdApp;
     }
-
-    com.yofish.gary.api.dto.rsp.UserDetailRspDTO userDetail = userService.getUserDetail(app.getAppOwner().getId());
-    if (userDetail == null) {
-      throw new BadRequestException("Application's owner not exist.");
-    }
-    app.set(owner.getEmail());
-
-    String operator = userInfoHolder.getUser().getUserId();
-    app.setDataChangeCreatedBy(operator);
-    app.setDataChangeLastModifiedBy(operator);
-
-    App createdApp = appRepository.save(app);
-
-    appNamespaceService.createDefaultAppNamespace(appId);
-    roleInitializationService.initAppRoles(createdApp);
-
-    Tracer.logEvent(TracerEventType.CREATE_APP, appId);
-
-    return createdApp;
-  }
 /*
   public List<App> findAll() {
     Iterable<App> apps = appRepository.findAll();

@@ -1,5 +1,6 @@
 package com.yofish.apollo.controller.controller;
 
+import com.yofish.apollo.spi.UserInfoHolder;
 import common.exception.BadRequestException;
 import common.utils.InputValidator;
 import common.utils.RequestPrecondition;
@@ -16,7 +17,7 @@ import static common.utils.RequestPrecondition.checkModel;
 @RestController
 public class ClusterController {
 
-  @Autowired
+  /*@Autowired
   private ClusterService clusterService;
   @Autowired
   private UserInfoHolder userInfoHolder;
@@ -52,6 +53,6 @@ public class ClusterController {
   public ClusterEntity loadCluster(@PathVariable("appId") String appId, @PathVariable String env, @PathVariable("clusterName") String clusterName) {
 
     return clusterService.loadCluster(appId, Env.fromString(env), clusterName);
-  }
+  }*/
 
 }

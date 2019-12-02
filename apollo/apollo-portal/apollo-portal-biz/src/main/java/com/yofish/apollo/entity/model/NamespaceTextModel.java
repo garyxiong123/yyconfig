@@ -1,9 +1,9 @@
 package com.yofish.apollo.entity.model;
 
 
-import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
-import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.core.utils.StringUtils;
+import framework.apollo.core.enums.ConfigFileFormat;
+import framework.apollo.core.enums.Env;
+import framework.apollo.core.utils.StringUtils;
 
 public class NamespaceTextModel implements Verifiable {
 

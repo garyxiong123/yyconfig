@@ -1,26 +1,10 @@
 package com.yofish.apollo.controller.controller;
 
-import com.ctrip.framework.apollo.common.dto.GrayReleaseRuleDTO;
-import com.ctrip.framework.apollo.common.exception.BadRequestException;
-import com.ctrip.framework.apollo.component.PermissionValidator;
-import com.ctrip.framework.apollo.config.PortalConfig;
-import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.listener.ConfigPublishEvent;
-import com.ctrip.framework.apollo.model.NamespaceReleaseModel;
-import com.ctrip.framework.apollo.model.bo.NamespaceBO;
-import com.ctrip.framework.apollo.model.entity.Namespace;
-import com.ctrip.framework.apollo.model.entity.Release;
-import com.ctrip.framework.apollo.service.NamespaceBranchService;
-import com.ctrip.framework.apollo.service.ReleaseService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class NamespaceBranchController {
-
+/*
   @Autowired
   private PermissionValidator permissionValidator;
   @Autowired
@@ -129,6 +113,6 @@ public class NamespaceBranchController {
     namespaceBranchService
         .updateBranchGrayRules(appId, Env.valueOf(env), clusterName, namespaceName, branchName, rules);
 
-  }
+  }*/
 
 }

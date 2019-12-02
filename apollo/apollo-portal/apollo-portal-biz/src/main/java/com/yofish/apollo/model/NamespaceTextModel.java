@@ -1,10 +1,9 @@
 package com.yofish.apollo.model;
 
 
-import com.yofish.apollo.enums.ConfigFileFormat;
 import com.yofish.apollo.enums.Envs;
+import framework.apollo.core.enums.ConfigFileFormat;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 
 @Data
 public class NamespaceTextModel {

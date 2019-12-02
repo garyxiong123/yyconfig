@@ -1,7 +1,7 @@
 package com.yofish.apollo.entity.model;
 
-import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 
+import common.dto.NamespaceDTO;
 
 public class NamespaceCreationModel {
 

@@ -1,30 +1,14 @@
 package com.yofish.apollo.controller.controller;
 
-import com.ctrip.framework.apollo.common.exception.BadRequestException;
-import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
-import com.ctrip.framework.apollo.config.UserInfoHolder;
-import com.ctrip.framework.apollo.config.UserService;
-import com.ctrip.framework.apollo.constant.RoleType;
-import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.core.enums.EnvUtils;
-import com.ctrip.framework.apollo.model.bo.UserInfo;
-import com.ctrip.framework.apollo.model.vo.AppRolesAssignedUsers;
-import com.ctrip.framework.apollo.model.vo.NamespaceEnvRolesAssignedUsers;
-import com.ctrip.framework.apollo.model.vo.NamespaceRolesAssignedUsers;
-import com.ctrip.framework.apollo.model.vo.PermissionCondition;
-import com.ctrip.framework.apollo.service.RoleInitializationService;
-import com.ctrip.framework.apollo.service.RolePermissionService;
-import com.ctrip.framework.apollo.util.RoleUtils;
 import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
-
+/*
 @RestController
 public class PermissionController {
 
@@ -255,3 +239,4 @@ public class PermissionController {
   }
 
 }
+*/

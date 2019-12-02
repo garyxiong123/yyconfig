@@ -1,15 +1,10 @@
 package com.yofish.apollo.entity.vo;
 
-import com.ctrip.framework.apollo.core.enums.Env;
 
+import framework.apollo.core.enums.Env;
+import lombok.Data;
+
+@Data
 public class NamespaceEnvRolesAssignedUsers extends NamespaceRolesAssignedUsers {
     private Env env;
-
-    public Env getEnv() {
-        return env;
-    }
-
-    public void setEnv(Env env) {
-        this.env = env;
-    }
 }
