@@ -21,7 +21,7 @@ import com.yofish.gary.api.dto.req.UserEditReqDTO;
 import com.yofish.gary.api.dto.req.UserModifyPasswordReqDTO;
 import com.yofish.gary.api.enums.RoleTypeEnum;
 import com.yofish.gary.biz.repository.RoleRepository;
-import com.yofish.gary.entity.BaseEntity;
+import com.yofish.gary.dao.entity.BaseEntity;
 import lombok.*;
 import org.springframework.util.ObjectUtils;
 

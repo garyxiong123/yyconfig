@@ -10,7 +10,6 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
     <artifactId>upms</artifactId>
-    <packaging>pom</packaging>
 
     <modules>
         <module>upms-domain</module>

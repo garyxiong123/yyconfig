@@ -11,10 +11,10 @@ import org.springframework.context.ConfigurableApplicationContext;
  * @since 1.0
  */
 @SpringBootApplication
-public class JpaApplication {
+public class UmpsApplication {
 
     public static void main(String[] args) {
-        ConfigurableApplicationContext run = SpringApplication.run(JpaApplication.class, args);
+        ConfigurableApplicationContext run = SpringApplication.run(UmpsApplication.class, args);
         System.out.println(run);
 
     }

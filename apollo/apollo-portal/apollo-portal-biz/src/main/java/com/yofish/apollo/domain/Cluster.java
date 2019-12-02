@@ -1,6 +1,6 @@
 package com.yofish.apollo.domain;
 
-import com.yofish.gary.entity.BaseEntity;
+import com.yofish.gary.dao.entity.BaseEntity;
 import framework.apollo.core.enums.Env;
 import lombok.*;
 

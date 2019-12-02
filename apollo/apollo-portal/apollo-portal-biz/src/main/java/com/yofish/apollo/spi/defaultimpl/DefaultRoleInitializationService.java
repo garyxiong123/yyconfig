@@ -10,7 +10,7 @@ import com.yofish.gary.biz.domain.Permission;
 import com.yofish.gary.biz.domain.Role;
 import com.yofish.gary.biz.repository.PermissionRepository;
 import com.yofish.gary.biz.service.RoleService;
-import com.yofish.gary.entity.BaseEntity;
+import com.yofish.gary.dao.entity.BaseEntity;
 import framework.apollo.core.ConfigConsts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

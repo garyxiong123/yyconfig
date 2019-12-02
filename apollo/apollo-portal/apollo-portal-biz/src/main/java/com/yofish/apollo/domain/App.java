@@ -1,7 +1,7 @@
 package com.yofish.apollo.domain;
 
 import com.yofish.gary.biz.domain.User;
-import com.yofish.gary.entity.BaseEntity;
+import com.yofish.gary.dao.entity.BaseEntity;
 import lombok.*;
 
 import javax.persistence.CascadeType;
