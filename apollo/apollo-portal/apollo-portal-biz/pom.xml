@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>apollo-biz</artifactId>
+    <artifactId>apollo-portal-biz</artifactId>
 
 
     <dependencies>
@@ -23,6 +23,10 @@
             <artifactId>upms-domain-biz</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.yofish.gary</groupId>
+            <artifactId>upms-domain-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
@@ -32,6 +36,10 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.47</version>
         </dependency>
+        <!--<dependency>
+            <groupId>com.yofish.gary</groupId>
+            <artifactId>upms-domain-api</artifactId>
+        </dependency>-->
     </dependencies>
 
 </project>

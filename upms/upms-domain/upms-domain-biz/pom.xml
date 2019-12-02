@@ -15,7 +15,6 @@
         <dependency>
             <groupId>com.yofish.gary</groupId>
             <artifactId>upms-domain-api</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
     </dependencies>
