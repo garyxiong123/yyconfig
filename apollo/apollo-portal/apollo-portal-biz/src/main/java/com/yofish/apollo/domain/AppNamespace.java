@@ -23,7 +23,7 @@ public class AppNamespace extends BaseEntity {
 
     private String name;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.DETACH,CascadeType.REMOVE})
     private App app;
 
     private String format;

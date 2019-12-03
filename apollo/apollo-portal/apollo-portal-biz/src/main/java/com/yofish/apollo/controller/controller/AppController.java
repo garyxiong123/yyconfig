@@ -2,15 +2,18 @@ package com.yofish.apollo.controller.controller;
 
 
 import com.yofish.apollo.domain.App;
+import com.yofish.apollo.domain.Department;
 import com.yofish.apollo.model.AppModel;
 import com.yofish.apollo.service.AppService;
 import com.yofish.apollo.util.RoleUtils;
+import com.yofish.gary.biz.domain.User;
 import com.youyu.common.helper.YyRequestInfoHelper;
 import common.exception.BadRequestException;
 import common.utils.InputValidator;
 import common.utils.RequestPrecondition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -54,25 +58,25 @@ public class AppController {
   }
 
   private App transformToApp(AppModel appModel) {
-    String appId = appModel.getAppId();
+    String appCode = appModel.getAppCode();
     String appName = appModel.getName();
-    String ownerName = appModel.getOwnerName();
-    String orgId = appModel.getOrgId();
-    String orgName = appModel.getOrgName();
+    Long ownerId = appModel.getOwnerId();
+    Long orgId = appModel.getOrgId();
+    Set<Long> admins = appModel.getAdmins();
 
-    RequestPrecondition.checkArgumentsNotEmpty(appId, appName, ownerName, orgId, orgName);
+    RequestPrecondition.checkArgumentsNotEmpty(appCode, appName, ownerId, orgId);
 
-    if (!InputValidator.isValidClusterNamespace(appModel.getAppId())) {
+    if (!InputValidator.isValidClusterNamespace(appModel.getAppCode())) {
       throw new BadRequestException(
-          String.format("AppId格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
+          String.format("AppCode格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
     }
     return App.builder()
-//        .appId(appId)
-        .name(appName)
-//            .ownerName(ownerName)
-//            .orgId(orgId)
-//            .orgName(orgName)
-        .build();
+            .appCode(appCode)
+            .name(appName)
+            .department(new Department(orgId))
+            .appOwner(new User(ownerId))
+            .appAdmins(ObjectUtils.isEmpty(admins)?null:admins.stream().map(userId->new User(userId)).collect(Collectors.toSet()))
+            .build();
 
   }
 }

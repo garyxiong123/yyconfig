@@ -5,6 +5,7 @@ import common.utils.InputValidator;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.Set;
 
@@ -14,21 +15,19 @@ public class AppModel {
     @NotBlank(message = "name cannot be blank")
     private String name;
 
-    @NotBlank(message = "appId cannot be blank")
+    @NotBlank(message = "appCode cannot be blank")
     @Pattern(
             regexp = InputValidator.CLUSTER_NAMESPACE_VALIDATOR,
             message = "Invalid AppId format: " + InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE
     )
-    private String appId;
+    private String appCode;
 
-    @NotBlank(message = "orgId cannot be blank")
-    private String orgId;
+    @NotNull(message = "orgId cannot be blank")
+    private Long orgId;
 
-    @NotBlank(message = "orgName cannot be blank")
-    private String orgName;
 
-    @NotBlank(message = "ownerName cannot be blank")
-    private String ownerName;
+    @NotNull(message = "ownerId cannot be blank")
+    private Long ownerId;
 
-    private Set<String> admins;
+    private Set<Long> admins;
 }
