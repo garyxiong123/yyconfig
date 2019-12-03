@@ -26,13 +26,13 @@ public class App extends BaseEntity {
     private String appCode;
     private String name;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.DETACH)
     private Department department;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.DETACH)
     private User appOwner;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(cascade = {CascadeType.DETACH})
     private Set<User> appAdmins;
 
 

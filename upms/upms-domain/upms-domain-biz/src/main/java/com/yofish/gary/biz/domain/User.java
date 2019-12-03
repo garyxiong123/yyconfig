@@ -64,9 +64,6 @@ import static org.apache.commons.lang3.StringUtils.isNoneBlank;
 @DiscriminatorColumn(name = "DISCRIMINATOR", discriminatorType = DiscriminatorType.STRING, length = 30)
 public class User extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
 
     /**
      * 用户名

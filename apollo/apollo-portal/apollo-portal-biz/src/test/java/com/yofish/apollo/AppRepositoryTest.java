@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import com.yofish.apollo.domain.*;
 import com.yofish.apollo.repository.*;
 import com.yofish.gary.biz.domain.User;
+import com.yofish.gary.biz.repository.UserRepository;
 import framework.apollo.core.enums.Env;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -32,7 +34,10 @@ public class AppRepositoryTest {
     private ClusterNamespaceRepository clusterNamespaceRepository;
     @Autowired
     private ItemRepository itemRepository;
-
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private DepartmentRepository departmentRepository;
     @Before
     public void setUp() throws Exception {
 
@@ -45,6 +50,29 @@ public class AppRepositoryTest {
     @Test
     public void addApp() {
         App app = createApp();
+        App app1 = appRepository.save(app);
+        Assert.assertNotNull(app1);
+    }
+
+    @Test
+    public void addApp4Select() {
+        App app = createApp4Select();
+        App app1 = appRepository.save(app);
+        Assert.assertNotNull(app1);
+    }
+
+    @Test
+    public void addApp4SelectForId() {
+        App app = createApp4Select4Id();
+        App app1 = appRepository.save(app);
+        Assert.assertNotNull(app1);
+    }
+
+
+
+    @Test
+    public void addApp4Wrong() {
+        App app = createApp4Wrong();
         App app1 = appRepository.save(app);
         Assert.assertNotNull(app1);
     }
@@ -85,6 +113,42 @@ public class AppRepositoryTest {
         User user = createUser();
         Set<User> users = Sets.newHashSet(user);
         Department department = Department.builder().name("技术平台").build();
+        App app = App.builder().department(department).name("中台支付").build();
+        app.setAppAdmins(users);
+        app.setAppOwner(user);
+        return app;
+    }
+
+    private App createApp4Select() {
+        User user = User.builder().username("zhangsan").build();
+        userRepository.save(user);
+        Set<User> users = new HashSet<>(userRepository.findAll()) ;
+//        Department department =   Department.builder().name("caigou").build();
+        App app = App.builder().name("中台支付").build();
+        app.setAppAdmins(users);
+        app.setAppOwner(users.iterator().next());
+        return app;
+    }
+
+
+    private App createApp4Select4Id() {
+        User user = User.builder().username("zhangsan").build();
+        userRepository.save(user);
+        Set<User> users = new HashSet<>(userRepository.findAll()) ;
+        users.iterator().next().setUsername(null);
+//        Department department =   Department.builder().name("caigou").build();
+        App app = App.builder().name("中台支付").build();
+        app.setAppAdmins(users);
+        app.setAppOwner(users.iterator().next());
+        return app;
+    }
+
+
+    private App createApp4Wrong() {
+        User user = User.builder().build();
+        user.setId(3L);
+        Set<User> users = Sets.newHashSet(user);
+        Department department =   Department.builder().id(5L).build();
         App app = App.builder().department(department).name("中台支付").build();
         app.setAppAdmins(users);
         app.setAppOwner(user);

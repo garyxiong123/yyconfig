@@ -111,7 +111,8 @@ public abstract class AbstractConfigFile implements ConfigFile, RepositoryChange
     return m_sourceType;
   }
 
-  private void fireConfigChange(final ConfigFileChangeEvent changeEvent) {
+  @Override
+  public  void fireConfigChange(final ConfigFileChangeEvent changeEvent) {
     for (final ConfigFileChangeListener listener : m_listeners) {
       m_executorService.submit(new Runnable() {
         @Override
