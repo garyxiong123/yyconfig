@@ -1,5 +1,7 @@
 import React, { Fragment } from 'react';
-import { Card, Tabs } from 'antd';
+import { Card, Tabs, Row, Col, Radio, Icon, Button } from 'antd';
+import { MyProject, PubLicSpace } from './listView/'
+import styles from './index.less';
 
 const { TabPane } = Tabs;
 
@@ -7,7 +9,8 @@ class ListView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      key: '1'
+      key: '1',
+
     };
   }
   componentDidMount() { }
@@ -16,30 +19,16 @@ class ListView extends React.Component {
       key
     })
   }
-  renderProject() {
-    return (
-      <div>
-        我的项目
-      </div>
-    )
-  }
-  renderSpaceList() {
-    return (
-      <div>
-        公共命名空间列表
-      </div>
-    )
-  }
   render() {
     const { key } = this.state;
     return (
       <Card>
         <Tabs tabPosition="left" activeKey={key} onChange={this.onTabChange}>
           <TabPane tab="我的项目" key="1">
-            {this.renderProject()}
+            <MyProject />
           </TabPane>
           <TabPane tab="公共命名空间列表" key="2">
-            {this.renderSpaceList()}
+            <PubLicSpace />
           </TabPane>
         </Tabs>
       </Card>

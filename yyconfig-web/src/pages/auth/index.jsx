@@ -1,6 +1,6 @@
 import React from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { Card, Tabs } from 'antd';
+import { Card } from 'antd';
 import User from './User';
 import Role from './Role';
 import Auth from './Auth';
