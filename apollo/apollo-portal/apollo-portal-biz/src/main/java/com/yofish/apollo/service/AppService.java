@@ -4,7 +4,6 @@ package com.yofish.apollo.service;
 import com.yofish.apollo.constant.TracerEventType;
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.repository.AppRepository;
-import com.yofish.gary.biz.domain.User;
 import com.yofish.gary.biz.service.UserService;
 import com.youyu.common.helper.YyRequestInfoHelper;
 import common.exception.BadRequestException;
@@ -40,10 +39,6 @@ public class AppService {
         if (userDetail == null) {
             throw new BadRequestException("Application's owner not exist.");
         }
-        User user = new User();
-        user.setId(userDetail.getUserId());
-
-        app.setAppOwner(user);
 
         String operator = YyRequestInfoHelper.getCurrentUserRealName();
         app.setCreateAuthor(operator);

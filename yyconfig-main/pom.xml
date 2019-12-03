@@ -17,6 +17,12 @@
             <groupId>com.yofish.gary</groupId>
             <artifactId>upms-permissonFramework-shiro</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>persistence-api</artifactId>
+                    <groupId>javax.persistence</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

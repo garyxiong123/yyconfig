@@ -54,8 +54,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private PermissionRepository permissionRepository;
 
     @Autowired(required = false)
     private ShiroProperties shiroProperties;
@@ -179,7 +177,7 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     private User getUser(Long userId) {
-        User user = userRepository.findById(userId).get();
+        User user = userRepository.findById(userId).orElse(null);
         return user;
     }
 

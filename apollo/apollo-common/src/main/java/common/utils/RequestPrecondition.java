@@ -19,7 +19,7 @@ public class RequestPrecondition {
     }
 
     public static void checkArgumentsNotEmpty(Object... args) {
-        checkArguments(isContainEmpty(args), CONTAIN_EMPTY_ARGUMENT);
+        checkArguments(!isContainEmpty(args), CONTAIN_EMPTY_ARGUMENT);
     }
 
     public static void checkModel(boolean valid) {

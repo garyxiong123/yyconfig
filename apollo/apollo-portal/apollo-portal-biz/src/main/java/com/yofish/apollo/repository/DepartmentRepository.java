@@ -1,6 +1,7 @@
 package com.yofish.apollo.repository;
 
-import com.yofish.apollo.domain.Cluster;
+import com.yofish.apollo.domain.App;
+import com.yofish.apollo.domain.Department;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +11,9 @@ import org.springframework.stereotype.Component;
  * @author zlf
  * @since 1.0
  */
-public interface EnvRepository extends JpaRepository<Cluster, Long> {
+@Component
+public interface DepartmentRepository extends JpaRepository<Department, Long> {
+
 
 
 
