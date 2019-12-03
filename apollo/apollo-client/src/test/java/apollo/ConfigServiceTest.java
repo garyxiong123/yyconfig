@@ -4,6 +4,7 @@ import apollo.build.MockInjector;
 import apollo.enums.ConfigSourceType;
 import apollo.internals.AbstractConfig;
 import apollo.internals.DefaultInjector;
+import apollo.model.ConfigFileChangeEvent;
 import apollo.spi.ConfigFactory;
 import apollo.util.ConfigUtil;
 import framework.apollo.core.ConfigConsts;
@@ -142,6 +143,11 @@ public class ConfigServiceTest {
     @Override
     public ConfigFileFormat getConfigFileFormat() {
       return m_configFileFormat;
+    }
+
+    @Override
+    public void fireConfigChange(ConfigFileChangeEvent changeEvent) {
+
     }
 
     @Override

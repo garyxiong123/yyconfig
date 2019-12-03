@@ -1,5 +1,7 @@
 package apollo.internals;
 
+import apollo.model.ConfigFileChangeEvent;
+
 import java.util.Properties;
 
 /**
@@ -12,4 +14,5 @@ public interface RepositoryChangeListener {
    * @param newProperties the properties after change
    */
   public void onRepositoryChange(String namespace, Properties newProperties);
+
 }

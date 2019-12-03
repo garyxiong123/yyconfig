@@ -2,12 +2,13 @@ package apollo;
 
 
 import apollo.enums.ConfigSourceType;
+import apollo.util.ConfigFileChangePublisher;
 import framework.apollo.core.enums.ConfigFileFormat;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
-public interface ConfigFile {
+public interface ConfigFile extends ConfigFileChangePublisher {
   /**
    * Get file content of the namespace
    * @return file content, {@code null} if there is no content
@@ -32,20 +33,7 @@ public interface ConfigFile {
    */
   ConfigFileFormat getConfigFileFormat();
 
-  /**
-   * Add change listener to this config file instance.
-   *
-   * @param listener the config file change listener
-   */
-  void addChangeListener(ConfigFileChangeListener listener);
 
-  /**
-   * Remove the change listener
-   *
-   * @param listener the specific config change listener to remove
-   * @return true if the specific config change listener is found and removed
-   */
-  public boolean removeChangeListener(ConfigChangeListener listener);
 
   /**
    * Return the config's source type, i.e. where is the config loaded from
