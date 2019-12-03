@@ -121,6 +121,10 @@ public class User extends BaseEntity {
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles = new HashSet<>();
 
+    public User(Long id) {
+        super(id);
+    }
+
     public User(String username) {
         this();
         this.username = username;
