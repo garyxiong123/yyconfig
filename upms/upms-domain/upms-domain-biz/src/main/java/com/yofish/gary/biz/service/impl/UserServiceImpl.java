@@ -54,8 +54,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private PermissionRepository permissionRepository;
 
     @Autowired(required = false)
     private ShiroProperties shiroProperties;
