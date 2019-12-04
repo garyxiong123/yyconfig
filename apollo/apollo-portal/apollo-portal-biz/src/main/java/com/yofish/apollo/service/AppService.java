@@ -5,10 +5,14 @@ import com.yofish.apollo.constant.TracerEventType;
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.repository.AppRepository;
 import com.yofish.gary.biz.service.UserService;
+import com.youyu.common.api.PageData;
 import com.youyu.common.helper.YyRequestInfoHelper;
 import common.exception.BadRequestException;
+import common.utils.PageDataAdapter;
 import framework.apollo.tracer.Tracer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,6 +58,19 @@ public class AppService {
 
         return createdApp;
     }
+
+
+    public PageData<App> findAll(Pageable pageable) {
+        Page<App> apps = appRepository.findAll(pageable);
+
+        return PageDataAdapter.toPageData(apps);
+    }
+
+    public PageData<App> searchByAppCodeOrAppName(String query, Pageable pageable) {
+        Page<App> apps = appRepository.findByAppCodeContainingOrNameContaining(query, query, pageable);
+
+        return PageDataAdapter.toPageData(apps);
+    }
 /*
   public List<App> findAll() {
     Iterable<App> apps = appRepository.findAll();
@@ -68,7 +85,7 @@ public class AppService {
 
     return new PageDTO<>(apps.getContent(), pageable, apps.getTotalElements());
   }
-  public PageDTO<App> searchByAppIdOrAppName(String query, Pageable pageable) {
+  public PageDTO<App> searchByAppCodeOrAppName(String query, Pageable pageable) {
     Page<App> apps = appRepository.findByAppIdContainingOrNameContaining(query, query, pageable);
 
     return new PageDTO<>(apps.getContent(), pageable, apps.getTotalElements());

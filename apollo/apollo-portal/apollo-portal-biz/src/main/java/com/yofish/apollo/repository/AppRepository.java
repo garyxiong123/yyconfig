@@ -1,7 +1,8 @@
 package com.yofish.apollo.repository;
 
 import com.yofish.apollo.domain.App;
-import com.yofish.gary.biz.domain.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
@@ -18,4 +19,5 @@ public interface AppRepository extends JpaRepository<App, Long> {
     App findByAppCode(String appId);
 
 
+    Page<App> findByAppCodeContainingOrNameContaining(String appId, String name, Pageable pageable);
 }
