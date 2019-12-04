@@ -10,9 +10,21 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>yyconfig-main</artifactId>
-
-
+<properties>
+    <start-class>com.yofish.gary.MainApplication</start-class>
+</properties>
     <dependencies>
+        <dependency>
+            <groupId>com.yofish.platform</groupId>
+            <artifactId>sword-api</artifactId>
+            <!--<scope>provided</scope>-->
+            <exclusions>
+                <exclusion>
+                    <artifactId>persistence-api</artifactId>
+                    <groupId>javax.persistence</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <dependency>
             <groupId>com.yofish.gary</groupId>
             <artifactId>upms-permissonFramework-shiro</artifactId>
@@ -36,5 +48,54 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <!--<finalName>${project.artifactId}</finalName>-->
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>${start-class}</mainClass>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

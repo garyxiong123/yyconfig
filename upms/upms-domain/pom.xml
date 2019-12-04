@@ -25,13 +25,6 @@
         <dependency>
             <groupId>com.yofish.platform</groupId>
             <artifactId>sword-api</artifactId>
-            <!--<scope>provided</scope>-->
-            <exclusions>
-                <exclusion>
-                    <artifactId>persistence-api</artifactId>
-                    <groupId>javax.persistence</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
