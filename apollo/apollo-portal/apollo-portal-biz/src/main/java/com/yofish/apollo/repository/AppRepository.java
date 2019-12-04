@@ -15,9 +15,22 @@ import org.springframework.stereotype.Component;
 @Component
 public interface AppRepository extends JpaRepository<App, Long> {
 
+    /**
+     * findByAppCode
+     *
+     * @param appCode
+     * @return
+     */
+    App findByAppCode(String appCode);
 
-    App findByAppCode(String appId);
 
-
+    /**
+     * findByAppCodeContainingOrNameContaining
+     *
+     * @param appId
+     * @param name
+     * @param pageable
+     * @return
+     */
     Page<App> findByAppCodeContainingOrNameContaining(String appId, String name, Pageable pageable);
 }

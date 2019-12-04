@@ -3,7 +3,10 @@ package com.yofish.apollo.service;
 
 import com.yofish.apollo.constant.TracerEventType;
 import com.yofish.apollo.domain.App;
+import com.yofish.apollo.domain.Department;
 import com.yofish.apollo.repository.AppRepository;
+import com.yofish.apollo.repository.DepartmentRepository;
+import com.yofish.gary.api.dto.rsp.UserDetailRspDTO;
 import com.yofish.gary.biz.service.UserService;
 import com.youyu.common.api.PageData;
 import com.youyu.common.helper.YyRequestInfoHelper;
@@ -27,10 +30,12 @@ public class AppService {
     private AppNamespaceService appNamespaceService;
     @Autowired
     private RoleInitializationService roleInitializationService;
+    @Autowired
+    private DepartmentRepository departmentRepository;
 
 
     @Transactional
-    public App createAppInLocal(App app) {
+    public App createApp(App app) {
         String appCode = app.getAppCode();
 
         App managedApp = appRepository.findByAppCode(appCode);
@@ -44,7 +49,12 @@ public class AppService {
             throw new BadRequestException("Application's owner not exist.");
         }
 
-        String operator = YyRequestInfoHelper.getCurrentUserRealName();
+        Department department = departmentRepository.findById(app.getDepartment().getId()).orElse(null);
+        if (department == null) {
+            throw new BadRequestException("Application's department not exist.");
+        }
+
+        String operator = YyRequestInfoHelper.getCurrentUserName();
         app.setCreateAuthor(operator);
         app.setUpdateAuthor(operator);
 
@@ -71,6 +81,39 @@ public class AppService {
 
         return PageDataAdapter.toPageData(apps);
     }
+
+
+    @Transactional
+    public App updateApp(App app) {
+        Long appId = app.getId();
+
+        App managedApp = appRepository.findById(appId).orElse(null);
+        if (managedApp == null) {
+            throw new BadRequestException(String.format("App not exists. AppId = %s", appId));
+        }
+
+        managedApp.setName(app.getName());
+        managedApp.setDepartment(app.getDepartment());
+
+        Long userId = app.getAppOwner().getId();
+        UserDetailRspDTO userDetail = userService.getUserDetail(userId);
+        if (userDetail == null) {
+            throw new BadRequestException(String.format("App's owner not exists. owner = %s", userId));
+        }
+
+        Department department = departmentRepository.findById(app.getDepartment().getId()).orElse(null);
+        if (department == null) {
+            throw new BadRequestException("Application's department not exist.");
+        }
+
+        managedApp.setAppOwner(app.getAppOwner());
+
+        String operator = YyRequestInfoHelper.getCurrentUserName();
+        managedApp.setUpdateAuthor(operator);
+
+        return appRepository.save(managedApp);
+    }
+
 /*
   public List<App> findAll() {
     Iterable<App> apps = appRepository.findAll();

@@ -46,7 +46,7 @@ public class AppController {
 
         App app = transformToApp(appModel);
 
-        App createdApp = appService.createAppInLocal(app);
+        App createdApp = appService.createApp(app);
 
     /*Set<String> admins = appModel.getAdmins();
     if (!CollectionUtils.isEmpty(admins)) {
@@ -60,7 +60,7 @@ public class AppController {
 
 
     @GetMapping("/search")
-    @ApiOperation("查询")
+    @ApiOperation("查询项目")
     public PageData<App> searchByAppCodeOrAppName(@RequestParam(required = false) String query, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "20") int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
         if (StringUtils.isEmpty(query)) {
@@ -69,6 +69,18 @@ public class AppController {
             return appService.searchByAppCodeOrAppName(query, pageable);
         }
     }
+
+
+    @PutMapping("/{appId:\\d+}")
+    @ApiOperation("修改项目信息")
+    public Result<App> update(@PathVariable Long appId, @Valid @RequestBody AppModel appModel) {
+        App app = transformToApp(appModel);
+        app.setId(appId);
+
+        App updatedApp = appService.updateApp(app);
+        return Result.ok(updatedApp);
+    }
+
 
     private App transformToApp(AppModel appModel) {
         String appCode = appModel.getAppCode();
