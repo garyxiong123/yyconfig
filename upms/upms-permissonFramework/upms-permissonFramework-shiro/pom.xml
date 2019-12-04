@@ -27,10 +27,6 @@
         </dependency>
         <dependency>
             <groupId>com.yofish.gary</groupId>
-            <artifactId>upms-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.yofish.gary</groupId>
             <artifactId>upms-domain-biz</artifactId>
         </dependency>
         <dependency>

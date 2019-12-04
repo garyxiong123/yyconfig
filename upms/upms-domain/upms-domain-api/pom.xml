@@ -16,11 +16,6 @@
             <groupId>com.yofish.platform</groupId>
             <artifactId>sword-api</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>com.yofish.gary</groupId>
-            <artifactId>upms-common</artifactId>
-        </dependency>
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-annotations</artifactId>
