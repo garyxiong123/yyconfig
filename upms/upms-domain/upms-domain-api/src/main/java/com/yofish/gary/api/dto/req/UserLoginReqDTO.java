@@ -28,6 +28,7 @@ import java.io.Serializable;
  * @date 2019年6月27日 10:00:00
  * @work 用户登录请求req
  */
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @ApiModel("用户登录请求req")

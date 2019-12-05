@@ -37,8 +37,6 @@ import java.util.List;
 @ApiModel("用户添加请求req")
 @Setter
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 public class UserAddReqDTO implements Serializable {
 
     private static final long serialVersionUID = 8976395778045419855L;

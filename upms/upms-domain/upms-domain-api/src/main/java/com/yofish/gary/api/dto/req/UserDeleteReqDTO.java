@@ -39,4 +39,8 @@ public class UserDeleteReqDTO implements Serializable {
     @ApiModelProperty("用户id")
     @NotNull
     private Long userId;
+
+    public UserDeleteReqDTO(){
+
+    }
 }
