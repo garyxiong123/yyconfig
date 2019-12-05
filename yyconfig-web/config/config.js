@@ -70,6 +70,7 @@ if (isAntDesignProPreview) {
 export default {
   plugins,
   hash: true,
+  outputPath: '../yyconfig-main/src/main/resources/static',
   history: 'hash',
   targets: {
     ie: 11,

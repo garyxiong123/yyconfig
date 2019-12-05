@@ -15,6 +15,10 @@
 </properties>
     <dependencies>
         <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.yofish.platform</groupId>
             <artifactId>sword-api</artifactId>
             <!--<scope>provided</scope>-->
