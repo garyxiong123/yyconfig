@@ -36,7 +36,7 @@ public class UserLoginRspDTO implements Serializable {
     private static final long serialVersionUID = -3526808292233287799L;
 
     @ApiModelProperty("用户id")
-    private Long userId;
+    private Long id;
 
     @ApiModelProperty("用户名")
     private String username;

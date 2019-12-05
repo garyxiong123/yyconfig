@@ -12,6 +12,8 @@ import org.springframework.util.ObjectUtils;
 
 import javax.annotation.PostConstruct;
 
+import static org.springframework.util.ObjectUtils.isEmpty;
+
 /**
  * @author WangSongJun
  * @date 2019-12-05
@@ -24,20 +26,28 @@ public class DataImport {
     private UserService userService;
     @Autowired
     private UserRepository userRepository;
+    private String adminUsername = "apollo";
+    private String adminPassword = "apollo";
+    private String adminRealName = "管理员用户";
 
     @PostConstruct
     public void importUser() {
         log.info("初始化用户数据...");
 
-        User defaultUser = this.userRepository.findByUsername("apollo");
+        User defaultAdminUser = this.userRepository.findByUsername(adminUsername);
 
-        if (ObjectUtils.isEmpty(defaultUser)) {
-            Long userId = this.userService.add(UserAddReqDTO.builder().username("apollo").password("apollo").realName("Apollo").remark("初始用户").build());
+        if (isEmpty(defaultAdminUser)) {
+            UserAddReqDTO admin = createAdmin();
+            Long userId = this.userService.add(admin);
 
             User user = userRepository.findById(userId).orElse(null);
-            log.info("初始用户成功！\nUserName:{},Password:{}", user.getUsername(), user.getPassword());
+            log.info("初始用户成功！\n UserName:{},Password:{}", user.getUsername(), user.getPassword());
         } else {
-            log.info("用户已存在！\nUserName:{},Password:{}", defaultUser.getUsername(), defaultUser.getPassword());
+            log.info("用户已存在！\n UserName:{},Password:{}", defaultAdminUser.getUsername(), defaultAdminUser.getPassword());
         }
+    }
+
+    private UserAddReqDTO createAdmin() {
+        return UserAddReqDTO.builder().username(adminUsername).password(adminPassword).realName(adminRealName).remark("初始用户").build();
     }
 }
