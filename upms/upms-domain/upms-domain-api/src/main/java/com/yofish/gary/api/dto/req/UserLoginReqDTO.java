@@ -17,8 +17,7 @@ package com.yofish.gary.api.dto.req;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -29,9 +28,10 @@ import java.io.Serializable;
  * @date 2019年6月27日 10:00:00
  * @work 用户登录请求req
  */
+@AllArgsConstructor
+@Builder
 @ApiModel("用户登录请求req")
-@Setter
-@Getter
+@Data
 public class UserLoginReqDTO implements Serializable {
 
     private static final long serialVersionUID = 7980211784973171962L;

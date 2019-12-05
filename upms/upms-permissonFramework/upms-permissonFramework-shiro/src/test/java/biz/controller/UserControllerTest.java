@@ -1,15 +1,16 @@
-package repository;
+package biz.controller;
 
 import com.yofish.gary.api.dto.req.UserAddReqDTO;
+import com.yofish.gary.api.dto.req.UserLoginReqDTO;
 import com.yofish.gary.biz.controller.UserController;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import javax.validation.Valid;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @Author: xiongchengwei
@@ -17,23 +18,32 @@ import javax.validation.Valid;
  */
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {com.yofish.gary.JpaApplication.class})
+@SpringBootTest(classes = {com.yofish.gary.UmpsShiroApplication.class})
 public class UserControllerTest {
+
+    private String username = "gary";
+    private String password = "123456";
 
     @Autowired
     private UserController userController;
 
     @Before
     public void setUp() throws Exception {
+        this.addUser();
     }
 
     @Test
     public void login() {
-
+        userController.login(createUserLoginDto());
     }
 
+    private UserLoginReqDTO createUserLoginDto() {
+        return UserLoginReqDTO.builder().build();
+    }
+
+    @Rollback(false)
     @Test
-    public void add() {
+    public void addUser() {
 
         UserAddReqDTO userAddReqDTO = createUserAddReqDTO();
         userController.add(userAddReqDTO);
@@ -42,7 +52,7 @@ public class UserControllerTest {
     private UserAddReqDTO createUserAddReqDTO() {
 
 
-        UserAddReqDTO userAddReqDTO = UserAddReqDTO.builder().username("gary").password("123456").build();
+        UserAddReqDTO userAddReqDTO = UserAddReqDTO.builder().username(username).password(password).build();
         return userAddReqDTO;
     }
 }

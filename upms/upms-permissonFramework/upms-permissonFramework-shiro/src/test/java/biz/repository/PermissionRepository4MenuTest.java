@@ -1,4 +1,4 @@
-package repository;
+package biz.repository;
 
 import com.yofish.gary.biz.domain.Permission4Menu;
 import com.yofish.gary.biz.repository.PermissionRepository4Menu;
@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {com.yofish.gary.JpaApplication.class})
+@SpringBootTest
 public class PermissionRepository4MenuTest {
 
 
@@ -36,7 +36,7 @@ public class PermissionRepository4MenuTest {
     }
 
     private Permission4Menu createPermission4Menu() {
-        Permission4Menu permission4Menu = new Permission4Menu();
+        Permission4Menu permission4Menu = (Permission4Menu) Permission4Menu.builder().permissionName("新增权限").build();
         permission4Menu.setIframeUrl(url);
         return permission4Menu;
     }

@@ -17,9 +17,7 @@ package com.yofish.gary.api.dto.req;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -34,6 +32,7 @@ import java.util.List;
  * @date 2019年6月27日 10:00:00
  * @work 用户添加请求req
  */
+@AllArgsConstructor
 @Builder
 @ApiModel("用户添加请求req")
 @Setter
@@ -79,5 +78,9 @@ public class UserAddReqDTO implements Serializable {
 
     @ApiModelProperty("角色id列表")
     private List<Long> roleIds;
+
+    public UserAddReqDTO(){
+
+    }
 
 }
