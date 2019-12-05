@@ -1,4 +1,4 @@
-package com.yofish.apollo.controller.controller;
+package com.yofish.apollo.controller;
 
 import com.yofish.apollo.spi.UserInfoHolder;
 import common.exception.BadRequestException;

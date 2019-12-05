@@ -1,4 +1,4 @@
-package com.yofish.apollo.controller.controller;//package com.ctrip.framework.apollo.controller;
+package com.yofish.apollo.controller;//package com.ctrip.framework.apollo.controller;
 //
 //import com.ctrip.framework.apollo.core.ConfigConsts;
 //import com.ctrip.framework.apollo.core.dto.ApolloConfigNotification;

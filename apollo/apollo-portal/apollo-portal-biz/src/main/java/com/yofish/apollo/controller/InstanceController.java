@@ -1,4 +1,4 @@
-package com.yofish.apollo.controller.controller;
+package com.yofish.apollo.controller;
 
 import com.google.common.base.Splitter;
 import org.springframework.web.bind.annotation.RestController;

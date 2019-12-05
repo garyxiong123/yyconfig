@@ -1,4 +1,4 @@
-package com.yofish.apollo.controller.controller;//package com.ctrip.framework.apollo.controller;
+package com.yofish.apollo.controller;//package com.ctrip.framework.apollo.controller;
 //
 //import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 //import com.ctrip.framework.apollo.common.exception.BadRequestException;
