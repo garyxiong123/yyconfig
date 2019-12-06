@@ -53,6 +53,9 @@ public abstract class RefreshableConfig {
 
     //add property source to environment
     for (RefreshablePropertySource propertySource : propertySources) {
+      if(propertySource == null){
+        return;
+      }
       propertySource.refresh();
       environment.getPropertySources().addLast(propertySource);
     }

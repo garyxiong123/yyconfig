@@ -21,8 +21,6 @@ public class ServerConfigController {
 
     @Autowired
     private ServerConfigRepository serverConfigRepository;
-    @Autowired
-    private UserInfoHolder userInfoHolder;
 
     //  @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
     @RequestMapping(value = "/server/config", method = RequestMethod.POST)
@@ -31,7 +29,6 @@ public class ServerConfigController {
 //        checkModel(Objects.nonNull(serverConfig));
 //        RequestPrecondition.checkArgumentsNotEmpty(serverConfig.getKey(), serverConfig.getValue());
 
-        String modifiedBy = userInfoHolder.getUser().getUserId();
 
         ServerConfig storedConfig = serverConfigRepository.findByKey(serverConfig.getKey());
 
