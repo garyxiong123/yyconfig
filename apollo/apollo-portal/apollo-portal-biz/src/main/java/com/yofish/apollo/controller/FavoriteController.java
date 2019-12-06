@@ -1,10 +1,14 @@
 package com.yofish.apollo.controller;
 
-import org.springframework.web.bind.annotation.RestController;
+import com.yofish.apollo.service.FavoriteService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class FavoriteController {
-/*
 
   @Autowired
   private FavoriteService favoriteService;
@@ -34,6 +38,5 @@ public class FavoriteController {
   public void toTop(@PathVariable long favoriteId) {
     favoriteService.adjustFavoriteToFirst(favoriteId);
   }
-*/
 
 }

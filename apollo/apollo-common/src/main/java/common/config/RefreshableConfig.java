@@ -12,6 +12,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +32,10 @@ public abstract class RefreshableConfig {
   private ConfigurableEnvironment environment;
 
   private List<RefreshablePropertySource> propertySources;
+
+  public RefreshableConfig(String name, Map<String, Object> source) {
+
+  }
 
   /**
    * register refreshable property source.

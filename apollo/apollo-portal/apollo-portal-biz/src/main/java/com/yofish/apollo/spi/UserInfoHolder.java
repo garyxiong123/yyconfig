@@ -1,7 +1,7 @@
 package com.yofish.apollo.spi;
 
 
-import com.yofish.apollo.entity.bo.UserInfo;
+import com.yofish.apollo.model.bo.UserInfo;
 
 /**
  * Get access to the user's information,

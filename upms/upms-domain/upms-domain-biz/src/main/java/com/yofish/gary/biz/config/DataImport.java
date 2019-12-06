@@ -8,9 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
 
 import javax.annotation.PostConstruct;
+
+import java.util.List;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
 
@@ -36,18 +37,37 @@ public class DataImport {
 
         User defaultAdminUser = this.userRepository.findByUsername(adminUsername);
 
-        if (isEmpty(defaultAdminUser)) {
-            UserAddReqDTO admin = createAdmin();
-            Long userId = this.userService.add(admin);
-
-            User user = userRepository.findById(userId).orElse(null);
-            log.info("初始用户成功！\n UserName:{},Password:{}", user.getUsername(), user.getPassword());
-        } else {
+        if (!isEmpty(defaultAdminUser)) {
             log.info("用户已存在！\n UserName:{},Password:{}", defaultAdminUser.getUsername(), defaultAdminUser.getPassword());
+            return;
         }
+        createInitServerConfig();
+
+        createDefaultDepartment();
+
+        UserAddReqDTO initAdmin = createInitAdmin();
+        Long initAdminId = this.userService.add(initAdmin);
+        User initAdminUser = userRepository.findById(initAdminId).orElse(null);
+        log.info("初始用户成功！\n UserName:{},Password:{}", initAdminUser.getUsername(), initAdminUser.getPassword());
+
+    }
+    //TODO
+    private void createDefaultDepartment() {
+
     }
 
-    private UserAddReqDTO createAdmin() {
-        return UserAddReqDTO.builder().username(adminUsername).password(adminPassword).realName(adminRealName).remark("初始用户").build();
+    //TODO
+    private void createInitServerConfig() {
+
+    }
+
+    private UserAddReqDTO createInitAdmin() {
+        List<Long> initRoles = createInitRoles();
+        UserAddReqDTO userAddReqDTO = UserAddReqDTO.builder().username(adminUsername).password(adminPassword).roleIds(initRoles).realName(adminRealName).remark("初始用户").build();
+        return userAddReqDTO;
+    }
+
+    private List<Long> createInitRoles() {
+        return null;
     }
 }

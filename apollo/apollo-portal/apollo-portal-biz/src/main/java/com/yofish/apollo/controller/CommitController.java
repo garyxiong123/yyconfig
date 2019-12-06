@@ -17,21 +17,22 @@ public class CommitController {
   private CommitService commitService;
 
   @Autowired
-  private PermissionValidator permissionValidator;
+  private PermissionValidator permissionValidator;*/
 
-  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/commits", method = RequestMethod.GET)
-  public List<Commit> find(@PathVariable String appId, @PathVariable String env,
-                           @PathVariable String clusterName, @PathVariable String namespaceName,
-                           @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-    if (permissionValidator.shouldHideConfigToCurrentUser(appId, env, namespaceName)) {
-      return Collections.emptyList();
+    @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/commits", method = RequestMethod.GET)
+    public List<Commit> find(@PathVariable String appId, @PathVariable String env,
+                             @PathVariable String clusterName, @PathVariable String namespaceName,
+                             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+//    if (permissionValidator.shouldHideConfigToCurrentUser(appId, env, namespaceName)) {
+//      return Collections.emptyList();
+//    }
+
+        RequestPrecondition.checkNumberPositive(size);
+        RequestPrecondition.checkNumberNotNegative(page);
+
+//    return commitService.find(appId, Env.valueOf(env), clusterName, namespaceName, page, size);
+        return null;
+
     }
-
-    RequestPrecondition.checkNumberPositive(size);
-    RequestPrecondition.checkNumberNotNegative(page);
-
-    return commitService.find(appId, Env.valueOf(env), clusterName, namespaceName, page, size);
-
-  }*/
 
 }

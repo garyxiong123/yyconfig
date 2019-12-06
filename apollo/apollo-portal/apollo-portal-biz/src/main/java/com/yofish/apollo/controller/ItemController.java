@@ -1,18 +1,7 @@
 package com.yofish.apollo.controller;
 
-import com.yofish.apollo.entity.model.NamespaceTextModel;
-import com.yofish.apollo.service.ItemService;
-import com.yofish.apollo.spi.UserInfoHolder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.yofish.apollo.model.model.NamespaceTextModel;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
-import static common.utils.RequestPrecondition.checkModel;
 
 
 @RestController

@@ -1,11 +1,6 @@
 package com.yofish.apollo.controller;
 
-import com.yofish.apollo.entity.vo.LockInfo;
-import framework.apollo.core.enums.Env;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import com.yofish.apollo.model.vo.LockInfo;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
