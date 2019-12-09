@@ -1,15 +1,18 @@
 package com.yofish.apollo.controller;
 
 import com.yofish.apollo.domain.Department;
+import com.yofish.apollo.model.DepartmentModel;
 import com.yofish.apollo.repository.DepartmentRepository;
 import com.youyu.common.api.Result;
 import com.youyu.common.utils.YyAssert;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -27,15 +30,17 @@ public class DepartmentController {
     private DepartmentRepository departmentRepository;
 
     @PostMapping
-    public Result<Department> create(String departmentName) {
-        Department byName = this.departmentRepository.findByName(departmentName);
+    @ApiOperation("创建部门")
+    public Result<Department> create(@RequestBody @Valid DepartmentModel model) {
+        Department byName = this.departmentRepository.findByName(model.getName());
         YyAssert.paramCheck(!ObjectUtils.isEmpty(byName), "部门名称不能重复");
-        Department department = Department.builder().name(departmentName).build();
+        Department department = this.modelToEntity(model);
         this.departmentRepository.save(department);
         return Result.ok(department);
     }
 
     @PutMapping("{departmentId:\\d+}")
+    @ApiOperation("修改部门名称")
     public Result<Department> update(@PathVariable Long departmentId, String departmentName) {
         YyAssert.paramCheck(StringUtils.isEmpty(departmentId), "departmentName 不能为空");
 
@@ -72,5 +77,9 @@ public class DepartmentController {
 
         this.departmentRepository.delete(department);
         return Result.ok();
+    }
+
+    private Department modelToEntity(DepartmentModel model) {
+        return Department.builder().name(model.getName()).code(model.getCode()).build();
     }
 }
