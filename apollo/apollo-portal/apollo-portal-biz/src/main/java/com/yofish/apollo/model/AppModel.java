@@ -18,7 +18,7 @@ public class AppModel {
     @NotBlank(message = "appCode cannot be blank")
     @Pattern(
             regexp = InputValidator.CLUSTER_NAMESPACE_VALIDATOR,
-            message = "Invalid AppId format: " + InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE
+            message = "Invalid appCode format: " + InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE
     )
     private String appCode;
 

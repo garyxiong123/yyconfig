@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 @Entity
 public class Department extends BaseEntity {
 
+    private String code;
 
     private String name;
 
@@ -26,8 +27,9 @@ public class Department extends BaseEntity {
     }
 
     @Builder
-    public Department(Long id, String createAuthor, LocalDateTime createTime, String updateAuthor, LocalDateTime updateTime, String name) {
+    public Department(Long id, String createAuthor, LocalDateTime createTime, String updateAuthor, LocalDateTime updateTime, String code, String name) {
         super(id, createAuthor, createTime, updateAuthor, updateTime);
+        this.code = code;
         this.name = name;
     }
 }
