@@ -10,6 +10,8 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * 部门管理
  *
@@ -54,6 +56,13 @@ public class DepartmentController {
         Department department = this.departmentRepository.findById(departmentId).orElse(null);
         YyAssert.paramCheck(ObjectUtils.isEmpty(department), "部门不存在或已删除");
         return Result.ok(department);
+    }
+
+
+    @GetMapping
+    public Result<List<Department>> selectAll() {
+        List<Department> departmentList = this.departmentRepository.findAll();
+        return Result.ok(departmentList);
     }
 
     @DeleteMapping("{departmentId:\\d+}")
