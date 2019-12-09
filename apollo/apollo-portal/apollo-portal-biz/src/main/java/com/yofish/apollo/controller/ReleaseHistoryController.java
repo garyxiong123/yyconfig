@@ -1,7 +1,7 @@
 package com.yofish.apollo.controller;
 
 
-import com.yofish.apollo.model.bo.ReleaseHistoryBO;
+//import com.yofish.apollo.model.bo.ReleaseHistoryBO;
 import framework.apollo.core.enums.Env;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +16,7 @@ public class ReleaseHistoryController {
 //    @Autowired
 //    private PermissionValidator permissionValidator;
 
-    @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/releases/histories",
+/*    @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/releases/histories",
             method = RequestMethod.GET)
     public List<ReleaseHistoryBO> findReleaseHistoriesByNamespace(@PathVariable String appId,
                                                                   @PathVariable String env,
@@ -32,6 +32,6 @@ public class ReleaseHistoryController {
 //        return releaseHistoryService.findNamespaceReleaseHistory(appId, Env.valueOf(env), clusterName, namespaceName, page, size);
 //    }
         return null;
-    }
+    }*/
 
 }

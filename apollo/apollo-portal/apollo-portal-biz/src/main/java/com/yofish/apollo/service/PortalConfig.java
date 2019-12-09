@@ -7,7 +7,7 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yofish.apollo.domain.ServerConfig;
-import com.yofish.apollo.model.vo.Organization;
+//import com.yofish.apollo.model.vo.Organization;
 import com.yofish.apollo.repository.ServerConfigRepository;
 import common.config.RefreshableConfig;
 import common.config.RefreshablePropertySource;
@@ -43,8 +43,8 @@ public class PortalConfig extends RefreshableConfig {
     private static final String LIST_SEPARATOR = ",";
 
     private Gson gson = new Gson();
-    private static final Type ORGANIZATION = new TypeToken<List<Organization>>() {
-    }.getType();
+//    private static final Type ORGANIZATION = new TypeToken<List<Organization>>() {
+//    }.getType();
 
 //  @Autowired
 //  private PortalDBPropertySource portalDBPropertySource;
@@ -218,11 +218,13 @@ public class PortalConfig extends RefreshableConfig {
         return getIntProperty("api.readTimeout", 10000);
     }
 
+/*
     public List<Organization> organizations() {
 
         String organizations = getValue("organizations");
         return organizations == null ? Collections.emptyList() : gson.fromJson(organizations, ORGANIZATION);
     }
+*/
 
     public String portalAddress() {
         return getValue("apollo.portal.address");

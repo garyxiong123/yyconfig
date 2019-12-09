@@ -1,8 +1,6 @@
 package com.yofish.apollo.controller;
 
 import com.yofish.apollo.domain.Release;
-import com.yofish.apollo.model.model.NamespaceReleaseModel;
-import com.yofish.apollo.model.vo.ReleaseCompareResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
@@ -13,7 +11,7 @@ import java.nio.file.AccessDeniedException;
  */
 public class ReleaseController {
 
-
+/*
     public Release createRelease(@PathVariable String appId,
                                  @PathVariable String env, @PathVariable String clusterName,
                                  @PathVariable String namespaceName, @RequestBody NamespaceReleaseModel namespaceReleaseModel) {
@@ -29,7 +27,7 @@ public class ReleaseController {
         return null;
 
 //        return releaseService.compare(Env.valueOf(env), baseReleaseId, toCompareReleaseId);
-    }
+    }*/
 
 
     @RequestMapping(path = "/envs/{env}/releases/{releaseId}/rollback", method = RequestMethod.PUT)
