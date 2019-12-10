@@ -45,4 +45,8 @@ public class App extends BaseEntity {
         this.appAdmins = appAdmins;
         this.appOwner = appOwner;
     }
+
+    public App(Long id) {
+        super(id);
+    }
 }

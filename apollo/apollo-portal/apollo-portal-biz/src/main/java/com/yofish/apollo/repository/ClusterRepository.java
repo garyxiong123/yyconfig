@@ -15,6 +15,6 @@ import org.springframework.stereotype.Component;
 public interface ClusterRepository extends JpaRepository<Cluster, Long> {
 
 
-
+    Cluster findClusterByAppAndEnvAndName(App app, String env, String name);
 
 }

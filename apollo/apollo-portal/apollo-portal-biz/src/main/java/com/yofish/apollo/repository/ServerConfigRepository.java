@@ -1,11 +1,8 @@
 package com.yofish.apollo.repository;
 
-import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.domain.ServerConfig;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 /**
  * @author WangSongJun

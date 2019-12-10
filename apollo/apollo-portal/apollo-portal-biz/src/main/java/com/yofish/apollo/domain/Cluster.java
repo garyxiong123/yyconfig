@@ -23,8 +23,7 @@ public class Cluster extends BaseEntity {
 
     private String name;
 
-//    @ManyToOne(cascade = CascadeType.ALL)
-    private Env env;
+    private String env;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private App app;

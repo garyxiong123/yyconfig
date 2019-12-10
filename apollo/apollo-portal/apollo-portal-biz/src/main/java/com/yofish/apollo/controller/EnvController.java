@@ -1,9 +1,9 @@
 package com.yofish.apollo.controller;
 
-import framework.apollo.core.enums.Env;
+import com.yofish.apollo.service.ServerConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -12,13 +12,12 @@ import java.util.List;
 @RequestMapping("/envs")
 public class EnvController {
 
-//  @Autowired
-//  private PortalSettings portalSettings;
+    @Autowired
+    private ServerConfigService serverConfigService;
 
-  @RequestMapping(value = "", method = RequestMethod.GET)
-  public List<Env> envs() {
-//    return portalSettings.getActiveEnvs();
-      return null;
-  }
+    @GetMapping
+    public List<String> envs() {
+        return this.serverConfigService.getActiveEnvs();
+    }
 
 }

@@ -1,55 +1,43 @@
 package com.yofish.apollo.controller;
 
+import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.Cluster;
-import com.yofish.apollo.spi.UserInfoHolder;
+import com.yofish.apollo.repository.ClusterRepository;
 import com.youyu.common.api.Result;
 import common.exception.BadRequestException;
 import common.utils.InputValidator;
-import common.utils.RequestPrecondition;
-import framework.apollo.core.enums.Env;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Objects;
 
 
 @RestController
 public class ClusterController {
 
-//    @Autowired
-//    private ClusterService clusterService;
+    @Autowired
+    private ClusterRepository clusterRepository;
 
-    //  @PreAuthorize(value = "@permissionValidator.hasCreateClusterPermission(#appId)")
-    @RequestMapping(value = "apps/{appId}/envs/{env}/clusters", method = RequestMethod.POST)
-    public Result<Cluster> createCluster(@PathVariable String appId, @PathVariable String env,
-                                        @RequestBody Cluster cluster) {
+    @PostMapping(value = "apps/{appId}/envs/{env:\\d+}/clusters/{clusterName}")
+    public Result<Cluster> createCluster(@PathVariable Long appId, @PathVariable String env, @PathVariable String clusterName) {
 
-//    checkModel(Objects.nonNull(cluster));
-//        RequestPrecondition.checkArgumentsNotEmpty(cluster.getAppId(), cluster.getName());
-//
-//        if (!InputValidator.isValidClusterNamespace(cluster.getName())) {
-//            throw new BadRequestException(String.format("Cluster格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
-//        }
-//
-//
-//        return clusterService.createCluster(Env.valueOf(env), cluster);
-        return null;
+        if (!InputValidator.isValidClusterNamespace(clusterName)) {
+            throw new BadRequestException(String.format("Cluster格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
+        }
+
+        Cluster cluster = Cluster.builder().app(new App(appId)).env(env).name(clusterName).build();
+        this.clusterRepository.save(cluster);
+        return Result.ok(cluster);
     }
 
-    //  @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
-    @RequestMapping(value = "apps/{appId}/envs/{env}/clusters/{clusterName:.+}", method = RequestMethod.DELETE)
-    public ResponseEntity<Void> deleteCluster(@PathVariable String appId, @PathVariable String env,
-                                              @PathVariable String clusterName) {
-//    clusterService.deleteCluster(Env.fromString(env), appId, clusterName);
-        return ResponseEntity.ok().build();
+    @DeleteMapping(value = "apps/{appId:\\d+}/envs/{env}/clusters/{clusterName:.+}")
+    public Result deleteCluster(@PathVariable Long appId, @PathVariable String env, @PathVariable String clusterName) {
+        this.clusterRepository.delete(Cluster.builder().app(new App(appId)).env(env).name(clusterName).build());
+        return Result.ok();
     }
 
-    @RequestMapping(value = "apps/{appId}/envs/{env}/clusters/{clusterName:.+}", method = RequestMethod.GET)
-    public Cluster loadCluster(@PathVariable("appId") String appId, @PathVariable String env, @PathVariable("clusterName") String clusterName) {
-
-//    return clusterService.loadCluster(appId, Env.fromString(env), clusterName);
-        return null;
+    @GetMapping(value = "apps/{appId:\\d+}/envs/{env}/clusters/{clusterName:.+}")
+    public Cluster loadCluster(@PathVariable("appId") Long appId, @PathVariable String env, @PathVariable("clusterName") String clusterName) {
+        Cluster cluster = this.clusterRepository.findClusterByAppAndEnvAndName(new App(appId), env, clusterName);
+        return cluster;
     }
 
 }
