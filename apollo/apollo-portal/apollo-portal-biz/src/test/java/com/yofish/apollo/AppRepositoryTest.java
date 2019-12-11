@@ -157,7 +157,7 @@ public class AppRepositoryTest {
 
     private Namespace createNamespace() {
         App app = createApp();
-        return Namespace.builder().app(app).name("application").build();
+        return Namespace.builder().appId(app.getId()).namespaceName("application").build();
     }
 
     private ClusterNamespace createClusterNamespace() {
@@ -170,7 +170,7 @@ public class AppRepositoryTest {
     private Cluster createCluster() {
         App app = createApp();
         Env env = Env.TEST;
-        return Cluster.builder().app(app).env(env).build();
+        return Cluster.builder().app(app).env(env.name()).build();
     }
 
     private Item createItem() {

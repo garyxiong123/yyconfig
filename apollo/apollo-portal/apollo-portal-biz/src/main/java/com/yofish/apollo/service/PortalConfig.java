@@ -9,6 +9,7 @@ import com.google.gson.reflect.TypeToken;
 import com.yofish.apollo.domain.ServerConfig;
 //import com.yofish.apollo.model.vo.Organization;
 import com.yofish.apollo.repository.ServerConfigRepository;
+import com.youyu.common.helper.YyRequestInfoHelper;
 import common.config.RefreshableConfig;
 import common.config.RefreshablePropertySource;
 import framework.apollo.core.ConfigConsts;
@@ -72,7 +73,7 @@ public class PortalConfig extends RefreshableConfig {
 
         Map<String, Object> newConfigs = Maps.newHashMap();
         //default cluster's configs
-        for (ServerConfig config : dbConfigs) {
+        /*for (ServerConfig config : dbConfigs) {
             if (Objects.equals(ConfigConsts.CLUSTER_NAME_DEFAULT, config.getCluster())) {
                 newConfigs.put(config.getKey(), config.getValue());
             }
@@ -95,7 +96,7 @@ public class PortalConfig extends RefreshableConfig {
                 }
             }
         }
-
+*/
         //put to environment
 //        for (Map.Entry<String, Object> config : newConfigs.entrySet()) {
 //            String key = config.getKey();

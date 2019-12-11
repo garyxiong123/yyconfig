@@ -1,4 +1,4 @@
-//package com.yofish.apollo.service;
+package com.yofish.apollo.service;
 //
 //import com.google.common.base.Strings;
 //import com.yofish.apollo.repository.ClusterRepository;
@@ -6,8 +6,20 @@
 //import common.utils.BeanUtils;
 //import framework.apollo.core.ConfigConsts;
 //import framework.apollo.core.enums.Env;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Service;
+
+import com.yofish.apollo.domain.App;
+import com.yofish.apollo.domain.Cluster;
+import com.yofish.apollo.repository.ClusterRepository;
+import common.exception.ServiceException;
+import framework.apollo.core.ConfigConsts;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
+
+import java.util.List;
+import java.util.Objects;
+
 //import org.springframework.transaction.annotation.Transactional;
 //import org.springframework.util.ObjectUtils;
 //
@@ -17,14 +29,14 @@
 //
 ////import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 //
-//@Service
-//public class ClusterService {
-//
-//
-//    @Autowired
-//    private ClusterRepository clusterRepository;
-//    @Autowired
-//    private AuditService auditService;
+@Service
+public class ClusterService {
+
+
+    @Autowired
+    private ClusterRepository clusterRepository;
+    @Autowired
+    private ServerConfigService serverConfigService;
 //    @Autowired
 //    private NamespaceService namespaceService;
 //
@@ -37,16 +49,13 @@
 //        return clusterRepository.findByAppIdAndEnv(appId, env.name());
 //    }
 //
-//
-//    public ClusterEntity createCluster(Env env, ClusterEntity cluster) {
-////    if (!clusterAPI.isClusterUnique(cluster.getAppId(), env, cluster.getName())) {
-////      throw new BadRequestException(String.format("cluster %s already exists.", cluster.getName()));
-////    }
-//        cluster.setEnv(env.name());
-//        return clusterRepository.save(cluster);
-//    }
-//
-//    public void deleteCluster(Env env, String appId, String clusterName) {
+
+    public Cluster createCluster(String env, Cluster cluster) {
+        cluster.setEnv(env);
+        return clusterRepository.save(cluster);
+    }
+
+    //    public void deleteCluster(Env env, String appId, String clusterName) {
 ////    clusterAPI.delete(env, appId, clusterName, userInfoHolder.getUser().getUserId());
 //        ClusterEntity clusterEntity = new ClusterEntity();
 //        clusterEntity.setEnv(env.name());
@@ -61,12 +70,12 @@
 //    }
 //
 //
-//    public boolean isClusterNameUnique(String appId, String clusterName) {
-//        Objects.requireNonNull(appId, "AppId must not be null");
-//        Objects.requireNonNull(clusterName, "ClusterName must not be null");
-//        return ObjectUtils.isEmpty((clusterRepository.findByAppIdAndName(appId, clusterName)));
-//
-//    }
+    public boolean isClusterNameUnique(Long appId, String clusterName) {
+        Objects.requireNonNull(appId, "AppId must not be null");
+        Objects.requireNonNull(clusterName, "ClusterName must not be null");
+        return ObjectUtils.isEmpty((clusterRepository.findByAppAndName(new App(appId), clusterName)));
+
+    }
 //
 //    public ClusterEntity findOne(String appId, String name, String env) {
 //        //TODO fix env
@@ -147,29 +156,26 @@
 //
 //        return managedClusterEntity;
 //    }
-//
-//    @Transactional
-//    public void createDefaultCluster(String appId, String createBy) {
-//        if (!isClusterNameUnique(appId, ConfigConsts.CLUSTER_NAME_DEFAULT)) {
-//            throw new ServiceException("clusterEntity not unique");
-//        }
-//        List<Env> envs = portalSettings.getActiveEnvs();
-//        //每次遍历，都要new，防止覆盖
-//        envs.forEach((env -> {
-//                    ClusterEntity clusterEntity = new ClusterEntity();
-//                    clusterEntity.setName(ConfigConsts.CLUSTER_NAME_DEFAULT);
-//                    clusterEntity.setAppId(appId);
-//                    clusterEntity.setDataChangeCreatedBy(createBy);
-//                    clusterEntity.setDataChangeLastModifiedBy(createBy);
-//                    clusterEntity.setEnv(env.name());
-//                    clusterRepository.save(clusterEntity);
-//                    auditService.audit(ClusterEntity.class.getSimpleName(), clusterEntity.getId(), AuditEntity.OP.INSERT, createBy);
-//                })
-//
-//        );
-//
-//    }
-//
+
+    @Transactional
+    public void createDefaultCluster(long appId) {
+        if (!isClusterNameUnique(appId, ConfigConsts.CLUSTER_NAME_DEFAULT)) {
+            throw new ServiceException("clusterEntity not unique");
+        }
+        List<String> envs = serverConfigService.getActiveEnvs();
+        //每次遍历，都要new，防止覆盖
+        envs.forEach((env -> {
+                    Cluster cluster = new Cluster();
+                    cluster.setName(ConfigConsts.CLUSTER_NAME_DEFAULT);
+                    cluster.setApp(new App(appId));
+                    cluster.setEnv(env);
+                    clusterRepository.save(cluster);
+                })
+
+        );
+
+    }
+
 //    public List<ClusterEntity> findChildClusters(String appId, String parentClusterName, String env) {
 //        //TODO fix
 //        ClusterEntity parentClusterEntity = findOne(appId, parentClusterName, env);
@@ -194,4 +200,4 @@
 //    }
 //
 //
-//}
+}

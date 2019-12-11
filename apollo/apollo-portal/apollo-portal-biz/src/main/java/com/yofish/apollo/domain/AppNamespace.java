@@ -1,10 +1,9 @@
 package com.yofish.apollo.domain;
 
+import com.yofish.apollo.enums.NamespaceType;
 import com.yofish.gary.dao.entity.BaseEntity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import framework.apollo.core.enums.ConfigFileFormat;
+import lombok.*;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -17,6 +16,7 @@ import javax.persistence.ManyToOne;
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AppNamespace extends BaseEntity {
@@ -26,9 +26,9 @@ public class AppNamespace extends BaseEntity {
     @ManyToOne(cascade = {CascadeType.DETACH,CascadeType.REMOVE})
     private App app;
 
-    private String format;
+    private ConfigFileFormat format;
 
-    private boolean isPublic = false;
+    private NamespaceType type;
 
     private String comment;
 }
