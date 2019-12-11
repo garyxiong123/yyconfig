@@ -1,23 +1,28 @@
 package com.yofish.apollo.domain;
 
-import com.yofish.apollo.dto.CreateItemReq;
-import com.yofish.apollo.dto.UpdateItemReq;
+import com.google.common.base.MoreObjects;
 import com.yofish.gary.dao.entity.BaseEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
- * @Author: xiongchengwei
- * @Date: 2019/11/12 上午10:51
+ * @author Jason Song(song_s@ctrip.com)
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Setter
-@Getter
+@Data
 @Entity
 public class Instance extends BaseEntity {
 
-        private String ip;
+    private AppNamespace appNamespace;
+
+    @Column(name = "DataCenter", nullable = false)
+    private String dataCenter;
+
+    @Column(name = "Ip", nullable = false)
+    private String ip;
+
+
 }

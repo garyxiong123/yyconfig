@@ -17,6 +17,12 @@
             <version>1.0.0-SNAPSHOT</version>
             <groupId>com.yofish.gary</groupId>
         </dependency>
+
+        <dependency>
+            <artifactId>apollo-portal-biz</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <groupId>com.yofish.gary</groupId>
+        </dependency>
     </dependencies>
 
 </project>
