@@ -27,4 +27,6 @@ public class Cluster extends BaseEntity {
 
     @ManyToOne(cascade = CascadeType.ALL)
     private App app;
+
+    private Long parentClusterId;
 }

@@ -20,10 +20,13 @@ import javax.persistence.*;
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 30)
 public class Namespace extends BaseEntity {
 
-    private String name;
+    private Long appId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    private App app;
+    private String env;
+
+    private String clusterName;
+
+    private String namespaceName;
 
 
 }
