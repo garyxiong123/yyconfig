@@ -23,6 +23,6 @@ public interface AppNamespaceRepository extends JpaRepository<AppNamespace, Long
     List<AppNamespace> findByType(NamespaceType type);
 
 
-    List<AppNamespace> findByAppId(String appId);
+    List<AppNamespace> findByAppId(Long appId);
 
 }

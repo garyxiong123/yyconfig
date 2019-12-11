@@ -1,7 +1,6 @@
 package com.yofish.apollo.service;
 
 
-import com.yofish.apollo.constant.TracerEventType;
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.Department;
 import com.yofish.apollo.repository.AppRepository;
@@ -12,7 +11,7 @@ import com.youyu.common.api.PageData;
 import com.youyu.common.helper.YyRequestInfoHelper;
 import common.exception.BadRequestException;
 import common.utils.PageDataAdapter;
-import framework.apollo.tracer.Tracer;
+import framework.apollo.core.ConfigConsts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +28,9 @@ public class AppService {
     @Autowired
     private AppNamespaceService appNamespaceService;
     @Autowired
-    private RoleInitializationService roleInitializationService;
+    private NamespaceService namespaceService;
+    @Autowired
+    private ClusterService clusterService;
     @Autowired
     private DepartmentRepository departmentRepository;
 
@@ -61,10 +62,13 @@ public class AppService {
         App createdApp = appRepository.save(app);
 
         appNamespaceService.createDefaultAppNamespace(createdApp.getId());
-        // TODO: 2019-12-02 还要继续写
-        roleInitializationService.initAppRoles(createdApp);
 
-        Tracer.logEvent(TracerEventType.CREATE_APP, appCode);
+        clusterService.createDefaultCluster(createdApp.getId());
+
+        namespaceService.createNamespaceForAppNamespaceInAllCluster(createdApp.getId(), ConfigConsts.NAMESPACE_APPLICATION);
+
+        // TODO: 2019-12-02 还要继续写
+//        roleInitializationService.initAppRoles(createdApp);
 
         return createdApp;
     }

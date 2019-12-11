@@ -4,12 +4,9 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppNamespace;
-import com.yofish.apollo.domain.Cluster;
-import com.yofish.apollo.domain.Namespace;
 import com.yofish.apollo.enums.NamespaceType;
 import com.yofish.apollo.repository.AppNamespaceRepository;
 import com.yofish.apollo.repository.AppRepository;
-import com.yofish.apollo.repository.ClusterRepository;
 import com.youyu.common.helper.YyRequestInfoHelper;
 import common.exception.BadRequestException;
 import framework.apollo.core.ConfigConsts;
@@ -36,8 +33,6 @@ public class AppNamespaceService {
     private AppNamespaceRepository appNamespaceRepository;
     @Autowired
     private AppRepository appRepository;
-    @Autowired
-    private ClusterRepository clusterRepository;
     @Autowired
     private NamespaceService namespaceService;
 
@@ -66,7 +61,7 @@ public class AppNamespaceService {
         return appNamespaceRepository.findByAppIdAndName(appId, namespaceName);
     }
 
-    public List<AppNamespace> findByAppId(String appId) {
+    public List<AppNamespace> findByAppId(Long appId) {
         return appNamespaceRepository.findByAppId(appId);
     }
 
@@ -131,28 +126,9 @@ public class AppNamespaceService {
 
         AppNamespace createdAppNamespace = appNamespaceRepository.save(appNamespace);
 
-        createNamespaceForAppNamespaceInAllCluster(appNamespace.getApp().getId(), appNamespace.getName());
+        namespaceService.createNamespaceForAppNamespaceInAllCluster(appNamespace.getApp().getId(), appNamespace.getName());
 
         return createdAppNamespace;
-    }
-
-    public void createNamespaceForAppNamespaceInAllCluster(Long appId, String namespaceName) {
-        List<Cluster> clusters = this.clusterRepository.findByAppAndParentClusterId(new App(appId), 0L);
-
-        for (Cluster cluster : clusters) {
-
-            // in case there is some dirty data, e.g. public namespace deleted in other app and now created in this app
-            if (!namespaceService.isNamespaceUnique(appId, cluster.getName(), namespaceName)) {
-                continue;
-            }
-
-            Namespace namespace = new Namespace();
-            namespace.setClusterName(cluster.getName());
-            namespace.setAppId(appId);
-            namespace.setNamespaceName(namespaceName);
-
-            namespaceService.save(namespace);
-        }
     }
 
     private void checkAppNamespaceGlobalUniqueness(AppNamespace appNamespace) {

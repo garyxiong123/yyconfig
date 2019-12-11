@@ -14,5 +14,5 @@ import org.springframework.stereotype.Component;
 public interface NamespaceRepository extends JpaRepository<Namespace, Long> {
 
 
-    Namespace findByAppIdAndClusterNameAndNamespaceName(Long appId, String clusterName, String namespaceName);
+    Namespace findByAppIdAAndEnvAndClusterNameAndNamespaceName(Long appId, String env, String clusterName, String namespaceName);
 }

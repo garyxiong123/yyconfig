@@ -16,6 +16,7 @@ import java.util.List;
 @Component
 public interface ClusterRepository extends JpaRepository<Cluster, Long> {
 
+    Cluster findByAppAndName(App app, String name);
 
     Cluster findClusterByAppAndEnvAndName(App app, String env, String name);
 

@@ -1,6 +1,10 @@
 package com.yofish.apollo.service;
 
+import com.yofish.apollo.domain.App;
+import com.yofish.apollo.domain.AppNamespace;
+import com.yofish.apollo.domain.Cluster;
 import com.yofish.apollo.domain.Namespace;
+import com.yofish.apollo.repository.ClusterRepository;
 import com.yofish.apollo.repository.NamespaceRepository;
 import common.dto.NamespaceDTO;
 import common.exception.BadRequestException;
@@ -11,6 +15,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -21,6 +26,12 @@ import java.util.Objects;
 public class NamespaceService {
     @Autowired
     private NamespaceRepository namespaceRepository;
+    @Autowired
+    private AppNamespaceService appNamespaceService;
+    @Autowired
+    private ClusterRepository clusterRepository;
+    @Autowired
+    private ServerConfigService serverConfigService;
 
 
     public NamespaceDTO createNamespace(String env, NamespaceDTO dto) {
@@ -35,17 +46,48 @@ public class NamespaceService {
         return BeanUtils.transform(NamespaceDTO.class, entity);
     }
 
-    public boolean isNamespaceUnique(Long appId, String cluster, String namespace) {
+    public boolean isNamespaceUnique(Long appId, String env, String cluster, String namespace) {
         Objects.requireNonNull(appId, "AppId must not be null");
         Objects.requireNonNull(cluster, "Cluster must not be null");
         Objects.requireNonNull(namespace, "Namespace must not be null");
-        return Objects.isNull(namespaceRepository.findByAppIdAndClusterNameAndNamespaceName(appId, cluster, namespace));
+        return Objects.isNull(namespaceRepository.findByAppIdAAndEnvAndClusterNameAndNamespaceName(appId, env, cluster, namespace));
     }
 
+    @Transactional
+    public void instanceOfAppNamespaces(Long appId, String clusterName) {
 
+        List<AppNamespace> appNamespaces = appNamespaceService.findByAppId(appId);
+
+        for (AppNamespace appNamespace : appNamespaces) {
+            Namespace ns = new Namespace();
+            ns.setAppId(appId);
+            ns.setClusterName(clusterName);
+            ns.setNamespaceName(appNamespace.getName());
+            namespaceRepository.save(ns);
+        }
+
+    }
+
+    public void createNamespaceForAppNamespaceInAllCluster(Long appId, String namespaceName) {
+        List<Cluster> clusters = this.clusterRepository.findByAppAndParentClusterId(new App(appId), 0L);
+
+        List<String> activeEnvs = this.serverConfigService.getActiveEnvs();
+        for (String env : activeEnvs) {
+            for (Cluster cluster : clusters) {
+
+                // in case there is some dirty data, e.g. public namespace deleted in other app and now created in this app
+                if (!this.isNamespaceUnique(appId, env, cluster.getName(), namespaceName)) {
+                    continue;
+                }
+
+                Namespace namespace = new Namespace(appId,env,cluster.getName(),namespaceName);
+                this.save(namespace);
+            }
+        }
+    }
     @Transactional
     public Namespace save(Namespace entity) {
-        if (!isNamespaceUnique(entity.getAppId(), entity.getClusterName(), entity.getNamespaceName())) {
+        if (!isNamespaceUnique(entity.getAppId(), entity.getEnv(), entity.getClusterName(), entity.getNamespaceName())) {
             throw new ServiceException("namespace not unique");
         }
         //protection
