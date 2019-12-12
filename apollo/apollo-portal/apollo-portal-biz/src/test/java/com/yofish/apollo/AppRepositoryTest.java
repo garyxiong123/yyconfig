@@ -29,9 +29,9 @@ public class AppRepositoryTest {
     @Autowired
     private NamespaceRepository namespaceRepository;
     @Autowired
-    private ClusterRepository clusterRepository;
+    private AppEnvClusterRepository appEnvClusterRepository;
     @Autowired
-    private ClusterNamespaceRepository clusterNamespaceRepository;
+    private AppEnvClusterNamespaceRepository appEnvClusterNamespaceRepository;
     @Autowired
     private ItemRepository itemRepository;
     @Autowired
@@ -85,14 +85,14 @@ public class AppRepositoryTest {
 
     @Test
     public void addCluster() {
-        Cluster cluster = createCluster();
-        clusterRepository.save(cluster);
+        AppEnvCluster appEnvCluster = createCluster();
+        appEnvClusterRepository.save(appEnvCluster);
     }
 
     @Test
     public void addClusterNamespace() {
-        ClusterNamespace clusterNamespace = createClusterNamespace();
-        clusterNamespaceRepository.save(clusterNamespace);
+        AppEnvClusterNamespace appEnvClusterNamespace = createClusterNamespace();
+        appEnvClusterNamespaceRepository.save(appEnvClusterNamespace);
     }
 
     @Test
@@ -160,22 +160,22 @@ public class AppRepositoryTest {
         return Namespace.builder().appId(app.getId()).namespaceName("application").build();
     }
 
-    private ClusterNamespace createClusterNamespace() {
-        Cluster cluster = createCluster();
+    private AppEnvClusterNamespace createClusterNamespace() {
+        AppEnvCluster appEnvCluster = createCluster();
         Namespace namespace = createNamespace();
-        return ClusterNamespace.builder().name("default").cluster(cluster).namespace(namespace).build();
+        return AppEnvClusterNamespace.builder().name("default").appEnvCluster(appEnvCluster).namespace(namespace).build();
     }
 
 
-    private Cluster createCluster() {
+    private AppEnvCluster createCluster() {
         App app = createApp();
         Env env = Env.TEST;
-        return Cluster.builder().app(app).env(env.name()).build();
+        return AppEnvCluster.builder().app(app).env(env.name()).build();
     }
 
     private Item createItem() {
-        ClusterNamespace clusterNamespace = createClusterNamespace();
-        return Item.builder().key("kafka.ur.").clusterNamespace(clusterNamespace).comment("kafka地址").value("www.abc.com").build();
+        AppEnvClusterNamespace appEnvClusterNamespace = createClusterNamespace();
+        return Item.builder().key("kafka.ur.").appEnvClusterNamespace(appEnvClusterNamespace).comment("kafka地址").value("www.abc.com").build();
     }
 
     private User createUser() {
