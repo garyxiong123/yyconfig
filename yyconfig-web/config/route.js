@@ -26,7 +26,17 @@ const routes = [
           {
             path: '/project',
             name: 'project',
-            component: './Project',
+            component: './project',
+          },
+          {
+            path: '/project-create',
+            name: 'projectCreate',
+            component: './project/create/index',
+          },
+          {
+            path: '/project-details',
+            name: 'projectDetails',
+            component: './project/details/index',
           },
           {
             path: '/auth',

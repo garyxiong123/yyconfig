@@ -51,4 +51,6 @@ export default {
   'menu.project': '项目',
   'menu.auth': '权限',
   'menu.system': '系统',
+  'menu.projectCreate': '新建项目',
+  'menu.projectDetails': '项目详情',
 };
