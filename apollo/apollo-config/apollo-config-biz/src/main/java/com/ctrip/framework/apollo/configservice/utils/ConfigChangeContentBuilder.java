@@ -1,9 +1,9 @@
 package com.ctrip.framework.apollo.configservice.utils;
 
-import com.ctrip.framework.apollo.biz.entity.Item;
-import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.yofish.apollo.domain.Item;
+import framework.apollo.core.utils.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import java.util.Date;
@@ -50,17 +50,17 @@ public class ConfigChangeContentBuilder {
     //因为事务第一段提交并没有更新时间,所以build时统一更新
     Date now = new Date();
 
-    for (Item item : createItems) {
-      item.setDataChangeLastModifiedTime(now);
-    }
-
-    for (ItemPair item : updateItems) {
-      item.newItem.setDataChangeLastModifiedTime(now);
-    }
-
-    for (Item item : deleteItems) {
-      item.setDataChangeLastModifiedTime(now);
-    }
+//    for (Item item : createItems) {
+//      item.setDataChangeLastModifiedTime(now);
+//    }
+//
+//    for (ItemPair item : updateItems) {
+//      item.newItem.setDataChangeLastModifiedTime(now);
+//    }
+//
+//    for (Item item : deleteItems) {
+//      item.setDataChangeLastModifiedTime(now);
+//    }
     return gson.toJson(this);
   }
 

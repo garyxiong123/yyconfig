@@ -3,6 +3,7 @@ package com.ctrip.framework.apollo.configservice.controller;
 import com.ctrip.framework.apollo.configservice.service.ReleaseMessageServiceWithCache;
 import com.ctrip.framework.apollo.configservice.util.NamespaceUtil;
 import com.ctrip.framework.apollo.configservice.util.WatchKeysUtil;
+import com.ctrip.framework.apollo.configservice.utils.EntityManagerUtil;
 import com.ctrip.framework.apollo.configservice.wrapper.DeferredResultWrapper;
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
@@ -13,6 +14,7 @@ import com.google.gson.reflect.TypeToken;
 import com.yofish.apollo.domain.ReleaseMessage;
 import com.yofish.apollo.message.ReleaseMessageListener;
 import com.yofish.apollo.message.Topics;
+import com.yofish.apollo.service.PortalConfig;
 import common.exception.BadRequestException;
 import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.dto.ApolloConfigNotification;
@@ -70,7 +72,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
   private Gson gson;
 
   @Autowired
-  private BizConfig bizConfig;
+  private PortalConfig bizConfig;
 
   public NotificationControllerV2() {
     largeNotificationBatchExecutorService = Executors.newSingleThreadExecutor(ApolloThreadFactory.create
@@ -220,10 +222,11 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
 
   @Override
   public void handleMessage(ReleaseMessage message, String channel) {
-    logger.info("message received - channel: {}, message: {}", channel, message);
 
     String content = message.getMessage();
-    Tracer.logEvent("Apollo.LongPoll.Messages", content);
+
+    handleMessageLog(message, channel, content);
+
     if (!Topics.APOLLO_RELEASE_TOPIC.equals(channel) || Strings.isNullOrEmpty(content)) {
       return;
     }
@@ -271,6 +274,12 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
       result.setResult(configNotification);
     }
     logger.debug("Notification completed");
+  }
+
+  private void handleMessageLog(ReleaseMessage message, String channel, String content) {
+    logger.info("message received - channel: {}, message: {}", channel, message);
+
+    Tracer.logEvent("Apollo.LongPoll.Messages", content);
   }
 
   private static final Function<String, String> retrieveNamespaceFromReleaseMessage =

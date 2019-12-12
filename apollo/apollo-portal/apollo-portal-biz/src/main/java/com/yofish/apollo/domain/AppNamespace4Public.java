@@ -14,6 +14,6 @@ import javax.persistence.Entity;
 @NoArgsConstructor
 @Data
 @Entity
-@DiscriminatorValue("Namespace4Public")
-public class Namespace4Public extends Namespace {
+@DiscriminatorValue("Namespace4Protect")
+public class AppNamespace4Public extends Namespace {
 }

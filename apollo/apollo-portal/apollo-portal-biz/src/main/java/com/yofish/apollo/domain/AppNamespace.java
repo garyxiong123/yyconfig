@@ -5,9 +5,7 @@ import com.yofish.gary.dao.entity.BaseEntity;
 import framework.apollo.core.enums.ConfigFileFormat;
 import lombok.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 /**
  * @author WangSongJun
@@ -19,6 +17,8 @@ import javax.persistence.ManyToOne;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 30)
 public class AppNamespace extends BaseEntity {
 
     private String name;

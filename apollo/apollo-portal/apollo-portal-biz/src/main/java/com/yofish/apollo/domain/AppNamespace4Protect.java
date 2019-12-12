@@ -1,6 +1,5 @@
 package com.yofish.apollo.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +14,6 @@ import javax.persistence.Entity;
 @NoArgsConstructor
 @Data
 @Entity
-@DiscriminatorValue("Namespace4Private")
-public class Namespace4Private extends Namespace {
+@DiscriminatorValue("Namespace4Public")
+public class AppNamespace4Protect extends Namespace {
 }

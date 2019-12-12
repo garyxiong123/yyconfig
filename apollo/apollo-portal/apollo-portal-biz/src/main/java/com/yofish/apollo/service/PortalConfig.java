@@ -359,4 +359,16 @@ public class PortalConfig extends RefreshableConfig {
     public TimeUnit releaseMessageCacheScanIntervalTimeUnit() {
         return null;
     }
+
+    public int grayReleaseRuleScanInterval() {
+        return 0;
+    }
+
+    public int releaseMessageNotificationBatch() {
+        return 0;
+    }
+
+    public long releaseMessageNotificationBatchIntervalInMilli() {
+        return 0;
+    }
 }

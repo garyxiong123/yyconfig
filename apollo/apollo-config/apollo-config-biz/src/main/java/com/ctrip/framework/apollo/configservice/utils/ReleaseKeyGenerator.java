@@ -1,8 +1,8 @@
 package com.ctrip.framework.apollo.configservice.utils;
 
 
-import com.ctrip.framework.apollo.biz.entity.Namespace;
-import com.ctrip.framework.apollo.common.utils.UniqueKeyGenerator;
+import com.yofish.apollo.domain.Namespace;
+import common.utils.UniqueKeyGenerator;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

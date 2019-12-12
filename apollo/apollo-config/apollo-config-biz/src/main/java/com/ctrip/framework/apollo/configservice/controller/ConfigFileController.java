@@ -12,6 +12,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.gson.Gson;
 import com.yofish.apollo.domain.ReleaseMessage;
+import com.yofish.apollo.grayReleaseRule.GrayReleaseRulesHolder;
 import com.yofish.apollo.message.ReleaseMessageListener;
 import com.yofish.apollo.message.Topics;
 import framework.apollo.core.ConfigConsts;

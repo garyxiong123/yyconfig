@@ -37,7 +37,7 @@ import java.util.Set;
 @Entity
 @Builder
 @Table(name = "permission")
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 30)
 public class Permission {
 

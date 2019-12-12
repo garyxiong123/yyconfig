@@ -4,9 +4,12 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.*;
+import com.yofish.apollo.domain.GrayReleaseRule;
 import com.yofish.apollo.domain.ReleaseMessage;
 import com.yofish.apollo.message.ReleaseMessageListener;
 import com.yofish.apollo.message.Topics;
+import com.yofish.apollo.repository.GrayReleaseRuleRepository;
+import com.yofish.apollo.service.PortalConfig;
 import common.constants.NamespaceBranchStatus;
 import common.dto.GrayReleaseRuleItemDTO;
 import common.utils.GrayReleaseRuleItemTransformer;
@@ -39,7 +42,7 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
   @Autowired
   private GrayReleaseRuleRepository grayReleaseRuleRepository;
   @Autowired
-  private BizConfig bizConfig;
+  private PortalConfig bizConfig;
 
   private int databaseScanInterval;
   private ScheduledExecutorService executorService;
@@ -161,7 +164,7 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
       return;
     }
     for (GrayReleaseRule grayReleaseRule : grayReleaseRules) {
-      if (grayReleaseRule.getReleaseId() == null || grayReleaseRule.getReleaseId() == 0) {
+      if (grayReleaseRule.getRelease() == null || grayReleaseRule.getRelease() .getId() == 0) {
         //filter rules with no release id, i.e. never released
         continue;
       }

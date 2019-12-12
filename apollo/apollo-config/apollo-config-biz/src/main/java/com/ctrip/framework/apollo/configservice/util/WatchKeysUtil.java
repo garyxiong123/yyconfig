@@ -1,14 +1,14 @@
 package com.ctrip.framework.apollo.configservice.util;
 
-import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.configservice.service.AppNamespaceServiceWithCache;
-import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import com.yofish.apollo.domain.AppNamespace;
+import framework.apollo.core.ConfigConsts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -71,11 +71,11 @@ public class WatchKeysUtil {
 
     for (AppNamespace appNamespace : appNamespaces) {
       //check whether the namespace's appId equals to current one
-      if (Objects.equals(applicationId, appNamespace.getAppId())) {
+      if (Objects.equals(applicationId, appNamespace.getApp().getId())) {
         continue;
       }
 
-      String publicConfigAppId = appNamespace.getAppId();
+      String publicConfigAppId = String.valueOf(appNamespace.getApp().getId());
 
       watchedKeysMap.putAll(appNamespace.getName(),
           assembleWatchKeys(publicConfigAppId, clusterName, appNamespace.getName(), dataCenter));

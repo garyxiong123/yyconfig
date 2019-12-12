@@ -1,6 +1,7 @@
 package com.yofish.apollo.grayReleaseRule;
 
-import com.ctrip.framework.apollo.common.dto.GrayReleaseRuleItemDTO;
+
+import common.dto.GrayReleaseRuleItemDTO;
 
 import java.util.Set;
 
