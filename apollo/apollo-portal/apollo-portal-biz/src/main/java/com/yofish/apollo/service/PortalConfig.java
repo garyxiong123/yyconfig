@@ -34,15 +34,11 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public class PortalConfig extends RefreshableConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(PortalConfig.class);
-
+    private static final String LIST_SEPARATOR = ",";
     @Autowired
     private ServerConfigRepository serverConfigRepository;
-
     @Autowired
     private ConfigurableEnvironment environment;
-
-    private static final String LIST_SEPARATOR = ",";
-
     private Gson gson = new Gson();
 //    private static final Type ORGANIZATION = new TypeToken<List<Organization>>() {
 //    }.getType();
@@ -50,18 +46,18 @@ public class PortalConfig extends RefreshableConfig {
 //  @Autowired
 //  private PortalDBPropertySource portalDBPropertySource;
 
-    @Override
-    public List<RefreshablePropertySource> getRefreshablePropertySources() {
-        return Collections.singletonList(null);
-    }
-
-
     public PortalConfig(String name, Map<String, Object> source) {
         super(name, source);
     }
 
+
     public PortalConfig() {
         super("DBConfig", Maps.newConcurrentMap());
+    }
+
+    @Override
+    public List<RefreshablePropertySource> getRefreshablePropertySources() {
+        return Collections.singletonList(null);
     }
 
     String getCurrentDataCenter() {
