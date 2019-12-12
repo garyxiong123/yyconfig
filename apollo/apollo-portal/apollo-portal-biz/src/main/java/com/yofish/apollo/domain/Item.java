@@ -20,7 +20,7 @@ import javax.persistence.*;
 public class Item extends BaseEntity {
 
     @ManyToOne(cascade = CascadeType.ALL)
-    private ClusterNamespace clusterNamespace;
+    private AppEnvClusterNamespace appEnvClusterNamespace;
 
     @Column(name = "keynumber", nullable = false)
     private String key;

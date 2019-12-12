@@ -18,7 +18,7 @@ import javax.persistence.ManyToOne;
 @Setter
 @Getter
 @Entity
-public class ClusterNamespace extends BaseEntity {
+public class AppEnvClusterNamespace extends BaseEntity {
 
     private String name;
 
