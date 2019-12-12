@@ -13,8 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Setter
-@Getter
+@Data
 @Entity
 @Table(name="releases")
 public class Release extends BaseEntity {
