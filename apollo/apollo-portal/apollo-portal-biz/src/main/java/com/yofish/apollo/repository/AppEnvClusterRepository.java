@@ -14,7 +14,7 @@ import java.util.List;
  * @since 1.0
  */
 @Component
-public interface ClusterRepository extends JpaRepository<AppEnvCluster, Long> {
+public interface AppEnvClusterRepository extends JpaRepository<AppEnvCluster, Long> {
 
     AppEnvCluster findByAppAndName(App app, String name);
 

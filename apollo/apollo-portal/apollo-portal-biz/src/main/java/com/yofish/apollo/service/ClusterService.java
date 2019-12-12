@@ -9,7 +9,7 @@ package com.yofish.apollo.service;
 
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppEnvCluster;
-import com.yofish.apollo.repository.ClusterRepository;
+import com.yofish.apollo.repository.AppEnvClusterRepository;
 import common.exception.ServiceException;
 import framework.apollo.core.ConfigConsts;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class ClusterService {
 
 
     @Autowired
-    private ClusterRepository clusterRepository;
+    private AppEnvClusterRepository appEnvClusterRepository;
     @Autowired
     private ServerConfigService serverConfigService;
 //    @Autowired
@@ -52,7 +52,7 @@ public class ClusterService {
 
     public AppEnvCluster createCluster(String env, AppEnvCluster appEnvCluster) {
         appEnvCluster.setEnv(env);
-        return clusterRepository.save(appEnvCluster);
+        return appEnvClusterRepository.save(appEnvCluster);
     }
 
     //    public void deleteCluster(Env env, String appId, String clusterName) {
@@ -73,7 +73,7 @@ public class ClusterService {
     public boolean isClusterNameUnique(Long appId, String clusterName) {
         Objects.requireNonNull(appId, "AppId must not be null");
         Objects.requireNonNull(clusterName, "ClusterName must not be null");
-        return ObjectUtils.isEmpty((clusterRepository.findByAppAndName(new App(appId), clusterName)));
+        return ObjectUtils.isEmpty((appEnvClusterRepository.findByAppAndName(new App(appId), clusterName)));
 
     }
 //
@@ -169,7 +169,7 @@ public class ClusterService {
                     appEnvCluster.setName(ConfigConsts.CLUSTER_NAME_DEFAULT);
                     appEnvCluster.setApp(new App(appId));
                     appEnvCluster.setEnv(env);
-                    clusterRepository.save(appEnvCluster);
+                    appEnvClusterRepository.save(appEnvCluster);
                 })
 
         );

@@ -4,7 +4,7 @@ import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppEnvCluster;
 import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.domain.Namespace;
-import com.yofish.apollo.repository.ClusterRepository;
+import com.yofish.apollo.repository.AppEnvClusterRepository;
 import com.yofish.apollo.repository.NamespaceRepository;
 import common.dto.NamespaceDTO;
 import common.exception.BadRequestException;
@@ -29,7 +29,7 @@ public class NamespaceService {
     @Autowired
     private AppNamespaceService appNamespaceService;
     @Autowired
-    private ClusterRepository clusterRepository;
+    private AppEnvClusterRepository appEnvClusterRepository;
     @Autowired
     private ServerConfigService serverConfigService;
 
@@ -69,7 +69,7 @@ public class NamespaceService {
     }
 
     public void createNamespaceForAppNamespaceInAllCluster(Long appId, String namespaceName) {
-        List<AppEnvCluster> appEnvClusters = this.clusterRepository.findByAppAndParentClusterId(new App(appId), 0L);
+        List<AppEnvCluster> appEnvClusters = this.appEnvClusterRepository.findByAppAndParentClusterId(new App(appId), 0L);
 
         List<String> activeEnvs = this.serverConfigService.getActiveEnvs();
         for (String env : activeEnvs) {

@@ -29,7 +29,7 @@ public class AppRepositoryTest {
     @Autowired
     private NamespaceRepository namespaceRepository;
     @Autowired
-    private ClusterRepository clusterRepository;
+    private AppEnvClusterRepository appEnvClusterRepository;
     @Autowired
     private ClusterNamespaceRepository clusterNamespaceRepository;
     @Autowired
@@ -86,7 +86,7 @@ public class AppRepositoryTest {
     @Test
     public void addCluster() {
         AppEnvCluster appEnvCluster = createCluster();
-        clusterRepository.save(appEnvCluster);
+        appEnvClusterRepository.save(appEnvCluster);
     }
 
     @Test
