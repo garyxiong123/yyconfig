@@ -30,7 +30,7 @@ public class AppService {
     @Autowired
     private NamespaceService namespaceService;
     @Autowired
-    private ClusterService clusterService;
+    private AppEnvClusterService appEnvClusterService;
     @Autowired
     private DepartmentRepository departmentRepository;
 
@@ -63,7 +63,7 @@ public class AppService {
 
         appNamespaceService.createDefaultAppNamespace(createdApp.getId());
 
-        clusterService.createDefaultCluster(createdApp.getId());
+        appEnvClusterService.createDefaultCluster(createdApp.getId());
 
         namespaceService.createNamespaceForAppNamespaceInAllCluster(createdApp.getId(), ConfigConsts.NAMESPACE_APPLICATION);
 

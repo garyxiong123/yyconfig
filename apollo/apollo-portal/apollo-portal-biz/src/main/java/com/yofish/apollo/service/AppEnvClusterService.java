@@ -30,7 +30,7 @@ import java.util.Objects;
 ////import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 //
 @Service
-public class ClusterService {
+public class AppEnvClusterService {
 
 
     @Autowired
