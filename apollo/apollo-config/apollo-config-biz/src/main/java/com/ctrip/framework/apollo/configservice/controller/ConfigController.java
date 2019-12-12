@@ -155,11 +155,11 @@ public class ConfigController {
         AppNamespace appNamespace = appNamespaceService.findPublicNamespaceByName(namespace);
 
         //check whether the namespace's appId equals to current one
-        if (Objects.isNull(appNamespace) || Objects.equals(clientAppId, appNamespace.getAppId())) {
+        if (Objects.isNull(appNamespace) || Objects.equals(clientAppId, appNamespace.getApp().getId())) {
             return null;
         }
 
-        String publicConfigAppId = appNamespace.getAppId();
+        String publicConfigAppId = String.valueOf(appNamespace.getApp().getId());
 
         return configService.loadConfig4SingleClient(clientAppId, clientIp, publicConfigAppId, clusterName, namespace, dataCenter,
                 clientMessages);

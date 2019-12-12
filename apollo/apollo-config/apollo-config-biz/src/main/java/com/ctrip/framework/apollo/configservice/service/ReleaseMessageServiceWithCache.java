@@ -3,6 +3,11 @@ package com.ctrip.framework.apollo.configservice.service;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.yofish.apollo.domain.ReleaseMessage;
+import com.yofish.apollo.message.ReleaseMessageListener;
+import com.yofish.apollo.message.Topics;
+import com.yofish.apollo.repository.ReleaseMessageRepository;
+import com.yofish.apollo.service.PortalConfig;
 import framework.apollo.core.utils.ApolloThreadFactory;
 import framework.apollo.tracer.Tracer;
 import framework.apollo.tracer.spi.Transaction;
@@ -33,7 +38,7 @@ public class ReleaseMessageServiceWithCache implements ReleaseMessageListener, I
   private ReleaseMessageRepository releaseMessageRepository;
 
   @Autowired
-  private BizConfig bizConfig;
+  private PortalConfig bizConfig;
 
   private int scanInterval;
   private TimeUnit scanIntervalTimeUnit;

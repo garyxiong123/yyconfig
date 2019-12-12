@@ -121,4 +121,5 @@ public abstract class RefreshableConfig {
 
   public abstract int releaseMessageScanIntervalInMilli();
 
+  public abstract boolean isConfigServiceCacheEnabled();
 }

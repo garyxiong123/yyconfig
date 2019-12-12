@@ -1,11 +1,5 @@
 package com.ctrip.framework.apollo.configservice.controller;
 
-import com.ctrip.framework.apollo.biz.config.BizConfig;
-import com.ctrip.framework.apollo.biz.entity.ReleaseMessage;
-import com.ctrip.framework.apollo.biz.message.ReleaseMessageListener;
-import com.ctrip.framework.apollo.biz.message.Topics;
-import com.ctrip.framework.apollo.biz.utils.EntityManagerUtil;
-import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.configservice.service.ReleaseMessageServiceWithCache;
 import com.ctrip.framework.apollo.configservice.util.NamespaceUtil;
 import com.ctrip.framework.apollo.configservice.util.WatchKeysUtil;
@@ -16,6 +10,10 @@ import com.google.common.base.Strings;
 import com.google.common.collect.*;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.yofish.apollo.domain.ReleaseMessage;
+import com.yofish.apollo.message.ReleaseMessageListener;
+import com.yofish.apollo.message.Topics;
+import common.exception.BadRequestException;
 import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.dto.ApolloConfigNotification;
 import framework.apollo.core.utils.ApolloThreadFactory;

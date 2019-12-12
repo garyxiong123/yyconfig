@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -152,6 +153,16 @@ public class PortalConfig extends RefreshableConfig {
     @Override
     public String getValue(String key) {
         return environment.getProperty(key);
+    }
+
+    @Override
+    public int releaseMessageScanIntervalInMilli() {
+        return 0;
+    }
+
+    @Override
+    public boolean isConfigServiceCacheEnabled() {
+        return false;
     }
 
 
@@ -341,4 +352,11 @@ public class PortalConfig extends RefreshableConfig {
     }
 
 
+    public int releaseMessageCacheScanInterval() {
+        return 0;
+    }
+
+    public TimeUnit releaseMessageCacheScanIntervalTimeUnit() {
+        return null;
+    }
 }
