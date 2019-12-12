@@ -62,7 +62,7 @@ public class NotificationController implements ReleaseMessageListener {
    * For single namespace notification, reserved for older version of apollo clients
    *
    * @param appId          the appId
-   * @param cluster        the cluster
+   * @param cluster        the appEnvCluster
    * @param namespace      the namespace name
    * @param dataCenter     the datacenter
    * @param notificationId the notification id for the namespace
@@ -72,7 +72,7 @@ public class NotificationController implements ReleaseMessageListener {
   @RequestMapping(method = RequestMethod.GET)
   public DeferredResult<ResponseEntity<ApolloConfigNotification>> pollNotification(
       @RequestParam(value = "appId") String appId,
-      @RequestParam(value = "cluster") String cluster,
+      @RequestParam(value = "appEnvCluster") String cluster,
       @RequestParam(value = "namespace", defaultValue = ConfigConsts.NAMESPACE_APPLICATION) String namespace,
       @RequestParam(value = "dataCenter", required = false) String dataCenter,
       @RequestParam(value = "notificationId", defaultValue = "-1") long notificationId,
@@ -117,7 +117,7 @@ public class NotificationController implements ReleaseMessageListener {
       });
 
       logWatchedKeys(watchedKeys, "Apollo.LongPoll.RegisteredKeys");
-      logger.debug("Listening {} from appId: {}, cluster: {}, namespace: {}, datacenter: {}",
+      logger.debug("Listening {} from appId: {}, appEnvCluster: {}, namespace: {}, datacenter: {}",
           watchedKeys, appId, cluster, namespace, dataCenter);
     }
 
@@ -134,7 +134,7 @@ public class NotificationController implements ReleaseMessageListener {
       return;
     }
     List<String> keys = STRING_SPLITTER.splitToList(content);
-    //message should be appId+cluster+namespace
+    //message should be appId+appEnvCluster+namespace
     if (keys.size() != 3) {
       logger.error("message format invalid - {}", content);
       return;

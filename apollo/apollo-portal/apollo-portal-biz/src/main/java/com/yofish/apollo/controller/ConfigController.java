@@ -55,7 +55,7 @@ public class ConfigController {
 
       if (currentAppRelease != null) {
         releases.add(currentAppRelease);
-        //we have cluster search process, so the cluster name might be overridden
+        //we have appEnvCluster search process, so the appEnvCluster name might be overridden
         appClusterNameLoaded = currentAppRelease.getClusterName();
       }
     }
@@ -149,22 +149,22 @@ public class ConfigController {
     return result;
   }
 
-  private String assembleKey(String appId, String cluster, String namespace, String dataCenter) {
-    List<String> keyParts = Lists.newArrayList(appId, cluster, namespace);
+  private String assembleKey(String appId, String appEnvCluster, String namespace, String dataCenter) {
+    List<String> keyParts = Lists.newArrayList(appId, appEnvCluster, namespace);
     if (!Strings.isNullOrEmpty(dataCenter)) {
       keyParts.add(dataCenter);
     }
     return keyParts.stream().collect(Collectors.joining(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR));
   }
 
-  private void auditReleases(String appId, String cluster, String dataCenter, String clientIp,
+  private void auditReleases(String appId, String appEnvCluster, String dataCenter, String clientIp,
                              List<Release> releases) {
     if (Strings.isNullOrEmpty(clientIp)) {
       //no need to audit instance config when there is no ip
       return;
     }
     for (Release release : releases) {
-      instanceConfigAuditUtil.audit(appId, cluster, dataCenter, clientIp, release.getAppId(),
+      instanceConfigAuditUtil.audit(appId, appEnvCluster, dataCenter, clientIp, release.getAppId(),
           release.getClusterName(),
           release.getNamespaceName(), release.getReleaseKey(), release.getEnv());
     }

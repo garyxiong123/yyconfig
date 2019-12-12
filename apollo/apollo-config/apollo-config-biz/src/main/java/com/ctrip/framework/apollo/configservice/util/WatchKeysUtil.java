@@ -27,7 +27,7 @@ public class WatchKeysUtil {
   private AppNamespaceServiceWithCache appNamespaceService;
 
   /**
-   * Assemble watch keys for the given appId, cluster, namespace, dataCenter combination
+   * Assemble watch keys for the given appId, appEnvCluster, namespace, dataCenter combination
    */
   public Set<String> assembleAllWatchKeys(String appId, String clusterName, String namespace,
                                           String dataCenter) {
@@ -37,7 +37,7 @@ public class WatchKeysUtil {
   }
 
   /**
-   * Assemble watch keys for the given appId, cluster, namespaces, dataCenter combination
+   * Assemble watch keys for the given appId, appEnvCluster, namespaces, dataCenter combination
    *
    * @return a multimap with namespace as the key and watch keys as the value
    */
@@ -95,7 +95,7 @@ public class WatchKeysUtil {
     }
     Set<String> watchedKeys = Sets.newHashSet();
 
-    //watch specified cluster config change
+    //watch specified appEnvCluster config change
     if (!Objects.equals(ConfigConsts.CLUSTER_NAME_DEFAULT, clusterName)) {
       watchedKeys.add(assembleKey(appId, clusterName, namespace));
     }
@@ -105,7 +105,7 @@ public class WatchKeysUtil {
       watchedKeys.add(assembleKey(appId, dataCenter, namespace));
     }
 
-    //watch default cluster config change
+    //watch default appEnvCluster config change
     watchedKeys.add(assembleKey(appId, ConfigConsts.CLUSTER_NAME_DEFAULT, namespace));
 
     return watchedKeys;

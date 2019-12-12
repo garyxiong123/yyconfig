@@ -69,9 +69,9 @@ public class PortalConfig extends RefreshableConfig {
         Iterable<ServerConfig> dbConfigs = serverConfigRepository.findAll();
 
         Map<String, Object> newConfigs = Maps.newHashMap();
-        //default cluster's configs
+        //default appEnvCluster's configs
         /*for (ServerConfig config : dbConfigs) {
-            if (Objects.equals(ConfigConsts.CLUSTER_NAME_DEFAULT, config.getCluster())) {
+            if (Objects.equals(ConfigConsts.CLUSTER_NAME_DEFAULT, config.getAppEnvCluster())) {
                 newConfigs.put(config.getKey(), config.getValue());
             }
         }
@@ -79,16 +79,16 @@ public class PortalConfig extends RefreshableConfig {
         //data center's configs
         String dataCenter = getCurrentDataCenter();
         for (ServerConfig config : dbConfigs) {
-            if (Objects.equals(dataCenter, config.getCluster())) {
+            if (Objects.equals(dataCenter, config.getAppEnvCluster())) {
                 newConfigs.put(config.getKey(), config.getValue());
             }
         }
 
-        //cluster's config
+        //appEnvCluster's config
         if (!isNullOrEmpty(System.getProperty(ConfigConsts.APOLLO_CLUSTER_KEY))) {
-            String cluster = System.getProperty(ConfigConsts.APOLLO_CLUSTER_KEY);
+            String appEnvCluster = System.getProperty(ConfigConsts.APOLLO_CLUSTER_KEY);
             for (ServerConfig config : dbConfigs) {
-                if (Objects.equals(cluster, config.getCluster())) {
+                if (Objects.equals(appEnvCluster, config.getAppEnvCluster())) {
                     newConfigs.put(config.getKey(), config.getValue());
                 }
             }

@@ -12,7 +12,7 @@ public interface TracerEventType {
 
   String CREATE_APP = "App.Create";
 
-  String CREATE_CLUSTER = "Cluster.Create";
+  String CREATE_CLUSTER = "AppEnvCluster.Create";
 
   String CREATE_NAMESPACE = "Namespace.Create";
 

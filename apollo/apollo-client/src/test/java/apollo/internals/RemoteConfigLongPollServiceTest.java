@@ -95,7 +95,7 @@ public class RemoteConfigLongPollServiceTest {
 
         assertTrue(request.getUrl().contains(someServerUrl + "/notifications/v2?"));
         assertTrue(request.getUrl().contains("appId=" + someAppId));
-        assertTrue(request.getUrl().contains("cluster=" + someCluster));
+        assertTrue(request.getUrl().contains("appEnvCluster=" + someCluster));
         assertTrue(request.getUrl().contains("notifications="));
         assertTrue(request.getUrl().contains(someNamespace));
 
@@ -426,7 +426,7 @@ public class RemoteConfigLongPollServiceTest {
 
     assertTrue(longPollRefreshUrl.contains(someServerUrl + "/notifications/v2?"));
     assertTrue(longPollRefreshUrl.contains("appId=" + someAppId));
-    assertTrue(longPollRefreshUrl.contains("cluster=someCluster%2B+%26.-_someSign"));
+    assertTrue(longPollRefreshUrl.contains("appEnvCluster=someCluster%2B+%26.-_someSign"));
     assertTrue(longPollRefreshUrl.contains(
         "notifications=%5B%7B%22namespaceName%22%3A%22" + someNamespace
             + "%22%2C%22notificationId%22%3A" + 1 + "%7D%5D"));
@@ -450,7 +450,7 @@ public class RemoteConfigLongPollServiceTest {
 
     assertTrue(longPollRefreshUrl.contains(someServerUrl + "/notifications/v2?"));
     assertTrue(longPollRefreshUrl.contains("appId=" + someAppId));
-    assertTrue(longPollRefreshUrl.contains("cluster=someCluster%2B+%26.-_someSign"));
+    assertTrue(longPollRefreshUrl.contains("appEnvCluster=someCluster%2B+%26.-_someSign"));
     assertTrue(
         longPollRefreshUrl.contains("notifications=%5B%7B%22namespaceName%22%3A%22" + someNamespace
             + "%22%2C%22notificationId%22%3A" + someNotificationId

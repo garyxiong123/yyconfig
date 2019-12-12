@@ -23,7 +23,7 @@ public class ClusterNamespace extends BaseEntity {
     private String name;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    private Cluster cluster;
+    private AppEnvCluster appEnvCluster;
     @ManyToOne(cascade = CascadeType.ALL)
     private Namespace namespace;
 }

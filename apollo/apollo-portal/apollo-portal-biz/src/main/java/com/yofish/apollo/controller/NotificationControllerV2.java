@@ -80,7 +80,7 @@ package com.yofish.apollo.controller;//package com.ctrip.framework.apollo.contro
 //  @RequestMapping(method = RequestMethod.GET)
 //  public DeferredResult<ResponseEntity<List<ApolloConfigNotification>>> pollNotification(
 //      @RequestParam(value = "appId") String appId,
-//      @RequestParam(value = "cluster") String cluster,
+//      @RequestParam(value = "appEnvCluster") String appEnvCluster,
 //      @RequestParam(value = "notifications") String notificationsAsString,
 //      @RequestParam(value = "dataCenter", required = false) String dataCenter,
 //      @RequestParam(value = "ip", required = false) String clientIp) {
@@ -117,7 +117,7 @@ package com.yofish.apollo.controller;//package com.ctrip.framework.apollo.contro
 //    }
 //
 //    Multimap<String, String> watchedKeysMap =
-//        watchKeysUtil.assembleAllWatchKeys(appId, cluster, namespaces, dataCenter);
+//        watchKeysUtil.assembleAllWatchKeys(appId, appEnvCluster, namespaces, dataCenter);
 //
 //    Set<String> watchedKeys = Sets.newHashSet(watchedKeysMap.values());
 //
@@ -156,8 +156,8 @@ package com.yofish.apollo.controller;//package com.ctrip.framework.apollo.contro
 //      }
 //
 //      logWatchedKeys(watchedKeys, "Apollo.LongPoll.RegisteredKeys");
-//      logger.debug("Listening {} from appId: {}, cluster: {}, namespace: {}, datacenter: {}",
-//          watchedKeys, appId, cluster, namespaces, dataCenter);
+//      logger.debug("Listening {} from appId: {}, appEnvCluster: {}, namespace: {}, datacenter: {}",
+//          watchedKeys, appId, appEnvCluster, namespaces, dataCenter);
 //    }
 //
 //    return deferredResultWrapper.getResult();
@@ -283,7 +283,7 @@ package com.yofish.apollo.controller;//package com.ctrip.framework.apollo.contro
 //          return null;
 //        }
 //        List<String> keys = STRING_SPLITTER.splitToList(releaseMessage);
-//        //message should be appId+cluster+namespace
+//        //message should be appId+appEnvCluster+namespace
 //        if (keys.size() != 3) {
 //          logger.error("message format invalid - {}", releaseMessage);
 //          return null;

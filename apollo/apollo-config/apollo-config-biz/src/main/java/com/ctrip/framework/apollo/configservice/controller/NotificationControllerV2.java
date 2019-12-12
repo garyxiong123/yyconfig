@@ -82,7 +82,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
   @RequestMapping(method = RequestMethod.GET)
   public DeferredResult<ResponseEntity<List<ApolloConfigNotification>>> pollNotification(
       @RequestParam(value = "appId") String appId,
-      @RequestParam(value = "cluster") String cluster,
+      @RequestParam(value = "appEnvCluster") String cluster,
       @RequestParam(value = "notifications") String notificationsAsString,
       @RequestParam(value = "dataCenter", required = false) String dataCenter,
       @RequestParam(value = "ip", required = false) String clientIp) {
@@ -154,7 +154,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
       }
 
       logWatchedKeys(watchedKeys, "Apollo.LongPoll.RegisteredKeys");
-      logger.debug("Listening {} from appId: {}, cluster: {}, namespace: {}, datacenter: {}",
+      logger.debug("Listening {} from appId: {}, appEnvCluster: {}, namespace: {}, datacenter: {}",
           watchedKeys, appId, cluster, namespaces, dataCenter);
     }
 
@@ -288,7 +288,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
           return null;
         }
         List<String> keys = STRING_SPLITTER.splitToList(releaseMessage);
-        //message should be appId+cluster+namespace
+        //message should be appId+appEnvCluster+namespace
         if (keys.size() != 3) {
           logger.error("message format invalid - {}", releaseMessage);
           return null;

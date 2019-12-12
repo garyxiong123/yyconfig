@@ -85,8 +85,8 @@ public class AppRepositoryTest {
 
     @Test
     public void addCluster() {
-        Cluster cluster = createCluster();
-        clusterRepository.save(cluster);
+        AppEnvCluster appEnvCluster = createCluster();
+        clusterRepository.save(appEnvCluster);
     }
 
     @Test
@@ -161,16 +161,16 @@ public class AppRepositoryTest {
     }
 
     private ClusterNamespace createClusterNamespace() {
-        Cluster cluster = createCluster();
+        AppEnvCluster appEnvCluster = createCluster();
         Namespace namespace = createNamespace();
-        return ClusterNamespace.builder().name("default").cluster(cluster).namespace(namespace).build();
+        return ClusterNamespace.builder().name("default").appEnvCluster(appEnvCluster).namespace(namespace).build();
     }
 
 
-    private Cluster createCluster() {
+    private AppEnvCluster createCluster() {
         App app = createApp();
         Env env = Env.TEST;
-        return Cluster.builder().app(app).env(env.name()).build();
+        return AppEnvCluster.builder().app(app).env(env.name()).build();
     }
 
     private Item createItem() {
