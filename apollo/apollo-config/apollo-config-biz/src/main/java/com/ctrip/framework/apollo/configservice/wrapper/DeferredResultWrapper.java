@@ -14,32 +14,31 @@ import java.util.Map;
  * @author Jason Song(song_s@ctrip.com)
  */
 public class DeferredResultWrapper {
-  private static final long TIMEOUT = 60 * 1000;//60 seconds
-  private static final ResponseEntity<List<ApolloConfigNotification>>
-      NOT_MODIFIED_RESPONSE_LIST = new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+  private static final long TIMEOUT = 60 * 1000;
+  private static final ResponseEntity<List<ApolloConfigNotification>> NOT_MODIFIED_RESPONSE_LIST = new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
 
-  private Map<String, String> normalizedNamespaceNameToOriginalNamespaceName;
-  private DeferredResult<ResponseEntity<List<ApolloConfigNotification>>> result;
+  private Map<String, String> normalizedNamespaceName2OriginalNamespaceNameMap;
+  private DeferredResult<ResponseEntity<List<ApolloConfigNotification>>> severNotificationresult;
 
 
   public DeferredResultWrapper() {
-    result = new DeferredResult<>(TIMEOUT, NOT_MODIFIED_RESPONSE_LIST);
+    severNotificationresult = new DeferredResult<>(TIMEOUT, NOT_MODIFIED_RESPONSE_LIST);
   }
 
-  public void recordNamespaceNameNormalizedResult(String originalNamespaceName, String normalizedNamespaceName) {
-    if (normalizedNamespaceNameToOriginalNamespaceName == null) {
-      normalizedNamespaceNameToOriginalNamespaceName = Maps.newHashMap();
+  public void fillNormalizedNamespaceName2OriginalNamespaceNameMap(String originalNamespaceName, String normalizedNamespaceName) {
+    if (normalizedNamespaceName2OriginalNamespaceNameMap == null) {
+      normalizedNamespaceName2OriginalNamespaceNameMap = Maps.newHashMap();
     }
-    normalizedNamespaceNameToOriginalNamespaceName.put(normalizedNamespaceName, originalNamespaceName);
+    normalizedNamespaceName2OriginalNamespaceNameMap.put(normalizedNamespaceName, originalNamespaceName);
   }
 
 
   public void onTimeout(Runnable timeoutCallback) {
-    result.onTimeout(timeoutCallback);
+    severNotificationresult.onTimeout(timeoutCallback);
   }
 
   public void onCompletion(Runnable completionCallback) {
-    result.onCompletion(completionCallback);
+    severNotificationresult.onCompletion(completionCallback);
   }
 
 
@@ -51,16 +50,16 @@ public class DeferredResultWrapper {
    * The namespace name is used as a key in client side, so we have to return the original one instead of the correct one
    */
   public void setResult(List<ApolloConfigNotification> notifications) {
-    if (normalizedNamespaceNameToOriginalNamespaceName != null) {
-      notifications.stream().filter(notification -> normalizedNamespaceNameToOriginalNamespaceName.containsKey
+    if (normalizedNamespaceName2OriginalNamespaceNameMap != null) {
+      notifications.stream().filter(notification -> normalizedNamespaceName2OriginalNamespaceNameMap.containsKey
           (notification.getNamespaceName())).forEach(notification -> notification.setNamespaceName(
-              normalizedNamespaceNameToOriginalNamespaceName.get(notification.getNamespaceName())));
+              normalizedNamespaceName2OriginalNamespaceNameMap.get(notification.getNamespaceName())));
     }
 
-    result.setResult(new ResponseEntity<>(notifications, HttpStatus.OK));
+    severNotificationresult.setResult(new ResponseEntity<>(notifications, HttpStatus.OK));
   }
 
   public DeferredResult<ResponseEntity<List<ApolloConfigNotification>>> getResult() {
-    return result;
+    return severNotificationresult;
   }
 }

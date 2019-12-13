@@ -44,8 +44,7 @@ public class WatchKeysUtil {
   public Multimap<String, String> assembleAllWatchKeys(String appId, String clusterName,
                                                        Set<String> namespaces,
                                                        String dataCenter) {
-    Multimap<String, String> watchedKeysMap =
-        assembleWatchKeys(appId, clusterName, namespaces, dataCenter);
+    Multimap<String, String> watchedKeysMap = assembleWatchKeys(appId, clusterName, namespaces, dataCenter);
 
     //Every app has an 'application' namespace
     if (!(namespaces.size() == 1 && namespaces.contains(ConfigConsts.NAMESPACE_APPLICATION))) {
@@ -54,8 +53,7 @@ public class WatchKeysUtil {
 
       //Listen on more namespaces if it's a public namespace
       if (!publicNamespaces.isEmpty()) {
-        watchedKeysMap
-            .putAll(findPublicConfigWatchKeys(appId, clusterName, publicNamespaces, dataCenter));
+        watchedKeysMap.putAll(findPublicConfigWatchKeys(appId, clusterName, publicNamespaces, dataCenter));
       }
     }
 
