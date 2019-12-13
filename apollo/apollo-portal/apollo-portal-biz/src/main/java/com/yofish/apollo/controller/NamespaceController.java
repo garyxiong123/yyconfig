@@ -86,7 +86,7 @@ public class NamespaceController {
 //  }
 //
 //  @PreAuthorize(value = "@permissionValidator.hasCreateNamespacePermission(#appId)")
-    @RequestMapping(value = "/apps/{appId}/namespaces", method = RequestMethod.POST)
+/*    @RequestMapping(value = "/apps/{appId}/namespaces", method = RequestMethod.POST)
     public Result createNamespace(@PathVariable String appId,
                                   @RequestBody List<NamespaceCreationModel> models) {
 
@@ -105,7 +105,7 @@ public class NamespaceController {
         }
 
         return Result.ok();
-    }
+    }*/
 
     //
 //  @PreAuthorize(value = "@permissionValidator.hasDeleteNamespacePermission(#appId)")

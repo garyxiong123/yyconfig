@@ -20,8 +20,6 @@ import javax.persistence.ManyToOne;
 @Entity
 public class AppEnvClusterNamespace extends BaseEntity {
 
-    private String name;
-
     @ManyToOne(cascade = CascadeType.ALL)
     private AppEnvCluster appEnvCluster;
 

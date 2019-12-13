@@ -4,10 +4,9 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppNamespace;
+import com.yofish.apollo.domain.AppNamespace4Private;
 import com.yofish.apollo.enums.NamespaceType;
-import com.yofish.apollo.repository.AppNamespaceRepository;
-import com.yofish.apollo.repository.AppRepository;
-import com.youyu.common.helper.YyRequestInfoHelper;
+import com.yofish.apollo.repository.*;
 import common.exception.BadRequestException;
 import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.enums.ConfigFileFormat;
@@ -32,16 +31,16 @@ public class AppNamespaceService {
     @Autowired
     private AppNamespaceRepository appNamespaceRepository;
     @Autowired
+    private AppNamespace4PublicRepository appNamespace4PublicRepository;
+    @Autowired
+    private AppNamespace4ProtectRepository appNamespace4ProtectRepository;
+    @Autowired
+    private AppNamespace4PrivateRepository appNamespace4PrivateRepository;
+    @Autowired
     private AppRepository appRepository;
     @Autowired
     private AppEnvClusterNamespaceService appEnvClusterNamespaceService;
 
-    /**
-     * 公共的app ns,能被其它项目关联到的app ns
-     */
-    public List<AppNamespace> findPublicAppNamespaces() {
-        return appNamespaceRepository.findByType(NamespaceType.Public);
-    }
 
     public AppNamespace findPublicAppNamespace(String namespaceName) {
         List<AppNamespace> appNamespaces = appNamespaceRepository.findByNameAndType(namespaceName, NamespaceType.Public);
@@ -66,21 +65,20 @@ public class AppNamespaceService {
     }
 
     @Transactional
-    public void createDefaultAppNamespace(Long appId) {
+    public AppNamespace createDefaultAppNamespace(Long appId) {
         if (!isAppNamespaceNameUnique(appId, ConfigConsts.NAMESPACE_APPLICATION)) {
             throw new BadRequestException(String.format("App already has application namespace. AppId = %s", appId));
         }
 
-        AppNamespace appNs = new AppNamespace();
-        appNs.setApp(App.builder().id(appId).build());
-        appNs.setName(ConfigConsts.NAMESPACE_APPLICATION);
-        appNs.setComment("default app namespace");
-        appNs.setFormat(ConfigFileFormat.Properties);
-        String userId = YyRequestInfoHelper.getCurrentUserRealName();
-        appNs.setCreateAuthor(userId);
-        appNs.setUpdateAuthor(userId);
+        AppNamespace4Private appNs = AppNamespace4Private.builder()
+                .app(App.builder().id(appId).build())
+                .name(ConfigConsts.NAMESPACE_APPLICATION)
+                .comment("default app namespace")
+                .format(ConfigFileFormat.Properties)
+                .build();
 
-        appNamespaceRepository.save(appNs);
+        appNs = appNamespace4PrivateRepository.save(appNs);
+        return appNs;
     }
 
 
@@ -126,7 +124,7 @@ public class AppNamespaceService {
 
         AppNamespace createdAppNamespace = appNamespaceRepository.save(appNamespace);
 
-        appEnvClusterNamespaceService.createNamespaceForAppNamespaceInAllCluster(appNamespace.getApp().getId(), appNamespace.getName());
+        appEnvClusterNamespaceService.createNamespaceForAppNamespaceInAllCluster(appNamespace);
 
         return createdAppNamespace;
     }
