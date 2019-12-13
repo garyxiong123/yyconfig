@@ -8,18 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.*;
-
 /**
  * @author WangSongJun
  * @date 2019-12-11
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {com.yofish.apollo.JpaApplication.class})
-public class NamespaceServiceTest {
+public class AppEnvClusterNamespaceServiceTest {
 
     @Autowired
-    private NamespaceService namespaceService;
+    private AppEnvClusterNamespaceService appEnvClusterNamespaceService;
 
     @Test
     public void createNamespace() {
@@ -28,7 +26,7 @@ public class NamespaceServiceTest {
         dto.setAppId(1L);
         dto.setClusterName("default");
         dto.setNamespaceName("other-config");
-        NamespaceDTO namespace = this.namespaceService.createNamespace(env, dto);
+        NamespaceDTO namespace = this.appEnvClusterNamespaceService.createNamespace(env, dto);
         Assert.assertEquals(dto.getNamespaceName(), namespace.getNamespaceName());
     }
 }

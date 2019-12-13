@@ -5,7 +5,7 @@ import com.yofish.apollo.domain.AppEnvCluster;
 import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.domain.Namespace;
 import com.yofish.apollo.repository.AppEnvClusterRepository;
-import com.yofish.apollo.repository.NamespaceRepository;
+import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import common.dto.NamespaceDTO;
 import common.exception.BadRequestException;
 import common.exception.ServiceException;
@@ -23,9 +23,9 @@ import java.util.Objects;
  * @date 2019-12-11
  */
 @Service
-public class NamespaceService {
+public class AppEnvClusterNamespaceService {
     @Autowired
-    private NamespaceRepository namespaceRepository;
+    private AppEnvClusterNamespaceRepository namespaceRepository;
     @Autowired
     private AppNamespaceService appNamespaceService;
     @Autowired

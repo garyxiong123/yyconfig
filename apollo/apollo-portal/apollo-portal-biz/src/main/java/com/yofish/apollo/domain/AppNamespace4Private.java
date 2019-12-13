@@ -1,6 +1,5 @@
 package com.yofish.apollo.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

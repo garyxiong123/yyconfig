@@ -15,5 +15,5 @@ import javax.persistence.Entity;
 @Data
 @Entity
 @DiscriminatorValue("Namespace4Public")
-public class AppNamespace4Protect extends Namespace {
+public class AppNamespace4Protect extends AppNamespace {
 }

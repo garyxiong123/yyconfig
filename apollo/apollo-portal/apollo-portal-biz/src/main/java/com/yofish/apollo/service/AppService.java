@@ -28,7 +28,7 @@ public class AppService {
     @Autowired
     private AppNamespaceService appNamespaceService;
     @Autowired
-    private NamespaceService namespaceService;
+    private AppEnvClusterNamespaceService appEnvClusterNamespaceService;
     @Autowired
     private AppEnvClusterService appEnvClusterService;
     @Autowired
@@ -55,20 +55,13 @@ public class AppService {
             throw new BadRequestException("Application's department not exist.");
         }
 
-        String operator = YyRequestInfoHelper.getCurrentUserName();
-        app.setCreateAuthor(operator);
-        app.setUpdateAuthor(operator);
-
         App createdApp = appRepository.save(app);
 
         appNamespaceService.createDefaultAppNamespace(createdApp.getId());
 
         appEnvClusterService.createDefaultCluster(createdApp.getId());
 
-        namespaceService.createNamespaceForAppNamespaceInAllCluster(createdApp.getId(), ConfigConsts.NAMESPACE_APPLICATION);
-
-        // TODO: 2019-12-02 还要继续写
-//        roleInitializationService.initAppRoles(createdApp);
+        appEnvClusterNamespaceService.createNamespaceForAppNamespaceInAllCluster(createdApp.getId(), ConfigConsts.NAMESPACE_APPLICATION);
 
         return createdApp;
     }

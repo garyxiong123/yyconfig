@@ -48,13 +48,6 @@ public class AppController {
 
         App createdApp = appService.createApp(app);
 
-    /*Set<String> admins = appModel.getAdmins();
-    if (!CollectionUtils.isEmpty(admins)) {
-      rolePermissionService
-              .assignRoleToUsers(RoleUtils.buildAppMasterRoleName(createdApp.getAppCode()),
-                      admins, YyRequestInfoHelper.getCurrentUserId());
-    }*/
-
         return Result.ok(createdApp);
     }
 

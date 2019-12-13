@@ -27,7 +27,7 @@ public class AppRepositoryTest {
     @Autowired
     private AppRepository appRepository;
     @Autowired
-    private NamespaceRepository namespaceRepository;
+    private AppNamespaceRepository appNamespaceRepository;
     @Autowired
     private AppEnvClusterRepository appEnvClusterRepository;
     @Autowired
@@ -79,8 +79,8 @@ public class AppRepositoryTest {
 
     @Test
     public void addNamespace() {
-        Namespace namespace = createNamespace();
-        namespaceRepository.save(namespace);
+        AppNamespace namespace = createNamespace();
+        appNamespaceRepository.save(namespace);
     }
 
     @Test
@@ -155,14 +155,14 @@ public class AppRepositoryTest {
         return app;
     }
 
-    private Namespace createNamespace() {
+    private AppNamespace createNamespace() {
         App app = createApp();
-        return Namespace.builder().appId(app.getId()).namespaceName("application").build();
+        return AppNamespace.builder().app(app).name("application").build();
     }
 
     private AppEnvClusterNamespace createClusterNamespace() {
         AppEnvCluster appEnvCluster = createCluster();
-        Namespace namespace = createNamespace();
+        AppNamespace namespace = createNamespace();
         return AppEnvClusterNamespace.builder().name("default").appEnvCluster(appEnvCluster).namespace(namespace).build();
     }
 
