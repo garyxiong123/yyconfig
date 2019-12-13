@@ -17,6 +17,6 @@ public class ReleaseKeyGenerator extends UniqueKeyGenerator {
    * @return the unique release key
    */
   public static String generateReleaseKey(AppEnvClusterNamespace namespace) {
-    return generate(namespace.getAppEnvCluster().getApp().getAppCode(), namespace.getAppEnvCluster().getName(), namespace.getName());
+    return generate(namespace.getAppEnvCluster().getApp().getAppCode(), namespace.getAppEnvCluster().getName(), namespace.getNamespace().getName());
   }
 }

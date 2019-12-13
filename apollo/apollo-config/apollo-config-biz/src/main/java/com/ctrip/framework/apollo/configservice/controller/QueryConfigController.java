@@ -192,9 +192,9 @@ public class QueryConfigController {
             return;
         }
         for (Release release : releases) {
-            instanceConfigAuditUtil.audit(appId, cluster, dataCenter, clientIp, release.getAppId(),
-                    release.getClusterName(),
-                    release.getNamespaceName(), release.getReleaseKey());
+            instanceConfigAuditUtil.audit(appId, cluster, dataCenter, clientIp, release.getAppEnvClusterNamespace().getAppEnvCluster().getApp().getAppCode(),
+                    release.getAppEnvClusterNamespace().getAppEnvCluster().getName(),
+                    release.getAppEnvClusterNamespace().getNamespace().getName(), release.getReleaseKey());
         }
     }
 
