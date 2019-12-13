@@ -185,7 +185,7 @@ public class RemoteConfigLongPollService {
         transaction.setStatus(ex);
         long sleepTimeInSecond = m_longPollFailSchedulePolicyInSecond.fail();
         logger.warn(
-            "Long polling failed, will retry in {} seconds. appId: {}, cluster: {}, namespaces: {}, long polling url: {}, reason: {}",
+            "Long polling failed, will retry in {} seconds. appId: {}, appEnvCluster: {}, namespaces: {}, long polling url: {}, reason: {}",
             sleepTimeInSecond, appId, cluster, assembleNamespaces(), url, ExceptionUtil.getDetailMessage(ex));
         try {
           TimeUnit.SECONDS.sleep(sleepTimeInSecond);

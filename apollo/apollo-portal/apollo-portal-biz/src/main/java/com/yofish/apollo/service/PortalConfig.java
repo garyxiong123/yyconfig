@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -34,17 +35,16 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public class PortalConfig extends RefreshableConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(PortalConfig.class);
+
     private static final int DEFAULT_ITEM_KEY_LENGTH = 128;
     private static final int DEFAULT_ITEM_VALUE_LENGTH = 20000;
 
-    @Autowired
-    private ServerConfigRepository serverConfigRepository;
-
-    @Autowired
-    private ConfigurableEnvironment environment;
-
     private static final String LIST_SEPARATOR = ",";
 
+    @Autowired
+    private ServerConfigRepository serverConfigRepository;
+    @Autowired
+    private ConfigurableEnvironment environment;
     private Gson gson = new Gson();
 //    private static final Type ORGANIZATION = new TypeToken<List<Organization>>() {
 //    }.getType();
@@ -54,18 +54,20 @@ public class PortalConfig extends RefreshableConfig {
     private static final Type namespaceValueLengthOverrideTypeReference =
         new TypeToken<Map<Long, Integer>>() {
         }.getType();
-    @Override
-    public List<RefreshablePropertySource> getRefreshablePropertySources() {
-        return Collections.singletonList(null);
-    }
 
 
     public PortalConfig(String name, Map<String, Object> source) {
         super(name, source);
     }
 
+
     public PortalConfig() {
         super("DBConfig", Maps.newConcurrentMap());
+    }
+
+    @Override
+    public List<RefreshablePropertySource> getRefreshablePropertySources() {
+        return Collections.singletonList(null);
     }
 
     String getCurrentDataCenter() {
@@ -76,9 +78,9 @@ public class PortalConfig extends RefreshableConfig {
         Iterable<ServerConfig> dbConfigs = serverConfigRepository.findAll();
 
         Map<String, Object> newConfigs = Maps.newHashMap();
-        //default cluster's configs
+        //default appEnvCluster's configs
         /*for (ServerConfig config : dbConfigs) {
-            if (Objects.equals(ConfigConsts.CLUSTER_NAME_DEFAULT, config.getCluster())) {
+            if (Objects.equals(ConfigConsts.CLUSTER_NAME_DEFAULT, config.getAppEnvCluster())) {
                 newConfigs.put(config.getKey(), config.getValue());
             }
         }
@@ -86,16 +88,16 @@ public class PortalConfig extends RefreshableConfig {
         //data center's configs
         String dataCenter = getCurrentDataCenter();
         for (ServerConfig config : dbConfigs) {
-            if (Objects.equals(dataCenter, config.getCluster())) {
+            if (Objects.equals(dataCenter, config.getAppEnvCluster())) {
                 newConfigs.put(config.getKey(), config.getValue());
             }
         }
 
-        //cluster's config
+        //appEnvCluster's config
         if (!isNullOrEmpty(System.getProperty(ConfigConsts.APOLLO_CLUSTER_KEY))) {
-            String cluster = System.getProperty(ConfigConsts.APOLLO_CLUSTER_KEY);
+            String appEnvCluster = System.getProperty(ConfigConsts.APOLLO_CLUSTER_KEY);
             for (ServerConfig config : dbConfigs) {
-                if (Objects.equals(cluster, config.getCluster())) {
+                if (Objects.equals(appEnvCluster, config.getAppEnvCluster())) {
                     newConfigs.put(config.getKey(), config.getValue());
                 }
             }
@@ -160,6 +162,16 @@ public class PortalConfig extends RefreshableConfig {
     @Override
     public String getValue(String key) {
         return environment.getProperty(key);
+    }
+
+    @Override
+    public int releaseMessageScanIntervalInMilli() {
+        return 0;
+    }
+
+    @Override
+    public boolean isConfigServiceCacheEnabled() {
+        return false;
     }
 
 
@@ -351,12 +363,7 @@ public class PortalConfig extends RefreshableConfig {
         int limit = getIntProperty("item.key.length.limit", DEFAULT_ITEM_KEY_LENGTH);
         return checkInt(limit, 5, Integer.MAX_VALUE, DEFAULT_ITEM_KEY_LENGTH);
     }
-    int checkInt(int value, int min, int max, int defaultValue) {
-        if (value >= min && value <= max) {
-            return value;
-        }
-        return defaultValue;
-    }
+
     public Map<Long, Integer> namespaceValueLengthLimitOverride() {
         String namespaceValueLengthOverrideString = getValue("namespace.value.length.limit.override");
         Map<Long, Integer> namespaceValueLengthOverride = Maps.newHashMap();
@@ -373,4 +380,27 @@ public class PortalConfig extends RefreshableConfig {
     }
 
 
+    public int releaseMessageCacheScanInterval() {
+        return 0;
+    }
+
+    public TimeUnit releaseMessageCacheScanIntervalTimeUnit() {
+        return null;
+    }
+
+    public int grayReleaseRuleScanInterval() {
+        return 0;
+    }
+
+    public int releaseMessageNotificationBatch() {
+        return 0;
+    }
+
+    public long releaseMessageNotificationBatchIntervalInMilli() {
+        return 0;
+    }
+
+    public int checkInt(int someInvalidValue, int someMin, int maxValue, int someDefaultValue) {
+        return 0;
+    }
 }

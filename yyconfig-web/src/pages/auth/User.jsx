@@ -2,13 +2,16 @@ import React, { Fragment } from 'react';
 import { Card, Table, Button, Input, Divider, Popconfirm } from 'antd';
 import moment from 'moment';
 import styles from './index.less';
+import { UserEditModal } from './user/index';
 
 class User extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       searchObj: {},
-      list: [{}, {}, {}]
+      list: [{}, {}, {}],
+      showEditModal: false,
+      currentUser: {}
     };
   }
   // ----------------------------------生命周期----------------------------------------
@@ -44,7 +47,20 @@ class User extends React.Component {
     //   searchObj: params
     // });
   };
-
+  onAdd = (record = {}) => {
+    this.setState({
+      showEditModal: true,
+      currentUser: record
+    })
+  }
+  onDelete = (userId) => {
+    console.log('onDelete-->', userId)
+  }
+  onCancel = () => {
+    this.setState({
+      showEditModal: false
+    })
+  }
   // ----------------------------------View----------------------------------------
   renderTable() {
     const { list } = this.state;
@@ -95,7 +111,7 @@ class User extends React.Component {
             <span>
               <a
                 onClick={() => {
-                  this.onEdit(record);
+                  this.onAdd(record);
                 }}
               >
                 修改
@@ -119,6 +135,7 @@ class User extends React.Component {
         columns={columns}
         dataSource={list || []}
         onChange={this.onTableChange}
+        pagination={false}
         // loading={loading}
         // pagination={{
         //   pageSizeOptions: ['10', '20', '30', '50'],
@@ -138,15 +155,17 @@ class User extends React.Component {
     )
   }
   render() {
+    const { showEditModal, currentUser } = this.state;
     return (
       <Card title={
-        <Button type="primary"> + 新增用户</Button>
+        <Button type="primary" onClick={() => { this.onAdd() }}> + 新增用户</Button>
       } extra={
         <Input.Search onSearch={this.onSearch} placeholder="搜索用户" />
       }>
         {
           this.renderTable()
         }
+        {showEditModal && <UserEditModal visible={showEditModal} onCancel={this.onCancel} currentUser={currentUser} />}
       </Card>
     );
   }

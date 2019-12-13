@@ -62,7 +62,7 @@ package com.yofish.apollo.controller;//package com.ctrip.framework.apollo.contro
 //   * For single namespace notification, reserved for older version of apollo clients
 //   *
 //   * @param appId          the appId
-//   * @param cluster        the cluster
+//   * @param appEnvCluster        the appEnvCluster
 //   * @param namespace      the namespace name
 //   * @param dataCenter     the datacenter
 //   * @param notificationId the notification id for the namespace
@@ -72,7 +72,7 @@ package com.yofish.apollo.controller;//package com.ctrip.framework.apollo.contro
 //  @RequestMapping(method = RequestMethod.GET)
 //  public DeferredResult<ResponseEntity<ApolloConfigNotification>> pollNotification(
 //      @RequestParam(value = "appId") String appId,
-//      @RequestParam(value = "cluster") String cluster,
+//      @RequestParam(value = "appEnvCluster") String appEnvCluster,
 //      @RequestParam(value = "namespace", defaultValue = ConfigConsts.NAMESPACE_APPLICATION) String namespace,
 //      @RequestParam(value = "dataCenter", required = false) String dataCenter,
 //      @RequestParam(value = "notificationId", defaultValue = "-1") long notificationId,
@@ -80,7 +80,7 @@ package com.yofish.apollo.controller;//package com.ctrip.framework.apollo.contro
 //    //strip out .properties suffix
 //    namespace = namespaceUtil.filterNamespaceName(namespace);
 //
-//    Set<String> watchedKeys = watchKeysUtil.assembleAllWatchKeys(appId, cluster, namespace, dataCenter);
+//    Set<String> watchedKeys = watchKeysUtil.assembleAllWatchKeys(appId, appEnvCluster, namespace, dataCenter);
 //
 //    DeferredResult<ResponseEntity<ApolloConfigNotification>> deferredResult =
 //        new DeferredResult<>(TIMEOUT, NOT_MODIFIED_RESPONSE);
@@ -117,15 +117,15 @@ package com.yofish.apollo.controller;//package com.ctrip.framework.apollo.contro
 //      });
 //
 //      logWatchedKeys(watchedKeys, "Apollo.LongPoll.RegisteredKeys");
-//      logger.debug("Listening {} from appId: {}, cluster: {}, namespace: {}, datacenter: {}",
-//          watchedKeys, appId, cluster, namespace, dataCenter);
+//      logger.debug("Listening {} from appId: {}, appEnvCluster: {}, namespace: {}, datacenter: {}",
+//          watchedKeys, appId, appEnvCluster, namespace, dataCenter);
 //    }
 //
 //    return deferredResult;
 //  }
 //
 //  @Override
-//  public void handleMessage(ReleaseMessage message, String channel) {
+//  public void handleReleaseMessage(ReleaseMessage message, String channel) {
 //    logger.info("message received - channel: {}, message: {}", channel, message);
 //
 //    String content = message.getMessage();
@@ -134,7 +134,7 @@ package com.yofish.apollo.controller;//package com.ctrip.framework.apollo.contro
 //      return;
 //    }
 //    List<String> keys = STRING_SPLITTER.splitToList(content);
-//    //message should be appId+cluster+namespace
+//    //message should be appId+appEnvCluster+namespace
 //    if (keys.size() != 3) {
 //      logger.error("message format invalid - {}", content);
 //      return;

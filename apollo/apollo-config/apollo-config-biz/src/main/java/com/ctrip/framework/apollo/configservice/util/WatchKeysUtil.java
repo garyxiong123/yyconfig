@@ -1,14 +1,14 @@
 package com.ctrip.framework.apollo.configservice.util;
 
-import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.configservice.service.AppNamespaceServiceWithCache;
-import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import com.yofish.apollo.domain.AppNamespace;
+import framework.apollo.core.ConfigConsts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +27,7 @@ public class WatchKeysUtil {
   private AppNamespaceServiceWithCache appNamespaceService;
 
   /**
-   * Assemble watch keys for the given appId, cluster, namespace, dataCenter combination
+   * Assemble watch keys for the given appId, appEnvCluster, namespace, dataCenter combination
    */
   public Set<String> assembleAllWatchKeys(String appId, String clusterName, String namespace,
                                           String dataCenter) {
@@ -37,7 +37,7 @@ public class WatchKeysUtil {
   }
 
   /**
-   * Assemble watch keys for the given appId, cluster, namespaces, dataCenter combination
+   * Assemble watch keys for the given appId, appEnvCluster, namespaces, dataCenter combination
    *
    * @return a multimap with namespace as the key and watch keys as the value
    */
@@ -71,11 +71,11 @@ public class WatchKeysUtil {
 
     for (AppNamespace appNamespace : appNamespaces) {
       //check whether the namespace's appId equals to current one
-      if (Objects.equals(applicationId, appNamespace.getAppId())) {
+      if (Objects.equals(applicationId, appNamespace.getApp().getId())) {
         continue;
       }
 
-      String publicConfigAppId = appNamespace.getAppId();
+      String publicConfigAppId = String.valueOf(appNamespace.getApp().getId());
 
       watchedKeysMap.putAll(appNamespace.getName(),
           assembleWatchKeys(publicConfigAppId, clusterName, appNamespace.getName(), dataCenter));
@@ -95,7 +95,7 @@ public class WatchKeysUtil {
     }
     Set<String> watchedKeys = Sets.newHashSet();
 
-    //watch specified cluster config change
+    //watch specified appEnvCluster config change
     if (!Objects.equals(ConfigConsts.CLUSTER_NAME_DEFAULT, clusterName)) {
       watchedKeys.add(assembleKey(appId, clusterName, namespace));
     }
@@ -105,7 +105,7 @@ public class WatchKeysUtil {
       watchedKeys.add(assembleKey(appId, dataCenter, namespace));
     }
 
-    //watch default cluster config change
+    //watch default appEnvCluster config change
     watchedKeys.add(assembleKey(appId, ConfigConsts.CLUSTER_NAME_DEFAULT, namespace));
 
     return watchedKeys;

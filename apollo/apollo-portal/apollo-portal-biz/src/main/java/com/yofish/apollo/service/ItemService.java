@@ -3,14 +3,17 @@ package com.yofish.apollo.service;
 import com.yofish.apollo.bo.ItemChangeSets;
 import com.yofish.apollo.component.txtresolver.ConfigChangeContentBuilder;
 import com.yofish.apollo.component.txtresolver.ConfigTextResolver;
-import com.yofish.apollo.domain.ClusterNamespace;
+import com.yofish.apollo.domain.AppEnvClusterNamespace;
 import com.yofish.apollo.domain.Commit;
 import com.yofish.apollo.domain.Item;
 import com.yofish.apollo.dto.CreateItemReq;
 import com.yofish.apollo.dto.ItemReq;
 import com.yofish.apollo.dto.ModifyItemsByTextsReq;
 import com.yofish.apollo.dto.UpdateItemReq;
-import com.yofish.apollo.repository.ClusterNamespaceRepository;
+
+import com.yofish.apollo.enums.Envs;
+import com.yofish.apollo.model.NamespaceTextModel;
+import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.repository.CommitRepository;
 import com.yofish.apollo.repository.ItemRepository;
 import common.dto.ItemDTO;
@@ -26,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.alibaba.fastjson.JSON.toJSONString;
 
@@ -38,7 +42,7 @@ import static com.alibaba.fastjson.JSON.toJSONString;
 public class ItemService {
 
     @Autowired
-    private ClusterNamespaceRepository clusterNamespaceRepository;
+    private AppEnvClusterNamespaceRepository appEnvClusterNamespaceRepository;
 
     @Autowired
     private PortalConfig portalConfig;
@@ -68,17 +72,14 @@ public class ItemService {
         itemRepository.save(item);
 
     }
+
     public void deleteItem(ItemReq deleteItemReq) {
 
     }
-    public List<Item> findItems(ItemReq deleteItemReq) {
-        ClusterNamespace clusterNamespace=new ClusterNamespace();
-        itemRepository.findFirstByClusterNamespaceOrderByLineNumDesc()
-        if (namespace != null) {
-            return findItemsWithOrdered(namespace.getId());
-        } else {
-            return Collections.emptyList();
-        }
+
+    public List<Item> findItems(ItemReq itemReq) {
+
+
         return new ArrayList<>();
     }
 
@@ -87,7 +88,7 @@ public class ItemService {
 
         String appId = model.getAppId();
         //todo 缺少clusterNamespace
-        ClusterNamespace clusterNamespace=new ClusterNamespace();
+        AppEnvClusterNamespace appEnvClusterNamespace = new AppEnvClusterNamespace();
         String clusterName = model.getClusterName();
         String namespaceName = model.getNamespaceName();
         long namespaceId = model.getNamespaceId();
@@ -95,13 +96,17 @@ public class ItemService {
 
         ConfigTextResolver resolver = findResolver(model.getFormat());
 
-        List<Item> items = itemRepository.findAllByClusterNamespace(clusterNamespace);
+        List<Item> items = itemRepository.findAllByAppEnvClusterNamespace(appEnvClusterNamespace);
 
         ItemChangeSets changeSets = resolver.resolve(namespaceId, configText, items);
         if (changeSets.isEmpty()) {
             return;
         }
-        updateItems(clusterNamespace, changeSets);
+
+        updateItems(appEnvClusterNamespace, changeSets);
+
+        Commit commit = Commit.builder().appEnvClusterNamespace(appEnvClusterNamespace).changeSets(toJSONString(changeSets)).build();
+        commitRepository.save(commit);
 
     }
 
@@ -109,7 +114,7 @@ public class ItemService {
         return fileFormat == ConfigFileFormat.Properties ? propertyResolver : fileTextResolver;
     }
 
-    private void updateItems(ClusterNamespace clusterNamespace, ItemChangeSets changeSet) {
+    private void updateItems(AppEnvClusterNamespace clusterNamespace, ItemChangeSets changeSet) {
 
         ConfigChangeContentBuilder configChangeContentBuilder = new ConfigChangeContentBuilder();
 
@@ -124,7 +129,7 @@ public class ItemService {
             for (Item item : changeSet.getUpdateItems()) {
                 Item entity = BeanUtils.transform(Item.class, item);
 
-                Item managedItem = itemService.findOne(entity.getId());
+                Item managedItem = findOne(entity.getId());
                 if (managedItem == null) {
                     throw new NotFoundException(String.format("item not found.(key=%s)", entity.getKey()));
                 }
@@ -134,9 +139,9 @@ public class ItemService {
                 managedItem.setValue(entity.getValue());
                 managedItem.setComment(entity.getComment());
                 managedItem.setLineNum(entity.getLineNum());
-                managedItem.setDataChangeLastModifiedBy(operator);
 
-                Item updatedItem = itemService.update(managedItem);
+
+                Item updatedItem = update(managedItem);
                 configChangeContentBuilder.updateItem(beforeUpdateItem, updatedItem);
 
             }
@@ -144,154 +149,39 @@ public class ItemService {
         }
 
         if (!CollectionUtils.isEmpty(changeSet.getDeleteItems())) {
-            for (ItemDTO item : changeSet.getDeleteItems()) {
-                Item deletedItem = itemService.delete(item.getId(), operator);
+            for (Item item : changeSet.getDeleteItems()) {
+                Item deletedItem = delete(item.getId());
                 configChangeContentBuilder.deleteItem(deletedItem);
             }
 
         }
-        if (configChangeContentBuilder.hasContent()){
-            Commit commit = Commit.builder().clusterNamespace(clusterNamespace).changeSets(toJSONString(changeSets)).build();
+        if (configChangeContentBuilder.hasContent()) {
+            Commit commit = Commit.builder().appEnvClusterNamespace(clusterNamespace).changeSets(toJSONString(changeSet)).build();
             commitRepository.save(commit);
         }
 
-        return changeSet;
     }
+
     @Transactional
-    public Item delete(long id, String operator) {
-        Item item = itemRepository.findById(id).orElse(null);
-        if (item == null) {
-            throw new IllegalArgumentException("item not exist. ID:" + id);
-        }
-
-        item.setDeleted(true);
-        item.setDataChangeLastModifiedBy(operator);
-        Item deletedItem = itemRepository.save(item);
-
-        auditService.audit(Item.class.getSimpleName(), id, Audit.OP.DELETE, operator);
-        return deletedItem;
+    public Item delete(long id) {
+        return new Item();
     }
-
+    public Item update(Item  item){
+        return new Item();
+    }
     @Transactional
     public int batchDelete(long namespaceId, String operator) {
-        return itemRepository.deleteByNamespaceId(namespaceId, operator);
+        return 1;
 
     }
-
-    public Item findOne(String appId, String clusterName, String namespaceName, String key) {
-        Namespace namespace = namespaceService.findOne(appId, clusterName, namespaceName);
-        if (namespace == null) {
-            throw new NotFoundException(
-                    String.format("namespace not found for %s %s %s", appId, clusterName, namespaceName));
-        }
-        Item item = itemRepository.findByNamespaceIdAndKey(namespace.getId(), key);
-        return item;
+    public Item save(Item item){
+        return new Item();
     }
 
-    public Item findLastOne(String appId, String clusterName, String namespaceName) {
-        Namespace namespace = namespaceService.findOne(appId, clusterName, namespaceName);
-        if (namespace == null) {
-            throw new NotFoundException(
-                    String.format("namespace not found for %s %s %s", appId, clusterName, namespaceName));
-        }
-        return findLastOne(namespace.getId());
+    public Item findOne(Long id){
+        return new Item();
     }
-
-    public Item findLastOne(ClusterNamespace clusterNamespace) {
-        return itemRepository.findFirst1ByNamespaceIdOrderByLineNumDesc(namespaceId);
-    }
-
-    public Item findOne(long itemId) {
-        Item item = itemRepository.findById(itemId).orElse(null);
-        return item;
-    }
-
-    public List<Item> findItemsWithoutOrdered(Long namespaceId) {
-        List<Item> items = itemRepository.findByNamespaceId(namespaceId);
-        if (items == null) {
-            return Collections.emptyList();
-        }
-        return items;
-    }
-
-    public List<Item> findItemsWithoutOrdered(String appId, String clusterName, String namespaceName) {
-        Namespace namespace = namespaceService.findOne(appId, clusterName, namespaceName);
-        if (namespace != null) {
-            return findItemsWithoutOrdered(namespace.getId());
-        } else {
-            return Collections.emptyList();
-        }
-    }
-
-    public List<Item> findItemsWithOrdered(Long namespaceId) {
-        List<Item> items = itemRepository.findByNamespaceIdOrderByLineNumAsc(namespaceId);
-        if (items == null) {
-            return Collections.emptyList();
-        }
-        return items;
-    }
-
-    public List<Item> findItemsWithOrdered(String appId, String clusterName, String namespaceName) {
-        Namespace namespace = namespaceService.findOne(appId, clusterName, namespaceName);
-        if (namespace != null) {
-            return findItemsWithOrdered(namespace.getId());
-        } else {
-            return Collections.emptyList();
-        }
-    }
-
-    public List<Item> findItemsModifiedAfterDate(long namespaceId, Date date) {
-        return itemRepository.findByNamespaceIdAndDataChangeLastModifiedTimeGreaterThan(namespaceId, date);
-    }
-
-    @Transactional
-    public Item save(Item entity) {
-        checkItemKeyLength(entity.getKey());
-        checkItemValueLength(entity.getClusterNamespace().getId(), entity.getValue());
-
-        //entity.setId(0);//protection
-
-        if (entity.getLineNum() == 0) {
-            Item lastItem = findLastOne(entity.getClusterNamespace());
-            int lineNum = lastItem == null ? 1 : lastItem.getLineNum() + 1;
-            entity.setLineNum(lineNum);
-        }
-        Item item = itemRepository.save(entity);
-        return item;
-    }
-
-    @Transactional
-    public Item update(Item item) {
-        checkItemValueLength(item.getNamespaceId(), item.getValue());
-        Item managedItem = itemRepository.findById(item.getId()).orElse(null);
-        BeanUtils.copyEntityProperties(item, managedItem);
-        managedItem = itemRepository.save(managedItem);
-
-        return managedItem;
-    }
-
-    private boolean checkItemValueLength(long namespaceId, String value) {
-        int limit = getItemValueLengthLimit(namespaceId);
-        if (!StringUtils.isEmpty(value) && value.length() > limit) {
-            throw new BadRequestException("value too long. length limit:" + limit);
-        }
-        return true;
-    }
-
-    private boolean checkItemKeyLength(String key) {
-        if (!StringUtils.isEmpty(key) && key.length() > portalConfig.itemKeyLengthLimit()) {
-            throw new BadRequestException("key too long. length limit:" + portalConfig.itemKeyLengthLimit());
-        }
-        return true;
-    }
-
-    private int getItemValueLengthLimit(long namespaceId) {
-        Map<Long, Integer> namespaceValueLengthOverride = portalConfig.namespaceValueLengthLimitOverride();
-        if (namespaceValueLengthOverride != null && namespaceValueLengthOverride.containsKey(namespaceId)) {
-            return namespaceValueLengthOverride.get(namespaceId);
-        }
-        return portalConfig.itemValueLengthLimit();
-    }
-
 
 }
+
+

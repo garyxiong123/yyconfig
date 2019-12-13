@@ -4,7 +4,7 @@ import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.model.model.AppNamespaceModel;
 import com.yofish.apollo.model.model.NamespaceCreationModel;
 import com.yofish.apollo.service.AppNamespaceService;
-import com.yofish.apollo.service.NamespaceService;
+import com.yofish.apollo.service.AppEnvClusterNamespaceService;
 import com.youyu.common.api.Result;
 import common.dto.NamespaceDTO;
 import common.exception.BadRequestException;
@@ -28,7 +28,7 @@ import static common.utils.RequestPrecondition.checkModel;
 public class NamespaceController {
 
     @Autowired
-    private NamespaceService namespaceService;
+    private AppEnvClusterNamespaceService appEnvClusterNamespaceService;
     @Autowired
     private AppNamespaceService appNamespaceService;
 
@@ -98,7 +98,7 @@ public class NamespaceController {
                     namespace.getClusterName(), namespace.getNamespaceName());
 
             try {
-                namespaceService.createNamespace(model.getEnv(), namespace);
+                appEnvClusterNamespaceService.createNamespace(model.getEnv(), namespace);
             } catch (Exception e) {
                 log.error("create namespace fail.", e);
             }
@@ -168,11 +168,11 @@ public class NamespaceController {
 
 //
 //  *
-//   * env -> cluster -> cluster has not published namespace?
+//   * env -> appEnvCluster -> appEnvCluster has not published namespace?
 //   * Example:
 //   * dev ->
-//   *  default -> true   (default cluster has not published namespace)
-//   *  customCluster -> false (customCluster cluster's all namespaces had published)
+//   *  default -> true   (default appEnvCluster has not published namespace)
+//   *  customCluster -> false (customCluster appEnvCluster's all namespaces had published)
 //
 //  @RequestMapping(value = "/apps/{appId}/namespaces/publish_info", method = RequestMethod.GET)
 //  public Map<String, Map<String, Boolean>> getNamespacesPublishInfo(@PathVariable String appId) {

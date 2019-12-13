@@ -49,4 +49,7 @@ public class App extends BaseEntity {
     public App(Long id) {
         super(id);
     }
+    public App(String appCode) {
+
+    }
 }

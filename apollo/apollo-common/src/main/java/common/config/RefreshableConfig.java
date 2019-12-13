@@ -119,4 +119,7 @@ public abstract class RefreshableConfig {
     return environment.getProperty(key);
   }
 
+  public abstract int releaseMessageScanIntervalInMilli();
+
+  public abstract boolean isConfigServiceCacheEnabled();
 }

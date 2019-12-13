@@ -1,21 +1,21 @@
 package com.ctrip.framework.apollo.configservice.controller;
 
-import com.ctrip.framework.apollo.biz.entity.ReleaseMessage;
-import com.ctrip.framework.apollo.biz.message.ReleaseMessageListener;
-import com.ctrip.framework.apollo.biz.message.Topics;
-import com.ctrip.framework.apollo.biz.utils.EntityManagerUtil;
 import com.ctrip.framework.apollo.configservice.service.ReleaseMessageServiceWithCache;
 import com.ctrip.framework.apollo.configservice.util.NamespaceUtil;
 import com.ctrip.framework.apollo.configservice.util.WatchKeysUtil;
-import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.ctrip.framework.apollo.core.dto.ApolloConfigNotification;
-import com.ctrip.framework.apollo.tracer.Tracer;
+import com.ctrip.framework.apollo.configservice.utils.EntityManagerUtil;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import com.yofish.apollo.domain.ReleaseMessage;
+import com.yofish.apollo.message.ReleaseMessageListener;
+import com.yofish.apollo.message.Topics;
+import framework.apollo.core.ConfigConsts;
+import framework.apollo.core.dto.ApolloConfigNotification;
+import framework.apollo.tracer.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +62,7 @@ public class NotificationController implements ReleaseMessageListener {
    * For single namespace notification, reserved for older version of apollo clients
    *
    * @param appId          the appId
-   * @param cluster        the cluster
+   * @param cluster        the appEnvCluster
    * @param namespace      the namespace name
    * @param dataCenter     the datacenter
    * @param notificationId the notification id for the namespace
@@ -72,7 +72,7 @@ public class NotificationController implements ReleaseMessageListener {
   @RequestMapping(method = RequestMethod.GET)
   public DeferredResult<ResponseEntity<ApolloConfigNotification>> pollNotification(
       @RequestParam(value = "appId") String appId,
-      @RequestParam(value = "cluster") String cluster,
+      @RequestParam(value = "appEnvCluster") String cluster,
       @RequestParam(value = "namespace", defaultValue = ConfigConsts.NAMESPACE_APPLICATION) String namespace,
       @RequestParam(value = "dataCenter", required = false) String dataCenter,
       @RequestParam(value = "notificationId", defaultValue = "-1") long notificationId,
@@ -117,7 +117,7 @@ public class NotificationController implements ReleaseMessageListener {
       });
 
       logWatchedKeys(watchedKeys, "Apollo.LongPoll.RegisteredKeys");
-      logger.debug("Listening {} from appId: {}, cluster: {}, namespace: {}, datacenter: {}",
+      logger.debug("Listening {} from appId: {}, appEnvCluster: {}, namespace: {}, datacenter: {}",
           watchedKeys, appId, cluster, namespace, dataCenter);
     }
 
@@ -125,7 +125,7 @@ public class NotificationController implements ReleaseMessageListener {
   }
 
   @Override
-  public void handleMessage(ReleaseMessage message, String channel) {
+  public void handleReleaseMessage(ReleaseMessage message, String channel) {
     logger.info("message received - channel: {}, message: {}", channel, message);
 
     String content = message.getMessage();
@@ -134,7 +134,7 @@ public class NotificationController implements ReleaseMessageListener {
       return;
     }
     List<String> keys = STRING_SPLITTER.splitToList(content);
-    //message should be appId+cluster+namespace
+    //message should be appId+appEnvCluster+namespace
     if (keys.size() != 3) {
       logger.error("message format invalid - {}", content);
       return;

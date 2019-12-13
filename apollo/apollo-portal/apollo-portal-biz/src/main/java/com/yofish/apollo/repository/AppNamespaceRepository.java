@@ -26,4 +26,6 @@ public interface AppNamespaceRepository extends JpaRepository<AppNamespace, Long
     List<AppNamespace> findByAppId(Long appId);
 
     List<AppNamespace> findFirst500ByIdGreaterThanOrderByIdAsc(long maxIdScanned);
+
+    AppNamespace findByNameAndIsPublicTrue(String name);
 }

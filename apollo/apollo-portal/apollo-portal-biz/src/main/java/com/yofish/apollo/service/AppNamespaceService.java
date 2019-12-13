@@ -34,7 +34,7 @@ public class AppNamespaceService {
     @Autowired
     private AppRepository appRepository;
     @Autowired
-    private NamespaceService namespaceService;
+    private AppEnvClusterNamespaceService appEnvClusterNamespaceService;
 
     /**
      * 公共的app ns,能被其它项目关联到的app ns
@@ -126,7 +126,7 @@ public class AppNamespaceService {
 
         AppNamespace createdAppNamespace = appNamespaceRepository.save(appNamespace);
 
-        namespaceService.createNamespaceForAppNamespaceInAllCluster(appNamespace.getApp().getId(), appNamespace.getName());
+        appEnvClusterNamespaceService.createNamespaceForAppNamespaceInAllCluster(appNamespace.getApp().getId(), appNamespace.getName());
 
         return createdAppNamespace;
     }

@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { Card, Table, Button, Input, Divider, Popconfirm, Select, Row, Col } from 'antd';
 import styles from './index.less';
+import { DepartmentModal } from './department/index'
 
 const { Option } = Select;
 
@@ -10,7 +11,9 @@ class Department extends React.Component {
     this.state = {
       searchObj: {},
       list: [{}, {}, {}],
-      partTypeList: []
+      showEditModal: false,
+      currentItem: {}
+
     };
   }
   // ----------------------------------生命周期----------------------------------------
@@ -46,7 +49,20 @@ class Department extends React.Component {
     //   searchObj: params
     // });
   };
-
+  onEdit = (record = {}) => {
+    this.setState({
+      currentItem: record,
+      showEditModal: true
+    })
+  }
+  onCancel = () => {
+    this.setState({
+      showEditModal: false
+    })
+  }
+  onDelete=(id)=>{
+    console.log('onDelete-->', id)
+  }
   // ----------------------------------View----------------------------------------
   renderTable() {
     const { list } = this.state;
@@ -55,10 +71,10 @@ class Department extends React.Component {
         title: '部门名称',
         dataIndex: 'name',
       },
-      {
-        title: '部门类型',
-        dataIndex: 'type',
-      },
+      // {
+      //   title: '部门类型',
+      //   dataIndex: 'type',
+      // },
       {
         title: '备注',
         dataIndex: 'email'
@@ -118,32 +134,37 @@ class Department extends React.Component {
     )
   }
   renderQuery() {
-    const { partTypeList } = this.state;
+    // const { partTypeList } = this.state;
     return (
-      <Row type="flex" gutter={48}>
-        <Col>
-          <Input.Search onSearch={this.onSearch} placeholder="请输入机构名称" />
-        </Col>
-        <Col>
-          <Select placeholder="请选择机构类型" style={{width: 200}}>
-            {
-              partTypeList && partTypeList.map((item, i) => (
-                <Option>{item.name}</Option>
-              ))
-            }
-          </Select>
-        </Col>
-      </Row>
+      <div>
+        <Input.Search onSearch={this.onSearch} placeholder="请输入机构名称" />
+      </div>
+      // <Row type="flex" gutter={48}>
+      //   <Col>
+      //     <Input.Search onSearch={this.onSearch} placeholder="请输入机构名称" />
+      //   </Col>
+      //   <Col>
+      //     <Select placeholder="请选择机构类型" style={{width: 200}}>
+      //       {
+      //         partTypeList && partTypeList.map((item, i) => (
+      //           <Option>{item.name}</Option>
+      //         ))
+      //       }
+      //     </Select>
+      //   </Col>
+      // </Row>
     )
   }
   render() {
+    const { showEditModal, currentItem } = this.state;
     return (
       <Card title={
-        <Button type="primary"> + 添加机构</Button>
+        <Button type="primary" onClick={() => { this.onEdit() }}> + 添加机构</Button>
       } extra={this.renderQuery()}>
         {
           this.renderTable()
         }
+        {showEditModal && <DepartmentModal visible={showEditModal} onCancel={this.onCancel} currentItem={currentItem} />}
       </Card>
     );
   }

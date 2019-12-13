@@ -73,21 +73,21 @@ public class ConfigUtil {
     //Load data center from system property
     cluster = System.getProperty(ConfigConsts.APOLLO_CLUSTER_KEY);
 
-    //Use data center as cluster
+    //Use data center as appEnvCluster
     if (Strings.isNullOrEmpty(cluster)) {
       cluster = getDataCenter();
     }
 
-    //Use default cluster
+    //Use default appEnvCluster
     if (Strings.isNullOrEmpty(cluster)) {
       cluster = ConfigConsts.CLUSTER_NAME_DEFAULT;
     }
   }
 
   /**
-   * Get the cluster name for the current application.
+   * Get the appEnvCluster name for the current application.
    *
-   * @return the cluster name, or "default" if not specified
+   * @return the appEnvCluster name, or "default" if not specified
    */
   public String getCluster() {
     return cluster;

@@ -6,6 +6,9 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
+import com.yofish.apollo.domain.Instance;
+import com.yofish.apollo.domain.InstanceConfig;
+import com.yofish.apollo.service.InstanceService;
 import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.utils.ApolloThreadFactory;
 import framework.apollo.tracer.Tracer;
@@ -44,8 +47,7 @@ public class InstanceConfigAuditUtil implements InitializingBean {
   private InstanceService instanceService;
 
   public InstanceConfigAuditUtil() {
-    auditExecutorService = Executors.newSingleThreadExecutor(
-        ApolloThreadFactory.create("InstanceConfigAuditUtil", true));
+    auditExecutorService = Executors.newSingleThreadExecutor(ApolloThreadFactory.create("InstanceConfigAuditUtil", true));
     auditStopped = new AtomicBoolean(false);
     instanceCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.HOURS)
         .maximumSize(INSTANCE_CACHE_MAX_SIZE).build();
@@ -84,31 +86,31 @@ public class InstanceConfigAuditUtil implements InitializingBean {
     InstanceConfig instanceConfig = instanceService.findInstanceConfig(instanceId, auditModel
         .getConfigAppId(), auditModel.getConfigNamespace());
 
-    if (instanceConfig != null) {
-      if (!Objects.equals(instanceConfig.getReleaseKey(), auditModel.getReleaseKey())) {
-        instanceConfig.setConfigClusterName(auditModel.getConfigClusterName());
-        instanceConfig.setReleaseKey(auditModel.getReleaseKey());
-        instanceConfig.setReleaseDeliveryTime(auditModel.getOfferTime());
-      } else if (offerTimeAndLastModifiedTimeCloseEnough(auditModel.getOfferTime(),
-          instanceConfig.getDataChangeLastModifiedTime())) {
-        //when releaseKey is the same, optimize to reduce writes if the record was updated not long ago
-        return;
-      }
-      //we need to update no matter the release key is the same or not, to ensure the
-      //last modified time is updated each day
-      instanceConfig.setDataChangeLastModifiedTime(auditModel.getOfferTime());
-      instanceService.updateInstanceConfig(instanceConfig);
-      return;
-    }
-
-    instanceConfig = new InstanceConfig();
-    instanceConfig.setInstanceId(instanceId);
-    instanceConfig.setConfigAppId(auditModel.getConfigAppId());
-    instanceConfig.setConfigClusterName(auditModel.getConfigClusterName());
-    instanceConfig.setConfigNamespaceName(auditModel.getConfigNamespace());
-    instanceConfig.setReleaseKey(auditModel.getReleaseKey());
-    instanceConfig.setReleaseDeliveryTime(auditModel.getOfferTime());
-    instanceConfig.setDataChangeCreatedTime(auditModel.getOfferTime());
+//    if (instanceConfig != null) {
+//      if (!Objects.equals(instanceConfig.getReleaseKey(), auditModel.getReleaseKey())) {
+//        instanceConfig.setConfigClusterName(auditModel.getConfigClusterName());
+//        instanceConfig.setReleaseKey(auditModel.getReleaseKey());
+//        instanceConfig.setReleaseDeliveryTime(auditModel.getOfferTime());
+//      } else if (offerTimeAndLastModifiedTimeCloseEnough(auditModel.getOfferTime(),
+//          instanceConfig.getDataChangeLastModifiedTime())) {
+//        //when releaseKey is the same, optimize to reduce writes if the record was updated not long ago
+//        return;
+//      }
+//      //we need to update no matter the release key is the same or not, to ensure the
+//      //last modified time is updated each day
+//      instanceConfig.setDataChangeLastModifiedTime(auditModel.getOfferTime());
+//      instanceService.updateInstanceConfig(instanceConfig);
+//      return;
+//    }
+//
+//    instanceConfig = new InstanceConfig();
+//    instanceConfig.setInstanceId(instanceId);
+//    instanceConfig.setConfigAppId(auditModel.getConfigAppId());
+//    instanceConfig.setConfigClusterName(auditModel.getConfigClusterName());
+//    instanceConfig.setConfigNamespaceName(auditModel.getConfigNamespace());
+//    instanceConfig.setReleaseKey(auditModel.getReleaseKey());
+//    instanceConfig.setReleaseDeliveryTime(auditModel.getOfferTime());
+//    instanceConfig.setDataChangeCreatedTime(auditModel.getOfferTime());
 
     try {
       instanceService.createInstanceConfig(instanceConfig);
@@ -123,14 +125,13 @@ public class InstanceConfigAuditUtil implements InitializingBean {
   }
 
   private long prepareInstanceId(InstanceConfigAuditModel auditModel) {
-    Instance instance = instanceService.findInstance(auditModel.getAppId(), auditModel
-        .getClusterName(), auditModel.getDataCenter(), auditModel.getIp());
+    Instance instance = instanceService.findInstance(auditModel.getAppId(), auditModel.getClusterName(), auditModel.getDataCenter(), auditModel.getIp());
     if (instance != null) {
       return instance.getId();
     }
     instance = new Instance();
-    instance.setAppId(auditModel.getAppId());
-    instance.setClusterName(auditModel.getClusterName());
+//    instance.setAppId(auditModel.getAppId());
+//    instance.setClusterName(auditModel.getClusterName());
     instance.setDataCenter(auditModel.getDataCenter());
     instance.setIp(auditModel.getIp());
 
@@ -139,7 +140,7 @@ public class InstanceConfigAuditUtil implements InitializingBean {
       return instanceService.createInstance(instance).getId();
     } catch (DataIntegrityViolationException ex) {
       //return the one exists
-      return instanceService.findInstance(instance.getAppId(), instance.getClusterName(),
+      return instanceService.findInstance(instance.getAppNamespace().getApp().getAppId()), instance.getAppNamespace().,
           instance.getDataCenter(), instance.getIp()).getId();
     }
   }

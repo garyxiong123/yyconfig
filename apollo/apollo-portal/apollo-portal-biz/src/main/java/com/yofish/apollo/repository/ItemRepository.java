@@ -4,6 +4,7 @@
 package com.yofish.apollo.repository;
 
 
+import com.yofish.apollo.domain.AppEnvClusterNamespace;
 import com.yofish.apollo.domain.ClusterNamespace;
 import com.yofish.apollo.domain.Item;
 import com.yofish.apollo.dto.UpdateItemReq;
@@ -20,7 +21,7 @@ import java.util.List;
 public interface ItemRepository  extends JpaRepository<Item, Long> {
 
 
-   List<Item> findAllByClusterNamespace(ClusterNamespace clusterNamespace);
-   Item findFirstByClusterNamespaceOrderByLineNumDesc(ClusterNamespace clusterNamespace);
+   List<Item> findAllByAppEnvClusterNamespace(AppEnvClusterNamespace appEnvClusterNamespace);
+   Item findFirstByClusterNamespaceOrderByLineNumDesc(AppEnvClusterNamespace clusterNamespace);
 
 }

@@ -13,8 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Setter
-@Getter
+@Data
 @Entity
 @Table(name="releases")
 public class Release extends BaseEntity {
@@ -27,7 +26,7 @@ public class Release extends BaseEntity {
     private String name;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    private ClusterNamespace clusterNamespace;
+    private AppEnvClusterNamespace appEnvClusterNamespace;
 
     @Column(name = "Configurations", nullable = false)
     @Lob

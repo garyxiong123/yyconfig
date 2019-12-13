@@ -232,7 +232,7 @@ public class RemoteConfigRepositoryTest {
 
   private ApolloConfig assembleApolloConfig(Map<String, String> configurations) {
     String someAppId = "appId";
-    String someClusterName = "cluster";
+    String someClusterName = "appEnvCluster";
     String someReleaseKey = "1";
     ApolloConfig apolloConfig =
         new ApolloConfig(someAppId, someClusterName, someNamespace, someReleaseKey);

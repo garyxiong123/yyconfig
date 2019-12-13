@@ -1,14 +1,9 @@
 package com.ctrip.framework.apollo.configservice.controller;
 
-import com.ctrip.framework.apollo.biz.config.BizConfig;
-import com.ctrip.framework.apollo.biz.entity.ReleaseMessage;
-import com.ctrip.framework.apollo.biz.message.ReleaseMessageListener;
-import com.ctrip.framework.apollo.biz.message.Topics;
-import com.ctrip.framework.apollo.biz.utils.EntityManagerUtil;
-import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.configservice.service.ReleaseMessageServiceWithCache;
 import com.ctrip.framework.apollo.configservice.util.NamespaceUtil;
 import com.ctrip.framework.apollo.configservice.util.WatchKeysUtil;
+import com.ctrip.framework.apollo.configservice.utils.EntityManagerUtil;
 import com.ctrip.framework.apollo.configservice.wrapper.DeferredResultWrapper;
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
@@ -16,6 +11,11 @@ import com.google.common.base.Strings;
 import com.google.common.collect.*;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.yofish.apollo.domain.ReleaseMessage;
+import com.yofish.apollo.message.ReleaseMessageListener;
+import com.yofish.apollo.message.Topics;
+import com.yofish.apollo.service.PortalConfig;
+import common.exception.BadRequestException;
 import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.dto.ApolloConfigNotification;
 import framework.apollo.core.utils.ApolloThreadFactory;
@@ -72,7 +72,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
   private Gson gson;
 
   @Autowired
-  private BizConfig bizConfig;
+  private PortalConfig bizConfig;
 
   public NotificationControllerV2() {
     largeNotificationBatchExecutorService = Executors.newSingleThreadExecutor(ApolloThreadFactory.create
@@ -82,7 +82,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
   @RequestMapping(method = RequestMethod.GET)
   public DeferredResult<ResponseEntity<List<ApolloConfigNotification>>> pollNotification(
       @RequestParam(value = "appId") String appId,
-      @RequestParam(value = "cluster") String cluster,
+      @RequestParam(value = "appEnvCluster") String cluster,
       @RequestParam(value = "notifications") String notificationsAsString,
       @RequestParam(value = "dataCenter", required = false) String dataCenter,
       @RequestParam(value = "ip", required = false) String clientIp) {
@@ -221,11 +221,12 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
   }
 
   @Override
-  public void handleMessage(ReleaseMessage message, String channel) {
-    logger.info("message received - channel: {}, message: {}", channel, message);
+  public void handleReleaseMessage(ReleaseMessage message, String channel) {
 
     String content = message.getMessage();
-    Tracer.logEvent("Apollo.LongPoll.Messages", content);
+
+    handleMessageLog(message, channel, content);
+
     if (!Topics.APOLLO_RELEASE_TOPIC.equals(channel) || Strings.isNullOrEmpty(content)) {
       return;
     }
@@ -275,13 +276,19 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
     logger.debug("Notification completed");
   }
 
+  private void handleMessageLog(ReleaseMessage message, String channel, String content) {
+    logger.info("message received - channel: {}, message: {}", channel, message);
+
+    Tracer.logEvent("Apollo.LongPoll.Messages", content);
+  }
+
   private static final Function<String, String> retrieveNamespaceFromReleaseMessage =
       releaseMessage -> {
         if (Strings.isNullOrEmpty(releaseMessage)) {
           return null;
         }
         List<String> keys = STRING_SPLITTER.splitToList(releaseMessage);
-        //message should be appId+cluster+namespace
+        //message should be appId+appEnvCluster+namespace
         if (keys.size() != 3) {
           logger.error("message format invalid - {}", releaseMessage);
           return null;

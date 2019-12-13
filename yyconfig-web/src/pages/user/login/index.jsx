@@ -28,7 +28,7 @@ class Login extends Component {
       const { dispatch } = this.props;
       dispatch({
         type: 'login/login',
-        payload: { ...values, type },
+        payload: { ...values },
       });
     }
   };
