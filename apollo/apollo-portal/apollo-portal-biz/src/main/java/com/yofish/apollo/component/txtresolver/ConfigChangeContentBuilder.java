@@ -3,8 +3,8 @@ package com.yofish.apollo.component.txtresolver;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.yofish.apollo.domain.Item;
-import framework.apollo.core.utils.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.LinkedList;

@@ -10,26 +10,20 @@ import com.yofish.apollo.dto.CreateItemReq;
 import com.yofish.apollo.dto.ItemReq;
 import com.yofish.apollo.dto.ModifyItemsByTextsReq;
 import com.yofish.apollo.dto.UpdateItemReq;
-
-import com.yofish.apollo.enums.Envs;
-import com.yofish.apollo.model.NamespaceTextModel;
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.repository.CommitRepository;
 import com.yofish.apollo.repository.ItemRepository;
-import common.dto.ItemDTO;
-import common.exception.BadRequestException;
 import common.exception.NotFoundException;
 import common.utils.BeanUtils;
 import framework.apollo.core.enums.ConfigFileFormat;
-import framework.apollo.core.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.alibaba.fastjson.JSON.toJSONString;
 
@@ -139,11 +133,8 @@ public class ItemService {
                 managedItem.setValue(entity.getValue());
                 managedItem.setComment(entity.getComment());
                 managedItem.setLineNum(entity.getLineNum());
-
-
                 Item updatedItem = update(managedItem);
                 configChangeContentBuilder.updateItem(beforeUpdateItem, updatedItem);
-
             }
 
         }

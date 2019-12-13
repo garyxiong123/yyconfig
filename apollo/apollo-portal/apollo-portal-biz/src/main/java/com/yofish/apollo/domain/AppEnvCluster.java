@@ -29,4 +29,6 @@ public class AppEnvCluster extends BaseEntity {
     private App app;
 
     private Long parentClusterId;
+
+
 }

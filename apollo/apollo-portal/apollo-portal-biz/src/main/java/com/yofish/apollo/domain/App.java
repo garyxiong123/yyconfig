@@ -1,8 +1,11 @@
 package com.yofish.apollo.domain;
 
+import com.yofish.apollo.repository.AppRepository;
 import com.yofish.gary.biz.domain.User;
+import com.yofish.gary.biz.repository.RoleRepository;
 import com.yofish.gary.dao.entity.BaseEntity;
 import lombok.*;
+import net.bytebuddy.asm.Advice;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -10,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.Set;
+
+import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
 
 /**
  * @Author: xiongchengwei
@@ -49,7 +54,12 @@ public class App extends BaseEntity {
     public App(Long id) {
         super(id);
     }
-    public App(String appCode) {
-
+    public static App creatApp(String appCode) {
+        AppRepository appRepository = getBeanInstance(AppRepository.class);
+        return appRepository.findByAppCode(appCode);
     }
+    public AppEnvCluster createAppEnvCluster(String co){
+        return new AppEnvCluster();
+    }
+
 }

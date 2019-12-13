@@ -28,4 +28,5 @@ public class AppNamespace extends BaseEntity {
     private ConfigFileFormat format;
 
     private String comment;
+
 }
