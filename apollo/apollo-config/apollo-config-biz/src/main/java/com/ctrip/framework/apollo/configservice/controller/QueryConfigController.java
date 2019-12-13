@@ -35,7 +35,7 @@ import static framework.apollo.core.ConfigConsts.NO_APPID_PLACEHOLDER;
  */
 @RestController
 @RequestMapping("/configs")
-public class ConfigController {
+public class QueryConfigController {
     private static final Splitter X_FORWARDED_FOR_SPLITTER = Splitter.on(",").omitEmptyStrings()
             .trimResults();
     @Autowired

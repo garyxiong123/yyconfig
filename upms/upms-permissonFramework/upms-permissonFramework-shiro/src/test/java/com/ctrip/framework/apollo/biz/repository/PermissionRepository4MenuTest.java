@@ -1,4 +1,4 @@
-package biz.repository;
+package com.ctrip.framework.apollo.biz.repository;
 
 import com.yofish.gary.biz.domain.Permission4Menu;
 import com.yofish.gary.biz.repository.PermissionRepository;

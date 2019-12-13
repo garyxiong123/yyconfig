@@ -25,6 +25,7 @@ public class App extends BaseEntity {
 
     private String appCode;
     private String name;
+    private String appId;
 
     @ManyToOne(cascade = CascadeType.DETACH)
     private Department department;

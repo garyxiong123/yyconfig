@@ -59,7 +59,7 @@ public class ConfigFileController implements ReleaseMessageListener {
   private static final Gson gson = new Gson();
 
   @Autowired
-  private ConfigController configController;
+  private QueryConfigController queryConfigController;
 
   @Autowired
   private NamespaceUtil namespaceUtil;
@@ -215,8 +215,7 @@ public class ConfigFileController implements ReleaseMessageListener {
                             String namespace, String dataCenter, String clientIp,
                             HttpServletRequest request,
                             HttpServletResponse response) throws IOException {
-    ApolloConfig apolloConfig = configController.queryConfig(appId, clusterName, namespace,
-        dataCenter, "-1", clientIp, null, request, response);
+    ApolloConfig apolloConfig = queryConfigController.queryConfig4Client(appId, clusterName, namespace, dataCenter, "-1", clientIp, null, request, response);
 
     if (apolloConfig == null || apolloConfig.getConfigurations() == null) {
       return null;

@@ -1,4 +1,4 @@
-package biz.controller;
+package com.ctrip.framework.apollo.biz.controller;
 
 import com.yofish.gary.api.dto.req.UserAddReqDTO;
 import com.yofish.gary.api.dto.req.UserLoginReqDTO;
