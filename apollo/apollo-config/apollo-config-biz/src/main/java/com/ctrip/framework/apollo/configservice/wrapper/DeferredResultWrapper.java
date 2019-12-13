@@ -18,11 +18,11 @@ public class DeferredResultWrapper {
   private static final ResponseEntity<List<ApolloConfigNotification>> NOT_MODIFIED_RESPONSE_LIST = new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
 
   private Map<String, String> normalizedNamespaceName2OriginalNamespaceNameMap;
-  private DeferredResult<ResponseEntity<List<ApolloConfigNotification>>> severNotificationresult;
+  private DeferredResult<ResponseEntity<List<ApolloConfigNotification>>> result;
 
 
   public DeferredResultWrapper() {
-    severNotificationresult = new DeferredResult<>(TIMEOUT, NOT_MODIFIED_RESPONSE_LIST);
+    result = new DeferredResult<>(TIMEOUT, NOT_MODIFIED_RESPONSE_LIST);
   }
 
   public void fillNormalizedNamespaceName2OriginalNamespaceNameMap(String originalNamespaceName, String normalizedNamespaceName) {
@@ -34,11 +34,11 @@ public class DeferredResultWrapper {
 
 
   public void onTimeout(Runnable timeoutCallback) {
-    severNotificationresult.onTimeout(timeoutCallback);
+    result.onTimeout(timeoutCallback);
   }
 
   public void onCompletion(Runnable completionCallback) {
-    severNotificationresult.onCompletion(completionCallback);
+    result.onCompletion(completionCallback);
   }
 
 
@@ -56,10 +56,10 @@ public class DeferredResultWrapper {
               normalizedNamespaceName2OriginalNamespaceNameMap.get(notification.getNamespaceName())));
     }
 
-    severNotificationresult.setResult(new ResponseEntity<>(notifications, HttpStatus.OK));
+    result.setResult(new ResponseEntity<>(notifications, HttpStatus.OK));
   }
 
   public DeferredResult<ResponseEntity<List<ApolloConfigNotification>>> getResult() {
-    return severNotificationresult;
+    return result;
   }
 }

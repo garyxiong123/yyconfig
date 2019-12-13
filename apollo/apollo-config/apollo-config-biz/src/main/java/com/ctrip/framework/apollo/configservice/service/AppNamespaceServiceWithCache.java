@@ -183,7 +183,7 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
     }
     List<List<Long>> partitionIds = Lists.partition(ids, 500);
     for (List<Long> toRebuild : partitionIds) {
-      Iterable<AppNamespace> appNamespaces = appNamespaceRepository.findAll(toRebuild);
+      Iterable<AppNamespace> appNamespaces = appNamespaceRepository.findAllById(toRebuild);
 
       if (appNamespaces == null) {
         continue;
@@ -203,8 +203,7 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
     for (AppNamespace appNamespace : appNamespaces) {
       foundIds.add(appNamespace.getId());
       AppNamespace thatInCache = appNamespaceIdCache.get(appNamespace.getId());
-      if (thatInCache != null && appNamespace.getDataChangeLastModifiedTime().after(thatInCache
-          .getDataChangeLastModifiedTime())) {
+      if (thatInCache != null ) {
         appNamespaceIdCache.put(appNamespace.getId(), appNamespace);
         String oldKey = assembleAppNamespaceKey(thatInCache);
         String newKey = assembleAppNamespaceKey(appNamespace);
@@ -255,14 +254,14 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
   }
 
   private String assembleAppNamespaceKey(AppNamespace appNamespace) {
-    return STRING_JOINER.join(appNamespace.getAppId(), appNamespace.getName());
+    return STRING_JOINER.join(appNamespace.getApp().getAppCode(), appNamespace.getName());
   }
 
   private void populateDataBaseInterval() {
-    scanInterval = bizConfig.appNamespaceCacheScanInterval();
-    scanIntervalTimeUnit = bizConfig.appNamespaceCacheScanIntervalTimeUnit();
-    rebuildInterval = bizConfig.appNamespaceCacheRebuildInterval();
-    rebuildIntervalTimeUnit = bizConfig.appNamespaceCacheRebuildIntervalTimeUnit();
+//    scanInterval = bizConfig.appNamespaceCacheScanInterval();
+//    scanIntervalTimeUnit = bizConfig.appNamespaceCacheScanIntervalTimeUnit();
+//    rebuildInterval = bizConfig.appNamespaceCacheRebuildInterval();
+//    rebuildIntervalTimeUnit = bizConfig.appNamespaceCacheRebuildIntervalTimeUnit();
   }
 
   //only for test use

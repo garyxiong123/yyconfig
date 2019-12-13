@@ -1,6 +1,7 @@
 package com.ctrip.framework.apollo.configservice.service.config;
 
 import com.yofish.apollo.domain.Release;
+import com.yofish.apollo.grayReleaseRule.GrayReleaseRulesHolder;
 import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.dto.ApolloNotificationMessages;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,8 @@ import static java.util.Objects.isNull;
  * @author Jason Song(song_s@ctrip.com)
  */
 public abstract class AbstractConfigService implements ConfigService {
-//  @Autowired
-//  private GrayReleaseRulesHolder grayReleaseRulesHolder;
+  @Autowired
+  private GrayReleaseRulesHolder grayReleaseRulesHolder;
 
   @Override
   public Release loadConfig4SingleClient(String clientAppId, String clientIp, String configAppId, String configClusterName,
