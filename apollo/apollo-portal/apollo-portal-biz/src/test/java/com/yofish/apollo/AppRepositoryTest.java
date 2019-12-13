@@ -157,13 +157,17 @@ public class AppRepositoryTest {
 
     private AppNamespace createNamespace() {
         App app = createApp();
-        return AppNamespace.builder().app(app).name("application").build();
+
+        AppNamespace appNamespace = new AppNamespace();
+        appNamespace.setApp(app);
+        appNamespace.setName("application");
+        return appNamespace;
     }
 
     private AppEnvClusterNamespace createClusterNamespace() {
         AppEnvCluster appEnvCluster = createCluster();
         AppNamespace namespace = createNamespace();
-        return AppEnvClusterNamespace.builder().name("default").appEnvCluster(appEnvCluster).namespace(namespace).build();
+        return AppEnvClusterNamespace.builder().appEnvCluster(appEnvCluster).namespace(namespace).build();
     }
 
 

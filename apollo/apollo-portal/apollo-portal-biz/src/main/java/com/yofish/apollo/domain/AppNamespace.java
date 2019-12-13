@@ -13,7 +13,6 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -29,4 +28,11 @@ public class AppNamespace extends BaseEntity {
 
     private String comment;
 
+    public AppNamespace(Long id, String name, App app, ConfigFileFormat format, String comment) {
+        super(id);
+        this.name = name;
+        this.app = app;
+        this.format = format;
+        this.comment = comment;
+    }
 }

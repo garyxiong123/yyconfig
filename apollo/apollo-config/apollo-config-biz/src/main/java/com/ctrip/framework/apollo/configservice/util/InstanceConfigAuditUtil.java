@@ -140,7 +140,7 @@ public class InstanceConfigAuditUtil implements InitializingBean {
       return instanceService.createInstance(instance).getId();
     } catch (DataIntegrityViolationException ex) {
       //return the one exists
-      return instanceService.findInstance(instance.getAppNamespace().getApp().getAppId()), instance.getAppNamespace().,
+      return instanceService.findInstance(instance.getAppNamespace().getApp().getId()), instance.getAppNamespace().,
           instance.getDataCenter(), instance.getIp()).getId();
     }
   }

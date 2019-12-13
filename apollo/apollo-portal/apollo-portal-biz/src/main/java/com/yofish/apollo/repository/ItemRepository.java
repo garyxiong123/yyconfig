@@ -5,9 +5,7 @@ package com.yofish.apollo.repository;
 
 
 import com.yofish.apollo.domain.AppEnvClusterNamespace;
-import com.yofish.apollo.domain.ClusterNamespace;
 import com.yofish.apollo.domain.Item;
-import com.yofish.apollo.dto.UpdateItemReq;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
