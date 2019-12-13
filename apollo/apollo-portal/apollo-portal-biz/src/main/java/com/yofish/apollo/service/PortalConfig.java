@@ -35,7 +35,12 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public class PortalConfig extends RefreshableConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(PortalConfig.class);
+
+    private static final int DEFAULT_ITEM_KEY_LENGTH = 128;
+    private static final int DEFAULT_ITEM_VALUE_LENGTH = 20000;
+
     private static final String LIST_SEPARATOR = ",";
+
     @Autowired
     private ServerConfigRepository serverConfigRepository;
     @Autowired
@@ -46,6 +51,10 @@ public class PortalConfig extends RefreshableConfig {
 
 //  @Autowired
 //  private PortalDBPropertySource portalDBPropertySource;
+    private static final Type namespaceValueLengthOverrideTypeReference =
+        new TypeToken<Map<Long, Integer>>() {
+        }.getType();
+
 
     public PortalConfig(String name, Map<String, Object> source) {
         super(name, source);
@@ -349,6 +358,25 @@ public class PortalConfig extends RefreshableConfig {
 
     public String hermesServerAddress() {
         return getValue("hermes.server.address");
+    }
+    public int itemKeyLengthLimit() {
+        int limit = getIntProperty("item.key.length.limit", DEFAULT_ITEM_KEY_LENGTH);
+        return checkInt(limit, 5, Integer.MAX_VALUE, DEFAULT_ITEM_KEY_LENGTH);
+    }
+
+    public Map<Long, Integer> namespaceValueLengthLimitOverride() {
+        String namespaceValueLengthOverrideString = getValue("namespace.value.length.limit.override");
+        Map<Long, Integer> namespaceValueLengthOverride = Maps.newHashMap();
+        if (!Strings.isNullOrEmpty(namespaceValueLengthOverrideString)) {
+            namespaceValueLengthOverride =
+                    gson.fromJson(namespaceValueLengthOverrideString, namespaceValueLengthOverrideTypeReference);
+        }
+
+        return namespaceValueLengthOverride;
+    }
+    public int itemValueLengthLimit() {
+        int limit = getIntProperty("item.value.length.limit", DEFAULT_ITEM_VALUE_LENGTH);
+        return checkInt(limit, 5, Integer.MAX_VALUE, DEFAULT_ITEM_VALUE_LENGTH);
     }
 
 

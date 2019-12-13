@@ -2,21 +2,23 @@ package com.yofish.apollo.service;
 
 
 import com.yofish.apollo.domain.App;
+import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.domain.Department;
 import com.yofish.apollo.repository.AppRepository;
 import com.yofish.apollo.repository.DepartmentRepository;
-import com.yofish.gary.api.dto.rsp.UserDetailRspDTO;
+import com.yofish.gary.biz.domain.User;
 import com.yofish.gary.biz.service.UserService;
 import com.youyu.common.api.PageData;
-import com.youyu.common.helper.YyRequestInfoHelper;
 import common.exception.BadRequestException;
 import common.utils.PageDataAdapter;
-import framework.apollo.core.ConfigConsts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
+
+import java.util.Set;
 
 @Service
 public class AppService {
@@ -44,28 +46,46 @@ public class AppService {
         if (managedApp != null) {
             throw new BadRequestException(String.format("App already exists. AppCode = %s", appCode));
         }
+        this.checkOwnerAndAdminsAndDepartmentIsExist(app);
 
+        App createdApp = appRepository.save(app);
+
+        AppNamespace defaultAppNamespace = appNamespaceService.createDefaultAppNamespace(createdApp.getId());
+
+        appEnvClusterService.createDefaultCluster(createdApp.getId());
+
+        appEnvClusterNamespaceService.createNamespaceForAppNamespaceInAllCluster(defaultAppNamespace);
+
+        return createdApp;
+    }
+
+    private void checkOwnerAndAdminsAndDepartmentIsExist(App app) {
+        //owner
         com.yofish.gary.api.dto.rsp.UserDetailRspDTO userDetail = userService.getUserDetail(app.getAppOwner().getId());
         if (userDetail == null) {
             throw new BadRequestException("Application's owner not exist.");
         }
 
+        //admins
+        this.checkAppAdminsIsExist(app.getAppAdmins());
+
+        //department
         Department department = departmentRepository.findById(app.getDepartment().getId()).orElse(null);
         if (department == null) {
             throw new BadRequestException("Application's department not exist.");
         }
-
-        App createdApp = appRepository.save(app);
-
-        appNamespaceService.createDefaultAppNamespace(createdApp.getId());
-
-        appEnvClusterService.createDefaultCluster(createdApp.getId());
-
-        appEnvClusterNamespaceService.createNamespaceForAppNamespaceInAllCluster(createdApp.getId(), ConfigConsts.NAMESPACE_APPLICATION);
-
-        return createdApp;
     }
 
+    private void checkAppAdminsIsExist(Set<User> appAdmins) {
+        if (!ObjectUtils.isEmpty(appAdmins)) {
+            for (User appAdmin : appAdmins) {
+                com.yofish.gary.api.dto.rsp.UserDetailRspDTO userDetailRspDTO = userService.getUserDetail(appAdmin.getId());
+                if (userDetailRspDTO == null) {
+                    throw new BadRequestException("Application's admin [" + appAdmin.getId() + "] not exist.");
+                }
+            }
+        }
+    }
 
     public PageData<App> findAll(Pageable pageable) {
         Page<App> apps = appRepository.findAll(pageable);
@@ -79,7 +99,12 @@ public class AppService {
         return PageDataAdapter.toPageData(apps);
     }
 
-
+    /**
+     * 只能改 appAdmins
+     *
+     * @param app
+     * @return
+     */
     @Transactional
     public App updateApp(App app) {
         Long appId = app.getId();
@@ -92,23 +117,11 @@ public class AppService {
         managedApp.setName(app.getName());
         managedApp.setDepartment(app.getDepartment());
 
-        Long userId = app.getAppOwner().getId();
-        UserDetailRspDTO userDetail = userService.getUserDetail(userId);
-        if (userDetail == null) {
-            throw new BadRequestException(String.format("App's owner not exists. owner = %s", userId));
-        }
+        this.checkOwnerAndAdminsAndDepartmentIsExist(app);
 
-        Department department = departmentRepository.findById(app.getDepartment().getId()).orElse(null);
-        if (department == null) {
-            throw new BadRequestException("Application's department not exist.");
-        }
+        managedApp.setAppAdmins(app.getAppAdmins());
 
-        managedApp.setAppOwner(app.getAppOwner());
-
-        String operator = YyRequestInfoHelper.getCurrentUserName();
-        managedApp.setUpdateAuthor(operator);
-
-        return appRepository.save(managedApp);
+        return appRepository.save(app);
     }
 
 /*

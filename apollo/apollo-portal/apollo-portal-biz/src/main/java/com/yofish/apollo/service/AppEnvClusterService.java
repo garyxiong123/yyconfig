@@ -10,7 +10,6 @@ package com.yofish.apollo.service;
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppEnvCluster;
 import com.yofish.apollo.repository.AppEnvClusterRepository;
-import common.exception.ServiceException;
 import framework.apollo.core.ConfigConsts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,10 +69,10 @@ public class AppEnvClusterService {
 //    }
 //
 //
-    public boolean isClusterNameUnique(Long appId, String clusterName) {
+    public boolean isClusterNameUnique(Long appId, String env, String clusterName) {
         Objects.requireNonNull(appId, "AppId must not be null");
         Objects.requireNonNull(clusterName, "ClusterName must not be null");
-        return ObjectUtils.isEmpty((appEnvClusterRepository.findByAppAndName(new App(appId), clusterName)));
+        return ObjectUtils.isEmpty((appEnvClusterRepository.findClusterByAppAndEnvAndName(new App(appId), env, clusterName)));
 
     }
 //
@@ -159,19 +158,18 @@ public class AppEnvClusterService {
 
     @Transactional
     public void createDefaultCluster(long appId) {
-        if (!isClusterNameUnique(appId, ConfigConsts.CLUSTER_NAME_DEFAULT)) {
-            throw new ServiceException("clusterEntity not unique");
-        }
         List<String> envs = serverConfigService.getActiveEnvs();
         //每次遍历，都要new，防止覆盖
         envs.forEach((env -> {
-                    AppEnvCluster appEnvCluster = new AppEnvCluster();
-                    appEnvCluster.setName(ConfigConsts.CLUSTER_NAME_DEFAULT);
-                    appEnvCluster.setApp(new App(appId));
-                    appEnvCluster.setEnv(env);
-                    appEnvClusterRepository.save(appEnvCluster);
+                    if (isClusterNameUnique(appId, env, ConfigConsts.CLUSTER_NAME_DEFAULT)) {
+                        AppEnvCluster appEnvCluster = AppEnvCluster.builder()
+                                .app(new App(appId))
+                                .env(env)
+                                .name(ConfigConsts.CLUSTER_NAME_DEFAULT)
+                                .build();
+                        appEnvClusterRepository.save(appEnvCluster);
+                    }
                 })
-
         );
 
     }
