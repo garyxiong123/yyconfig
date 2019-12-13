@@ -16,11 +16,11 @@ public class YyStringUtils extends StringUtils {
    * @param cs2
    * @return
    */
-  public static boolean eq(final CharSequence cs1, final CharSequence cs2) {
+  public static boolean equal(final CharSequence cs1, final CharSequence cs2) {
     return equals(cs1, cs2);
   }
 
-  public static boolean notEq(final CharSequence cs1, final CharSequence cs2) {
+  public static boolean notEqual(final CharSequence cs1, final CharSequence cs2) {
     return !equals(cs1, cs2);
   }
 

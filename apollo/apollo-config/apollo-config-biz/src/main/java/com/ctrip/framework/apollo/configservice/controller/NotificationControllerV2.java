@@ -37,6 +37,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import static common.utils.YyStringUtils.notEqual;
 import static org.springframework.util.StringUtils.isEmpty;
 
 /**
@@ -100,7 +101,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
             ApolloConfigNotification notification = notificationEntry.getValue();
             namespaces.add(normalizedNamespace);
             clientSideNotifications.put(normalizedNamespace, notification.getNotificationId());
-            if (!Objects.equals(notification.getNamespaceName(), normalizedNamespace)) {
+            if (notEqual(notification.getNamespaceName(), normalizedNamespace)) {
                 deferredResultWrapper.recordNamespaceNameNormalizedResult(notification.getNamespaceName(), normalizedNamespace);
             }
         }
