@@ -12,7 +12,7 @@ import com.yofish.apollo.repository.AppNamespaceRepository;
 import com.yofish.apollo.service.PortalConfig;
 import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.utils.ApolloThreadFactory;
-import framework.apollo.core.utils.StringUtils;
+import common.utils.YyStringUtils;
 import framework.apollo.tracer.Tracer;
 import framework.apollo.tracer.spi.Transaction;
 import org.slf4j.Logger;
@@ -74,7 +74,7 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
   }
 
   public AppNamespace findByAppIdAndNamespace(String appId, String namespaceName) {
-    Preconditions.checkArgument(!StringUtils.isContainEmpty(appId, namespaceName), "appId and namespaceName must not be empty");
+    Preconditions.checkArgument(!YyStringUtils.isContainEmpty(appId, namespaceName), "appId and namespaceName must not be empty");
     return appNamespaceCache.get(STRING_JOINER.join(appId, namespaceName));
   }
 

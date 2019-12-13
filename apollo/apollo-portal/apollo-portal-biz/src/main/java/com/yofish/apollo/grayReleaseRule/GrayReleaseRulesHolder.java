@@ -36,8 +36,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class GrayReleaseRulesHolder implements ReleaseMessageListener, InitializingBean {
   private static final Logger logger = LoggerFactory.getLogger(GrayReleaseRulesHolder.class);
   private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR);
-  private static final Splitter STRING_SPLITTER =
-      Splitter.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).omitEmptyStrings();
+  private static final Splitter STRING_SPLITTER = Splitter.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).omitEmptyStrings();
 
   @Autowired
   private GrayReleaseRuleRepository grayReleaseRuleRepository;
@@ -88,8 +87,7 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
     String cluster = keys.get(1);
     String namespace = keys.get(2);
 
-    List<GrayReleaseRule> rules = grayReleaseRuleRepository
-        .findByAppIdAndClusterNameAndNamespaceName(appId, cluster, namespace);
+    List<GrayReleaseRule> rules = grayReleaseRuleRepository.findByAppIdAndClusterNameAndNamespaceName(appId, cluster, namespace);
 
     mergeGrayReleaseRules(rules);
   }
@@ -168,8 +166,8 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
         //filter rules with no release id, i.e. never released
         continue;
       }
-      String key = assembleGrayReleaseRuleKey(grayReleaseRule.getAppId(), grayReleaseRule
-          .getClusterName(), grayReleaseRule.getNamespaceName());
+      String key = assembleGrayReleaseRuleKey(grayReleaseRule.getRelease().getAppEnvClusterNamespace().getAppEnvCluster().getApp().getAppCode(), grayReleaseRule
+          .getRelease().getAppEnvClusterNamespace().getAppEnvCluster().getName(), grayReleaseRule.getRelease().getAppEnvClusterNamespace().getName());
       //create a new list to avoid ConcurrentModificationException
       List<GrayReleaseRuleCache> rules = Lists.newArrayList(grayReleaseRuleCache.get(key));
       GrayReleaseRuleCache oldRule = null;
@@ -236,8 +234,7 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
     }
 
     GrayReleaseRuleCache ruleCache = new GrayReleaseRuleCache(grayReleaseRule.getId(),
-        grayReleaseRule.getBranchName(), grayReleaseRule.getNamespaceName(), grayReleaseRule
-        .getReleaseId(), grayReleaseRule.getBranchStatus(), loadVersion.get(), ruleItems);
+        grayReleaseRule.getBranchName(), grayReleaseRule.getRelease().getAppEnvClusterNamespace().getNamespace().getName(), grayReleaseRule.getRelease().getId(), grayReleaseRule.getBranchStatus(), loadVersion.get(), ruleItems);
 
     return ruleCache;
   }

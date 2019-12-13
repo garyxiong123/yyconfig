@@ -2,23 +2,17 @@ package com.ctrip.framework.apollo.configservice.controller;
 
 import com.ctrip.framework.apollo.configservice.util.NamespaceUtil;
 import com.ctrip.framework.apollo.configservice.util.WatchKeysUtil;
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.cache.*;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-import com.google.gson.Gson;
 import com.yofish.apollo.domain.ReleaseMessage;
 import com.yofish.apollo.grayReleaseRule.GrayReleaseRulesHolder;
 import com.yofish.apollo.message.ReleaseMessageListener;
 import com.yofish.apollo.message.Topics;
-import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.dto.ApolloConfig;
-import framework.apollo.core.utils.PropertiesUtil;
 import framework.apollo.tracer.Tracer;
-import net.bytebuddy.asm.Advice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -45,30 +38,23 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 @RequestMapping("/configfiles")
 public class ConfigFileController implements ReleaseMessageListener {
     private static final Logger logger = LoggerFactory.getLogger(ConfigFileController.class);
-    private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR);
-    private static final Splitter X_FORWARDED_FOR_SPLITTER = Splitter.on(",").omitEmptyStrings()
-            .trimResults();
+    private static final Splitter X_FORWARDED_FOR_SPLITTER = Splitter.on(",").omitEmptyStrings().trimResults();
     private static final long MAX_CACHE_SIZE = 50 * 1024 * 1024; // 50MB
     private static final long EXPIRE_AFTER_WRITE = 30;
     private final HttpHeaders propertiesResponseHeaders;
     private final HttpHeaders jsonResponseHeaders;
     private final ResponseEntity<String> NOT_FOUND_RESPONSE;
     private Cache<String, String> localCache;
-    private final Multimap<String, String>
-            watchedKeys2CacheKey = Multimaps.synchronizedSetMultimap(HashMultimap.create());
-    private final Multimap<String, String>
-            cacheKey2WatchedKeys = Multimaps.synchronizedSetMultimap(HashMultimap.create());
-    private static final Gson gson = new Gson();
+    private final Multimap<String, String> watchedKeys2CacheKey = Multimaps.synchronizedSetMultimap(HashMultimap.create());
+    private final Multimap<String, String> cacheKey2WatchedKeys = Multimaps.synchronizedSetMultimap(HashMultimap.create());
+
 
     @Autowired
     private QueryConfigController queryConfigController;
-
     @Autowired
     private NamespaceUtil namespaceUtil;
-
     @Autowired
     private WatchKeysUtil watchKeysUtil;
-
     @Autowired
     private GrayReleaseRulesHolder grayReleaseRulesHolder;
     @Autowired
@@ -118,7 +104,8 @@ public class ConfigFileController implements ReleaseMessageListener {
                                                           @RequestParam(value = "dataCenter", required = false) String dataCenter,
                                                           @RequestParam(value = "ip", required = false) String clientIp) throws IOException {
 
-        String result = queryConfig(ConfigFileOutputFormat.PROPERTIES, appId, clusterName, namespace, dataCenter, clientIp);
+        ConfigReqDto configReqDto4Properties = createConfigReqDto4Properties(appId, clusterName, namespace, dataCenter, clientIp);
+        String result = queryConfig(configReqDto4Properties);
 
         if (result == null) {
             return NOT_FOUND_RESPONSE;
@@ -132,11 +119,9 @@ public class ConfigFileController implements ReleaseMessageListener {
                                                     @PathVariable String clusterName,
                                                     @PathVariable String namespace,
                                                     @RequestParam(value = "dataCenter", required = false) String dataCenter,
-                                                    @RequestParam(value = "ip", required = false) String clientIp,
-                                                    HttpServletRequest request,
-                                                    HttpServletResponse response) throws IOException {
-
-        String result = queryConfig(ConfigFileOutputFormat.JSON, appId, clusterName, namespace, dataCenter, clientIp);
+                                                    @RequestParam(value = "ip", required = false) String clientIp) throws IOException {
+        ConfigReqDto configReqDto = createConfigReqDto4Json(appId, clusterName, namespace, dataCenter, clientIp);
+        String result = queryConfig(configReqDto);
 
         if (result == null) {
             return NOT_FOUND_RESPONSE;
@@ -146,107 +131,6 @@ public class ConfigFileController implements ReleaseMessageListener {
     }
 
 
-    private String queryConfig(ConfigFileOutputFormat outputFormat, String appId, String clusterName, String namespace, String dataCenter, String clientIp) throws IOException {
-
-        String queryConfigRs = null;
-        namespace = namespaceUtil.filterAndNormalizeNamespace(appId, namespace);
-
-        if (isNullOrEmpty(clientIp)) { clientIp = tryToGetClientIp(request); }
-
-        boolean hasGrayReleaseRule4CurrenClient = hasGrayRule4CurrentClient(appId, namespace, clientIp);
-        if (hasGrayReleaseRule4CurrenClient) {
-            return loadConfigByGrayRule(outputFormat, appId, clusterName, namespace, dataCenter, clientIp, request, response);
-        }
-
-        String cacheKey = assembleCacheKey(outputFormat, appId, clusterName, namespace, dataCenter);
-        if (cacheExists(cacheKey, queryConfigRs)) {
-            return queryConfigRs;
-        }
-
-        if (isNullOrEmpty(queryConfigRs)) {
-
-            queryConfigRs = loadConfigFromConfigController(outputFormat, appId, clusterName, namespace, dataCenter, clientIp, request, response);
-
-            if (queryConfigRs == null) {
-                return null;
-            }
-            //5. Double check if this client needs to load gray release, if yes, load from db again
-            //This step is mainly to avoid cache pollution
-            if (grayReleaseRulesHolder.hasGrayReleaseRule(appId, clientIp, namespace)) {
-
-                Tracer.logEvent("ConfigFile.Cache.GrayReleaseConflict", cacheKey);
-                return loadConfigFromConfigController(outputFormat, appId, clusterName, namespace, dataCenter, clientIp, request, response);
-            }
-
-            updateCache(appId, clusterName, namespace, dataCenter, queryConfigRs, cacheKey);
-        }
-
-        return queryConfigRs;
-    }
-
-    private void updateCache(String appId, String clusterName, String namespace, String dataCenter, String queryConfigRs, String cacheKey) {
-        localCache.put(cacheKey, queryConfigRs);
-        logger.debug("adding cache for key: {}", cacheKey);
-
-        Set<String> watchedKeys = watchKeysUtil.assembleAllWatchKeys(appId, clusterName, namespace, dataCenter);
-
-        for (String watchedKey : watchedKeys) {
-            watchedKeys2CacheKey.put(watchedKey, cacheKey);
-        }
-
-        cacheKey2WatchedKeys.putAll(cacheKey, watchedKeys);
-        logger.debug("added cache for key: {}", cacheKey);
-    }
-
-    private boolean cacheExists(String cacheKey, String queryConfigRs) {
-        queryConfigRs = localCache.getIfPresent(cacheKey);
-        return queryConfigRs != null;
-    }
-
-    private String loadConfigByGrayRule(ConfigFileOutputFormat outputFormat, String appId, String clusterName, String namespace, String dataCenter, String clientIp, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        return loadConfigFromConfigController(outputFormat, appId, clusterName, namespace, dataCenter, clientIp, request, response);
-    }
-
-    private boolean hasGrayRule4CurrentClient(String appId, String namespace, String clientIp) {
-        return grayReleaseRulesHolder.hasGrayReleaseRule(appId, clientIp, namespace);
-    }
-
-    private String loadConfigFromConfigController(ConfigFileOutputFormat outputFormat, String appId, String clusterName,
-                                                  String namespace, String dataCenter, String clientIp,
-                                                  HttpServletRequest request,
-                                                  HttpServletResponse response) throws IOException {
-        ApolloConfig apolloConfig = queryConfigController.queryConfig4Client(appId, clusterName, namespace, dataCenter, "-1", clientIp, null, request, response);
-
-        if (apolloConfig == null || apolloConfig.getConfigurations() == null) {
-            return null;
-        }
-
-        String result = null;
-
-        switch (outputFormat) {
-            case PROPERTIES:
-                Properties properties = new Properties();
-                properties.putAll(apolloConfig.getConfigurations());
-                result = PropertiesUtil.toString(properties);
-                break;
-            case JSON:
-                result = gson.toJson(apolloConfig.getConfigurations());
-                break;
-        }
-
-        return result;
-    }
-
-    String assembleCacheKey(ConfigFileOutputFormat outputFormat, String appId, String clusterName,
-                            String namespace,
-                            String dataCenter) {
-        List<String> keyParts =
-                Lists.newArrayList(outputFormat.getValue(), appId, clusterName, namespace);
-        if (!isNullOrEmpty(dataCenter)) {
-            keyParts.add(dataCenter);
-        }
-        return STRING_JOINER.join(keyParts);
-    }
 
     @Override
     public void handleReleaseMessage(ReleaseMessage message, String channel) {
@@ -269,6 +153,100 @@ public class ConfigFileController implements ReleaseMessageListener {
             localCache.invalidate(cacheKey);
         }
     }
+
+
+    private String queryConfig(ConfigReqDto configReqDto) throws IOException {
+
+        String queryConfigRs = null;
+        String cacheKey = paramsCheckAndFilter(configReqDto);
+
+        boolean hasGrayReleaseRule4CurrenClient = hasGrayRule4CurrentClient(configReqDto);
+        if (hasGrayReleaseRule4CurrenClient) {
+            return loadConfigByGrayRule(configReqDto);
+        }
+
+        if (cacheExistsThenLoad(cacheKey, queryConfigRs)) {
+            return queryConfigRs;
+        }
+
+        if (isNullOrEmpty(queryConfigRs)) {
+
+            queryConfigRs = loadConfigFromConfigController(configReqDto);
+
+            if (queryConfigRs == null) {
+                return null;
+            }
+            //5. Double check if this client needs to load gray release, if yes, load from db again
+            //This step is mainly to avoid cache pollution
+            if (grayReleaseRulesHolder.hasGrayReleaseRule(configReqDto.getAppId(), configReqDto.getClientIp(), configReqDto.getNamespace())) {
+
+                Tracer.logEvent("ConfigFile.Cache.GrayReleaseConflict", cacheKey);
+                return loadConfigFromConfigController(configReqDto);
+            }
+
+            updateCache(configReqDto, queryConfigRs, cacheKey);
+        }
+
+        return queryConfigRs;
+    }
+
+    private String paramsCheckAndFilter(ConfigReqDto configReqDto) {
+        namespaceUtil.filterAndNormalizeNamespace(configReqDto.getAppId(), configReqDto.getNamespace());
+        String cacheKey = configReqDto.assembleCacheKey();
+
+        if (isNullOrEmpty(configReqDto.getClientIp())) {
+            configReqDto.setClientIp(tryToGetClientIp(request));
+        }
+        return cacheKey;
+
+    }
+
+    private void updateCache(ConfigReqDto configReqDto, String queryConfigRs, String cacheKey) {
+        localCache.put(cacheKey, queryConfigRs);
+        logger.debug("adding cache for key: {}", cacheKey);
+
+        Set<String> watchedKeys = watchKeysUtil.assembleAllWatchKeys(configReqDto.getAppId(), configReqDto.getClusterName(), configReqDto.getNamespace(), configReqDto.getDataCenter());
+
+        for (String watchedKey : watchedKeys) {
+            watchedKeys2CacheKey.put(watchedKey, cacheKey);
+        }
+
+        cacheKey2WatchedKeys.putAll(cacheKey, watchedKeys);
+        logger.debug("added cache for key: {}", cacheKey);
+    }
+
+    private boolean cacheExistsThenLoad(String cacheKey, String queryConfigRs) {
+        queryConfigRs = localCache.getIfPresent(cacheKey);
+        return queryConfigRs != null;
+    }
+
+    private String loadConfigByGrayRule(ConfigReqDto configReqDto) throws IOException {
+        return loadConfigFromConfigController(configReqDto);
+    }
+
+    private boolean hasGrayRule4CurrentClient(ConfigReqDto configReqDto) {
+        return grayReleaseRulesHolder.hasGrayReleaseRule(configReqDto.getAppId(), configReqDto.getClientIp(), configReqDto.getNamespace());
+    }
+
+    private String loadConfigFromConfigController(ConfigReqDto configReqDto) throws IOException {
+        ApolloConfig apolloConfig = queryConfigController.queryConfig4Client(configReqDto.getAppId(), configReqDto.getClusterName(), configReqDto.getNamespace(), configReqDto.getDataCenter(), "-1", configReqDto.getClientIp(), null, request, response);
+
+        if (apolloConfig == null || apolloConfig.getConfigurations() == null) {
+            return null;
+        }
+        String result = configReqDto.getConfigResult(apolloConfig.getConfigurations());
+
+        return result;
+    }
+
+    private ConfigReqDto createConfigReqDto4Json( String appId, String clusterName, String namespace, String dataCenter, String clientIp) {
+        return ConfigReqDto4Json.builder().appId(appId).clusterName(clusterName).namespace(namespace).dataCenter(dataCenter).clientIp(clientIp).build();
+    }
+    private ConfigReqDto createConfigReqDto4Properties( String appId, String clusterName, String namespace, String dataCenter, String clientIp) {
+        return ConfigReqDto4Properties.builder().appId(appId).clusterName(clusterName).namespace(namespace).dataCenter(dataCenter).clientIp(clientIp).build();
+    }
+
+
 
     enum ConfigFileOutputFormat {
         PROPERTIES("properties"), JSON("json");

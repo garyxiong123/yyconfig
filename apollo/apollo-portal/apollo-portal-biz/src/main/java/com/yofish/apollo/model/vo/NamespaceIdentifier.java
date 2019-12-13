@@ -3,7 +3,7 @@ package com.yofish.apollo.model.vo;
 
 import com.yofish.apollo.model.model.Verifiable;
 import framework.apollo.core.enums.Env;
-import framework.apollo.core.utils.StringUtils;
+import common.utils.YyStringUtils;
 
 public class NamespaceIdentifier implements Verifiable {
   private String appId;
@@ -46,7 +46,7 @@ public class NamespaceIdentifier implements Verifiable {
 
   @Override
   public boolean isInvalid() {
-    return StringUtils.isContainEmpty(env, clusterName, namespaceName);
+    return YyStringUtils.isContainEmpty(env, clusterName, namespaceName);
   }
 
   @Override
