@@ -74,7 +74,7 @@ public class ApolloConfig {
   public String toString() {
     final StringBuilder sb = new StringBuilder("ApolloConfig{");
     sb.append("appId='").append(appId).append('\'');
-    sb.append(", cluster='").append(cluster).append('\'');
+    sb.append(", appEnvCluster='").append(cluster).append('\'');
     sb.append(", namespaceName='").append(namespaceName).append('\'');
     sb.append(", configurations=").append(configurations);
     sb.append(", releaseKey='").append(releaseKey).append('\'');

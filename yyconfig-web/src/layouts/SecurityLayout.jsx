@@ -11,10 +11,10 @@ class SecurityLayout extends React.Component {
   };
 
   componentDidMount() {
-    let currentUser = JSON.parse(localStorage.getItem('user'));
+    let currentUser = JSON.parse(localStorage.getItem('YYuser'));
     this.setState({
       isReady: true,
-      isLogin: currentUser && currentUser.userId ? true: false
+      isLogin: currentUser && currentUser.id ? true: false
     });
     // const { dispatch } = this.props;
 

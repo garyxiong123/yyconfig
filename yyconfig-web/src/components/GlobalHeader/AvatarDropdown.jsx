@@ -1,30 +1,44 @@
 import { Avatar, Icon, Menu, Spin } from 'antd';
 import { FormattedMessage } from 'umi-plugin-react/locale';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'dva';
 import router from 'umi/router';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
+import EditPassword from './EditPassword';
 
 class AvatarDropdown extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showEditPassword: false
+    };
+  }
+
   onMenuClick = event => {
     const { key } = event;
-
     if (key === 'logout') {
       const { dispatch } = this.props;
-
       if (dispatch) {
         dispatch({
           type: 'login/logout',
         });
       }
-
       return;
     }
-
+    if (key === 'editPassword') {
+      this.setState({
+        showEditPassword: true
+      })
+      return;
+    }
     router.push(`/account/${key}`);
   };
-
+  onEditPasswordCancel=()=>{
+    this.setState({
+      showEditPassword: false
+    })
+  }
   render() {
     const {
       // currentUser = {
@@ -33,10 +47,11 @@ class AvatarDropdown extends React.Component {
       // },
       menu,
     } = this.props;
-    let currentUser = JSON.parse(localStorage.getItem('user'));
+    const { showEditPassword } = this.state;
+    let currentUser = JSON.parse(localStorage.getItem('YYuser'));
     const menuHeaderDropdown = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={this.onMenuClick}>
-        {menu && (
+        {/* {menu && (
           <Menu.Item key="center">
             <Icon type="user" />
             <FormattedMessage id="menu.account.center" defaultMessage="account center" />
@@ -48,8 +63,12 @@ class AvatarDropdown extends React.Component {
             <FormattedMessage id="menu.account.settings" defaultMessage="account settings" />
           </Menu.Item>
         )}
-        {menu && <Menu.Divider />}
-
+        {menu && <Menu.Divider />} */}
+        <Menu.Item key="editPassword">
+          <Icon type="lock" />
+          <span>修改密码</span>
+        </Menu.Item>
+        <Menu.Divider />
         <Menu.Item key="logout">
           <Icon type="logout" />
           <FormattedMessage id="menu.account.logout" defaultMessage="logout" />
@@ -57,21 +76,25 @@ class AvatarDropdown extends React.Component {
       </Menu>
     );
     return currentUser && currentUser.username ? (
-      <HeaderDropdown overlay={menuHeaderDropdown}>
-        <span className={`${styles.action} ${styles.account}`}>
-          {/* <Avatar size="small" className={styles.avatar} src={currentUser.avatar} alt="avatar" /> */}
-          <span className={styles.name}>{currentUser.username}</span>
-        </span>
-      </HeaderDropdown>
+      <Fragment>
+        <HeaderDropdown overlay={menuHeaderDropdown}>
+          <span className={`${styles.action} ${styles.account}`}>
+            {/* <Avatar size="small" className={styles.avatar} src={currentUser.avatar} alt="avatar" /> */}
+            <span className={styles.name}>{currentUser.username}</span>
+          </span>
+        </HeaderDropdown>
+        { showEditPassword && <EditPassword onCancel={this.onEditPasswordCancel}/>}
+      </Fragment>
+
     ) : (
-      <Spin
-        size="small"
-        style={{
-          marginLeft: 8,
-          marginRight: 8,
-        }}
-      />
-    );
+        <Spin
+          size="small"
+          style={{
+            marginLeft: 8,
+            marginRight: 8,
+          }}
+        />
+      );
   }
 }
 

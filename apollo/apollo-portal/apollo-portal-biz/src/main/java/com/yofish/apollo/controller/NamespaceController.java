@@ -168,11 +168,11 @@ public class NamespaceController {
 
 //
 //  *
-//   * env -> cluster -> cluster has not published namespace?
+//   * env -> appEnvCluster -> appEnvCluster has not published namespace?
 //   * Example:
 //   * dev ->
-//   *  default -> true   (default cluster has not published namespace)
-//   *  customCluster -> false (customCluster cluster's all namespaces had published)
+//   *  default -> true   (default appEnvCluster has not published namespace)
+//   *  customCluster -> false (customCluster appEnvCluster's all namespaces had published)
 //
 //  @RequestMapping(value = "/apps/{appId}/namespaces/publish_info", method = RequestMethod.GET)
 //  public Map<String, Map<String, Boolean>> getNamespacesPublishInfo(@PathVariable String appId) {

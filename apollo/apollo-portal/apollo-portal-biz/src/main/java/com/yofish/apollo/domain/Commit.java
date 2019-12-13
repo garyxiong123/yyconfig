@@ -1,11 +1,9 @@
 package com.yofish.apollo.domain;
 
-import com.yofish.gary.biz.domain.User;
 import com.yofish.gary.dao.entity.BaseEntity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Set;
 
 /**
  * @Author: xiongchengwei
@@ -23,7 +21,7 @@ public class Commit extends BaseEntity {
     private String name;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    private ClusterNamespace clusterNamespace;
+    private AppEnvClusterNamespace appEnvClusterNamespace;
 
 
     @Lob

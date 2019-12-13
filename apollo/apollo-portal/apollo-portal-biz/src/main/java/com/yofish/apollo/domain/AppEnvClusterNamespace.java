@@ -18,12 +18,12 @@ import javax.persistence.ManyToOne;
 @Setter
 @Getter
 @Entity
-public class ClusterNamespace extends BaseEntity {
+public class AppEnvClusterNamespace extends BaseEntity {
 
     private String name;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    private Cluster cluster;
+    private AppEnvCluster appEnvCluster;
     @ManyToOne(cascade = CascadeType.ALL)
     private Namespace namespace;
 }

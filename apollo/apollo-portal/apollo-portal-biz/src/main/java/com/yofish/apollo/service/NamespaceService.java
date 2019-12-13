@@ -1,10 +1,10 @@
 package com.yofish.apollo.service;
 
 import com.yofish.apollo.domain.App;
+import com.yofish.apollo.domain.AppEnvCluster;
 import com.yofish.apollo.domain.AppNamespace;
-import com.yofish.apollo.domain.Cluster;
 import com.yofish.apollo.domain.Namespace;
-import com.yofish.apollo.repository.ClusterRepository;
+import com.yofish.apollo.repository.AppEnvClusterRepository;
 import com.yofish.apollo.repository.NamespaceRepository;
 import common.dto.NamespaceDTO;
 import common.exception.BadRequestException;
@@ -29,7 +29,7 @@ public class NamespaceService {
     @Autowired
     private AppNamespaceService appNamespaceService;
     @Autowired
-    private ClusterRepository clusterRepository;
+    private AppEnvClusterRepository appEnvClusterRepository;
     @Autowired
     private ServerConfigService serverConfigService;
 
@@ -48,7 +48,7 @@ public class NamespaceService {
 
     public boolean isNamespaceUnique(Long appId, String env, String cluster, String namespace) {
         Objects.requireNonNull(appId, "AppId must not be null");
-        Objects.requireNonNull(cluster, "Cluster must not be null");
+        Objects.requireNonNull(cluster, "AppEnvCluster must not be null");
         Objects.requireNonNull(namespace, "Namespace must not be null");
         return Objects.isNull(namespaceRepository.findByAppIdAAndEnvAndClusterNameAndNamespaceName(appId, env, cluster, namespace));
     }
@@ -69,18 +69,18 @@ public class NamespaceService {
     }
 
     public void createNamespaceForAppNamespaceInAllCluster(Long appId, String namespaceName) {
-        List<Cluster> clusters = this.clusterRepository.findByAppAndParentClusterId(new App(appId), 0L);
+        List<AppEnvCluster> appEnvClusters = this.appEnvClusterRepository.findByAppAndParentClusterId(new App(appId), 0L);
 
         List<String> activeEnvs = this.serverConfigService.getActiveEnvs();
         for (String env : activeEnvs) {
-            for (Cluster cluster : clusters) {
+            for (AppEnvCluster appEnvCluster : appEnvClusters) {
 
                 // in case there is some dirty data, e.g. public namespace deleted in other app and now created in this app
-                if (!this.isNamespaceUnique(appId, env, cluster.getName(), namespaceName)) {
+                if (!this.isNamespaceUnique(appId, env, appEnvCluster.getName(), namespaceName)) {
                     continue;
                 }
 
-                Namespace namespace = new Namespace(appId,env,cluster.getName(),namespaceName);
+                Namespace namespace = new Namespace(appId,env, appEnvCluster.getName(),namespaceName);
                 this.save(namespace);
             }
         }

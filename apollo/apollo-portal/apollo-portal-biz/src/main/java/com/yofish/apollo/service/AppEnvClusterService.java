@@ -8,8 +8,8 @@ package com.yofish.apollo.service;
 //import framework.apollo.core.enums.Env;
 
 import com.yofish.apollo.domain.App;
-import com.yofish.apollo.domain.Cluster;
-import com.yofish.apollo.repository.ClusterRepository;
+import com.yofish.apollo.domain.AppEnvCluster;
+import com.yofish.apollo.repository.AppEnvClusterRepository;
 import common.exception.ServiceException;
 import framework.apollo.core.ConfigConsts;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +30,11 @@ import java.util.Objects;
 ////import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 //
 @Service
-public class ClusterService {
+public class AppEnvClusterService {
 
 
     @Autowired
-    private ClusterRepository clusterRepository;
+    private AppEnvClusterRepository appEnvClusterRepository;
     @Autowired
     private ServerConfigService serverConfigService;
 //    @Autowired
@@ -50,9 +50,9 @@ public class ClusterService {
 //    }
 //
 
-    public Cluster createCluster(String env, Cluster cluster) {
-        cluster.setEnv(env);
-        return clusterRepository.save(cluster);
+    public AppEnvCluster createCluster(String env, AppEnvCluster appEnvCluster) {
+        appEnvCluster.setEnv(env);
+        return appEnvClusterRepository.save(appEnvCluster);
     }
 
     //    public void deleteCluster(Env env, String appId, String clusterName) {
@@ -73,7 +73,7 @@ public class ClusterService {
     public boolean isClusterNameUnique(Long appId, String clusterName) {
         Objects.requireNonNull(appId, "AppId must not be null");
         Objects.requireNonNull(clusterName, "ClusterName must not be null");
-        return ObjectUtils.isEmpty((clusterRepository.findByAppAndName(new App(appId), clusterName)));
+        return ObjectUtils.isEmpty((appEnvClusterRepository.findByAppAndName(new App(appId), clusterName)));
 
     }
 //
@@ -165,11 +165,11 @@ public class ClusterService {
         List<String> envs = serverConfigService.getActiveEnvs();
         //每次遍历，都要new，防止覆盖
         envs.forEach((env -> {
-                    Cluster cluster = new Cluster();
-                    cluster.setName(ConfigConsts.CLUSTER_NAME_DEFAULT);
-                    cluster.setApp(new App(appId));
-                    cluster.setEnv(env);
-                    clusterRepository.save(cluster);
+                    AppEnvCluster appEnvCluster = new AppEnvCluster();
+                    appEnvCluster.setName(ConfigConsts.CLUSTER_NAME_DEFAULT);
+                    appEnvCluster.setApp(new App(appId));
+                    appEnvCluster.setEnv(env);
+                    appEnvClusterRepository.save(appEnvCluster);
                 })
 
         );
@@ -180,7 +180,7 @@ public class ClusterService {
 //        //TODO fix
 //        ClusterEntity parentClusterEntity = findOne(appId, parentClusterName, env);
 //        if (parentClusterEntity == null) {
-//            throw new BadRequestException("parent cluster not exist");
+//            throw new BadRequestException("parent appEnvCluster not exist");
 //        }
 //
 //        return clusterRepository.findByParentClusterId(parentClusterEntity.getId());
@@ -193,7 +193,7 @@ public class ClusterService {
 //            return Collections.emptyList();
 //        }
 //
-//        // to make sure parent cluster is ahead of branch cluster
+//        // to make sure parent appEnvCluster is ahead of branch appEnvCluster
 //        Collections.sort(clusterEntities);
 //
 //        return clusterEntities;

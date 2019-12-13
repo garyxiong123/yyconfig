@@ -16,10 +16,10 @@ class AuthMain extends React.Component {
           key: '1',
           tab: '用户'
         },
-        {
-          key: '2',
-          tab: '角色'
-        },
+        // {
+        //   key: '2',
+        //   tab: '角色'
+        // },
         {
           key: '3',
           tab: '权限'

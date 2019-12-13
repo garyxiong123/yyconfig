@@ -37,7 +37,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.springframework.util.StringUtils.isEmpty;
 
 /**
@@ -80,7 +79,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
   @RequestMapping(method = RequestMethod.GET)
   public DeferredResult<ResponseEntity<List<ApolloConfigNotification>>> pollNotification4Client(
       @RequestParam(value = "appId") String appId,
-      @RequestParam(value = "cluster") String cluster,
+      @RequestParam(value = "appEnvCluster") String cluster,
       @RequestParam(value = "notifications") String notificationsAsString,
       @RequestParam(value = "dataCenter", required = false) String dataCenter,
       @RequestParam(value = "ip", required = false) String clientIp) {
@@ -145,7 +144,8 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
       }
 
       logWatchedKeys(watchedKeys, "Apollo.LongPoll.RegisteredKeys");
-      logger.debug("Listening {} from appId: {}, cluster: {}, namespace: {}, datacenter: {}", watchedKeys, appId, cluster, namespaces, dataCenter);
+      logger.debug("Listening {} from appId: {}, cluster: {}, namespace: {}, datacenter: {}",
+          watchedKeys, appId, cluster, namespaces, dataCenter);
     }
 
     return deferredResultWrapper.getResult();
@@ -278,7 +278,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
           return null;
         }
         List<String> keys = STRING_SPLITTER.splitToList(releaseMessage);
-        //message should be appId+cluster+namespace
+        //message should be appId+appEnvCluster+namespace
         if (keys.size() != 3) {
           logger.error("message format invalid - {}", releaseMessage);
           return null;

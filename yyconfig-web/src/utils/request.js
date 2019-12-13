@@ -41,7 +41,7 @@ const errorHandler = error => {
  * 配置request请求时的默认参数
  */
 // const SERVER_HOME = '.';
-const SERVER_HOME = 'http://192.168.1.147:6060';
+const SERVER_HOME = 'http://10.0.33.14:60008';
 
 const request = extend({
   errorHandler,

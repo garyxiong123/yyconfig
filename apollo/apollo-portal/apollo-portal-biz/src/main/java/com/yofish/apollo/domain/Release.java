@@ -26,7 +26,7 @@ public class Release extends BaseEntity {
     private String name;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    private ClusterNamespace clusterNamespace;
+    private AppEnvClusterNamespace appEnvClusterNamespace;
 
     @Column(name = "Configurations", nullable = false)
     @Lob
