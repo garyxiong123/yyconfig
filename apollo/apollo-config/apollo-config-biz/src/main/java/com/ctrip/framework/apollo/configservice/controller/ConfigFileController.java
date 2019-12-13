@@ -13,6 +13,7 @@ import com.yofish.apollo.message.ReleaseMessageListener;
 import com.yofish.apollo.message.Topics;
 import framework.apollo.core.dto.ApolloConfig;
 import framework.apollo.tracer.Tracer;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +35,10 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
+@Slf4j
 @RestController
 @RequestMapping("/configfiles")
 public class ConfigFileController implements ReleaseMessageListener {
-    private static final Logger logger = LoggerFactory.getLogger(ConfigFileController.class);
     private static final Splitter X_FORWARDED_FOR_SPLITTER = Splitter.on(",").omitEmptyStrings().trimResults();
     private static final long MAX_CACHE_SIZE = 50 * 1024 * 1024; // 50MB
     private static final long EXPIRE_AFTER_WRITE = 30;
@@ -76,7 +77,7 @@ public class ConfigFileController implements ReleaseMessageListener {
                     @Override
                     public void onRemoval(RemovalNotification<String, String> notification) {
                         String cacheKey = notification.getKey();
-                        logger.debug("removing cache key: {}", cacheKey);
+                        log.debug("removing cache key: {}", cacheKey);
                         if (!cacheKey2WatchedKeys.containsKey(cacheKey)) {
                             return;
                         }
@@ -86,7 +87,7 @@ public class ConfigFileController implements ReleaseMessageListener {
                             watchedKeys2CacheKey.remove(watchedKey, cacheKey);
                         }
                         cacheKey2WatchedKeys.removeAll(cacheKey);
-                        logger.debug("removed cache key: {}", cacheKey);
+                        log.debug("removed cache key: {}", cacheKey);
                     }
                 })
                 .build();
@@ -134,7 +135,7 @@ public class ConfigFileController implements ReleaseMessageListener {
 
     @Override
     public void handleReleaseMessage(ReleaseMessage message, String channel) {
-        logger.info("message received - channel: {}, message: {}", channel, message);
+        log.info("message received - channel: {}, message: {}", channel, message);
 
         String content = message.getMessage();
         if (!Topics.APOLLO_RELEASE_TOPIC.equals(channel) || isNullOrEmpty(content)) {
@@ -149,7 +150,7 @@ public class ConfigFileController implements ReleaseMessageListener {
         List<String> cacheKeys = new ArrayList<>(watchedKeys2CacheKey.get(content));
 
         for (String cacheKey : cacheKeys) {
-            logger.debug("invalidate cache key: {}", cacheKey);
+            log.debug("invalidate cache key: {}", cacheKey);
             localCache.invalidate(cacheKey);
         }
     }
@@ -203,7 +204,7 @@ public class ConfigFileController implements ReleaseMessageListener {
 
     private void updateCache(ConfigReqDto configReqDto, String queryConfigRs, String cacheKey) {
         localCache.put(cacheKey, queryConfigRs);
-        logger.debug("adding cache for key: {}", cacheKey);
+        log.debug("adding cache for key: {}", cacheKey);
 
         Set<String> watchedKeys = watchKeysUtil.assembleAllWatchKeys(configReqDto.getAppId(), configReqDto.getClusterName(), configReqDto.getNamespace(), configReqDto.getDataCenter());
 
@@ -212,7 +213,7 @@ public class ConfigFileController implements ReleaseMessageListener {
         }
 
         cacheKey2WatchedKeys.putAll(cacheKey, watchedKeys);
-        logger.debug("added cache for key: {}", cacheKey);
+        log.debug("added cache for key: {}", cacheKey);
     }
 
     private boolean cacheExistsThenLoad(String cacheKey, String queryConfigRs) {
