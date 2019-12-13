@@ -2,10 +2,11 @@ package com.ctrip.framework.apollo.biz.service;
 
 import com.ctrip.framework.apollo.biz.AbstractUnitTest;
 import com.ctrip.framework.apollo.biz.MockBeanFactory;
-import com.ctrip.framework.apollo.biz.entity.ServerConfig;
-import com.ctrip.framework.apollo.biz.repository.ServerConfigRepository;
-import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.google.common.collect.Lists;
+import com.yofish.apollo.domain.ServerConfig;
+import com.yofish.apollo.repository.ServerConfigRepository;
+import com.yofish.apollo.service.BizDBPropertySource;
+import framework.apollo.core.ConfigConsts;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,6 +15,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;

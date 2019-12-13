@@ -1,8 +1,9 @@
 package com.ctrip.framework.apollo.biz.utils;
 
 import com.ctrip.framework.apollo.biz.MockBeanFactory;
-import com.ctrip.framework.apollo.biz.entity.Namespace;
+import com.ctrip.framework.apollo.configservice.utils.ReleaseKeyGenerator;
 import com.google.common.collect.Sets;
+import com.yofish.apollo.domain.AppEnvClusterNamespace;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +29,8 @@ public class ReleaseKeyGeneratorTest {
 
     String anotherAppId = "anotherAppId";
 
-    Namespace namespace = MockBeanFactory.mockNamespace(someAppId, someCluster, someNamespace);
-    Namespace anotherNamespace = MockBeanFactory.mockNamespace(anotherAppId, someCluster, someNamespace);
+    AppEnvClusterNamespace namespace = MockBeanFactory.mockNamespace(someAppId, someCluster, someNamespace);
+    AppEnvClusterNamespace anotherNamespace = MockBeanFactory.mockNamespace(anotherAppId, someCluster, someNamespace);
     int generateTimes = 50000;
     Set<String> releaseKeys = Sets.newConcurrentHashSet();
 
@@ -48,7 +49,7 @@ public class ReleaseKeyGeneratorTest {
     assertEquals(generateTimes * 2, releaseKeys.size());
   }
 
-  private Runnable generateReleaseKeysTask(Namespace namespace, Set<String> releaseKeys,
+  private Runnable generateReleaseKeysTask(AppEnvClusterNamespace namespace, Set<String> releaseKeys,
                                    int generateTimes, CountDownLatch latch) {
     return () -> {
       try {

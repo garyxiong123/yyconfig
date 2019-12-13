@@ -1,17 +1,18 @@
 package com.ctrip.framework.apollo.biz.grayReleaseRule;
 
-import com.ctrip.framework.apollo.biz.config.BizConfig;
-import com.ctrip.framework.apollo.biz.entity.GrayReleaseRule;
-import com.ctrip.framework.apollo.biz.entity.ReleaseMessage;
-import com.ctrip.framework.apollo.biz.message.Topics;
-import com.ctrip.framework.apollo.biz.repository.GrayReleaseRuleRepository;
-import com.ctrip.framework.apollo.common.constants.NamespaceBranchStatus;
-import com.ctrip.framework.apollo.common.dto.GrayReleaseRuleItemDTO;
-import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
+import com.yofish.apollo.domain.GrayReleaseRule;
+import com.yofish.apollo.domain.ReleaseMessage;
+import com.yofish.apollo.grayReleaseRule.GrayReleaseRulesHolder;
+import com.yofish.apollo.message.Topics;
+import com.yofish.apollo.repository.GrayReleaseRuleRepository;
+import com.yofish.apollo.service.PortalConfig;
+import common.constants.NamespaceBranchStatus;
+import common.dto.GrayReleaseRuleItemDTO;
+import framework.apollo.core.ConfigConsts;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,7 +36,7 @@ public class GrayReleaseRulesHolderTest {
   private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR);
   private GrayReleaseRulesHolder grayReleaseRulesHolder;
   @Mock
-  private BizConfig bizConfig;
+  private PortalConfig bizConfig;
   @Mock
   private GrayReleaseRuleRepository grayReleaseRuleRepository;
   private Gson gson = new Gson();
@@ -44,10 +45,8 @@ public class GrayReleaseRulesHolderTest {
   @Before
   public void setUp() throws Exception {
     grayReleaseRulesHolder = spy(new GrayReleaseRulesHolder());
-    ReflectionTestUtils.setField(grayReleaseRulesHolder, "bizConfig",
-                                 bizConfig);
-    ReflectionTestUtils.setField(grayReleaseRulesHolder, "grayReleaseRuleRepository",
-        grayReleaseRuleRepository);
+    ReflectionTestUtils.setField(grayReleaseRulesHolder, "bizConfig", bizConfig);
+    ReflectionTestUtils.setField(grayReleaseRulesHolder, "grayReleaseRuleRepository", grayReleaseRuleRepository);
     idCounter = new AtomicLong();
   }
 
@@ -107,7 +106,7 @@ public class GrayReleaseRulesHolderTest {
         someClusterName, someNamespaceName)).thenReturn(Lists.newArrayList(anotherRule));
 
     //send message
-    grayReleaseRulesHolder.handleMessage(assembleReleaseMessage(someAppId, someClusterName,
+    grayReleaseRulesHolder.handleReleaseMessage(assembleReleaseMessage(someAppId, someClusterName,
         someNamespaceName), Topics.APOLLO_RELEASE_TOPIC);
 
     assertNull(grayReleaseRulesHolder.findReleaseIdFromGrayReleaseRule
@@ -132,12 +131,12 @@ public class GrayReleaseRulesHolderTest {
       namespaceName, List<GrayReleaseRuleItemDTO> ruleItems, long releaseId, int branchStatus) {
     GrayReleaseRule rule = new GrayReleaseRule();
     rule.setId(idCounter.incrementAndGet());
-    rule.setAppId(appId);
-    rule.setClusterName(clusterName);
-    rule.setNamespaceName(namespaceName);
-    rule.setBranchName("someBranch");
-    rule.setRules(gson.toJson(ruleItems));
-    rule.setReleaseId(releaseId);
+//    rule.setAppId(appId);
+//    rule.setClusterName(clusterName);
+//    rule.setNamespaceName(namespaceName);
+//    rule.setBranchName("someBranch");
+//    rule.setRules(gson.toJson(ruleItems));
+//    rule.setReleaseId(releaseId);
     rule.setBranchStatus(branchStatus);
 
     return rule;

@@ -9,6 +9,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.repository.AppNamespaceRepository;
+import com.yofish.apollo.service.PortalConfig;
 import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.utils.ApolloThreadFactory;
 import framework.apollo.core.utils.StringUtils;
@@ -41,7 +42,7 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
   private AppNamespaceRepository appNamespaceRepository;
 
   @Autowired
-  private BizConfig bizConfig;
+  private PortalConfig bizConfig;
 
   private int scanInterval;
   private TimeUnit scanIntervalTimeUnit;

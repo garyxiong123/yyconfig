@@ -125,7 +125,7 @@ package com.yofish.apollo.controller;//package com.ctrip.framework.apollo.contro
 //  }
 //
 //  @Override
-//  public void handleMessage(ReleaseMessage message, String channel) {
+//  public void handleReleaseMessage(ReleaseMessage message, String channel) {
 //    logger.info("message received - channel: {}, message: {}", channel, message);
 //
 //    String content = message.getMessage();

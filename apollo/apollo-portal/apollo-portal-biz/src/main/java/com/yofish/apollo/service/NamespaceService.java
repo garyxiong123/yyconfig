@@ -3,7 +3,6 @@ package com.yofish.apollo.service;
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppEnvCluster;
 import com.yofish.apollo.domain.AppNamespace;
-import com.yofish.apollo.domain.Namespace;
 import com.yofish.apollo.repository.AppEnvClusterRepository;
 import com.yofish.apollo.repository.NamespaceRepository;
 import common.dto.NamespaceDTO;

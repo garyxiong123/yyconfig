@@ -72,7 +72,7 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
   }
 
   @Override
-  public void handleMessage(ReleaseMessage message, String channel) {
+  public void handleReleaseMessage(ReleaseMessage message, String channel) {
     logger.info("message received - channel: {}, message: {}", channel, message);
     String releaseMessage = message.getMessage();
     if (!Topics.APOLLO_RELEASE_TOPIC.equals(channel) || Strings.isNullOrEmpty(releaseMessage)) {

@@ -371,4 +371,8 @@ public class PortalConfig extends RefreshableConfig {
     public long releaseMessageNotificationBatchIntervalInMilli() {
         return 0;
     }
+
+    public int checkInt(int someInvalidValue, int someMin, int maxValue, int someDefaultValue) {
+        return 0;
+    }
 }

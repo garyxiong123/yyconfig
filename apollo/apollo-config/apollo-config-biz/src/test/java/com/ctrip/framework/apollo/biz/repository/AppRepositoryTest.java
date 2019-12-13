@@ -1,7 +1,8 @@
 package com.ctrip.framework.apollo.biz.repository;
 
 import com.ctrip.framework.apollo.biz.AbstractIntegrationTest;
-import com.ctrip.framework.apollo.common.entity.App;
+import com.yofish.apollo.domain.App;
+import com.yofish.apollo.repository.AppRepository;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,8 @@ public class AppRepositoryTest extends AbstractIntegrationTest{
     App app = new App();
     app.setAppId(appId);
     app.setName(appName);
-    app.setOwnerName(ownerName);
-    app.setOwnerEmail(ownerEmail);
+//    app.setOwnerName(ownerName);
+//    app.setOwnerEmail(ownerEmail);
 
     Assert.assertEquals(0, appRepository.count());
 
@@ -41,8 +42,8 @@ public class AppRepositoryTest extends AbstractIntegrationTest{
     App app = new App();
     app.setAppId(appId);
     app.setName(appName);
-    app.setOwnerName(ownerName);
-    app.setOwnerEmail(ownerEmail);
+//    app.setOwnerName(ownerName);
+//    app.setOwnerEmail(ownerEmail);
 
     Assert.assertEquals(0, appRepository.count());
 
@@ -50,7 +51,7 @@ public class AppRepositoryTest extends AbstractIntegrationTest{
 
     Assert.assertEquals(1, appRepository.count());
 
-    appRepository.delete(app.getId());
+//    appRepository.delete(app.getId());
 
     Assert.assertEquals(0, appRepository.count());
   }

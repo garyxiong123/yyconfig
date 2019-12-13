@@ -3,14 +3,18 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>apollo-config</artifactId>
+        <artifactId>apollo</artifactId>
         <groupId>com.yofish.gary</groupId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <artifactId>apollo-config</artifactId>
 
-    <artifactId>apollo-config-biz</artifactId>
+    <modules>
+        <module>apollo-config-api</module>
+        <module>apollo-config-biz</module>
+    </modules>
 
     <dependencies>
         <dependency>
@@ -27,12 +31,6 @@
             <artifactId>apollo-portal-biz</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <groupId>com.yofish.gary</groupId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot</artifactId>
-            <version>1.3.8.RELEASE</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

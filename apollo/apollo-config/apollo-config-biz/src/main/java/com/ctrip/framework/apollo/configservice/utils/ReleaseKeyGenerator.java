@@ -1,7 +1,7 @@
 package com.ctrip.framework.apollo.configservice.utils;
 
 
-import com.yofish.apollo.domain.Namespace;
+import com.yofish.apollo.domain.AppEnvClusterNamespace;
 import common.utils.UniqueKeyGenerator;
 
 /**
@@ -16,7 +16,7 @@ public class ReleaseKeyGenerator extends UniqueKeyGenerator {
    * @param namespace the namespace of the release
    * @return the unique release key
    */
-  public static String generateReleaseKey(Namespace namespace) {
-    return generate(namespace.getAppId(), namespace.getClusterName(), namespace.getNamespaceName());
+  public static String generateReleaseKey(AppEnvClusterNamespace namespace) {
+    return generate(namespace.getAppEnvCluster().getApp().getAppCode(), namespace.getAppEnvCluster().getName(), namespace.getName());
   }
 }

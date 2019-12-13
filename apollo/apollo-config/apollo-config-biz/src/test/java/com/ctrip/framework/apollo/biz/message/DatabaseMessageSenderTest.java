@@ -1,8 +1,10 @@
 package com.ctrip.framework.apollo.biz.message;
 
 import com.ctrip.framework.apollo.biz.AbstractUnitTest;
-import com.ctrip.framework.apollo.biz.entity.ReleaseMessage;
-import com.ctrip.framework.apollo.biz.repository.ReleaseMessageRepository;
+import com.yofish.apollo.domain.ReleaseMessage;
+import com.yofish.apollo.message.ReleaseMessageSender4Database;
+import com.yofish.apollo.message.Topics;
+import com.yofish.apollo.repository.ReleaseMessageRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -10,19 +12,20 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public class DatabaseMessageSenderTest extends AbstractUnitTest{
-  private DatabaseMessageSender messageSender;
+  private ReleaseMessageSender4Database messageSender;
   @Mock
   private ReleaseMessageRepository releaseMessageRepository;
 
   @Before
   public void setUp() throws Exception {
-    messageSender = new DatabaseMessageSender();
+    messageSender = new ReleaseMessageSender4Database();
     ReflectionTestUtils.setField(messageSender, "releaseMessageRepository", releaseMessageRepository);
   }
 

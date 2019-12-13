@@ -96,7 +96,7 @@ public class ReleaseMessageServiceWithCache implements ReleaseMessageListener, I
   }
 
   @Override
-  public void handleMessage(ReleaseMessage message, String channel) {
+  public void handleReleaseMessage(ReleaseMessage message, String channel) {
     //Could stop once the ReleaseMessageScanner starts to work
     doScan.set(false);
     logger.info("message received - channel: {}, message: {}", channel, message);

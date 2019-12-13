@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.biz.config;
 
+import com.yofish.apollo.service.PortalConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,6 +9,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 /**
@@ -19,11 +21,11 @@ public class BizConfigTest {
   @Mock
   private ConfigurableEnvironment environment;
 
-  private BizConfig bizConfig;
+  private PortalConfig bizConfig;
 
   @Before
   public void setUp() throws Exception {
-    bizConfig = new BizConfig();
+    bizConfig = new PortalConfig();
     ReflectionTestUtils.setField(bizConfig, "environment", environment);
   }
 

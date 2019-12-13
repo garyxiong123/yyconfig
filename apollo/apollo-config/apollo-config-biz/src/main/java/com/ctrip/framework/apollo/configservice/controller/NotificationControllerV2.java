@@ -46,9 +46,12 @@ import static org.springframework.util.StringUtils.isEmpty;
 @RequestMapping("/notifications/v2")
 public class NotificationControllerV2 implements ReleaseMessageListener {
   private static final Logger logger = LoggerFactory.getLogger(NotificationControllerV2.class);
-  private final Multimap<String, DeferredResultWrapper> deferredResults = Multimaps.synchronizedSetMultimap(HashMultimap.create());
-  private static final Splitter STRING_SPLITTER = Splitter.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).omitEmptyStrings();
-  private static final Type notificationsTypeReference = new TypeToken<List<ApolloConfigNotification>>() {
+  private final Multimap<String, DeferredResultWrapper> deferredResults =
+      Multimaps.synchronizedSetMultimap(HashMultimap.create());
+  private static final Splitter STRING_SPLITTER =
+      Splitter.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).omitEmptyStrings();
+  private static final Type notificationsTypeReference =
+      new TypeToken<List<ApolloConfigNotification>>() {
       }.getType();
 
   private final ExecutorService largeNotificationBatchExecutorService;
@@ -77,14 +80,16 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
   }
 
   @RequestMapping(method = RequestMethod.GET)
-  public DeferredResult<ResponseEntity<List<ApolloConfigNotification>>> pollNotification4Client(
+  public DeferredResult<ResponseEntity<List<ApolloConfigNotification>>> pollNotification(
       @RequestParam(value = "appId") String appId,
       @RequestParam(value = "appEnvCluster") String cluster,
       @RequestParam(value = "notifications") String notificationsAsString,
       @RequestParam(value = "dataCenter", required = false) String dataCenter,
       @RequestParam(value = "ip", required = false) String clientIp) {
+    List<ApolloConfigNotification> notifications = null;
 
-    List<ApolloConfigNotification> notifications = gson.fromJson(notificationsAsString, notificationsTypeReference);
+      notifications =
+          gson.fromJson(notificationsAsString, notificationsTypeReference);
 
     if (isEmpty(notifications)) {
 //      throw new BadRequestException("Invalid format of notifications: " + notificationsAsString);
@@ -109,11 +114,13 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
       throw new BadRequestException("Invalid format of notifications: " + notificationsAsString);
     }
 
-    Multimap<String, String> watchedKeysMap = watchKeysUtil.assembleAllWatchKeys(appId, cluster, namespaces, dataCenter);
+    Multimap<String, String> watchedKeysMap =
+        watchKeysUtil.assembleAllWatchKeys(appId, cluster, namespaces, dataCenter);
 
     Set<String> watchedKeys = Sets.newHashSet(watchedKeysMap.values());
 
-    List<ReleaseMessage> latestReleaseMessages = releaseMessageService.findLatestReleaseMessagesGroupByMessages(watchedKeys);
+    List<ReleaseMessage> latestReleaseMessages =
+        releaseMessageService.findLatestReleaseMessagesGroupByMessages(watchedKeys);
 
     /**
      * Manually close the entity manager.
@@ -123,12 +130,15 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
      */
     entityManagerUtil.closeEntityManager();
 
-    List<ApolloConfigNotification> newNotifications = getApolloConfigNotifications(namespaces, clientSideNotifications, watchedKeysMap, latestReleaseMessages);
+    List<ApolloConfigNotification> newNotifications =
+        getApolloConfigNotifications(namespaces, clientSideNotifications, watchedKeysMap,
+            latestReleaseMessages);
 
     if (!CollectionUtils.isEmpty(newNotifications)) {
       deferredResultWrapper.setResult(newNotifications);
     } else {
-      deferredResultWrapper.onTimeout(() -> logWatchedKeys(watchedKeys, "Apollo.LongPoll.TimeOutKeys"));
+      deferredResultWrapper
+          .onTimeout(() -> logWatchedKeys(watchedKeys, "Apollo.LongPoll.TimeOutKeys"));
 
       deferredResultWrapper.onCompletion(() -> {
         //unregister all keys
@@ -155,7 +165,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
                                                                     List<ApolloConfigNotification> notifications) {
     Map<String, ApolloConfigNotification> filteredNotifications = Maps.newHashMap();
     for (ApolloConfigNotification notification : notifications) {
-      if (isNullOrEmpty(notification.getNamespaceName())) {
+      if (Strings.isNullOrEmpty(notification.getNamespaceName())) {
         continue;
       }
       //strip out .properties suffix
@@ -211,19 +221,19 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
   }
 
   @Override
-  public void handleMessage(ReleaseMessage message, String channel) {
+  public void handleReleaseMessage(ReleaseMessage message, String channel) {
 
     String content = message.getMessage();
 
     handleMessageLog(message, channel, content);
 
-    if (!Topics.APOLLO_RELEASE_TOPIC.equals(channel) || isNullOrEmpty(content)) {
+    if (!Topics.APOLLO_RELEASE_TOPIC.equals(channel) || Strings.isNullOrEmpty(content)) {
       return;
     }
 
     String changedNamespace = retrieveNamespaceFromReleaseMessage.apply(content);
 
-    if (isNullOrEmpty(changedNamespace)) {
+    if (Strings.isNullOrEmpty(changedNamespace)) {
       logger.error("message format invalid - {}", content);
       return;
     }
@@ -274,7 +284,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
 
   private static final Function<String, String> retrieveNamespaceFromReleaseMessage =
       releaseMessage -> {
-        if (isNullOrEmpty(releaseMessage)) {
+        if (Strings.isNullOrEmpty(releaseMessage)) {
           return null;
         }
         List<String> keys = STRING_SPLITTER.splitToList(releaseMessage);
