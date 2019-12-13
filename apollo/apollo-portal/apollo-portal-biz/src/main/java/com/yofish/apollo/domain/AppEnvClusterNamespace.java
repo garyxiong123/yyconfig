@@ -24,6 +24,7 @@ public class AppEnvClusterNamespace extends BaseEntity {
 
     @ManyToOne(cascade = CascadeType.ALL)
     private AppEnvCluster appEnvCluster;
+
     @ManyToOne(cascade = CascadeType.ALL)
-    private Namespace namespace;
+    private AppNamespace namespace;
 }

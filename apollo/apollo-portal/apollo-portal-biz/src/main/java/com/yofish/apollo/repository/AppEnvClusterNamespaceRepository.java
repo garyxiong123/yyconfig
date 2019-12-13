@@ -10,9 +10,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @since 1.0
  */
 public interface AppEnvClusterNamespaceRepository extends JpaRepository<AppEnvClusterNamespace, Long> {
-//    @Query
-//    AppEnvClusterNamespace findByAppIdAndEnvAndClusterNameAndnamespaceName(String appId, String env, String clusterName, String namespaceName);
 
+
+    AppEnvClusterNamespace findByAppIdAAndEnvAndClusterNameAndNamespaceName(Long appId, String env, String clusterName, String namespaceName);
 
 
 }
