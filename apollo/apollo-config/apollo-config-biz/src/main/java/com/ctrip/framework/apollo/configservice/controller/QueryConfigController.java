@@ -79,7 +79,7 @@ public class QueryConfigController {
             if (currentRelease4ThisClient != null) {
                 releases.add(currentRelease4ThisClient);
                 //we have cluster search process, so the cluster name might be overridden
-                appClusterNameLoaded = currentRelease4ThisClient.getClusterNamespace().getName();
+                appClusterNameLoaded = currentRelease4ThisClient.getAppEnvClusterNamespace().getNamespace().getName();
             }
         }
 

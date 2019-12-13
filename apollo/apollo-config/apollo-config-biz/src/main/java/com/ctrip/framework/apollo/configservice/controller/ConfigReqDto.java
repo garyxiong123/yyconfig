@@ -18,11 +18,11 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  * @Author: xiongchengwei
  * @Date: 2019/12/13 下午2:06
  */
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Builder
-public abstract class ConfigReqDto {
+public  class ConfigReqDto {
 
     private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR);
 
@@ -43,5 +43,7 @@ public abstract class ConfigReqDto {
         return STRING_JOINER.join(keyParts);
     }
 
-     abstract String getConfigResult(Map<String, String> configurations);
+     protected String getConfigResult(Map<String, String> configurations){
+       return null;
+     };
 }

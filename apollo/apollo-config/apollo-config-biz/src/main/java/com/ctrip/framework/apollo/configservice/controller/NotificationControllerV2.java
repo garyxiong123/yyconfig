@@ -96,7 +96,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
         DeferredResultWrapper deferredResultWrapper = new DeferredResultWrapper();
         Set<String> namespaces = Sets.newHashSet();
 
-        Map<String, Long> clientSideNotifications = buildClientSideNotificationsAndFillNormalizedNamespaceName2OriginalNamespaceNameMap(notificationsAsString, clientNotificationMap, deferredResultWrapper, namespaces, clientSideNotifications);
+        Map<String, Long> clientSideNotifications = buildClientSideNotificationsAndFillNormalizedNamespaceName2OriginalNamespaceNameMap(notificationsAsString, clientNotificationMap, deferredResultWrapper, namespaces);
 
         Multimap<String, String> watchedKeysMap = watchKeysUtil.assembleAllWatchKeys(appId, cluster, namespaces, dataCenter);
 
@@ -208,7 +208,8 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
 
     }
 
-    private void buildClientSideNotificationsAndFillNormalizedNamespaceName2OriginalNamespaceNameMap(String notificationsAsString, Map<String, ApolloConfigNotification> clientNotificationMap, DeferredResultWrapper deferredResultWrapper, Set<String> namespaces, Map<String, Long> clientSideNotifications) {
+    private Map<String, Long> buildClientSideNotificationsAndFillNormalizedNamespaceName2OriginalNamespaceNameMap(String notificationsAsString, Map<String, ApolloConfigNotification> clientNotificationMap, DeferredResultWrapper deferredResultWrapper, Set<String> namespaces) {
+        Map<String, Long> clientSideNotifications = Maps.newHashMap();
         for (Map.Entry<String, ApolloConfigNotification> notificationEntry : clientNotificationMap.entrySet()) {
             String normalizedNamespace = notificationEntry.getKey();
             ApolloConfigNotification notification = notificationEntry.getValue();
@@ -223,6 +224,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
         if (isEmpty(namespaces)) {
             throw new BadRequestException("Invalid format of notifications: " + notificationsAsString);
         }
+        return clientSideNotifications;
     }
 
     private Map<String, ApolloConfigNotification> createAndFilterClientNotification(String appId, String notificationsAsString) {

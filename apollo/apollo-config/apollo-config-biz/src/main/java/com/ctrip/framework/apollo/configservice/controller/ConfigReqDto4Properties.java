@@ -21,7 +21,7 @@ public class ConfigReqDto4Properties extends ConfigReqDto {
     }
 
     @Override
-    String getConfigResult(Map<String, String> configurations) {
+    public String getConfigResult(Map<String, String> configurations) {
 
         Properties properties = new Properties();
         properties.putAll(configurations);

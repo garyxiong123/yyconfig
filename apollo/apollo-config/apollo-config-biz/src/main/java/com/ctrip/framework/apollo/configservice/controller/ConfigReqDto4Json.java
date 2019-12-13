@@ -22,8 +22,8 @@ public class ConfigReqDto4Json extends ConfigReqDto {
 
 
     @Override
-    String getConfigResult(Map<String, String> configurations) {
-        String result = gson.toJson(apolloConfig.getConfigurations());
+    public String getConfigResult(Map<String, String> configurations) {
+        String result = gson.toJson(configurations);
 
         return result;
     }
