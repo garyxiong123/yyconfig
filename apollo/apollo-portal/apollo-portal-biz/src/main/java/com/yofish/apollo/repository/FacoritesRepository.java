@@ -20,4 +20,5 @@ import java.util.List;
 public interface FacoritesRepository extends JpaRepository<Favorites, Long> {
 
     List<Favorites> findFavoritesByUser(User user);
+
 }
