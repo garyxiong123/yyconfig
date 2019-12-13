@@ -2,7 +2,8 @@ package com.yofish.apollo.component.txtresolver;
 
 import com.yofish.apollo.bo.ItemChangeSets;
 import com.yofish.apollo.domain.Item;
-import org.springframework.beans.BeanUtils;
+import common.exception.BadRequestException;
+import common.utils.BeanUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -21,49 +22,47 @@ public class PropertyResolver implements ConfigTextResolver {
     @Override
     public ItemChangeSets resolve(long namespaceId, String configText, List<Item> baseItems) {
 
-//    Map<Integer, Item> oldLineNumMapItem = BeanUtils.mapByKey("lineNum", baseItems);
-//    Map<String, Item> oldKeyMapItem = BeanUtils.mapByKey("key", baseItems);
-//
-//    //remove comment and blank item map.
-//    oldKeyMapItem.remove("");
-//
-//    String[] newItems = configText.split(ITEM_SEPARATOR);
-//
-////    if (isHasRepeatKey(newItems)) {
-////      throw new BadRequestException("config text has repeat key please check.");
-////    }
-//
-//    ItemChangeSets changeSets = new ItemChangeSets();
-//    Map<Integer, String> newLineNumMapItem = new HashMap<Integer, String>();//use for delete blank and comment item
-//    int lineCounter = 1;
-//    for (String newItem : newItems) {
-//      newItem = newItem.trim();
-//      newLineNumMapItem.put(lineCounter, newItem);
-//      Item oldItemByLine = oldLineNumMapItem.get(lineCounter);
-//
-//      //comment item
-//      if (isCommentItem(newItem)) {
-//
-//        handleCommentLine(namespaceId, oldItemByLine, newItem, lineCounter, changeSets);
-//
-//        //blank item
-//      } else if (isBlankItem(newItem)) {
-//
-//        handleBlankLine(namespaceId, oldItemByLine, lineCounter, changeSets);
-//
-//        //normal item
-//      } else {
-//        handleNormalLine(namespaceId, oldKeyMapItem, newItem, lineCounter, changeSets);
-//      }
-//
-//      lineCounter++;
-//    }
-//
-//    deleteCommentAndBlankItem(oldLineNumMapItem, newLineNumMapItem, changeSets);
-//    deleteNormalKVItem(oldKeyMapItem, changeSets);
-//
-//    return changeSets;
-        return null;
+     Map<Integer, Item> oldLineNumMapItem = BeanUtils.mapByKey("lineNum", baseItems);
+     Map<String, Item> oldKeyMapItem = BeanUtils.mapByKey("key", baseItems);
+     //remove comment and blank item map.
+     oldKeyMapItem.remove("");
+
+     String[] newItems = configText.split(ITEM_SEPARATOR);
+
+      if (isHasRepeatKey(newItems)) {
+        throw new BadRequestException("config text has repeat key please check.");
+      }
+
+     ItemChangeSets changeSets = new ItemChangeSets();
+     Map<Integer, String> newLineNumMapItem = new HashMap<Integer, String>();//use for delete blank and comment item
+     int lineCounter = 1;
+     for (String newItem : newItems) {
+      newItem = newItem.trim();
+      newLineNumMapItem.put(lineCounter, newItem);
+      Item oldItemByLine = oldLineNumMapItem.get(lineCounter);
+
+      //comment item
+      if (isCommentItem(newItem)) {
+
+        handleCommentLine(namespaceId, oldItemByLine, newItem, lineCounter, changeSets);
+
+        //blank item
+      } else if (isBlankItem(newItem)) {
+
+        handleBlankLine(namespaceId, oldItemByLine, lineCounter, changeSets);
+
+        //normal item
+      } else {
+        handleNormalLine(namespaceId, oldKeyMapItem, newItem, lineCounter, changeSets);
+      }
+
+      lineCounter++;
+    }
+
+    deleteCommentAndBlankItem(oldLineNumMapItem, newLineNumMapItem, changeSets);
+    deleteNormalKVItem(oldKeyMapItem, changeSets);
+
+    return changeSets;
     }
 
     private boolean isHasRepeatKey(String[] newItems) {

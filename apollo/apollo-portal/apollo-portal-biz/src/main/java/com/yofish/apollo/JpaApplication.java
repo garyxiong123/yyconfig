@@ -16,7 +16,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  * @since 1.0
  */
 
-@ComponentScan(basePackages = {"com.yofish.gary","com.yofish.apollo","com.yofish.apollo.repository"})
+     @ComponentScan(basePackages = {"com.yofish.gary","com.yofish.apollo","com.yofish.apollo.repository"})
 @EnableJpaRepositories(basePackages = {"com.yofish.gary", "com.yofish.apollo.repository" })
 @EnableJpaAuditing
 @EntityScan(basePackages = { "com.yofish.apollo.domain","com.yofish.gary" })

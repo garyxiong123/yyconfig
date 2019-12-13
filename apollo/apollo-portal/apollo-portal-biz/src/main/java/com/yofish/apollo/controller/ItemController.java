@@ -1,139 +1,75 @@
 package com.yofish.apollo.controller;
 
 //import com.yofish.apollo.model.model.NamespaceTextModel;
+import com.yofish.apollo.domain.Item;
+import com.yofish.apollo.dto.CreateItemReq;
+import com.yofish.apollo.dto.ItemReq;
+import com.yofish.apollo.dto.ModifyItemsByTextsReq;
+import com.yofish.apollo.dto.UpdateItemReq;
+import com.yofish.apollo.service.ItemService;
+import com.youyu.common.api.Result;
+import common.exception.BadRequestException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.List;
+
+import static common.utils.RequestPrecondition.checkModel;
 
 
 @RestController
+@RequestMapping("item")
 public class ItemController {
-/*
 
   @Autowired
-  private ItemService configService;
-  @Autowired
-  private UserInfoHolder userInfoHolder;
-  @Autowired
-  private PermissionValidator permissionValidator;
+  private ItemService itemService;
 
-  @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, #env)")
-  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items", method = RequestMethod.PUT, consumes = {
+
+  @RequestMapping(value = "/modifyItemsByTexts", method = RequestMethod.POST, consumes = {
       "application/json"})
-  public void modifyItemsByText(@PathVariable String appId, @PathVariable String env,
-                                @PathVariable String clusterName, @PathVariable String namespaceName,
-                                @RequestBody NamespaceTextModel model) {
+  public void modifyItemsByText(@RequestBody ModifyItemsByTextsReq model) {
 
     checkModel(model != null);
-
-    model.setAppId(appId);
-    model.setClusterName(clusterName);
-    model.setEnv(env);
-    model.setNamespaceName(namespaceName);
-
-    configService.updateConfigItemByText(model);
-  }
-
-  @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, #env)")
-  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/item", method = RequestMethod.POST)
-  public Item createItem(@PathVariable String appId, @PathVariable String env,
-                         @PathVariable String clusterName, @PathVariable String namespaceName,
-                         @RequestBody Item item) {
-    checkModel(isValidItem(item));
-
-    //protect
-    item.setLineNum(0);
-    item.setId(0);
-    String userId = userInfoHolder.getUser().getUserId();
-    item.setDataChangeCreatedBy(userId);
-    item.setDataChangeLastModifiedBy(userId);
-    item.setDataChangeCreatedTime(null);
-    item.setDataChangeLastModifiedTime(null);
-
-    return configService.createItem(appId, Env.valueOf(env), clusterName, namespaceName, item);
-  }
-
-  @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, #env)")
-  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/item", method = RequestMethod.PUT)
-  public void updateItem(@PathVariable String appId, @PathVariable String env,
-                         @PathVariable String clusterName, @PathVariable String namespaceName,
-                         @RequestBody Item item) {
-    checkModel(isValidItem(item));
-
-    String username = userInfoHolder.getUser().getUserId();
-    item.setDataChangeLastModifiedBy(username);
-
-    configServic(appId, Env.valueOf(env), clusterName, namespaceName, item);
+    itemService.updateConfigItemByText(model);
   }
 
 
-  @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, #env) ")
-  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items/{itemId}", method = RequestMethod.DELETE)
-  public void deleteItem(@PathVariable String appId, @PathVariable String env,
-                         @PathVariable String clusterName, @PathVariable String namespaceName,
-                         @PathVariable long itemId) {
-    if (itemId <= 0) {
+  @RequestMapping(value = "/createItem", method = RequestMethod.POST)
+  public Result<Item> createItem(@RequestBody CreateItemReq req) {
+    Item item= itemService.createItem(req);
+    return Result.ok(item);
+  }
+
+
+  @RequestMapping(value = "/updateItem", method = RequestMethod.PUT)
+  public Result updateItem(@RequestBody UpdateItemReq req) {
+     itemService.updateItem(req);
+    return Result.ok();
+  }
+
+
+
+  @RequestMapping(value = "deleteItem", method = RequestMethod.DELETE)
+  public void deleteItem(@RequestBody ItemReq req) {
+    if (req.getClusterNamespaceId() <= 0) {
       throw new BadRequestException("item id invalid");
     }
-    configService.deleteItem(Env.valueOf(env), itemId, userInfoHolder.getUser().getUserId());
+    itemService.deleteItem(req);
   }
 
 
-  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items", method = RequestMethod.GET)
-  public List<Item> findItems(@PathVariable String appId, @PathVariable String env,
-                              @PathVariable String clusterName, @PathVariable String namespaceName,
-                              @RequestParam(defaultValue = "lineNum") String orderBy) {
+  @RequestMapping(value = "/findItems", method = RequestMethod.GET)
+  public Result<List<Item>> findItems(@RequestBody ItemReq req) {
 
-    if (permissionValidator.shouldHideConfigToCurrentUser(appId, env, namespaceName)) {
-      return Collections.emptyList();
-    }
+    List<Item> items = itemService.findItems(req);
 
-    List<Item> items = configService.findItems(appId, Env.valueOf(env), clusterName, namespaceName);
-    if ("lastModifiedTime".equals(orderBy)) {
-      Collections.sort(items, (o1, o2) -> {
-        if (o1.getDataChangeLastModifiedTime().after(o2.getDataChangeLastModifiedTime())) {
-          return -1;
-        }
-        if (o1.getDataChangeLastModifiedTime().before(o2.getDataChangeLastModifiedTime())) {
-          return 1;
-        }
-        return 0;
-      });
-    }
-    return items;
+    return Result.ok(items);
   }
 
-  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}/items", method = RequestMethod.GET)
-  public List<Item> findBranchItems(@PathVariable("appId") String appId, @PathVariable String env,
-                                    @PathVariable("clusterName") String clusterName,
-                                    @PathVariable("namespaceName") String namespaceName,
-                                    @PathVariable("branchName") String branchName) {
+//todo 配置同步
 
-    return findItems(appId, env, branchName, namespaceName, "lastModifiedTime");
-  }
-    //比较各个项目值的差异
-  @RequestMapping(value = "/namespaces/{namespaceName}/diff", method = RequestMethod.POST, consumes = {
-      "application/json"})
-  public List<ItemDiffs> diff(@RequestBody NamespaceSyncModel model) {
-    checkModel(Objects.nonNull(model) && !model.isInvalid());
-
-    List<ItemDiffs> itemDiffs = configService.compare(model.getSyncToNamespaces(), model.getSyncItems());
-
-    for (ItemDiffs diff : itemDiffs) {
-      NamespaceIdentifier namespace = diff.getNamespace();
-      if (namespace == null) {
-        continue;
-      }
-
-      if (permissionValidator
-          .shouldHideConfigToCurrentUser(namespace.getAppId(), namespace.getEnv().name(), namespace.getNamespaceName())) {
-        diff.setDiffs(new ItemChangeSets());
-        diff.setExtInfo("您不是该项目的管理员，也没有该Namespace在 " + namespace.getEnv() +  " 环境的编辑或发布权限");
-      }
-    }
-
-    return itemDiffs;
-  }
-
-  @RequestMapping(value = "/apps/{appId}/namespaces/{namespaceName}/items", method = RequestMethod.PUT, consumes = {
+  /*@RequestMapping(value = "/apps/{appId}/namespaces/{namespaceName}/items", method = RequestMethod.PUT, consumes = {
       "application/json"})
   public ResponseEntity<Void> update(@PathVariable String appId, @PathVariable String namespaceName,
                                      @RequestBody NamespaceSyncModel model) {
@@ -161,11 +97,8 @@ public class ItemController {
       throw new AccessDeniedException(String.format("您没有修改环境%s的权限", envNoPermission));
     }
   }
-
-  private boolean isValidItem(Item item) {
-    return Objects.nonNull(item) && !StringUtils.isContainEmpty(item.getKey());
-  }
 */
+
 
 
 }
