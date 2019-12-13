@@ -3,7 +3,7 @@ package com.ctrip.framework.apollo.configservice.utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.yofish.apollo.domain.Item;
-import framework.apollo.core.utils.StringUtils;
+import common.utils.YyStringUtils;
 import org.springframework.beans.BeanUtils;
 
 import java.util.Date;
@@ -21,7 +21,7 @@ public class ConfigChangeContentBuilder {
 
 
   public ConfigChangeContentBuilder createItem(Item item) {
-    if (!StringUtils.isEmpty(item.getKey())){
+    if (!YyStringUtils.isEmpty(item.getKey())){
       createItems.add(cloneItem(item));
     }
     return this;
@@ -36,7 +36,7 @@ public class ConfigChangeContentBuilder {
   }
 
   public ConfigChangeContentBuilder deleteItem(Item item) {
-    if (!StringUtils.isEmpty(item.getKey())) {
+    if (!YyStringUtils.isEmpty(item.getKey())) {
       deleteItems.add(cloneItem(item));
     }
     return this;

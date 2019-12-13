@@ -1,11 +1,41 @@
-package framework.apollo.core.utils;
+package common.utils;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.Iterator;
 
-public class StringUtils {
+public class YyStringUtils extends StringUtils {
 
   public static final String EMPTY = "";
+
+  /**
+   * 参考StringUtils.equals(cs1,cs2)
+   *
+   * @param cs1
+   * @param cs2
+   * @return
+   */
+  public static boolean eq(final CharSequence cs1, final CharSequence cs2) {
+    return equals(cs1, cs2);
+  }
+
+  public static boolean notEq(final CharSequence cs1, final CharSequence cs2) {
+    return !equals(cs1, cs2);
+  }
+
+
+  /**
+   * 要求parameter不为Blank,并提供描述信息
+   *
+   * @param parameter
+   * @param message
+   */
+  public static void checkNonBlank(String parameter, String message) {
+    if (isBlank(parameter)) {
+      throw new RuntimeException(message);
+    }
+  }
 
   /**
    * <p>

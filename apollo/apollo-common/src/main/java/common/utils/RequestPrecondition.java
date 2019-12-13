@@ -2,7 +2,6 @@ package common.utils;
 
 
 import common.exception.BadRequestException;
-import framework.apollo.core.utils.StringUtils;
 import org.springframework.util.ObjectUtils;
 
 public class RequestPrecondition {
@@ -15,7 +14,7 @@ public class RequestPrecondition {
 
 
     public static void checkArgumentsNotEmpty(String... args) {
-        checkArguments(!StringUtils.isContainEmpty(args), CONTAIN_EMPTY_ARGUMENT);
+        checkArguments(!YyStringUtils.isContainEmpty(args), CONTAIN_EMPTY_ARGUMENT);
     }
 
     public static void checkArgumentsNotEmpty(Object... args) {

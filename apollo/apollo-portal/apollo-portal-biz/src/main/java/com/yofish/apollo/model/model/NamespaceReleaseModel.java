@@ -2,7 +2,7 @@ package com.yofish.apollo.model.model;
 
 
 import framework.apollo.core.enums.Env;
-import framework.apollo.core.utils.StringUtils;
+import common.utils.YyStringUtils;
 
 public class NamespaceReleaseModel implements Verifiable {
 
@@ -17,7 +17,7 @@ public class NamespaceReleaseModel implements Verifiable {
 
   @Override
   public boolean isInvalid() {
-    return StringUtils.isContainEmpty(appId, env, clusterName, namespaceName, releaseTitle);
+    return YyStringUtils.isContainEmpty(appId, env, clusterName, namespaceName, releaseTitle);
   }
 
   public String getAppId() {

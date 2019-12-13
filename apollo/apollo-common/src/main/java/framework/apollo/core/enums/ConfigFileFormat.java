@@ -1,7 +1,7 @@
 package framework.apollo.core.enums;
 
 
-import framework.apollo.core.utils.StringUtils;
+import common.utils.YyStringUtils;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -20,7 +20,7 @@ public enum ConfigFileFormat {
   }
 
   public static ConfigFileFormat fromString(String value) {
-    if (StringUtils.isEmpty(value)) {
+    if (YyStringUtils.isEmpty(value)) {
       throw new IllegalArgumentException("value can not be empty");
     }
     switch (value) {
