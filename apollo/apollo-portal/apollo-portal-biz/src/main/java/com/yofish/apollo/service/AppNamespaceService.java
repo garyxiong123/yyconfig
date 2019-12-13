@@ -2,9 +2,7 @@ package com.yofish.apollo.service;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
-import com.yofish.apollo.domain.App;
-import com.yofish.apollo.domain.AppNamespace;
-import com.yofish.apollo.domain.AppNamespace4Private;
+import com.yofish.apollo.domain.*;
 import com.yofish.apollo.enums.NamespaceType;
 import com.yofish.apollo.repository.*;
 import common.exception.BadRequestException;
@@ -88,9 +86,22 @@ public class AppNamespaceService {
         return Objects.isNull(appNamespaceRepository.findByAppIdAndName(appId, namespaceName));
     }
 
+    public AppNamespace4Private createAppNamespace4Private(AppNamespace4Private namespace4Private) {
+
+        return null;
+    }
+    public AppNamespace4Private createAppNamespace4Protect(AppNamespace4Protect namespace4Protect) {
+
+        return null;
+    }
+    public AppNamespace4Private createAppNamespace4Public(AppNamespace4Public namespace4Public) {
+
+        return null;
+    }
+
     @Transactional
     public AppNamespace createAppNamespace(AppNamespace appNamespace, boolean appendNamespacePrefix) {
-        Long appId = appNamespace.getApp().getId();
+        /*Long appId = appNamespace.getApp().getId();
 
         //add app org id as prefix
         App app = this.appRepository.findById(appId).orElse(null);
@@ -125,8 +136,9 @@ public class AppNamespaceService {
         AppNamespace createdAppNamespace = appNamespaceRepository.save(appNamespace);
 
         appEnvClusterNamespaceService.createNamespaceForAppNamespaceInAllCluster(appNamespace);
-
         return createdAppNamespace;
+*/
+        return null;
     }
 
     private void checkAppNamespaceGlobalUniqueness(AppNamespace appNamespace) {
