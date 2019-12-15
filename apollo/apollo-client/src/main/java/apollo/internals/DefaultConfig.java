@@ -34,7 +34,7 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
   /**
    * Constructor.
    *
-   * @param namespace        the namespace of this config instance
+   * @param namespace        the appNamespace of this config instance
    * @param configRepository the config repository for this config instance
    */
   public DefaultConfig(String namespace, ConfigRepository configRepository) {
@@ -51,7 +51,7 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
       updateConfig(m_configRepository.getConfig(), m_configRepository.getSourceType());
     } catch (Throwable ex) {
       Tracer.logError(ex);
-      logger.warn("Init Apollo Local Config failed - namespace: {}, reason: {}.",
+      logger.warn("Init Apollo Local Config failed - appNamespace: {}, reason: {}.",
           m_namespace, ExceptionUtil.getDetailMessage(ex));
     } finally {
       //register the change listener no matter config repository is working or not
@@ -85,7 +85,7 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
     }
 
     if (value == null && m_configProperties.get() == null && m_warnLogRateLimiter.tryAcquire()) {
-      logger.warn("Could not load config for namespace {} from Apollo, please check whether the configs are released in Apollo! Return default value now!", m_namespace);
+      logger.warn("Could not load config for appNamespace {} from Apollo, please check whether the configs are released in Apollo! Return default value now!", m_namespace);
     }
 
     return value == null ? defaultValue : value;
@@ -212,7 +212,7 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
         properties.load(in);
       } catch (IOException ex) {
         Tracer.logError(ex);
-        logger.error("Load resource config for namespace {} failed", namespace, ex);
+        logger.error("Load resource config for appNamespace {} failed", namespace, ex);
       } finally {
         try {
           in.close();

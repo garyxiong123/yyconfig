@@ -41,17 +41,17 @@
 //  private String testUser = "apollo";
 //
 //  @Test
-//  @Sql(scripts = "/sql/namespace-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+//  @Sql(scripts = "/sql/appNamespace-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 //  @Sql(scripts = "/sql/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 //  public void testDeleteNamespace() {
 //
-//    Namespace namespace = new Namespace();
-//    namespace.setAppId(testApp);
-//    namespace.setClusterName(testCluster);
-//    namespace.setNamespaceName(testPrivateNamespace);
-//    namespace.setId(1);
+//    Namespace appNamespace = new Namespace();
+//    appNamespace.setAppId(testApp);
+//    appNamespace.setClusterName(testCluster);
+//    appNamespace.setNamespaceName(testPrivateNamespace);
+//    appNamespace.setId(1);
 //
-//    namespaceService.deleteNamespace(namespace, testUser);
+//    namespaceService.deleteNamespace(appNamespace, testUser);
 //
 //    List<Item> items = itemService.findItemsWithoutOrdered(testApp, testCluster, testPrivateNamespace);
 //    List<Commit> commits = commitService.find(testApp, testCluster, testPrivateNamespace, new PageRequest(0, 10));

@@ -39,12 +39,12 @@
 //  @Test
 //  public void testNamespaceNotEverPublishedButHasItems() {
 //    Cluster cluster = createCluster(ConfigConsts.CLUSTER_NAME_DEFAULT);
-//    Namespace namespace = createNamespace(ConfigConsts.CLUSTER_NAME_DEFAULT, ConfigConsts.NAMESPACE_APPLICATION);
-//    Item item = createItem(namespace.getId(), "a", "b");
+//    Namespace appNamespace = createNamespace(ConfigConsts.CLUSTER_NAME_DEFAULT, ConfigConsts.NAMESPACE_APPLICATION);
+//    Item item = createItem(appNamespace.getId(), "a", "b");
 //
 //    when(clusterService.findParentClusters(testApp)).thenReturn(Collections.singletonList(cluster));
 //    when(namespaceRepository.findByAppIdAndClusterNameOrderByIdAsc(testApp, ConfigConsts.CLUSTER_NAME_DEFAULT))
-//        .thenReturn(Collections.singletonList(namespace));
+//        .thenReturn(Collections.singletonList(appNamespace));
 //    when(itemService.findLastOne(anyLong())).thenReturn(item);
 //
 //    Map<String, Boolean> result = namespaceService.namespacePublishInfo(testApp);
@@ -56,14 +56,14 @@
 //  @Test
 //  public void testNamespaceEverPublishedAndNotModifiedAfter() {
 //    Cluster cluster = createCluster(ConfigConsts.CLUSTER_NAME_DEFAULT);
-//    Namespace namespace = createNamespace(ConfigConsts.CLUSTER_NAME_DEFAULT, ConfigConsts.NAMESPACE_APPLICATION);
-//    Item item = createItem(namespace.getId(), "a", "b");
+//    Namespace appNamespace = createNamespace(ConfigConsts.CLUSTER_NAME_DEFAULT, ConfigConsts.NAMESPACE_APPLICATION);
+//    Item item = createItem(appNamespace.getId(), "a", "b");
 //    Release release = createRelease("{\"a\":\"b\"}");
 //
 //    when(clusterService.findParentClusters(testApp)).thenReturn(Collections.singletonList(cluster));
 //    when(namespaceRepository.findByAppIdAndClusterNameOrderByIdAsc(testApp, ConfigConsts.CLUSTER_NAME_DEFAULT))
-//        .thenReturn(Collections.singletonList(namespace));
-//    when(releaseService.findLatestActiveRelease(namespace)).thenReturn(release);
+//        .thenReturn(Collections.singletonList(appNamespace));
+//    when(releaseService.findLatestActiveRelease(appNamespace)).thenReturn(release);
 //    when(itemService.findItemsModifiedAfterDate(anyLong(), anyObject())).thenReturn(Collections.singletonList(item));
 //
 //    Map<String, Boolean> result = namespaceService.namespacePublishInfo(testApp);
@@ -76,14 +76,14 @@
 //  @Test
 //  public void testNamespaceEverPublishedAndModifiedAfter() {
 //    Cluster cluster = createCluster(ConfigConsts.CLUSTER_NAME_DEFAULT);
-//    Namespace namespace = createNamespace(ConfigConsts.CLUSTER_NAME_DEFAULT, ConfigConsts.NAMESPACE_APPLICATION);
-//    Item item = createItem(namespace.getId(), "a", "b");
+//    Namespace appNamespace = createNamespace(ConfigConsts.CLUSTER_NAME_DEFAULT, ConfigConsts.NAMESPACE_APPLICATION);
+//    Item item = createItem(appNamespace.getId(), "a", "b");
 //    Release release = createRelease("{\"a\":\"c\"}");
 //
 //    when(clusterService.findParentClusters(testApp)).thenReturn(Collections.singletonList(cluster));
 //    when(namespaceRepository.findByAppIdAndClusterNameOrderByIdAsc(testApp, ConfigConsts.CLUSTER_NAME_DEFAULT))
-//        .thenReturn(Collections.singletonList(namespace));
-//    when(releaseService.findLatestActiveRelease(namespace)).thenReturn(release);
+//        .thenReturn(Collections.singletonList(appNamespace));
+//    when(releaseService.findLatestActiveRelease(appNamespace)).thenReturn(release);
 //    when(itemService.findItemsModifiedAfterDate(anyLong(), anyObject())).thenReturn(Collections.singletonList(item));
 //
 //    Map<String, Boolean> result = namespaceService.namespacePublishInfo(testApp);
@@ -104,14 +104,14 @@
 //  }
 //
 //  private Namespace createNamespace(String clusterName, String namespaceName) {
-//    Namespace namespace = new Namespace();
+//    Namespace appNamespace = new Namespace();
 //
-//    namespace.setAppId(testApp);
-//    namespace.setClusterName(clusterName);
-//    namespace.setNamespaceName(namespaceName);
-//    namespace.setId(new Random().nextLong());
+//    appNamespace.setAppId(testApp);
+//    appNamespace.setClusterName(clusterName);
+//    appNamespace.setNamespaceName(namespaceName);
+//    appNamespace.setId(new Random().nextLong());
 //
-//    return namespace;
+//    return appNamespace;
 //  }
 //
 //  private Item createItem(long namespaceId, String key, String value) {

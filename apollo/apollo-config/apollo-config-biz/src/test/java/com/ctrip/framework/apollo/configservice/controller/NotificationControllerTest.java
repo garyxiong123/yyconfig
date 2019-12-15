@@ -105,8 +105,8 @@
 //
 //  @Test
 //  public void testPollNotificationWithDefaultNamespaceAsFile() throws Exception {
-//    String namespace = String.format("%s.%s", defaultNamespace, "properties");
-//    when(namespaceUtil.filterNamespaceName(namespace)).thenReturn(defaultNamespace);
+//    String appNamespace = String.format("%s.%s", defaultNamespace, "properties");
+//    when(namespaceUtil.filterNamespaceName(appNamespace)).thenReturn(defaultNamespace);
 //
 //    String someWatchKey = "someKey";
 //    String anotherWatchKey = "anotherKey";
@@ -120,7 +120,7 @@
 //
 //    DeferredResult<ResponseEntity<ApolloConfigNotification>>
 //        deferredResult = controller
-//        .pollNotification(someAppId, someCluster, namespace, someDataCenter,
+//        .pollNotification(someAppId, someCluster, appNamespace, someDataCenter,
 //            someNotificationId, someClientIp);
 //
 //    assertEquals(watchKeys.size(), deferredResults.size());
@@ -132,21 +132,21 @@
 //
 //  @Test
 //  public void testPollNotificationWithSomeNamespaceAsFile() throws Exception {
-//    String namespace = String.format("someNamespace.xml");
+//    String appNamespace = String.format("someNamespace.xml");
 //
-//    when(namespaceUtil.filterNamespaceName(namespace)).thenReturn(namespace);
+//    when(namespaceUtil.filterNamespaceName(appNamespace)).thenReturn(appNamespace);
 //
 //    String someWatchKey = "someKey";
 //
 //    Set<String> watchKeys = Sets.newHashSet(someWatchKey);
 //    when(watchKeysUtil
-//        .assembleAllWatchKeys(someAppId, someCluster, namespace, someDataCenter))
+//        .assembleAllWatchKeys(someAppId, someCluster, appNamespace, someDataCenter))
 //        .thenReturn(
 //            watchKeys);
 //
 //    DeferredResult<ResponseEntity<ApolloConfigNotification>>
 //        deferredResult = controller
-//        .pollNotification(someAppId, someCluster, namespace, someDataCenter,
+//        .pollNotification(someAppId, someCluster, appNamespace, someDataCenter,
 //            someNotificationId, someClientIp);
 //
 //    assertEquals(watchKeys.size(), deferredResults.size());

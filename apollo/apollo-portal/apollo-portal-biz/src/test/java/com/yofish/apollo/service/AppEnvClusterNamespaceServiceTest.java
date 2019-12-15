@@ -26,7 +26,7 @@ public class AppEnvClusterNamespaceServiceTest {
         dto.setAppId(1L);
         dto.setClusterName("default");
         dto.setNamespaceName("other-config");
-        NamespaceDTO namespace = this.appEnvClusterNamespaceService.createNamespace(env, dto);
-        Assert.assertEquals(dto.getNamespaceName(), namespace.getNamespaceName());*/
+        NamespaceDTO appNamespace = this.appEnvClusterNamespaceService.createNamespace(env, dto);
+        Assert.assertEquals(dto.getNamespaceName(), appNamespace.getNamespaceName());*/
     }
 }

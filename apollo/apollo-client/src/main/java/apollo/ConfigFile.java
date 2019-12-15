@@ -10,7 +10,7 @@ import framework.apollo.core.enums.ConfigFileFormat;
  */
 public interface ConfigFile extends ConfigFileChangePublisher {
   /**
-   * Get file content of the namespace
+   * Get file content of the appNamespace
    * @return file content, {@code null} if there is no content
    */
   String getContent();
@@ -22,8 +22,8 @@ public interface ConfigFile extends ConfigFileChangePublisher {
   boolean hasContent();
 
   /**
-   * Get the namespace of this config file instance
-   * @return the namespace
+   * Get the appNamespace of this config file instance
+   * @return the appNamespace
    */
   String getNamespace();
 

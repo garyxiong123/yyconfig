@@ -40,7 +40,7 @@ public class DefaultConfigFactoryManagerTest {
 
     ConfigFactory result = defaultConfigFactoryManager.getFactory(someNamespace);
 
-    assertThat("When namespace is registered, should return the registerd config factory", result,
+    assertThat("When appNamespace is registered, should return the registerd config factory", result,
         instanceOf(SomeConfigFactory.class));
   }
 
@@ -53,7 +53,7 @@ public class DefaultConfigFactoryManagerTest {
     ConfigFactory anotherResult = defaultConfigFactoryManager.getFactory(someNamespace);
 
     assertThat(
-        "Get config factory with the same namespace multiple times should returnt the same instance",
+        "Get config factory with the same appNamespace multiple times should returnt the same instance",
         anotherResult, equalTo(result));
   }
 
@@ -64,12 +64,12 @@ public class DefaultConfigFactoryManagerTest {
 
     ConfigFactory result = defaultConfigFactoryManager.getFactory(someNamespace);
 
-    assertThat("When namespace is not registered, should return the default config factory", result,
+    assertThat("When appNamespace is not registered, should return the default config factory", result,
         instanceOf(AnotherConfigFactory.class));
   }
 
   public static class MockConfigRegistry implements ConfigRegistry {
-    public static String NAMESPACE_REGISTERED = "some-namespace-registered";
+    public static String NAMESPACE_REGISTERED = "some-appNamespace-registered";
     public static ConfigFactory REGISTERED_CONFIGFACTORY = new ConfigFactory() {
       @Override
       public Config create(String namespace) {

@@ -1,11 +1,12 @@
 package com.yofish.apollo.domain;
 
+import com.yofish.apollo.service.AppNamespaceService;
 import com.yofish.gary.dao.entity.BaseEntity;
 import lombok.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+
+import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
 
 /**
  * @Author: xiongchengwei
@@ -18,11 +19,34 @@ import javax.persistence.ManyToOne;
 @Setter
 @Getter
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 30)
 public class AppEnvClusterNamespace extends BaseEntity {
 
     @ManyToOne(cascade = CascadeType.ALL)
     private AppEnvCluster appEnvCluster;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    private AppNamespace namespace;
+    private AppNamespace appNamespace;
+
+    public boolean isBranchNamespace() {
+        return getBeanInstance(AppNamespaceService.class).findAppEnvClusterNamespace4Branch(this) != null;
+    }
+
+    public AppEnvClusterNamespace getBranchNamespace() {
+        return getBeanInstance(AppNamespaceService.class).findAppEnvClusterNamespace4Branch(this);
+    }
+
+    public boolean hasBranchNamespace() {
+        return getBeanInstance(AppNamespaceService.class).findChildNamespace(this) != null;
+    }
+
+    public AppEnvClusterNamespace getNamespacesBranchNamespace() {
+        return getBeanInstance(AppNamespaceService.class).findChildNamespace(this);
+    }
+
+    public Release publish(String releaseName, String releaseComment, boolean isEmergencyPublish) {
+
+        return null;
+    }
 }

@@ -104,7 +104,7 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
 
   @Test
   public void testMultiplePropertySourcesCoverWithSameProperties() throws Exception {
-    //Multimap does not maintain the strict input order of namespace.
+    //Multimap does not maintain the strict input order of appNamespace.
     int someTimeout = 1000;
     int anotherTimeout = someTimeout + 1;
     int someBatch = 2000;

@@ -26,7 +26,7 @@ import java.util.List;
  * <pre class="code">
  *   # set app.id
  *   app.id = 100004458
- *   # enable apollo bootstrap config and inject 'application' namespace in bootstrap phase
+ *   # enable apollo bootstrap config and inject 'application' appNamespace in bootstrap phase
  *   apollo.bootstrap.enabled = true
  * </pre>
  *

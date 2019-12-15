@@ -178,24 +178,24 @@
 //  @Sql(scripts = "/integration-test/test-release.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 //  @Sql(scripts = "/integration-test/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 //  public void testPollNotificationWithPrivateNamespaceAsFile() throws Exception {
-//    String namespace = "someNamespace.xml";
+//    String appNamespace = "someNamespace.xml";
 //    AtomicBoolean stop = new AtomicBoolean();
 //
-//    String key = assembleKey(someAppId, ConfigConsts.CLUSTER_NAME_DEFAULT, namespace);
+//    String key = assembleKey(someAppId, ConfigConsts.CLUSTER_NAME_DEFAULT, appNamespace);
 //    periodicSendMessage(executorService, key, stop);
 //
 //    ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
 //        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
 //        HttpMethod.GET, null, typeReference,
 //        getHostUrl(), someAppId, someCluster,
-//        transformApolloConfigNotificationsToString(namespace, ConfigConsts.NOTIFICATION_ID_PLACEHOLDER));
+//        transformApolloConfigNotificationsToString(appNamespace, ConfigConsts.NOTIFICATION_ID_PLACEHOLDER));
 //
 //    stop.set(true);
 //
 //    List<ApolloConfigNotification> notifications = result.getBody();
 //    assertEquals(HttpStatus.OK, result.getStatusCode());
 //    assertEquals(1, notifications.size());
-//    assertEquals(namespace, notifications.get(0).getNamespaceName());
+//    assertEquals(appNamespace, notifications.get(0).getNamespaceName());
 //    assertNotEquals(0, notifications.get(0).getNotificationId());
 //
 //    ApolloNotificationMessages messages = result.getBody().get(0).getMessages();
@@ -401,7 +401,7 @@
 //
 //    String somePublicNameWithIncorrectCase = somePublicNamespace.toUpperCase();
 //
-//    //the same namespace with difference character case, and difference notification id
+//    //the same appNamespace with difference character case, and difference notification id
 //    ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
 //        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
 //        HttpMethod.GET, null, typeReference,
@@ -434,7 +434,7 @@
 //
 //    String somePublicNameWithIncorrectCase = somePublicNamespace.toUpperCase();
 //
-//    //the same namespace with difference character case, and difference notification id
+//    //the same appNamespace with difference character case, and difference notification id
 //    ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
 //        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
 //        HttpMethod.GET, null, typeReference,
@@ -467,7 +467,7 @@
 //
 //    String somePublicNameWithIncorrectCase = somePublicNamespace.toUpperCase();
 //
-//    //the same namespace with difference character case, and difference notification id
+//    //the same appNamespace with difference character case, and difference notification id
 //    ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
 //        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
 //        HttpMethod.GET, null, typeReference,
@@ -500,7 +500,7 @@
 //
 //    String somePublicNameWithIncorrectCase = somePublicNamespace.toUpperCase();
 //
-//    //the same namespace with difference character case, and difference notification id
+//    //the same appNamespace with difference character case, and difference notification id
 //    ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
 //        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
 //        HttpMethod.GET, null, typeReference,
@@ -628,41 +628,41 @@
 //    );
 //  }
 //
-//  private String assembleKey(String appId, String cluster, String namespace) {
-//    return Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).join(appId, cluster, namespace);
+//  private String assembleKey(String appId, String cluster, String appNamespace) {
+//    return Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).join(appId, cluster, appNamespace);
 //  }
 //
 //  private String transformApolloConfigNotificationsToString(
-//      String namespace, long notificationId) {
+//      String appNamespace, long notificationId) {
 //    List<ApolloConfigNotification> notifications =
-//        Lists.newArrayList(assembleApolloConfigNotification(namespace, notificationId));
+//        Lists.newArrayList(assembleApolloConfigNotification(appNamespace, notificationId));
 //    return gson.toJson(notifications);
 //  }
 //
-//  private String transformApolloConfigNotificationsToString(String namespace, long notificationId,
+//  private String transformApolloConfigNotificationsToString(String appNamespace, long notificationId,
 //                                                            String anotherNamespace,
 //                                                            long anotherNotificationId) {
 //    List<ApolloConfigNotification> notifications =
-//        Lists.newArrayList(assembleApolloConfigNotification(namespace, notificationId),
+//        Lists.newArrayList(assembleApolloConfigNotification(appNamespace, notificationId),
 //            assembleApolloConfigNotification(anotherNamespace, anotherNotificationId));
 //    return gson.toJson(notifications);
 //  }
 //
-//  private String transformApolloConfigNotificationsToString(String namespace, long notificationId,
+//  private String transformApolloConfigNotificationsToString(String appNamespace, long notificationId,
 //                                                            String anotherNamespace,
 //                                                            long anotherNotificationId,
 //                                                            String yetAnotherNamespace,
 //                                                            long yetAnotherNotificationId) {
 //    List<ApolloConfigNotification> notifications =
-//        Lists.newArrayList(assembleApolloConfigNotification(namespace, notificationId),
+//        Lists.newArrayList(assembleApolloConfigNotification(appNamespace, notificationId),
 //            assembleApolloConfigNotification(anotherNamespace, anotherNotificationId),
 //            assembleApolloConfigNotification(yetAnotherNamespace, yetAnotherNotificationId));
 //    return gson.toJson(notifications);
 //  }
 //
-//  private ApolloConfigNotification assembleApolloConfigNotification(String namespace,
+//  private ApolloConfigNotification assembleApolloConfigNotification(String appNamespace,
 //                                                                    long notificationId) {
-//    ApolloConfigNotification notification = new ApolloConfigNotification(namespace, notificationId);
+//    ApolloConfigNotification notification = new ApolloConfigNotification(appNamespace, notificationId);
 //    return notification;
 //  }
 //}

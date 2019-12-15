@@ -108,7 +108,7 @@ public class NamespaceController {
 //    return namespaceBO;
 //  }
 //
-//  @RequestMapping(value = "/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/associated-public-namespace",
+//  @RequestMapping(value = "/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/associated-public-appNamespace",
 //      method = RequestMethod.GET)
 //  public NamespaceBO findPublicNamespaceForAssociatedNamespace(@PathVariable String env,
 //                                                               @PathVariable String appId,
@@ -126,14 +126,14 @@ public class NamespaceController {
         checkModel(!CollectionUtils.isEmpty(models));
 
         for (NamespaceCreationModel model : models) {
-            NamespaceDTO namespace = model.getNamespace();
-            RequestPrecondition.checkArgumentsNotEmpty(model.getEnv(), namespace.getAppId(),
-                    namespace.getClusterName(), namespace.getNamespaceName());
+            NamespaceDTO appNamespace = model.getAppNamespace();
+            RequestPrecondition.checkArgumentsNotEmpty(model.getEnv(), appNamespace.getAppId(),
+                    appNamespace.getClusterName(), appNamespace.getNamespaceName());
 
             try {
-                appEnvClusterNamespaceService.createNamespace(model.getEnv(), namespace);
+                appEnvClusterNamespaceService.createNamespace(model.getEnv(), appNamespace);
             } catch (Exception e) {
-                log.error("create namespace fail.", e);
+                log.error("create appNamespace fail.", e);
             }
         }
 
@@ -176,10 +176,10 @@ public class NamespaceController {
 //
 //
 //  *
-//   * env -> appEnvCluster -> appEnvCluster has not published namespace?
+//   * env -> appEnvCluster -> appEnvCluster has not published appNamespace?
 //   * Example:
 //   * dev ->
-//   *  default -> true   (default appEnvCluster has not published namespace)
+//   *  default -> true   (default appEnvCluster has not published appNamespace)
 //   *  customCluster -> false (customCluster appEnvCluster's all namespaces had published)
 //
 //  @RequestMapping(value = "/apps/{appId}/namespaces/publish_info", method = RequestMethod.GET)
@@ -198,7 +198,7 @@ public class NamespaceController {
 //  }
 //
 //  private void assignNamespaceRoleToOperator(String appId, String namespaceName) {
-//    //default assign modify、release namespace role to namespace creator
+//    //default assign modify、release appNamespace role to appNamespace creator
 //    String operator = userInfoHolder.getUser().getUserId();
 //
 //    rolePermissionService

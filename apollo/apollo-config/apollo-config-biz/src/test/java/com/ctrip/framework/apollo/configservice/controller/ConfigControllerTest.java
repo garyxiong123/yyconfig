@@ -456,14 +456,14 @@
 //    assertNull(configController.transformMessages(someInvalidMessages));
 //  }
 //
-//  private AppNamespace assemblePublicAppNamespace(String appId, String namespace) {
-//    return assembleAppNamespace(appId, namespace, true);
+//  private AppNamespace assemblePublicAppNamespace(String appId, String appNamespace) {
+//    return assembleAppNamespace(appId, appNamespace, true);
 //  }
 //
-//  private AppNamespace assembleAppNamespace(String appId, String namespace, boolean isPublic) {
+//  private AppNamespace assembleAppNamespace(String appId, String appNamespace, boolean isPublic) {
 //    AppNamespace appNamespace = new AppNamespace();
 //    appNamespace.setAppId(appId);
-//    appNamespace.setName(namespace);
+//    appNamespace.setName(appNamespace);
 //    appNamespace.setPublic(isPublic);
 //    return appNamespace;
 //  }

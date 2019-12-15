@@ -65,13 +65,13 @@ public class AppNamespaceService {
     @Transactional
     public AppNamespace createDefaultAppNamespace(Long appId) {
         if (!isAppNamespaceNameUnique(appId, ConfigConsts.NAMESPACE_APPLICATION)) {
-            throw new BadRequestException(String.format("App already has application namespace. AppId = %s", appId));
+            throw new BadRequestException(String.format("App already has application appNamespace. AppId = %s", appId));
         }
 
         AppNamespace4Private appNs = AppNamespace4Private.builder()
                 .app(App.builder().id(appId).build())
                 .name(ConfigConsts.NAMESPACE_APPLICATION)
-                .comment("default app namespace")
+                .comment("default app appNamespace")
                 .format(ConfigFileFormat.Properties)
                 .build();
 
@@ -121,15 +121,15 @@ public class AppNamespaceService {
             appNamespace.setComment("");
         }
 
-        // globally uniqueness check for public app namespace
+        // globally uniqueness check for public app appNamespace
         if (appNamespace.getType().equals(NamespaceType.Public)) {
             checkAppNamespaceGlobalUniqueness(appNamespace);
         } else {
-            // check private app namespace
+            // check private app appNamespace
             if (appNamespaceRepository.findByAppIdAndName(appNamespace.getApp().getId(), appNamespace.getName()) != null) {
                 throw new BadRequestException("Private AppNamespace " + appNamespace.getName() + " already exists!");
             }
-            // should not have the same with public app namespace
+            // should not have the same with public app appNamespace
             checkPublicAppNamespaceGlobalUniqueness(appNamespace);
         }
 
@@ -164,8 +164,15 @@ public class AppNamespaceService {
     private void checkPublicAppNamespaceGlobalUniqueness(AppNamespace appNamespace) {
         AppNamespace publicAppNamespace = findPublicAppNamespace(appNamespace.getName());
         if (publicAppNamespace != null) {
-            throw new BadRequestException("AppNamespace " + appNamespace.getName() + " already exists as public namespace in appId: " + publicAppNamespace.getApp().getId() + "!");
+            throw new BadRequestException("AppNamespace " + appNamespace.getName() + " already exists as public appNamespace in appId: " + publicAppNamespace.getApp().getId() + "!");
         }
     }
 
+    public AppEnvClusterNamespace findAppEnvClusterNamespace4Branch(AppEnvClusterNamespace namespace) {
+        return null;
+    }
+
+    public AppEnvClusterNamespace findChildNamespace(AppEnvClusterNamespace namespace) {
+        return null;
+    }
 }

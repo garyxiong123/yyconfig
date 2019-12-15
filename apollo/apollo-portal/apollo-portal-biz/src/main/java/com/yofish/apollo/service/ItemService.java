@@ -173,6 +173,9 @@ public class ItemService {
         return new Item();
     }
 
+    public List<Item> findItemsWithoutOrdered(Long id) {
+        return null;
+    }
 }
 
 

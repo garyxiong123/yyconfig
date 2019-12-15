@@ -35,5 +35,7 @@ public class Release extends BaseEntity {
     @Column(name = "Comment", nullable = false)
     private String comment;
 
+    private boolean abandoned;
+
 
 }

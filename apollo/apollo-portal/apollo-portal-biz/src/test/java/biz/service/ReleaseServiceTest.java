@@ -38,7 +38,7 @@
 //
 //  private String appId = "appId-test";
 //  private String clusterName = "cluster-test";
-//  private String namespaceName = "namespace-test";
+//  private String namespaceName = "appNamespace-test";
 //  private String user = "user-test";
 //  private long releaseId = 1;
 //  private Release firstRelease;

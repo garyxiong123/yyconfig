@@ -78,7 +78,7 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
       return;
     }
     List<String> keys = STRING_SPLITTER.splitToList(releaseMessage);
-    //message should be appId+cluster+namespace
+    //message should be appId+cluster+appNamespace
     if (keys.size() != 3) {
       logger.error("message format invalid - {}", releaseMessage);
       return;
@@ -128,7 +128,7 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
   }
 
   /**
-   * Check whether there are gray release rules for the clientAppId, clientIp, namespace
+   * Check whether there are gray release rules for the clientAppId, clientIp, appNamespace
    * combination. Please note that even there are gray release rules, it doesn't mean it will always
    * load gray releases. Because gray release rules actually apply to one more dimension - cluster.
    */
@@ -167,7 +167,7 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
         continue;
       }
       String key = assembleGrayReleaseRuleKey(grayReleaseRule.getRelease().getAppEnvClusterNamespace().getAppEnvCluster().getApp().getAppCode(), grayReleaseRule
-          .getRelease().getAppEnvClusterNamespace().getAppEnvCluster().getName(), grayReleaseRule.getRelease().getAppEnvClusterNamespace().getNamespace().getName());
+          .getRelease().getAppEnvClusterNamespace().getAppEnvCluster().getName(), grayReleaseRule.getRelease().getAppEnvClusterNamespace().getAppNamespace().getName());
       //create a new list to avoid ConcurrentModificationException
       List<GrayReleaseRuleCache> rules = Lists.newArrayList(grayReleaseRuleCache.get(key));
       GrayReleaseRuleCache oldRule = null;
@@ -234,7 +234,7 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
     }
 
     GrayReleaseRuleCache ruleCache = new GrayReleaseRuleCache(grayReleaseRule.getId(),
-        grayReleaseRule.getBranchName(), grayReleaseRule.getRelease().getAppEnvClusterNamespace().getNamespace().getName(), grayReleaseRule.getRelease().getId(), grayReleaseRule.getBranchStatus(), loadVersion.get(), ruleItems);
+        grayReleaseRule.getBranchName(), grayReleaseRule.getRelease().getAppEnvClusterNamespace().getAppNamespace().getName(), grayReleaseRule.getRelease().getId(), grayReleaseRule.getBranchStatus(), loadVersion.get(), ruleItems);
 
     return ruleCache;
   }

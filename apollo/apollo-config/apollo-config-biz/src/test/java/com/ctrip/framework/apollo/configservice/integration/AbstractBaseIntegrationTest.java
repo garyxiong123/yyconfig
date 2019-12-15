@@ -71,18 +71,18 @@
 //    releaseMessageRepository.save(releaseMessage);
 //  }
 //
-//  public Release buildRelease(String name, String comment, Namespace namespace,
+//  public Release buildRelease(String name, String comment, Namespace appNamespace,
 //                              Map<String, String> configurations, String owner) {
 //    Release release = new Release();
-//    release.setReleaseKey(ReleaseKeyGenerator.generateReleaseKey(namespace));
+//    release.setReleaseKey(ReleaseKeyGenerator.generateReleaseKey(appNamespace));
 //    release.setDataChangeCreatedTime(new Date());
 //    release.setDataChangeCreatedBy(owner);
 //    release.setDataChangeLastModifiedBy(owner);
 //    release.setName(name);
 //    release.setComment(comment);
-//    release.setAppId(namespace.getAppId());
-//    release.setClusterName(namespace.getClusterName());
-//    release.setNamespaceName(namespace.getNamespaceName());
+//    release.setAppId(appNamespace.getAppId());
+//    release.setClusterName(appNamespace.getClusterName());
+//    release.setNamespaceName(appNamespace.getNamespaceName());
 //    release.setConfigurations(gson.toJson(configurations));
 //    release = releaseRepository.save(release);
 //

@@ -244,7 +244,7 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
       appNamespaceCache.remove(assembleAppNamespaceKey(deleted));
       if (deleted.isPublic()) {
         AppNamespace publicAppNamespace = publicAppNamespaceCache.get(deleted.getName());
-        // in case there is some dirty data, e.g. public namespace deleted in some app and now created in another app
+        // in case there is some dirty data, e.g. public appNamespace deleted in some app and now created in another app
         if (publicAppNamespace == deleted) {
           publicAppNamespaceCache.remove(deleted.getName());
         }

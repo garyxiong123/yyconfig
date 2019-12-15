@@ -47,7 +47,7 @@ public class DeferredResultWrapper {
   }
 
   /**
-   * The namespace name is used as a key in client side, so we have to return the original one instead of the correct one
+   * The appNamespace name is used as a key in client side, so we have to return the original one instead of the correct one
    */
   public void setResult(List<ApolloConfigNotification> notifications) {
     if (normalizedNamespaceName2OriginalNamespaceNameMap != null) {

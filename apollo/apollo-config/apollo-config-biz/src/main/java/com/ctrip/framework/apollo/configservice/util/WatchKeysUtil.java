@@ -29,7 +29,7 @@ public class WatchKeysUtil {
   private AppNamespaceServiceWithCache appNamespaceService;
 
   /**
-   * Assemble watch keys for the given appId, appEnvCluster, namespace, dataCenter combination
+   * Assemble watch keys for the given appId, appEnvCluster, appNamespace, dataCenter combination
    */
   public Set<String> assembleAllWatchKeys(String appId, String clusterName, String namespace,
                                           String dataCenter) {
@@ -40,19 +40,19 @@ public class WatchKeysUtil {
   /**
    * Assemble watch keys for the given appId, appEnvCluster, namespaces, dataCenter combination
    *
-   * @return a multimap with namespace as the key and watch keys as the value
+   * @return a multimap with appNamespace as the key and watch keys as the value
    */
   public Multimap<String, String> assembleAllWatchKeys(String appId, String clusterName,
                                                        Set<String> namespaces,
                                                        String dataCenter) {
     Multimap<String, String> watchedKeysMap = assembleWatchKeys(appId, clusterName, namespaces, dataCenter);
 
-    //Every app has an 'application' namespace
+    //Every app has an 'application' appNamespace
     if (!(namespaces.size() == 1 && namespaces.contains(ConfigConsts.NAMESPACE_APPLICATION))) {
       Set<String> namespacesBelongToAppId = namespacesBelongToAppId(appId, namespaces);
       Set<String> publicNamespaces = Sets.difference(namespaces, namespacesBelongToAppId);
 
-      //Listen on more namespaces if it's a public namespace
+      //Listen on more namespaces if it's a public appNamespace
       if (!publicNamespaces.isEmpty()) {
         watchedKeysMap.putAll(findPublicConfigWatchKeys(appId, clusterName, publicNamespaces, dataCenter));
       }
@@ -69,7 +69,7 @@ public class WatchKeysUtil {
     List<AppNamespace> appNamespaces = appNamespaceService.findPublicNamespacesByNames(namespaces);
 
     for (AppNamespace appNamespace : appNamespaces) {
-      //check whether the namespace's appId equals to current one
+      //check whether the appNamespace's appId equals to current one
       if (Objects.equals(applicationId, appNamespace.getApp().getId())) {
         continue;
       }

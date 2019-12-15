@@ -121,7 +121,7 @@
 //    assertTrue(appNamespaceServiceWithCache.findPublicNamespacesByNames(publicNamespaces).isEmpty());
 //    assertTrue(appNamespaceServiceWithCache.findPublicNamespacesByNames(publicNamespacesWithIncorrectCase).isEmpty());
 //
-//    // Add 1 private namespace and 1 public namespace
+//    // Add 1 private appNamespace and 1 public appNamespace
 //    when(appNamespaceRepository.findFirst500ByIdGreaterThanOrderByIdAsc(0)).thenReturn(Lists
 //        .newArrayList(somePrivateAppNamespace, somePublicAppNamespace));
 //    when(appNamespaceRepository.findAll(Lists.newArrayList(somePrivateNamespaceId,
@@ -152,7 +152,7 @@
 //    check(Lists.newArrayList(somePublicAppNamespace), appNamespaceServiceWithCache.findPublicNamespacesByNames
 //        (publicNamespacesWithIncorrectCase));
 //
-//    // Add 2 private namespaces and 1 public namespace
+//    // Add 2 private namespaces and 1 public appNamespace
 //    when(appNamespaceRepository.findFirst500ByIdGreaterThanOrderByIdAsc(somePublicNamespaceId))
 //        .thenReturn(Lists.newArrayList(anotherPrivateAppNamespace, yetAnotherPrivateAppNamespace,
 //            anotherPublicAppNamespace));

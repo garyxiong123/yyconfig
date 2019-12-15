@@ -7,18 +7,18 @@ package apollo.spi;
  */
 public interface ConfigRegistry {
   /**
-   * Register the config factory for the namespace specified.
+   * Register the config factory for the appNamespace specified.
    *
-   * @param namespace the namespace
-   * @param factory   the factory for this namespace
+   * @param namespace the appNamespace
+   * @param factory   the factory for this appNamespace
    */
   public void register(String namespace, ConfigFactory factory);
 
   /**
-   * Get the registered config factory for the namespace.
+   * Get the registered config factory for the appNamespace.
    *
-   * @param namespace the namespace
-   * @return the factory registered for this namespace
+   * @param namespace the appNamespace
+   * @return the factory registered for this appNamespace
    */
   public ConfigFactory getFactory(String namespace);
 }

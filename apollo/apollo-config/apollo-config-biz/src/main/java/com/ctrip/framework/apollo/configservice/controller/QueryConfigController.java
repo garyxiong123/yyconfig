@@ -79,11 +79,11 @@ public class QueryConfigController {
             if (currentRelease4ThisClient != null) {
                 releases.add(currentRelease4ThisClient);
                 //we have cluster search process, so the cluster name might be overridden
-                appClusterNameLoaded = currentRelease4ThisClient.getAppEnvClusterNamespace().getNamespace().getName();
+                appClusterNameLoaded = currentRelease4ThisClient.getAppEnvClusterNamespace().getAppNamespace().getName();
             }
         }
 
-        //if namespace does not belong to this appId, should check if there is a public configuration
+        //if appNamespace does not belong to this appId, should check if there is a public configuration
         if (!namespaceBelongsToAppId(appId, namespace)) {
             Release publicRelease = this.findPublicConfig(appId, clientIp, clusterName, namespace,
                     dataCenter, clientMessages);
@@ -95,7 +95,7 @@ public class QueryConfigController {
         if (releases.isEmpty()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND,
                     String.format(
-                            "Could not load configurations with appId: %s, clusterName: %s, namespace: %s",
+                            "Could not load configurations with appId: %s, clusterName: %s, appNamespace: %s",
                             appId, clusterName, originalNamespace));
             return null;
         }
@@ -130,12 +130,12 @@ public class QueryConfigController {
 
 
     private boolean namespaceBelongsToAppId(String appId, String namespaceName) {
-        //Every app has an 'application' namespace
+        //Every app has an 'application' appNamespace
         if (Objects.equals(ConfigConsts.NAMESPACE_APPLICATION, namespaceName)) {
             return true;
         }
 
-        //if no appId is present, then no other namespace belongs to it
+        //if no appId is present, then no other appNamespace belongs to it
         if (NO_APPID_PLACEHOLDER.equalsIgnoreCase(appId)) {
             return false;
         }
@@ -147,14 +147,14 @@ public class QueryConfigController {
 
     /**
      * @param clientAppId the application which uses public config
-     * @param namespace   the namespace
+     * @param namespace   the appNamespace
      * @param dataCenter  the datacenter
      */
     private Release findPublicConfig(String clientAppId, String clientIp, String clusterName,
                                      String namespace, String dataCenter, ApolloNotificationMessages clientMessages) {
         AppNamespace appNamespace = appNamespaceService.findPublicNamespaceByName(namespace);
 
-        //check whether the namespace's appId equals to current one
+        //check whether the appNamespace's appId equals to current one
         if (Objects.isNull(appNamespace) || Objects.equals(clientAppId, appNamespace.getApp().getId())) {
             return null;
         }
@@ -194,7 +194,7 @@ public class QueryConfigController {
         for (Release release : releases) {
             instanceConfigAuditUtil.audit(appId, cluster, dataCenter, clientIp, release.getAppEnvClusterNamespace().getAppEnvCluster().getApp().getAppCode(),
                     release.getAppEnvClusterNamespace().getAppEnvCluster().getName(),
-                    release.getAppEnvClusterNamespace().getNamespace().getName(), release.getReleaseKey());
+                    release.getAppEnvClusterNamespace().getAppNamespace().getName(), release.getReleaseKey());
         }
     }
 

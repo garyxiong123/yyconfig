@@ -11,12 +11,12 @@ public class ReleaseKeyGenerator extends UniqueKeyGenerator {
 
 
   /**
-   * Generate the release key in the format: timestamp+appId+cluster+namespace+hash(ipAsInt+counter)
+   * Generate the release key in the format: timestamp+appId+cluster+appNamespace+hash(ipAsInt+counter)
    *
-   * @param namespace the namespace of the release
+   * @param namespace the appNamespace of the release
    * @return the unique release key
    */
   public static String generateReleaseKey(AppEnvClusterNamespace namespace) {
-    return generate(namespace.getAppEnvCluster().getApp().getAppCode(), namespace.getAppEnvCluster().getName(), namespace.getNamespace().getName());
+    return generate(namespace.getAppEnvCluster().getApp().getAppCode(), namespace.getAppEnvCluster().getName(), namespace.getAppNamespace().getName());
   }
 }

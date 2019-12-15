@@ -167,7 +167,7 @@ public class AppRepositoryTest {
     private AppEnvClusterNamespace createClusterNamespace() {
         AppEnvCluster appEnvCluster = createCluster();
         AppNamespace namespace = createNamespace();
-        return AppEnvClusterNamespace.builder().appEnvCluster(appEnvCluster).namespace(namespace).build();
+        return AppEnvClusterNamespace.builder().appEnvCluster(appEnvCluster).appNamespace(namespace).build();
     }
 
 

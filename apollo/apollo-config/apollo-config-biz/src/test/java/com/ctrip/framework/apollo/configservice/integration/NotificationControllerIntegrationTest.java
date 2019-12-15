@@ -52,7 +52,7 @@
 //    periodicSendMessage(executorService, assembleKey(someAppId, someCluster, defaultNamespace), stop);
 //
 //    ResponseEntity<ApolloConfigNotification> result = restTemplate.getForEntity(
-//        "{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}",
+//        "{baseurl}/notifications?appId={appId}&cluster={clusterName}&appNamespace={appNamespace}",
 //        ApolloConfigNotification.class,
 //        getHostUrl(), someAppId, someCluster, defaultNamespace);
 //
@@ -71,7 +71,7 @@
 //    periodicSendMessage(executorService, assembleKey(someAppId, someCluster, defaultNamespace), stop);
 //
 //    ResponseEntity<ApolloConfigNotification> result = restTemplate.getForEntity(
-//        "{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}",
+//        "{baseurl}/notifications?appId={appId}&cluster={clusterName}&appNamespace={appNamespace}",
 //        ApolloConfigNotification.class,
 //        getHostUrl(), someAppId, someCluster, defaultNamespace + ".properties");
 //
@@ -87,21 +87,21 @@
 //  @Sql(scripts = "/integration-test/test-release.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 //  @Sql(scripts = "/integration-test/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 //  public void testPollNotificationWithPrivateNamespaceAsFile() throws Exception {
-//    String namespace = "someNamespace.xml";
+//    String appNamespace = "someNamespace.xml";
 //    AtomicBoolean stop = new AtomicBoolean();
-//    periodicSendMessage(executorService, assembleKey(someAppId, ConfigConsts.CLUSTER_NAME_DEFAULT, namespace), stop);
+//    periodicSendMessage(executorService, assembleKey(someAppId, ConfigConsts.CLUSTER_NAME_DEFAULT, appNamespace), stop);
 //
 //    ResponseEntity<ApolloConfigNotification> result = restTemplate
 //        .getForEntity(
-//            "{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}",
+//            "{baseurl}/notifications?appId={appId}&cluster={clusterName}&appNamespace={appNamespace}",
 //            ApolloConfigNotification.class,
-//            getHostUrl(), someAppId, someCluster, namespace);
+//            getHostUrl(), someAppId, someCluster, appNamespace);
 //
 //    stop.set(true);
 //
 //    ApolloConfigNotification notification = result.getBody();
 //    assertEquals(HttpStatus.OK, result.getStatusCode());
-//    assertEquals(namespace, notification.getNamespaceName());
+//    assertEquals(appNamespace, notification.getNamespaceName());
 //    assertNotEquals(0, notification.getNotificationId());
 //  }
 //
@@ -110,7 +110,7 @@
 //  @Sql(scripts = "/integration-test/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 //  public void testPollNotificationWithDefaultNamespaceWithNotificationIdNull() throws Exception {
 //    ResponseEntity<ApolloConfigNotification> result = restTemplate.getForEntity(
-//        "{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}",
+//        "{baseurl}/notifications?appId={appId}&cluster={clusterName}&appNamespace={appNamespace}",
 //        ApolloConfigNotification.class,
 //        getHostUrl(), someAppId, someCluster, defaultNamespace);
 //
@@ -127,7 +127,7 @@
 //  public void testPollNotificationWithDefaultNamespaceWithNotificationIdOutDated() throws Exception {
 //    long someOutDatedNotificationId = 1;
 //    ResponseEntity<ApolloConfigNotification> result = restTemplate.getForEntity(
-//        "{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}&notificationId={notificationId}",
+//        "{baseurl}/notifications?appId={appId}&cluster={clusterName}&appNamespace={appNamespace}&notificationId={notificationId}",
 //        ApolloConfigNotification.class,
 //        getHostUrl(), someAppId, someCluster, defaultNamespace, someOutDatedNotificationId);
 //
@@ -148,7 +148,7 @@
 //
 //    ResponseEntity<ApolloConfigNotification> result = restTemplate
 //        .getForEntity(
-//            "{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}",
+//            "{baseurl}/notifications?appId={appId}&cluster={clusterName}&appNamespace={appNamespace}",
 //            ApolloConfigNotification.class,
 //            getHostUrl(), someAppId, someCluster, somePublicNamespace);
 //
@@ -172,7 +172,7 @@
 //
 //    ResponseEntity<ApolloConfigNotification> result = restTemplate
 //        .getForEntity(
-//            "{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}&dataCenter={dataCenter}",
+//            "{baseurl}/notifications?appId={appId}&cluster={clusterName}&appNamespace={appNamespace}&dataCenter={dataCenter}",
 //            ApolloConfigNotification.class,
 //            getHostUrl(), someAppId, someCluster, somePublicNamespace, someDC);
 //
@@ -196,7 +196,7 @@
 //
 //    ResponseEntity<ApolloConfigNotification> result = restTemplate
 //        .getForEntity(
-//            "{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}&dataCenter={dataCenter}",
+//            "{baseurl}/notifications?appId={appId}&cluster={clusterName}&appNamespace={appNamespace}&dataCenter={dataCenter}",
 //            ApolloConfigNotification.class,
 //            getHostUrl(), someAppId, someCluster, somePublicNamespace + ".properties", someDC);
 //
@@ -215,7 +215,7 @@
 //  public void testPollNotificationWithPublicNamespaceWithNotificationIdOutDated() throws Exception {
 //    long someOutDatedNotificationId = 1;
 //    ResponseEntity<ApolloConfigNotification> result = restTemplate.getForEntity(
-//        "{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}&notificationId={notificationId}",
+//        "{baseurl}/notifications?appId={appId}&cluster={clusterName}&appNamespace={appNamespace}&notificationId={notificationId}",
 //        ApolloConfigNotification.class,
 //        getHostUrl(), someAppId, someCluster, somePublicNamespace, someOutDatedNotificationId);
 //
@@ -225,7 +225,7 @@
 //    assertEquals(20, notification.getNotificationId());
 //  }
 //
-//  private String assembleKey(String appId, String cluster, String namespace) {
-//    return Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).join(appId, cluster, namespace);
+//  private String assembleKey(String appId, String cluster, String appNamespace) {
+//    return Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).join(appId, cluster, appNamespace);
 //  }
 //}

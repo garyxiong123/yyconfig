@@ -16,7 +16,7 @@ public interface ConfigChangePublisher {
     public void addChangeListener(ConfigChangeListener listener);
 
     /**
-     * Add change listener to this config instance, will only be notified when any of the interested keys is changed in this namespace.
+     * Add change listener to this config instance, will only be notified when any of the interested keys is changed in this appNamespace.
      *
      * @param listener       the config change listener
      * @param interestedKeys the keys interested by the listener

@@ -57,7 +57,7 @@
 //  @Sql(scripts = "/integration-test/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 //  public void testQueryConfigWithDefaultClusterAndDefaultNamespaceOK() throws Exception {
 //    ResponseEntity<ApolloConfig> response = restTemplate
-//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}", ApolloConfig.class,
+//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{appNamespace}", ApolloConfig.class,
 //            getHostUrl(), someAppId, ConfigConsts.CLUSTER_NAME_DEFAULT, ConfigConsts.NAMESPACE_APPLICATION);
 //    ApolloConfig result = response.getBody();
 //
@@ -71,7 +71,7 @@
 //  @Sql(scripts = "/integration-test/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 //  public void testQueryConfigWithDefaultClusterAndDefaultNamespaceAndIncorrectCase() throws Exception {
 //    ResponseEntity<ApolloConfig> response = restTemplate
-//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}", ApolloConfig.class,
+//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{appNamespace}", ApolloConfig.class,
 //            getHostUrl(), someAppId, ConfigConsts.CLUSTER_NAME_DEFAULT,
 //            ConfigConsts.NAMESPACE_APPLICATION.toUpperCase());
 //    ApolloConfig result = response.getBody();
@@ -95,7 +95,7 @@
 //    stop.set(true);
 //
 //    ResponseEntity<ApolloConfig> response = restTemplate
-//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?ip={clientIp}", ApolloConfig.class,
+//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{appNamespace}?ip={clientIp}", ApolloConfig.class,
 //            getHostUrl(), someAppId, ConfigConsts.CLUSTER_NAME_DEFAULT, ConfigConsts.NAMESPACE_APPLICATION, someClientIp);
 //    ApolloConfig result = response.getBody();
 //
@@ -118,7 +118,7 @@
 //    stop.set(true);
 //
 //    ResponseEntity<ApolloConfig> response = restTemplate
-//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?ip={clientIp}", ApolloConfig.class,
+//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{appNamespace}?ip={clientIp}", ApolloConfig.class,
 //            getHostUrl(), someAppId, ConfigConsts.CLUSTER_NAME_DEFAULT,
 //            ConfigConsts.NAMESPACE_APPLICATION.toUpperCase(), someClientIp);
 //    ApolloConfig result = response.getBody();
@@ -133,7 +133,7 @@
 //  @Sql(scripts = "/integration-test/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 //  public void testQueryConfigFileWithDefaultClusterAndDefaultNamespaceOK() throws Exception {
 //    ResponseEntity<ApolloConfig> response = restTemplate
-//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}", ApolloConfig.class,
+//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{appNamespace}", ApolloConfig.class,
 //            getHostUrl(), someAppId, ConfigConsts.CLUSTER_NAME_DEFAULT, ConfigConsts.NAMESPACE_APPLICATION + ".properties");
 //    ApolloConfig result = response.getBody();
 //
@@ -147,7 +147,7 @@
 //  @Sql(scripts = "/integration-test/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 //  public void testQueryConfigWithNamespaceOK() throws Exception {
 //    ResponseEntity<ApolloConfig> response = restTemplate
-//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}", ApolloConfig.class,
+//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{appNamespace}", ApolloConfig.class,
 //            getHostUrl(), someAppId, someCluster, someNamespace);
 //    ApolloConfig result = response.getBody();
 //
@@ -161,7 +161,7 @@
 //  @Sql(scripts = "/integration-test/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 //  public void testQueryConfigFileWithNamespaceOK() throws Exception {
 //    ResponseEntity<ApolloConfig> response = restTemplate
-//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}", ApolloConfig.class,
+//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{appNamespace}", ApolloConfig.class,
 //            getHostUrl(), someAppId, ConfigConsts.CLUSTER_NAME_DEFAULT, someNamespace + ".xml");
 //    ApolloConfig result = response.getBody();
 //
@@ -178,7 +178,7 @@
 //    HttpStatusCodeException httpException = null;
 //    try {
 //      ResponseEntity<ApolloConfig> response = restTemplate
-//          .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}", ApolloConfig.class,
+//          .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{appNamespace}", ApolloConfig.class,
 //              getHostUrl(), someAppId, someCluster, someNamespaceNotExists);
 //    } catch (HttpStatusCodeException ex) {
 //      httpException = ex;
@@ -193,7 +193,7 @@
 //  public void testQueryConfigNotModified() throws Exception {
 //    String releaseKey = "TEST-RELEASE-KEY2";
 //    ResponseEntity<ApolloConfig> response = restTemplate
-//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?releaseKey={releaseKey}",
+//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{appNamespace}?releaseKey={releaseKey}",
 //            ApolloConfig.class,
 //            getHostUrl(), someAppId, someCluster, someNamespace, releaseKey);
 //
@@ -214,7 +214,7 @@
 //    stop.set(true);
 //
 //    ResponseEntity<ApolloConfig> response = restTemplate
-//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?ip={clientIp}", ApolloConfig.class,
+//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{appNamespace}?ip={clientIp}", ApolloConfig.class,
 //            getHostUrl(), someAppId, someCluster, somePublicNamespace, someClientIp);
 //    ApolloConfig result = response.getBody();
 //
@@ -229,7 +229,7 @@
 //  @Sql(scripts = "/integration-test/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 //  public void testQueryPublicConfigWithDataCenterFoundAndNoOverride() throws Exception {
 //    ResponseEntity<ApolloConfig> response = restTemplate
-//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?dataCenter={dateCenter}",
+//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{appNamespace}?dataCenter={dateCenter}",
 //            ApolloConfig.class,
 //            getHostUrl(), someAppId, someCluster, somePublicNamespace, someDC);
 //    ApolloConfig result = response.getBody();
@@ -248,7 +248,7 @@
 //  @Sql(scripts = "/integration-test/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 //  public void testQueryPublicConfigWithDataCenterFoundAndOverride() throws Exception {
 //    ResponseEntity<ApolloConfig> response = restTemplate
-//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?dataCenter={dateCenter}",
+//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{appNamespace}?dataCenter={dateCenter}",
 //            ApolloConfig.class,
 //            getHostUrl(), someAppId, someDefaultCluster, somePublicNamespace, someDC);
 //    ApolloConfig result = response.getBody();
@@ -269,7 +269,7 @@
 //  @Sql(scripts = "/integration-test/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 //  public void testQueryPublicConfigWithIncorrectCaseAndDataCenterFoundAndOverride() throws Exception {
 //    ResponseEntity<ApolloConfig> response = restTemplate
-//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?dataCenter={dateCenter}",
+//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{appNamespace}?dataCenter={dateCenter}",
 //            ApolloConfig.class,
 //            getHostUrl(), someAppId, someDefaultCluster, somePublicNamespace.toUpperCase(), someDC);
 //    ApolloConfig result = response.getBody();
@@ -287,7 +287,7 @@
 //  public void testQueryPublicConfigWithDataCenterNotFoundAndNoOverride() throws Exception {
 //    String someDCNotFound = "someDCNotFound";
 //    ResponseEntity<ApolloConfig> response = restTemplate
-//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?dataCenter={dateCenter}",
+//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{appNamespace}?dataCenter={dateCenter}",
 //            ApolloConfig.class,
 //            getHostUrl(), someAppId, someCluster, somePublicNamespace, someDCNotFound);
 //    ApolloConfig result = response.getBody();
@@ -307,7 +307,7 @@
 //  public void testQueryPublicConfigWithDataCenterNotFoundAndOverride() throws Exception {
 //    String someDCNotFound = "someDCNotFound";
 //    ResponseEntity<ApolloConfig> response = restTemplate
-//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?dataCenter={dateCenter}",
+//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{appNamespace}?dataCenter={dateCenter}",
 //            ApolloConfig.class,
 //            getHostUrl(), someAppId, someDefaultCluster, somePublicNamespace, someDCNotFound);
 //    ApolloConfig result = response.getBody();
@@ -337,7 +337,7 @@
 //    stop.set(true);
 //
 //    ResponseEntity<ApolloConfig> response = restTemplate
-//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?ip={clientIp}", ApolloConfig.class,
+//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{appNamespace}?ip={clientIp}", ApolloConfig.class,
 //            getHostUrl(), someAppId, someDefaultCluster, somePublicNamespace, someClientIp);
 //    ApolloConfig result = response.getBody();
 //
@@ -364,7 +364,7 @@
 //    stop.set(true);
 //
 //    ResponseEntity<ApolloConfig> response = restTemplate
-//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?ip={clientIp}", ApolloConfig.class,
+//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{appNamespace}?ip={clientIp}", ApolloConfig.class,
 //            getHostUrl(), someAppId, someDefaultCluster, somePublicNamespace.toUpperCase(), someClientIp);
 //    ApolloConfig result = response.getBody();
 //
@@ -382,7 +382,7 @@
 //  public void testQueryPrivateConfigFileWithPublicNamespaceExists() throws Exception {
 //    String namespaceName = "anotherNamespace";
 //    ResponseEntity<ApolloConfig> response = restTemplate
-//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}",
+//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{appNamespace}",
 //            ApolloConfig.class,
 //            getHostUrl(), someAppId, ConfigConsts.CLUSTER_NAME_DEFAULT, namespaceName);
 //    ApolloConfig result = response.getBody();
@@ -401,7 +401,7 @@
 //    HttpStatusCodeException httpException = null;
 //    try {
 //      ResponseEntity<ApolloConfig> response = restTemplate
-//          .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}", ApolloConfig.class,
+//          .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{appNamespace}", ApolloConfig.class,
 //              getHostUrl(), ConfigConsts.NO_APPID_PLACEHOLDER, someCluster, ConfigConsts.NAMESPACE_APPLICATION);
 //    } catch (HttpStatusCodeException ex) {
 //      httpException = ex;
@@ -415,7 +415,7 @@
 //  @Sql(scripts = "/integration-test/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 //  public void testQueryPublicConfigForNoAppIdPlaceHolder() throws Exception {
 //    ResponseEntity<ApolloConfig> response = restTemplate
-//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?dataCenter={dateCenter}",
+//        .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{appNamespace}?dataCenter={dateCenter}",
 //            ApolloConfig.class,
 //            getHostUrl(), ConfigConsts.NO_APPID_PLACEHOLDER, someCluster, somePublicNamespace, someDC);
 //    ApolloConfig result = response.getBody();
@@ -428,7 +428,7 @@
 //    assertEquals("someDC-v2", result.getConfigurations().get("k2"));
 //  }
 //
-//  private String assembleKey(String appId, String cluster, String namespace) {
-//    return Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).join(appId, cluster, namespace);
+//  private String assembleKey(String appId, String cluster, String appNamespace) {
+//    return Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).join(appId, cluster, appNamespace);
 //  }
 //}

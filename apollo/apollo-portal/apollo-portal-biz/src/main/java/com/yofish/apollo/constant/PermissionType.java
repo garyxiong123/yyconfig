@@ -22,7 +22,7 @@ public interface PermissionType {
   String ASSIGN_ROLE = "AssignRole";
 
   /**
-   * namespace level permission
+   * appNamespace level permission
    */
 
   String MODIFY_NAMESPACE = "ModifyNamespace";

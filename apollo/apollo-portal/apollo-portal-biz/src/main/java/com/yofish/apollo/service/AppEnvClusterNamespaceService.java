@@ -35,7 +35,7 @@ public class AppEnvClusterNamespaceService {
         Namespace entity = BeanUtils.transform(Namespace.class, dto);
         Namespace managedEntity = this.namespaceRepository.findOne(Example.of(new Namespace(dto.getAppId(), env, dto.getClusterName(), dto.getNamespaceName()))).orElse(null);
         if (managedEntity != null) {
-            throw new BadRequestException("namespace already exist.");
+            throw new BadRequestException("appNamespace already exist.");
         }
 
         entity = this.namespaceRepository.save(entity);
@@ -67,7 +67,7 @@ public class AppEnvClusterNamespaceService {
     public void createNamespaceForAppNamespaceInAllCluster(AppNamespace appNamespace) {
         List<AppEnvCluster> appEnvClusters = this.appEnvClusterRepository.findByAppAndParentClusterId(appNamespace.getApp(), 0L);
         for (AppEnvCluster appEnvCluster : appEnvClusters) {
-            // in case there is some dirty data, e.g. public namespace deleted in other app and now created in this app
+            // in case there is some dirty data, e.g. public appNamespace deleted in other app and now created in this app
             if (!this.isNamespaceUnique(appEnvCluster, appNamespace)) {
                 continue;
             }

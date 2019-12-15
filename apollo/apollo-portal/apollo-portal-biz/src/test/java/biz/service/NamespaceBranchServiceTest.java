@@ -30,7 +30,7 @@
 //  private Pageable pageable = new PageRequest(0, 10);
 //
 //  @Test
-//  @Sql(scripts = "/sql/namespace-branch-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+//  @Sql(scripts = "/sql/appNamespace-branch-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 //  @Sql(scripts = "/sql/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 //  public void testFindBranch() {
 //    Namespace branch = namespaceBranchService.findBranch(testApp, testCluster, testNamespace);
@@ -40,7 +40,7 @@
 //  }
 //
 //  @Test
-//  @Sql(scripts = "/sql/namespace-branch-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+//  @Sql(scripts = "/sql/appNamespace-branch-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 //  @Sql(scripts = "/sql/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 //  public void testUpdateBranchGrayRulesWithUpdateOnce() {
 //    GrayReleaseRule rule = instanceGrayReleaseRule();
@@ -69,7 +69,7 @@
 //  }
 //
 //  @Test
-//  @Sql(scripts = "/sql/namespace-branch-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+//  @Sql(scripts = "/sql/appNamespace-branch-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 //  @Sql(scripts = "/sql/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 //  public void testUpdateBranchGrayRulesWithUpdateTwice() {
 //
@@ -105,7 +105,7 @@
 //  }
 //
 //  @Test
-//  @Sql(scripts = "/sql/namespace-branch-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+//  @Sql(scripts = "/sql/appNamespace-branch-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 //  @Sql(scripts = "/sql/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 //  public void testUpdateRulesReleaseIdWithOldRuleNotExist() {
 //    long latestReleaseId = 100;
@@ -121,7 +121,7 @@
 //  }
 //
 //  @Test
-//  @Sql(scripts = "/sql/namespace-branch-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+//  @Sql(scripts = "/sql/appNamespace-branch-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 //  @Sql(scripts = "/sql/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 //  public void testUpdateRulesReleaseIdWithOldRuleExist() {
 //
@@ -145,7 +145,7 @@
 //
 //
 //  @Test
-//  @Sql(scripts = "/sql/namespace-branch-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+//  @Sql(scripts = "/sql/appNamespace-branch-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 //  @Sql(scripts = "/sql/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 //  public void testDeleteBranch() {
 //

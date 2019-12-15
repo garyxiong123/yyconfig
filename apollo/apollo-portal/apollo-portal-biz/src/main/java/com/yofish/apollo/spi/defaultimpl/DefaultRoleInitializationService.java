@@ -59,7 +59,7 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
         initNamespaceRoles(appCode, ConfigConsts.NAMESPACE_APPLICATION, operator);
         initNamespaceEnvRoles(appCode, ConfigConsts.NAMESPACE_APPLICATION, operator);
 
-        //assign modify、release namespace role to user
+        //assign modify、release appNamespace role to user
         rolePermissionService.assignRoleToUsers(
                 RoleUtils.buildNamespaceRoleName(appCode, ConfigConsts.NAMESPACE_APPLICATION, RoleType.MODIFY_NAMESPACE),
                 Sets.newHashSet(operator), operator);

@@ -68,7 +68,7 @@
 //  public void testQueryConfigAsProperties() throws Exception {
 //    ResponseEntity<String> response =
 //        restTemplate
-//            .getForEntity("{baseurl}/configfiles/{appId}/{clusterName}/{namespace}", String.class,
+//            .getForEntity("{baseurl}/configfiles/{appId}/{clusterName}/{appNamespace}", String.class,
 //                getHostUrl(), someAppId, someCluster, someNamespace);
 //
 //    String result = response.getBody();
@@ -92,12 +92,12 @@
 //
 //    ResponseEntity<String> response =
 //        restTemplate
-//            .getForEntity("{baseurl}/configfiles/{appId}/{clusterName}/{namespace}?ip={clientIp}", String.class,
+//            .getForEntity("{baseurl}/configfiles/{appId}/{clusterName}/{appNamespace}?ip={clientIp}", String.class,
 //                getHostUrl(), someAppId, someDefaultCluster, ConfigConsts.NAMESPACE_APPLICATION, grayClientIp);
 //
 //    ResponseEntity<String> anotherResponse =
 //        restTemplate
-//            .getForEntity("{baseurl}/configfiles/{appId}/{clusterName}/{namespace}?ip={clientIp}", String.class,
+//            .getForEntity("{baseurl}/configfiles/{appId}/{clusterName}/{appNamespace}?ip={clientIp}", String.class,
 //                getHostUrl(), someAppId, someDefaultCluster, ConfigConsts.NAMESPACE_APPLICATION, nonGrayClientIp);
 //
 //    String result = response.getBody();
@@ -119,7 +119,7 @@
 //    ResponseEntity<String> response =
 //        restTemplate
 //            .getForEntity(
-//                "{baseurl}/configfiles/{appId}/{clusterName}/{namespace}?dataCenter={dateCenter}",
+//                "{baseurl}/configfiles/{appId}/{clusterName}/{appNamespace}?dataCenter={dateCenter}",
 //                String.class,
 //                getHostUrl(), someAppId, someDefaultCluster, somePublicNamespace, someDC);
 //
@@ -136,7 +136,7 @@
 //  public void testQueryConfigAsJson() throws Exception {
 //    ResponseEntity<String> response =
 //        restTemplate
-//            .getForEntity("{baseurl}/configfiles/json/{appId}/{clusterName}/{namespace}", String.class,
+//            .getForEntity("{baseurl}/configfiles/json/{appId}/{clusterName}/{appNamespace}", String.class,
 //                getHostUrl(), someAppId, someCluster, someNamespace);
 //
 //    Map<String, String> configs = gson.fromJson(response.getBody(), mapResponseType);
@@ -151,7 +151,7 @@
 //  public void testQueryConfigAsJsonWithIncorrectCase() throws Exception {
 //    ResponseEntity<String> response =
 //        restTemplate
-//            .getForEntity("{baseurl}/configfiles/json/{appId}/{clusterName}/{namespace}", String.class,
+//            .getForEntity("{baseurl}/configfiles/json/{appId}/{clusterName}/{appNamespace}", String.class,
 //                getHostUrl(), someAppId, someCluster, someNamespace.toUpperCase());
 //
 //    Map<String, String> configs = gson.fromJson(response.getBody(), mapResponseType);
@@ -168,7 +168,7 @@
 //    ResponseEntity<String> response =
 //        restTemplate
 //            .getForEntity(
-//                "{baseurl}/configfiles/json/{appId}/{clusterName}/{namespace}?dataCenter={dateCenter}",
+//                "{baseurl}/configfiles/json/{appId}/{clusterName}/{appNamespace}?dataCenter={dateCenter}",
 //                String.class,
 //                getHostUrl(), someAppId, someDefaultCluster, somePublicNamespace, someDC);
 //
@@ -187,7 +187,7 @@
 //    ResponseEntity<String> response =
 //        restTemplate
 //            .getForEntity(
-//                "{baseurl}/configfiles/json/{appId}/{clusterName}/{namespace}?dataCenter={dateCenter}",
+//                "{baseurl}/configfiles/json/{appId}/{clusterName}/{appNamespace}?dataCenter={dateCenter}",
 //                String.class,
 //                getHostUrl(), someAppId, someDefaultCluster, somePublicNamespace.toUpperCase(), someDC);
 //
@@ -215,14 +215,14 @@
 //    ResponseEntity<String> response =
 //        restTemplate
 //            .getForEntity(
-//                "{baseurl}/configfiles/json/{appId}/{clusterName}/{namespace}?ip={clientIp}",
+//                "{baseurl}/configfiles/json/{appId}/{clusterName}/{appNamespace}?ip={clientIp}",
 //                String.class,
 //                getHostUrl(), someAppId, someDefaultCluster, somePublicNamespace, grayClientIp);
 //
 //    ResponseEntity<String> anotherResponse =
 //        restTemplate
 //            .getForEntity(
-//                "{baseurl}/configfiles/json/{appId}/{clusterName}/{namespace}?ip={clientIp}",
+//                "{baseurl}/configfiles/json/{appId}/{clusterName}/{appNamespace}?ip={clientIp}",
 //                String.class,
 //                getHostUrl(), someAppId, someDefaultCluster, somePublicNamespace, nonGrayClientIp);
 //
@@ -256,14 +256,14 @@
 //    ResponseEntity<String> response =
 //        restTemplate
 //            .getForEntity(
-//                "{baseurl}/configfiles/json/{appId}/{clusterName}/{namespace}?ip={clientIp}",
+//                "{baseurl}/configfiles/json/{appId}/{clusterName}/{appNamespace}?ip={clientIp}",
 //                String.class,
 //                getHostUrl(), someAppId, someDefaultCluster, somePublicNamespace.toUpperCase(), grayClientIp);
 //
 //    ResponseEntity<String> anotherResponse =
 //        restTemplate
 //            .getForEntity(
-//                "{baseurl}/configfiles/json/{appId}/{clusterName}/{namespace}?ip={clientIp}",
+//                "{baseurl}/configfiles/json/{appId}/{clusterName}/{appNamespace}?ip={clientIp}",
 //                String.class,
 //                getHostUrl(), someAppId, someDefaultCluster, somePublicNamespace.toUpperCase(), nonGrayClientIp);
 //
@@ -286,7 +286,7 @@
 //  public void testConfigChanged() throws Exception {
 //    ResponseEntity<String> response =
 //        restTemplate
-//            .getForEntity("{baseurl}/configfiles/{appId}/{clusterName}/{namespace}", String.class,
+//            .getForEntity("{baseurl}/configfiles/{appId}/{clusterName}/{appNamespace}", String.class,
 //                getHostUrl(), someAppId, someCluster, someNamespace);
 //
 //    String result = response.getBody();
@@ -296,19 +296,19 @@
 //
 //    String someReleaseName = "someReleaseName";
 //    String someReleaseComment = "someReleaseComment";
-//    Namespace namespace = new Namespace();
-//    namespace.setAppId(someAppId);
-//    namespace.setClusterName(someCluster);
-//    namespace.setNamespaceName(someNamespace);
+//    Namespace appNamespace = new Namespace();
+//    appNamespace.setAppId(someAppId);
+//    appNamespace.setClusterName(someCluster);
+//    appNamespace.setNamespaceName(someNamespace);
 //    String someOwner = "someOwner";
 //
 //    Map<String, String> newConfigurations = ImmutableMap.of("k1", "v1-changed", "k2", "v2-changed");
 //
-//    buildRelease(someReleaseName, someReleaseComment, namespace, newConfigurations, someOwner);
+//    buildRelease(someReleaseName, someReleaseComment, appNamespace, newConfigurations, someOwner);
 //
 //    ResponseEntity<String> anotherResponse =
 //        restTemplate
-//            .getForEntity("{baseurl}/configfiles/{appId}/{clusterName}/{namespace}", String.class,
+//            .getForEntity("{baseurl}/configfiles/{appId}/{clusterName}/{appNamespace}", String.class,
 //                getHostUrl(), someAppId, someCluster, someNamespace);
 //
 //    assertEquals(response.getBody(), anotherResponse.getBody());
@@ -321,7 +321,7 @@
 //
 //    ResponseEntity<String> newResponse =
 //        restTemplate
-//            .getForEntity("{baseurl}/configfiles/{appId}/{clusterName}/{namespace}", String.class,
+//            .getForEntity("{baseurl}/configfiles/{appId}/{clusterName}/{appNamespace}", String.class,
 //                getHostUrl(), someAppId, someCluster, someNamespace);
 //
 //    result = newResponse.getBody();
@@ -330,7 +330,7 @@
 //    assertTrue(result.contains("k2=v2-changed"));
 //  }
 //
-//  private String assembleKey(String appId, String cluster, String namespace) {
-//    return Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).join(appId, cluster, namespace);
+//  private String assembleKey(String appId, String cluster, String appNamespace) {
+//    return Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).join(appId, cluster, appNamespace);
 //  }
 //}

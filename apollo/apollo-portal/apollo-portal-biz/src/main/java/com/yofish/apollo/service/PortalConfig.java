@@ -123,7 +123,7 @@ public class PortalConfig extends RefreshableConfig {
 
 
     public Set<Env> publishTipsSupportedEnvs() {
-        String[] configurations = getArrayProperty("namespace.publish.tips.supported.envs", null);
+        String[] configurations = getArrayProperty("appNamespace.publish.tips.supported.envs", null);
 
         Set<Env> result = Sets.newHashSet();
         if (configurations == null || configurations.length == 0) {
@@ -365,7 +365,7 @@ public class PortalConfig extends RefreshableConfig {
     }
 
     public Map<Long, Integer> namespaceValueLengthLimitOverride() {
-        String namespaceValueLengthOverrideString = getValue("namespace.value.length.limit.override");
+        String namespaceValueLengthOverrideString = getValue("appNamespace.value.length.limit.override");
         Map<Long, Integer> namespaceValueLengthOverride = Maps.newHashMap();
         if (!Strings.isNullOrEmpty(namespaceValueLengthOverrideString)) {
             namespaceValueLengthOverride =
@@ -418,5 +418,9 @@ public class PortalConfig extends RefreshableConfig {
 
     public Object appNamespaceCacheScanIntervalTimeUnit() {
             return null;
+    }
+
+    public List<Env> getActiveEnvs() {
+        return null;
     }
 }

@@ -88,7 +88,7 @@ public class XMLConfigAnnotationTest extends AbstractSpringIntegrationTest {
     TestApolloConfigChangeListenerBean1 bean = getBean("spring/XmlConfigAnnotationTest3.xml",
         TestApolloConfigChangeListenerBean1.class);
 
-    //PropertySourcesProcessor add listeners to listen config changed of all namespace
+    //PropertySourcesProcessor add listeners to listen config changed of all appNamespace
     assertEquals(4, applicationListeners.size());
     assertEquals(1, fxApolloListeners.size());
 

@@ -66,7 +66,7 @@ public abstract class AbstractConfigService implements ConfigService {
    * @param clientIp the client ip
    * @param configAppId the requested config's app id
    * @param configClusterName the requested config's cluster name
-   * @param configNamespace the requested config's namespace name
+   * @param configNamespace the requested config's appNamespace name
    * @param clientMessages the messages received in client side
    * @return the release
    */
@@ -94,7 +94,7 @@ public abstract class AbstractConfigService implements ConfigService {
   protected abstract Release findActiveOne(long id, ApolloNotificationMessages clientMessages);
 
   /**
-   * Find active release by app id, cluster name and namespace name
+   * Find active release by app id, cluster name and appNamespace name
    */
   protected abstract Release findLatestActiveRelease(String configAppId, String configClusterName,
       String configNamespaceName, ApolloNotificationMessages clientMessages);

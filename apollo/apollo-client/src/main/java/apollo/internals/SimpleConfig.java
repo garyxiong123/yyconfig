@@ -25,7 +25,7 @@ public class SimpleConfig extends AbstractConfig{
   /**
    * Constructor.
    *
-   * @param namespace        the namespace for this config instance
+   * @param namespace        the appNamespace for this config instance
    * @param configRepository the config repository for this config instance
    */
   public SimpleConfig(String namespace, ConfigRepository configRepository) {
@@ -39,7 +39,7 @@ public class SimpleConfig extends AbstractConfig{
       updateConfig(m_configRepository.getConfig(), m_configRepository.getSourceType());
     } catch (Throwable ex) {
       Tracer.logError(ex);
-      logger.warn("Init Apollo Simple Config failed - namespace: {}, reason: {}", m_namespace,
+      logger.warn("Init Apollo Simple Config failed - appNamespace: {}, reason: {}", m_namespace,
           ExceptionUtil.getDetailMessage(ex));
     } finally {
       //register the change listener no matter config repository is working or not

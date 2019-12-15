@@ -55,7 +55,7 @@ public class ConfigUtil {
     if (Strings.isNullOrEmpty(appId)) {
       appId = ConfigConsts.NO_APPID_PLACEHOLDER;
       logger.warn("app.id is not set, please make sure it is set in classpath:/META-INF/app.properties, now apollo " +
-          "will only load public namespace configurations!");
+          "will only load public appNamespace configurations!");
     }
     return appId;
   }

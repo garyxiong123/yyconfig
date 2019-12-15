@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * A change event when a namespace's config is changed.
+ * A change event when a appNamespace's config is changed.
  * @author Jason Song(song_s@ctrip.com)
  */
 public class ConfigChangeEvent {
@@ -13,7 +13,7 @@ public class ConfigChangeEvent {
 
   /**
    * Constructor.
-   * @param namespace the namespace of this change
+   * @param namespace the appNamespace of this change
    * @param changes the actual changes
    */
   public ConfigChangeEvent(String namespace,
@@ -49,8 +49,8 @@ public class ConfigChangeEvent {
   }
 
   /**
-   * Get the namespace of this change event.
-   * @return the namespace
+   * Get the appNamespace of this change event.
+   * @return the appNamespace
    */
   public String getNamespace() {
     return m_namespace;

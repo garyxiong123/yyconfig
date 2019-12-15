@@ -137,7 +137,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
 
         registerWatchedKeys(deferredResultWrapper, clientWatchedKeys);
 
-        logger.debug("Listening {} from appId: {}, cluster: {}, namespace: {}, datacenter: {}", clientWatchedKeys, appId, cluster, namespaces, dataCenter);
+        logger.debug("Listening {} from appId: {}, cluster: {}, appNamespace: {}, datacenter: {}", clientWatchedKeys, appId, cluster, namespaces, dataCenter);
     }
 
     @Override
@@ -272,7 +272,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
             //fix the character case issue, such as FX.apollo <-> fx.apollo
             String normalizedNamespace = namespaceUtil.normalizeNamespace(appId, originalNamespace);
 
-            // in case client side namespace name has character case issue and has difference notification ids
+            // in case client side appNamespace name has character case issue and has difference notification ids
             // such as FX.apollo = 1 but fx.apollo = 2, we should let FX.apollo have the chance to update its notification id
             // which means we should record FX.apollo = 1 here and ignore fx.apollo = 2
             if (filteredNotifications.containsKey(normalizedNamespace) &&
@@ -331,7 +331,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
                     return null;
                 }
                 List<String> keys = STRING_SPLITTER.splitToList(releaseMessage);
-                //message should be appId+appEnvCluster+namespace
+                //message should be appId+appEnvCluster+appNamespace
                 if (keys.size() != 3) {
                     logger.error("message format invalid - {}", releaseMessage);
                     return null;

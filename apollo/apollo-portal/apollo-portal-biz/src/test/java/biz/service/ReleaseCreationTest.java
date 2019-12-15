@@ -40,11 +40,11 @@
 //  public void testPublishNormalNamespace() {
 //    long namespaceId = 100;
 //    String clusterName = "only-master";
-//    Namespace namespace = instanceNamespace(namespaceId, clusterName);
+//    Namespace appNamespace = instanceNamespace(namespaceId, clusterName);
 //
-//    releaseService.publish(namespace, "", "", operator, false);
+//    releaseService.publish(appNamespace, "", "", operator, false);
 //
-//    Release latestRelease = releaseService.findLatestActiveRelease(namespace);
+//    Release latestRelease = releaseService.findLatestActiveRelease(appNamespace);
 //
 //    Assert.assertNotNull(latestRelease);
 //
@@ -91,7 +91,7 @@
 //
 //    Release latestParentNamespaceRelease = releaseService.findLatestActiveRelease(parentNamespace);
 //
-//    //assert parent namespace
+//    //assert parent appNamespace
 //    Assert.assertNotNull(latestParentNamespaceRelease);
 //
 //    Map<String, String> parentNamespaceConfiguration = parseConfiguration(latestParentNamespaceRelease.getConfigurations());
@@ -100,11 +100,11 @@
 //    Assert.assertEquals("v2", parentNamespaceConfiguration.get("k2"));
 //    Assert.assertEquals("v3", parentNamespaceConfiguration.get("k3"));
 //
-//    //assert child namespace
+//    //assert child appNamespace
 //    Namespace childNamespace = instanceNamespace(childNamespaceId, childClusterName);
 //    Release latestChildNamespaceRelease = releaseService.findLatestActiveRelease(childNamespace);
 //
-//    //assert parent namespace
+//    //assert parent appNamespace
 //    Assert.assertNotNull(latestChildNamespaceRelease);
 //
 //    Map<String, String> childNamespaceConfiguration = parseConfiguration(latestChildNamespaceRelease.getConfigurations());
@@ -165,7 +165,7 @@
 //
 //    Release latestParentNamespaceRelease = releaseService.findLatestActiveRelease(parentNamespace);
 //
-//    //assert parent namespace
+//    //assert parent appNamespace
 //    Assert.assertNotNull(latestParentNamespaceRelease);
 //
 //    Map<String, String> parentNamespaceConfiguration = parseConfiguration(latestParentNamespaceRelease.getConfigurations());
@@ -174,7 +174,7 @@
 //    Assert.assertEquals("v2", parentNamespaceConfiguration.get("k2"));
 //    Assert.assertEquals("v3", parentNamespaceConfiguration.get("k3"));
 //
-//    //assert child namespace
+//    //assert child appNamespace
 //    Namespace childNamespace = instanceNamespace(childNamespaceId, childClusterName);
 //    Release latestChildNamespaceRelease = releaseService.findLatestActiveRelease(childNamespace);
 //
@@ -236,7 +236,7 @@
 //
 //    Release latestParentNamespaceRelease = releaseService.findLatestActiveRelease(parentNamespace);
 //
-//    //assert parent namespace
+//    //assert parent appNamespace
 //    Assert.assertNotNull(latestParentNamespaceRelease);
 //
 //    Map<String, String> parentNamespaceConfiguration = parseConfiguration(latestParentNamespaceRelease.getConfigurations());
@@ -244,7 +244,7 @@
 //    Assert.assertEquals("v1", parentNamespaceConfiguration.get("k1"));
 //    Assert.assertEquals("v2-2", parentNamespaceConfiguration.get("k2"));
 //
-//    //assert child namespace
+//    //assert child appNamespace
 //    Namespace childNamespace = instanceNamespace(childNamespaceId, childClusterName);
 //    Release latestChildNamespaceRelease = releaseService.findLatestActiveRelease(childNamespace);
 //
@@ -299,7 +299,7 @@
 //    String parentClusterName = "default4";
 //    long childNamespaceId = 108;
 //    String childClusterName = "child-cluster4";
-//    //assert child namespace
+//    //assert child appNamespace
 //    Namespace childNamespace = instanceNamespace(childNamespaceId, childClusterName);
 //    releaseService.publish(childNamespace, "", "", operator, false);
 //
@@ -318,7 +318,7 @@
 //
 //    Release latestParentNamespaceRelease = releaseService.findLatestActiveRelease(parentNamespace);
 //
-//    //assert parent namespace
+//    //assert parent appNamespace
 //    Assert.assertNotNull(latestParentNamespaceRelease);
 //
 //    Map<String, String> parentNamespaceConfiguration = parseConfiguration(latestParentNamespaceRelease.getConfigurations());
@@ -370,7 +370,7 @@
 //    String parentClusterName = "default5";
 //    long childNamespaceId = 1010;
 //    String childClusterName = "child-cluster5";
-//    //assert child namespace
+//    //assert child appNamespace
 //    Namespace childNamespace = instanceNamespace(childNamespaceId, childClusterName);
 //    releaseService.publish(childNamespace, "", "", operator, false);
 //
@@ -390,7 +390,7 @@
 //
 //    Release latestParentNamespaceRelease = releaseService.findLatestActiveRelease(parentNamespace);
 //
-//    //assert parent namespace
+//    //assert parent appNamespace
 //    Assert.assertNotNull(latestParentNamespaceRelease);
 //
 //    Map<String, String> parentNamespaceConfiguration = parseConfiguration(latestParentNamespaceRelease.getConfigurations());
@@ -481,12 +481,12 @@
 //
 //
 //  private Namespace instanceNamespace(long id, String clusterName) {
-//    Namespace namespace = new Namespace();
-//    namespace.setAppId(testApp);
-//    namespace.setNamespaceName(testNamespace);
-//    namespace.setId(id);
-//    namespace.setClusterName(clusterName);
-//    return namespace;
+//    Namespace appNamespace = new Namespace();
+//    appNamespace.setAppId(testApp);
+//    appNamespace.setNamespaceName(testNamespace);
+//    appNamespace.setId(id);
+//    appNamespace.setClusterName(clusterName);
+//    return appNamespace;
 //  }
 //
 //  private Map<String, String> parseConfiguration(String configuration) {
