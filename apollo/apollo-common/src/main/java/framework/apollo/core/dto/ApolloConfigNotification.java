@@ -1,8 +1,11 @@
 package framework.apollo.core.dto;
 
+import lombok.Data;
+
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
+@Data
 public class ApolloConfigNotification {
   private String namespaceName;
   private long notificationId;
@@ -15,26 +18,6 @@ public class ApolloConfigNotification {
   public ApolloConfigNotification(String namespaceName, long notificationId) {
     this.namespaceName = namespaceName;
     this.notificationId = notificationId;
-  }
-
-  public String getNamespaceName() {
-    return namespaceName;
-  }
-
-  public long getNotificationId() {
-    return notificationId;
-  }
-
-  public void setNamespaceName(String namespaceName) {
-    this.namespaceName = namespaceName;
-  }
-
-  public ApolloNotificationMessages getMessages() {
-    return messages;
-  }
-
-  public void setMessages(ApolloNotificationMessages messages) {
-    this.messages = messages;
   }
 
   public void addMessage(String key, long notificationId) {
@@ -51,8 +34,8 @@ public class ApolloConfigNotification {
   @Override
   public String toString() {
     return "ApolloConfigNotification{" +
-        "namespaceName='" + namespaceName + '\'' +
-        ", notificationId=" + notificationId +
-        '}';
+            "namespaceName='" + namespaceName + '\'' +
+            ", notificationId=" + notificationId +
+            '}';
   }
 }

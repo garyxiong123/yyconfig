@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static common.utils.YyHttpUtils.tryToGetClientIp;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -39,8 +40,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 @RestController
 @RequestMapping("/configfiles")
 public class ConfigFileController implements ReleaseMessageListener {
-    private static final Splitter X_FORWARDED_FOR_SPLITTER = Splitter.on(",").omitEmptyStrings().trimResults();
-    private static final long MAX_CACHE_SIZE = 50 * 1024 * 1024; // 50MB
+    private static final long MAX_CACHE_SIZE = 50 * 1024 * 1024;
     private static final long EXPIRE_AFTER_WRITE = 30;
     private final HttpHeaders propertiesResponseHeaders;
     private final HttpHeaders jsonResponseHeaders;
@@ -263,11 +263,5 @@ public class ConfigFileController implements ReleaseMessageListener {
         }
     }
 
-    private String tryToGetClientIp(HttpServletRequest request) {
-        String forwardedFor = request.getHeader("X-FORWARDED-FOR");
-        if (!isNullOrEmpty(forwardedFor)) {
-            return X_FORWARDED_FOR_SPLITTER.splitToList(forwardedFor).get(0);
-        }
-        return request.getRemoteAddr();
-    }
+
 }

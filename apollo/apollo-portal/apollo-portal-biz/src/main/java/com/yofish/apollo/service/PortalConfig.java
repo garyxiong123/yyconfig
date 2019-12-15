@@ -403,4 +403,20 @@ public class PortalConfig extends RefreshableConfig {
     public int checkInt(int someInvalidValue, int someMin, int maxValue, int someDefaultValue) {
         return 0;
     }
+
+    public Object appNamespaceCacheRebuildInterval() {
+        return null;
+    }
+
+    public Object appNamespaceCacheRebuildIntervalTimeUnit() {
+        return null;
+    }
+
+    public Object appNamespaceCacheScanInterval() {
+        return null;
+    }
+
+    public Object appNamespaceCacheScanIntervalTimeUnit() {
+            return null;
+    }
 }

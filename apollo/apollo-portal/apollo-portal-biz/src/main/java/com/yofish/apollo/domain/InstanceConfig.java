@@ -15,6 +15,7 @@ import java.util.Date;
 @Entity
 public class InstanceConfig extends BaseEntity {
 
+    @ManyToOne
     private Instance instance;
 
     @Column(name = "ReleaseKey", nullable = false)

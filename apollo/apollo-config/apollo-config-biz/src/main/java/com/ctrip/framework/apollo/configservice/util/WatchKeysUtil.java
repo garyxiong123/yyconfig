@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import static common.utils.YyStringUtils.notEqual;
+
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
@@ -31,8 +33,7 @@ public class WatchKeysUtil {
    */
   public Set<String> assembleAllWatchKeys(String appId, String clusterName, String namespace,
                                           String dataCenter) {
-    Multimap<String, String> watchedKeysMap =
-        assembleAllWatchKeys(appId, clusterName, Sets.newHashSet(namespace), dataCenter);
+    Multimap<String, String> watchedKeysMap = assembleAllWatchKeys(appId, clusterName, Sets.newHashSet(namespace), dataCenter);
     return Sets.newHashSet(watchedKeysMap.get(namespace));
   }
 
@@ -94,7 +95,7 @@ public class WatchKeysUtil {
     Set<String> watchedKeys = Sets.newHashSet();
 
     //watch specified appEnvCluster config change
-    if (!Objects.equals(ConfigConsts.CLUSTER_NAME_DEFAULT, clusterName)) {
+    if (notEqual(ConfigConsts.CLUSTER_NAME_DEFAULT, clusterName)) {
       watchedKeys.add(assembleKey(appId, clusterName, namespace));
     }
 
@@ -109,14 +110,11 @@ public class WatchKeysUtil {
     return watchedKeys;
   }
 
-  private Multimap<String, String> assembleWatchKeys(String appId, String clusterName,
-                                                     Set<String> namespaces,
-                                                     String dataCenter) {
+  private Multimap<String, String> assembleWatchKeys(String appId, String clusterName, Set<String> namespaces, String dataCenter) {
     Multimap<String, String> watchedKeysMap = HashMultimap.create();
 
     for (String namespace : namespaces) {
-      watchedKeysMap
-          .putAll(namespace, assembleWatchKeys(appId, clusterName, namespace, dataCenter));
+      watchedKeysMap.putAll(namespace, assembleWatchKeys(appId, clusterName, namespace, dataCenter));
     }
 
     return watchedKeysMap;
