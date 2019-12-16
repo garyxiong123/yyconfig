@@ -18,14 +18,14 @@ public interface AppNamespaceRepository extends JpaRepository<AppNamespace, Long
 
     AppNamespace findByName(String namespaceName);
 
-    List<AppNamespace> findByNameAndType(String namespaceName, NamespaceType type);
+//    List<AppNamespace> findByNameAndType(String namespaceName, NamespaceType type);
 
-    List<AppNamespace> findByType(NamespaceType type);
+//    List<AppNamespace> findByType(NamespaceType type);
 
 
     List<AppNamespace> findByAppId(Long appId);
 
     List<AppNamespace> findFirst500ByIdGreaterThanOrderByIdAsc(long maxIdScanned);
 
-    AppNamespace findByNameAndIsPublicTrue(String name);
+//    AppNamespace findByNameAndIsPublicTrue(String name);
 }

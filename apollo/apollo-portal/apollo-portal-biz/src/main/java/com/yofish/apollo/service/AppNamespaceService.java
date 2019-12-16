@@ -41,7 +41,7 @@ public class AppNamespaceService {
 
 
     public AppNamespace findPublicAppNamespace(String namespaceName) {
-        List<AppNamespace> appNamespaces = appNamespaceRepository.findByNameAndType(namespaceName, NamespaceType.Public);
+        List<AppNamespace4Public> appNamespaces = appNamespace4PublicRepository.findByName(namespaceName);
 
         if (CollectionUtils.isEmpty(appNamespaces)) {
             return null;
@@ -50,8 +50,9 @@ public class AppNamespaceService {
         return appNamespaces.get(0);
     }
 
-    private List<AppNamespace> findAllPrivateAppNamespaces(String namespaceName) {
-        return appNamespaceRepository.findByNameAndType(namespaceName, NamespaceType.Public);
+    private List<AppNamespace4Private> findAllPrivateAppNamespaces(String namespaceName) {
+        List<AppNamespace4Private> appNamespaceList = appNamespace4PrivateRepository.findByName(namespaceName);
+        return appNamespaceList;
     }
 
     public AppNamespace findByAppIdAndName(Long appId, String namespaceName) {
@@ -144,7 +145,7 @@ public class AppNamespaceService {
     private void checkAppNamespaceGlobalUniqueness(AppNamespace appNamespace) {
         checkPublicAppNamespaceGlobalUniqueness(appNamespace);
 
-        List<AppNamespace> privateAppNamespaces = findAllPrivateAppNamespaces(appNamespace.getName());
+        List<AppNamespace4Private> privateAppNamespaces = findAllPrivateAppNamespaces(appNamespace.getName());
 
         if (!CollectionUtils.isEmpty(privateAppNamespaces)) {
             Set<Long> appIds = Sets.newHashSet();

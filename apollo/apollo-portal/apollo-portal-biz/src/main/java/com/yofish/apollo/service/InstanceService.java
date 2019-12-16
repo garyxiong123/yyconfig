@@ -2,6 +2,7 @@ package com.yofish.apollo.service;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.domain.Instance;
 import com.yofish.apollo.domain.InstanceConfig;
 import com.yofish.apollo.repository.InstanceConfigRepository;
@@ -23,15 +24,15 @@ import java.util.stream.Collectors;
  */
 @Service
 public class InstanceService {
-    @Autowired
+    /*@Autowired
     private InstanceRepository instanceRepository;
 
     @Autowired
     private InstanceConfigRepository instanceConfigRepository;
 
     public Instance findInstance(String appId, String clusterName, String dataCenter, String ip) {
-        return instanceRepository.findByAppIdAndClusterNameAndDataCenterAndIp(appId, clusterName,
-                dataCenter, ip);
+//        return instanceRepository.findByAppNamespaceAndDataCenterAndIp(new AppNamespace(),dataCenter, ip);
+        return null;
     }
 
     public List<Instance> findInstancesByIds(Set<Long> instanceIds) {
@@ -59,7 +60,7 @@ public class InstanceService {
     public Page<InstanceConfig> findActiveInstanceConfigsByReleaseKey(String releaseKey, Pageable
             pageable) {
         Page<InstanceConfig> instanceConfigs = instanceConfigRepository
-                .findByReleaseKeyAndDataChangeLastModifiedTimeAfter(releaseKey,
+                .findByReleaseKeyAndUpdateTimeAfter(releaseKey,
                         getValidInstanceConfigDate(), pageable);
         return instanceConfigs;
     }
@@ -67,7 +68,7 @@ public class InstanceService {
     public Page<Instance> findInstancesByNamespace(String appId, String clusterName, String
             namespaceName, Pageable pageable) {
         Page<InstanceConfig> instanceConfigs = instanceConfigRepository.
-                findByConfigAppIdAndConfigClusterNameAndConfigNamespaceNameAndDataChangeLastModifiedTimeAfter(appId, clusterName,
+                findByConfigAppIdAndConfigClusterNameAndConfigNamespaceNameAndUpdateTimeAfter(appId, clusterName,
                         namespaceName, getValidInstanceConfigDate(), pageable);
 
         List<Instance> instances = Collections.emptyList();
@@ -125,7 +126,7 @@ public class InstanceService {
                                                                                    Set<String>
                                                                                            releaseKeysNotIn) {
         List<InstanceConfig> instanceConfigs = instanceConfigRepository.
-                findByConfigAppIdAndConfigClusterNameAndConfigNamespaceNameAndDataChangeLastModifiedTimeAfterAndReleaseKeyNotIn(appId, clusterName,
+                findByConfigAppIdAndConfigClusterNameAndConfigNamespaceNameAndUpdateTimeAfterAndReleaseKeyNotIn(appId, clusterName,
                         namespaceName, getValidInstanceConfigDate(), releaseKeysNotIn);
 
         if (CollectionUtils.isEmpty(instanceConfigs)) {
@@ -135,10 +136,10 @@ public class InstanceService {
         return instanceConfigs;
     }
 
-    /**
+    *//**
      * Currently the instance config is expired by 1 day, add one more hour to avoid possible time
      * difference
-     */
+     *//*
     private Date getValidInstanceConfigDate() {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
@@ -162,8 +163,8 @@ public class InstanceService {
 //        existedInstanceConfig.setConfigClusterName(instanceConfig.getConfigClusterName());
 //        existedInstanceConfig.setReleaseKey(instanceConfig.getReleaseKey());
 //        existedInstanceConfig.setReleaseDeliveryTime(instanceConfig.getReleaseDeliveryTime());
-//        existedInstanceConfig.setDataChangeLastModifiedTime(instanceConfig
-//                .getDataChangeLastModifiedTime());
+//        existedInstanceConfig.setUpdateTime(instanceConfig
+//                .getUpdateTime());
 
         return instanceConfigRepository.save(existedInstanceConfig);
     }
@@ -171,5 +172,5 @@ public class InstanceService {
     @Transactional
     public int batchDeleteInstanceConfig(String configAppId, String configClusterName, String configNamespaceName) {
         return instanceConfigRepository.batchDelete(configAppId, configClusterName, configNamespaceName);
-    }
+    }*/
 }
