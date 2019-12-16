@@ -55,12 +55,12 @@ public class AppController {
 
     @GetMapping("/search")
     @ApiOperation("查询项目")
-    public PageData<App> searchByAppCodeOrAppName(@RequestParam(required = false) String query, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "20") int size) {
+    public Result<PageData<App>> searchByAppCodeOrAppName(@RequestParam(required = false) String query, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "20") int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
         if (StringUtils.isEmpty(query)) {
-            return appService.findAll(pageable);
+            return Result.ok(appService.findAll(pageable));
         } else {
-            return appService.searchByAppCodeOrAppName(query, pageable);
+            return Result.ok(appService.searchByAppCodeOrAppName(query, pageable));
         }
     }
 
