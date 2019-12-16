@@ -16,15 +16,15 @@ import java.util.List;
  * @Date: 2019/11/12 上午10:49
  */
 
-@NoArgsConstructor
-@AllArgsConstructor
+//@NoArgsConstructor
+//@AllArgsConstructor
 @Builder
 @Data
 @Entity
 @Table(name="releases")
 public class Release extends BaseEntity {
 
-
+/*
     @Column(nullable = false)
     private String releaseKey;
 
@@ -80,7 +80,7 @@ public class Release extends BaseEntity {
         rollbackChildNamespace(appId, clusterName, namespaceName, twoLatestActiveReleases, operator);
 
         return release;
-    }
+    }*/
 
 
 }

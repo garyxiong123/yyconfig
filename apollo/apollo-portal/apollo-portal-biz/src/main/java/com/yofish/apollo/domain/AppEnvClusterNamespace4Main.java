@@ -18,7 +18,7 @@ public class AppEnvClusterNamespace4Main extends AppEnvClusterNamespace {
         super(appEnvCluster, appNamespace);
     }
 
-    @Override
+/*    @Override
     public Release publish(String releaseName, String releaseComment, boolean isEmergencyPublish) {
         Release previousRelease = null;
         if (hasBranchNamespace()) {
@@ -36,6 +36,6 @@ public class AppEnvClusterNamespace4Main extends AppEnvClusterNamespace {
             mergeFromMasterAndPublishBranchThenRelease(namespace, namespace.getNamespacesBranchNamespace(), operateNamespaceItems, releaseName, releaseComment, operator, previousRelease, release, isEmergencyPublish);
         }
         return null;
-    }
+    }*/
 
 }

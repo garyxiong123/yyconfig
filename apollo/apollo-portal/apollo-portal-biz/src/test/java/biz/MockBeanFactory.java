@@ -40,7 +40,7 @@ public class MockBeanFactory {
 
     public static Release mockRelease(long releaseId, String releaseKey, String appId,
                                       String clusterName, String groupName, String configurations) {
-        Release instance = new Release();
+        Release instance = null;
 
         instance.setId(releaseId);
 //    instance.setReleaseKey(releaseKey);

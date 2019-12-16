@@ -46,7 +46,7 @@ public class AppEnvClusterNamespaceService {
     public boolean isNamespaceUnique(AppEnvCluster appEnvCluster, AppNamespace appNamespace) {
         Objects.requireNonNull(appEnvCluster, "appEnvCluster must not be null");
         Objects.requireNonNull(appNamespace, "appNamespace must not be null");
-        return Objects.isNull(namespaceRepository.findByAppEnvClusterAndNamespace(appEnvCluster, appNamespace));
+        return Objects.isNull(namespaceRepository.findByAppEnvClusterAndAppNamespace(appEnvCluster, appNamespace));
     }
 
 /*    @Transactional

@@ -13,5 +13,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface AppEnvClusterNamespaceRepository extends JpaRepository<AppEnvClusterNamespace, Long> {
 
-    AppEnvClusterNamespace findByAppEnvClusterAndNamespace(AppEnvCluster appEnvCluster, AppNamespace appNamespace);
+    AppEnvClusterNamespace findByAppEnvClusterAndAppNamespace(AppEnvCluster appEnvCluster, AppNamespace appNamespace);
 }

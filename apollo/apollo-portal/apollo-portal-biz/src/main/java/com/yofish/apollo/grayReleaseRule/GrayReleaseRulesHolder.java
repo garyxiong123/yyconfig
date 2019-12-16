@@ -161,6 +161,7 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
     }
   }
 */
+/*
 
   private void mergeGrayReleaseRules(List<GrayReleaseRule> grayReleaseRules) {
     if (CollectionUtils.isEmpty(grayReleaseRules)) {
@@ -205,6 +206,7 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
       }
     }
   }
+*/
 
   private void addCache(String key, GrayReleaseRuleCache ruleCache) {
     if (ruleCache.getBranchStatus() == NamespaceBranchStatus.ACTIVE) {
@@ -227,6 +229,7 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
       }
     }
   }
+/*
 
   private GrayReleaseRuleCache transformRuleToRuleCache(GrayReleaseRule grayReleaseRule) {
     Set<GrayReleaseRuleItemDTO> ruleItems;
@@ -243,6 +246,7 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
 
     return ruleCache;
   }
+*/
 
   private void populateDataBaseInterval() {
     databaseScanInterval = bizConfig.grayReleaseRuleScanInterval();
