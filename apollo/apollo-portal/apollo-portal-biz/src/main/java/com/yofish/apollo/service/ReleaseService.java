@@ -13,13 +13,10 @@ import com.yofish.apollo.util.ReleaseKeyGenerator;
 import common.constants.GsonType;
 import common.constants.ReleaseOperation;
 import common.constants.ReleaseOperationContext;
-import common.exception.BadRequestException;
-import common.exception.NotFoundException;
 import common.utils.GrayReleaseRuleItemTransformer;
 import framework.apollo.core.enums.Env;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,8 +74,7 @@ public class ReleaseService {
     }
 
     public Release findLatestActiveRelease(AppEnvClusterNamespace appNamespace) {
-        return findLatestActiveRelease(appNamespace.getAppId(),
-                appNamespace.getClusterName(), appNamespace.getNamespaceName());
+        return findLatestActiveRelease(appNamespace.getAppId(), appNamespace.getClusterName(), appNamespace.getNamespaceName());
 
     }
 
@@ -171,9 +167,7 @@ public class ReleaseService {
                                                             Release parentRelease, boolean isEmergencyPublish) {
         //create release for child appNamespace
         Map<String, String> childReleaseConfiguration = getNamespaceReleaseConfiguration(childNamespace);
-        Map<String, String> parentNamespaceOldConfiguration = masterPreviousRelease == null ?
-                null : gson.fromJson(masterPreviousRelease.getConfigurations(),
-                GsonType.CONFIG);
+        Map<String, String> parentNamespaceOldConfiguration = masterPreviousRelease == null ? null : gson.fromJson(masterPreviousRelease.getConfigurations(), GsonType.CONFIG);
 
         Map<String, String> childNamespaceToPublishConfigs =
                 calculateChildNamespaceToPublishConfiguration(parentNamespaceOldConfiguration,
@@ -319,43 +313,7 @@ public class ReleaseService {
         return release;
     }
 
-    @Transactional
-    public Release rollback(long releaseId, String operator) {
-        Release release = findOne(releaseId);
-        if (release == null) {
-            throw new NotFoundException("release not found");
-        }
-        if (release.isAbandoned()) {
-            throw new BadRequestException("release is not active");
-        }
 
-        String appId = release.getAppId();
-        String clusterName = release.getClusterName();
-        String namespaceName = release.getNamespaceName();
-
-        PageRequest page = new PageRequest(0, 2);
-        List<Release> twoLatestActiveReleases = findActiveReleases(appId, clusterName, namespaceName, page);
-        if (twoLatestActiveReleases == null || twoLatestActiveReleases.size() < 2) {
-            throw new BadRequestException(String.format(
-                    "Can't rollback appNamespace(appId=%s, clusterName=%s, namespaceName=%s) because there is only one active release",
-                    appId,
-                    clusterName,
-                    namespaceName));
-        }
-
-        release.setAbandoned(true);
-
-        releaseRepository.save(release);
-
-        releaseHistoryService.createReleaseHistory(appId, clusterName,
-                namespaceName, clusterName, twoLatestActiveReleases.get(1).getId(),
-                release.getId(), ReleaseOperation.ROLLBACK, null, operator);
-
-        //publish child appNamespace if appNamespace has child
-        rollbackChildNamespace(appId, clusterName, namespaceName, twoLatestActiveReleases, operator);
-
-        return release;
-    }
 
     private void rollbackChildNamespace(String appId, String clusterName, String namespaceName,
                                         List<Release> parentNamespaceTwoLatestActiveRelease, String operator) {
@@ -371,12 +329,9 @@ public class ReleaseService {
         Map<String, String> parentNamespaceAbandonedConfiguration = gson.fromJson(abandonedRelease.getConfigurations(),
                 GsonType.CONFIG);
 
-        Map<String, String>
-                parentNamespaceNewLatestConfiguration =
-                gson.fromJson(parentNamespaceNewLatestRelease.getConfigurations(), GsonType.CONFIG);
+        Map<String, String> parentNamespaceNewLatestConfiguration = gson.fromJson(parentNamespaceNewLatestRelease.getConfigurations(), GsonType.CONFIG);
 
-        Map<String, String>
-                childNamespaceNewConfiguration =
+        Map<String, String> childNamespaceNewConfiguration =
                 calculateChildNamespaceToPublishConfiguration(parentNamespaceAbandonedConfiguration,
                         parentNamespaceNewLatestConfiguration,
                         childNamespace);
