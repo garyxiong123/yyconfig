@@ -11,6 +11,7 @@ import com.youyu.common.api.Result;
 import common.exception.BadRequestException;
 import common.utils.InputValidator;
 import common.utils.RequestPrecondition;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -23,7 +24,7 @@ import javax.validation.Valid;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
+@Api(description = "项目")
 @RestController
 @RequestMapping("/apps")
 public class AppController {
