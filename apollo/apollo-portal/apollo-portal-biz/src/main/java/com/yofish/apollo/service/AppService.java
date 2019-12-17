@@ -124,6 +124,10 @@ public class AppService {
         return appRepository.save(app);
     }
 
+    public App getApp(long appId) {
+        App app = appRepository.findById(appId).orElse(null);
+        return app;
+    }
 /*
   public List<App> findAll() {
     Iterable<App> apps = appRepository.findAll();
