@@ -39,12 +39,18 @@ public class UserQueryReqDTO extends PageQuery {
     @ApiModelProperty("用户id")
     private Long userId;
 
-    @ApiModelProperty("查询条件(模糊查询):用户名,真实姓名,手机号,邮箱")
-    private String condition;
+    @ApiModelProperty("查询条件(模糊查询):用户名")
+    private String userName;
+
+    @ApiModelProperty("查询条件(模糊查询):真实姓名")
+    private String realName;
+
+    @ApiModelProperty("查询条件(模糊查询):手机号")
+    private String phone;
+
+    @ApiModelProperty("查询条件(模糊查询):邮箱")
+    private String email;
 
     @ApiModelProperty("状态")
     private String status;
-
-    @ApiModelProperty("用户id列表")
-    private List<Long> userIds;
 }

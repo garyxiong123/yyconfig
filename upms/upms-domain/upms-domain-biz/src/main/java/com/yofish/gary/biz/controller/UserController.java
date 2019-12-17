@@ -24,6 +24,7 @@ import com.yofish.gary.api.feign.UserApi;
 import com.yofish.gary.biz.service.UserService;
 import com.youyu.common.api.PageData;
 import com.youyu.common.api.Result;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -90,6 +91,20 @@ public class UserController implements UserApi {
     @PostMapping("/getPage")
     public Result<PageData<UserQueryRspDTO>> getPage(@RequestBody UserQueryReqDTO userQueryReqDTO) {
         return ok(userService.getPage(userQueryReqDTO));
+    }
+
+    /**
+     * 查询用户列表
+     *
+     * @param userQueryReqDTO
+     * @return
+     */
+    @Override
+    @ApiOperation("查询用户列表")
+    @PostMapping("/getList")
+    public Result<List<UserQueryRspDTO>> getList(@RequestBody UserQueryReqDTO userQueryReqDTO) {
+        List<UserQueryRspDTO> queryRspDTOS = this.userService.getList(userQueryReqDTO);
+        return Result.ok(queryRspDTOS);
     }
 
     @Override
