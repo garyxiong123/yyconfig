@@ -1,6 +1,7 @@
 package controller;
 
 import com.yofish.apollo.JpaApplication;
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +23,7 @@ public abstract class AbstractControllerTest {
   private HttpMessageConverters httpMessageConverters;
   
   RestTemplate restTemplate = new RestTemplate();
-  HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
+//  HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
 
   @PostConstruct
   private void postConstruct() {

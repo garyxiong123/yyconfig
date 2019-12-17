@@ -31,6 +31,10 @@ import static org.apache.commons.lang.StringUtils.isEmpty;
  */
 @Service
 public class ReleaseService {
+    public void rollbackChildNamespace(Release release, List<Release> twoLatestActiveReleases) {
+
+
+    }
 /*
     private static final FastDateFormat TIMESTAMP_FORMAT = FastDateFormat.getInstance("yyyyMMddHHmmss");
     private Gson gson = new Gson();

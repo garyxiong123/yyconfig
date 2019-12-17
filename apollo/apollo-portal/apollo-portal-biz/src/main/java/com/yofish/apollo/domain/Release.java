@@ -1,5 +1,8 @@
 package com.yofish.apollo.domain;
 
+import com.yofish.apollo.repository.ReleaseRepository;
+import com.yofish.apollo.service.ReleaseHistoryService;
+import com.yofish.apollo.service.ReleaseService;
 import com.yofish.gary.dao.entity.BaseEntity;
 import common.constants.ReleaseOperation;
 import common.exception.BadRequestException;
@@ -10,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Map;
+
+import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
 
 /**
  * @Author: xiongchengwei
