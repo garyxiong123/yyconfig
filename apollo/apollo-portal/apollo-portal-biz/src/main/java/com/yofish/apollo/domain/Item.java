@@ -34,8 +34,12 @@ public class Item extends BaseEntity {
 
     private Integer lineNum;
 
-    public Item(CreateItemReq createItemReq) {
-
+    public Item(String key,String value,String comment,AppEnvClusterNamespace a,Integer lineNum) {
+        this.key=key;
+        this.value=value;
+        this.comment=comment;
+        this.appEnvClusterNamespace=a;
+        this.lineNum=lineNum;
     }
 
     public Item(UpdateItemReq updateItemReq) {

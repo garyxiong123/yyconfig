@@ -2,15 +2,13 @@ package com.yofish.apollo.domain;
 
 import com.yofish.apollo.repository.AppRepository;
 import com.yofish.gary.biz.domain.User;
-import com.yofish.gary.biz.repository.RoleRepository;
 import com.yofish.gary.dao.entity.BaseEntity;
 import lombok.*;
-import net.bytebuddy.asm.Advice;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -37,7 +35,7 @@ public class App extends BaseEntity {
     @ManyToOne(cascade = CascadeType.DETACH)
     private User appOwner;
 
-    @OneToMany(cascade = {CascadeType.DETACH})
+    @ManyToMany(cascade = {CascadeType.DETACH})
     private Set<User> appAdmins;
 
 

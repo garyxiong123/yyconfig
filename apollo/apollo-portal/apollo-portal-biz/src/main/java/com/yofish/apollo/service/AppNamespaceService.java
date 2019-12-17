@@ -56,7 +56,7 @@ public class AppNamespaceService {
     }
 
     public AppNamespace findByAppIdAndName(Long appId, String namespaceName) {
-        return appNamespaceRepository.findByAppIdAndName(appId, namespaceName);
+        return appNamespaceRepository.findByAppAndName(new App(appId), namespaceName);
     }
 
     public List<AppNamespace> findByAppId(Long appId) {
@@ -84,7 +84,7 @@ public class AppNamespaceService {
     public boolean isAppNamespaceNameUnique(Long appId, String namespaceName) {
         Objects.requireNonNull(appId, "AppId must not be null");
         Objects.requireNonNull(namespaceName, "Namespace must not be null");
-        return Objects.isNull(appNamespaceRepository.findByAppIdAndName(appId, namespaceName));
+        return Objects.isNull(appNamespaceRepository.findByAppAndName(new App(appId), namespaceName));
     }
 
     public AppNamespace4Private createAppNamespace4Private(AppNamespace4Private namespace4Private) {
