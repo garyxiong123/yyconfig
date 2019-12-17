@@ -41,9 +41,6 @@ public class AppEnvClusterNamespace4Main extends AppEnvClusterNamespace {
 
 
 
-    public AppEnvClusterNamespace getNamespacesBranchNamespace() {
-        return getBeanInstance(AppNamespaceService.class).findChildNamespace(this);
-    }
 
 
 }

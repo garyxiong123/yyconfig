@@ -40,17 +40,6 @@ public class AppEnvClusterNamespace extends BaseEntity {
         return getBeanByClass(ReleaseRepository.class).findFirstByAppIdAndClusterNameAndNamespaceNameAndIsAbandonedFalseOrderByIdDesc(appId, clusterName, namespaceName);
     }
 
-//    public boolean isBranchNamespace() {
-//        return getBeanInstance(AppNamespaceService.class).findAppEnvClusterNamespace4Branch(this) != null;
-//    }
-
-
-
-
-    public Release publish(Map<String, String> operateNamespaceItems, String releaseName, String releaseComment, boolean isEmergencyPublish) {
-
-        return null;
-    }
 
     public Release findLatestActiveRelease() {
         return null;

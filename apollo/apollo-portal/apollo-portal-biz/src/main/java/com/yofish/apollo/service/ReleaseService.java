@@ -1,7 +1,6 @@
 package com.yofish.apollo.service;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.yofish.apollo.bo.ItemChangeSets;
 import com.yofish.apollo.domain.*;
@@ -11,9 +10,6 @@ import com.yofish.apollo.model.vo.ReleaseCompareResult;
 import com.yofish.apollo.repository.ReleaseRepository;
 import com.yofish.apollo.util.ReleaseKeyGenerator;
 import common.constants.GsonType;
-import common.constants.ReleaseOperation;
-import common.constants.ReleaseOperationContext;
-import common.utils.GrayReleaseRuleItemTransformer;
 import framework.apollo.core.enums.Env;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,9 +120,9 @@ public class ReleaseService {
 
         Map<String, String> operateNamespaceItems = getNamespaceItems(namespace);
 
-        Release release = createRelease(namespace, releaseComment, releaseComment, operateNamespaceItems, null);
-        release.publish();
-        return namespace.publish(operateNamespaceItems, releaseName, releaseComment, isEmergencyPublish);
+        Release release = createMainRelease(namespace, releaseComment, releaseComment, operateNamespaceItems, null);
+        Release publishedRelease = release.publish();
+        return publishedRelease;
     }
 
     private boolean hasBranch4Namespace(AppEnvClusterNamespace branchNamespace) {
@@ -190,7 +186,7 @@ public class ReleaseService {
                                   int releaseOperation, Map<String, Object> operationContext) {
 //        Release lastActiveRelease = namespace.findLatestActiveRelease();
 //        long previousReleaseId = lastActiveRelease == null ? 0 : lastActiveRelease.getId();
-//        Release release = createRelease(namespace, releaseName, releaseComment, configurations, operator);
+//        Release release = createMainRelease(namespace, releaseName, releaseComment, configurations, operator);
 //
 //        releaseHistoryService.createReleaseHistory(namespace.getAppId(), namespace.getClusterName(),
 //                namespace.getNamespaceName(), namespace.getClusterName(),
@@ -212,7 +208,7 @@ public class ReleaseService {
 //        releaseOperationContext.put(ReleaseOperationContext.BASE_RELEASE_ID, baseReleaseId);
 //        releaseOperationContext.put(ReleaseOperationContext.IS_EMERGENCY_PUBLISH, isEmergencyPublish);
 //
-//        Release release = createRelease(childNamespace, releaseName, releaseComment, configurations, operator);
+//        Release release = createMainRelease(childNamespace, releaseName, releaseComment, configurations, operator);
 //
 //        //update gray release rules
 //        GrayReleaseRule grayReleaseRule = namespaceBranchService.updateRulesReleaseId(childNamespace.getAppId(),
@@ -254,6 +250,7 @@ public class ReleaseService {
 
     private Map<String, String> getNamespaceItems(AppEnvClusterNamespace namespace) {
         List<Item> items = itemService.findItemsWithoutOrdered(namespace.getId());
+        if (CollectionUtils.isEmpty(items)) return null;
         Map<String, String> configurations = new HashMap<String, String>();
         for (Item item : items) {
             if (isEmpty(item.getKey())) {
@@ -278,14 +275,13 @@ public class ReleaseService {
         return null;
     }
 
-    private Release createRelease(AppEnvClusterNamespace namespace, String name, String comment, Map<String, String> configurations, String operator) {
-        Release release = new Release();
+    private Release createMainRelease(AppEnvClusterNamespace namespace, String name, String comment, Map<String, String> configurations, String operator) {
+        Release4Main release = new Release4Main();
         release.setReleaseKey(ReleaseKeyGenerator.generateReleaseKey(namespace));
         release.setName(name);
-//        release.setComment(comment);
+        release.setComment(comment);
         release.setAppEnvClusterNamespace(namespace);
         release.setConfigurations(gson.toJson(configurations));
-
 
         return release;
     }
@@ -376,5 +372,9 @@ public class ReleaseService {
     public void rollback(Env env, long releaseId) {
 
 
+    }
+
+    public boolean loadLatestRelease(String appId, Env env, String branchName, String namespaceName) {
+        return false;
     }
 }

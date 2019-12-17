@@ -30,6 +30,8 @@ import org.springframework.util.MultiValueMap;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.yofish.apollo.DomainCreate.createAppEnvClusterNamespace4Main;
+import static com.yofish.apollo.DomainCreate.createNamespace4Main;
 import static org.mockito.Mockito.*;
 
 public class ReleaseControllerTest extends AbstractControllerTest {
@@ -45,40 +47,16 @@ public class ReleaseControllerTest extends AbstractControllerTest {
     public void testRelease4Main() {
         AppEnvClusterNamespace4Main namespace = createNamespace4Main();
         namespaceRepository.save(namespace);
-        NamespaceReleaseModel namespaceReleaseModel = NamespaceReleaseModel.builder().AppEnvClusterNamespaceId(namespace.getId()).build();
+        NamespaceReleaseModel namespaceReleaseModel = NamespaceReleaseModel.builder().releaseTitle("测试发布标题").releaseComment("测试发布").AppEnvClusterNamespaceId(namespace.getId()).build();
         releaseController.createRelease(namespaceReleaseModel);
     }
 
-    private AppEnvClusterNamespace4Main createNamespace4Main() {
-        AppEnvClusterNamespace4Main appEnvClusterNamespace4Main = createAppEnvClusterNamespace4Main();
-        return appEnvClusterNamespace4Main;
-    }
-
-    private AppEnvClusterNamespace4Main createAppEnvClusterNamespace4Main() {
-
-        AppEnvClusterNamespace4Main namespace4Main = new AppEnvClusterNamespace4Main();
-        App app = createApp();
-        namespace4Main.setAppEnvCluster(createAppEnvCluster(app));
-        namespace4Main.setAppNamespace(createAppNamespace(app));
-
-        return namespace4Main;
-    }
-
-    private App createApp() {
-        return App.builder().appCode("middleground").name("中台支付").build();
-    }
-
-    private AppEnvCluster createAppEnvCluster(App app) {
-
-        return AppEnvCluster.builder().app(app).name("default集群").env(Env.DEV.name()).build();
-    }
-
-
-    private AppNamespace createAppNamespace(App app) {
-        AppNamespace appNamespace = new AppNamespace();
-        appNamespace.setApp(app);
-        appNamespace.setName("DB-config");
-        return appNamespace;
+    @Test
+    public void testRelease4MainWithBranch() {
+        AppEnvClusterNamespace4Main namespace = createNamespace4MainWithBranch();
+        namespaceRepository.save(namespace);
+        NamespaceReleaseModel namespaceReleaseModel = NamespaceReleaseModel.builder().releaseTitle("测试发布标题").releaseComment("测试发布").AppEnvClusterNamespaceId(namespace.getId()).build();
+        releaseController.createRelease(namespaceReleaseModel);
     }
 
     @Test
@@ -90,6 +68,18 @@ public class ReleaseControllerTest extends AbstractControllerTest {
     public void testRelease4Rollback() {
 
     }
+    private AppEnvClusterNamespace4Main createNamespace4MainWithBranch() {
+        AppEnvClusterNamespace4Main appEnvClusterNamespace4Main = createAppEnvClusterNamespace4Main();
+        createAppEnvClusterNamespace4Branch(appEnvClusterNamespace4Main);
+
+        return null;
+    }
+
+    private void createAppEnvClusterNamespace4Branch(AppEnvClusterNamespace4Main appEnvClusterNamespace4Main) {
+
+    }
+
+
 
     @Test
 //  @Sql(scripts = "/controller/test-release.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)

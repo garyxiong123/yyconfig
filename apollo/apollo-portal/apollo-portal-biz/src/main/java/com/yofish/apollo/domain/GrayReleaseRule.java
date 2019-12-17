@@ -8,10 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,8 +17,8 @@ import javax.persistence.Table;
 @Entity
 public class GrayReleaseRule extends BaseEntity {
 
-    @ManyToOne
-    private Release release;
+    @OneToOne
+    private Release4Branch release;
 
 
     @Column(nullable = false)
