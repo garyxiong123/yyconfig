@@ -31,11 +31,8 @@ import static org.apache.commons.lang.StringUtils.isEmpty;
  */
 @Service
 public class ReleaseService {
-    public void rollbackChildNamespace(Release release, List<Release> twoLatestActiveReleases) {
 
 
-    }
-/*
     private static final FastDateFormat TIMESTAMP_FORMAT = FastDateFormat.getInstance("yyyyMMddHHmmss");
     private Gson gson = new Gson();
 
@@ -127,7 +124,8 @@ public class ReleaseService {
 
         Map<String, String> operateNamespaceItems = getNamespaceItems(namespace);
 
-
+        Release release = createRelease(namespace, releaseComment, releaseComment, operateNamespaceItems, null);
+        release.publish();
         return namespace.publish(operateNamespaceItems, releaseName, releaseComment, isEmergencyPublish);
     }
 
@@ -284,13 +282,10 @@ public class ReleaseService {
         Release release = new Release();
         release.setReleaseKey(ReleaseKeyGenerator.generateReleaseKey(namespace));
         release.setName(name);
-        release.setComment(comment);
+//        release.setComment(comment);
         release.setAppEnvClusterNamespace(namespace);
         release.setConfigurations(gson.toJson(configurations));
-        release = releaseRepository.save(release);
 
-//        namespaceLockService.unlock(namespace.getId());
-//        auditService.audit(Release.class.getSimpleName(), release.getId(), Audit.OP.INSERT, release.getDataChangeCreatedBy());
 
         return release;
     }
@@ -381,5 +376,5 @@ public class ReleaseService {
     public void rollback(Env env, long releaseId) {
 
 
-    }*/
+    }
 }

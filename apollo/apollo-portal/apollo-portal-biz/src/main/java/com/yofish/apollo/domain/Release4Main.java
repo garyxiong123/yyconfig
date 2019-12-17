@@ -1,5 +1,6 @@
 package com.yofish.apollo.domain;
 
+import com.google.common.collect.Maps;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -22,10 +23,28 @@ public class Release4Main extends Release {
 
     @Override
     public Release publish() {
-
         Map<String, String> operateNamespaceItems = null;
-        this.getAppEnvClusterNamespace().publish(null, comment, null, isEmergencyPublish());
-        return this;
+        AppEnvClusterNamespace4Main appEnvClusterNamespace4Main = (AppEnvClusterNamespace4Main) this.getAppEnvClusterNamespace();
+
+        Release previousRelease = null;
+        if (appEnvClusterNamespace4Main.hasBranchNamespace()) {
+            previousRelease = appEnvClusterNamespace4Main.findLatestActiveRelease();
+        }
+
+        //master release
+        Map<String, Object> operationContext = Maps.newHashMap();
+//        operationContext.put(ReleaseOperationContext.IS_EMERGENCY_PUBLISH, isEmergencyPublish);
+//
+//        Release release = masterRelease(namespace, releaseName, releaseComment, operateNamespaceItems, operator, ReleaseOperation.NORMAL_RELEASE, operationContext);
+//
+//        //merge to branch and auto release
+//        if (hasBranchNamespace()) {
+//            mergeFromMasterAndPublishBranchThenRelease(namespace, namespace.getNamespacesBranchNamespace(), operateNamespaceItems, releaseName, releaseComment, operator, previousRelease, release, isEmergencyPublish);
+//        }
+        return null;
     }
 
+//        this.getAppEnvClusterNamespace().publish(null, comment, null, isEmergencyPublish());
+//        return this;
 }
+

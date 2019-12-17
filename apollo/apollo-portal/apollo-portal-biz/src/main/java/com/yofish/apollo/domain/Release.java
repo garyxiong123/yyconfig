@@ -53,6 +53,8 @@ public class Release extends BaseEntity {
 
 
     public Release publish(){
+//        release = releaseRepository.save(release);
+
         return null;
     }
 

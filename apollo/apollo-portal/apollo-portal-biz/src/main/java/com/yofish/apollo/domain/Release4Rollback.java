@@ -42,9 +42,10 @@ public class Release4Rollback extends Release {
         if (isAbandoned()) {
             throw new BadRequestException("release is not active");
         }
+        AppEnvClusterNamespace4Main namepsace = (AppEnvClusterNamespace4Main) this.getAppEnvClusterNamespace();
 
         PageRequest page = new PageRequest(0, 2);
-        List<Release> twoLatestActiveReleases = this.getAppEnvClusterNamespace().findLatestActiveReleases(page);
+        List<Release> twoLatestActiveReleases = namepsace.findLatestActiveReleases(page);
         if (twoLatestActiveReleases == null || twoLatestActiveReleases.size() < 2) {
 //            throw new BadRequestException(String.format("Can't rollback appNamespace(appId=%s, clusterName=%s, namespaceName=%s) because there is only one active release",
 //                    appId,
@@ -59,7 +60,8 @@ public class Release4Rollback extends Release {
         getBeanInstance(ReleaseHistoryService.class).createReleaseHistory(this, twoLatestActiveReleases.get(1).getId(), ReleaseOperation.ROLLBACK, null);
 
         //publish child appNamespace if appNamespace has child 灰度回滚
-        if (this.getAppEnvClusterNamespace().hasBranchNamespace()) {
+
+        if (namepsace.hasBranchNamespace()){
             getBeanInstance(ReleaseService.class).rollbackChildNamespace(this, twoLatestActiveReleases);
         }
         return this;

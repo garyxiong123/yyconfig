@@ -1,16 +1,24 @@
 package com.yofish.apollo.domain;
 
 import com.google.common.collect.Maps;
+import com.yofish.apollo.service.AppNamespaceService;
 import common.constants.ReleaseOperation;
 import common.constants.ReleaseOperationContext;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import java.util.Map;
+
+import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
 
 /**
  * @Author: xiongchengwei
  * @Date: 2019/12/15 下午10:14
  */
+@Data
+@Entity
 @DiscriminatorValue("main")
 public class AppEnvClusterNamespace4Main extends AppEnvClusterNamespace {
 
@@ -18,24 +26,23 @@ public class AppEnvClusterNamespace4Main extends AppEnvClusterNamespace {
         super(appEnvCluster, appNamespace);
     }
 
-    @Override
-    public Release publish(Map<String, String> operateNamespaceItems, String releaseName, String releaseComment, boolean isEmergencyPublish) {
-        Release previousRelease = null;
-        if (hasBranchNamespace()) {
-            previousRelease = findLatestActiveRelease();
-        }
+    public AppEnvClusterNamespace4Main() {
 
-        //master release
-        Map<String, Object> operationContext = Maps.newHashMap();
-        operationContext.put(ReleaseOperationContext.IS_EMERGENCY_PUBLISH, isEmergencyPublish);
-//
-//        Release release = masterRelease(namespace, releaseName, releaseComment, operateNamespaceItems, operator, ReleaseOperation.NORMAL_RELEASE, operationContext);
-//
-//        //merge to branch and auto release
-//        if (hasBranchNamespace()) {
-//            mergeFromMasterAndPublishBranchThenRelease(namespace, namespace.getNamespacesBranchNamespace(), operateNamespaceItems, releaseName, releaseComment, operator, previousRelease, release, isEmergencyPublish);
-//        }
-        return null;
+    }
+
+    public AppEnvClusterNamespace getBranchNamespace() {
+        return getBeanInstance(AppNamespaceService.class).findAppEnvClusterNamespace4Branch(this);
+    }
+
+    public boolean hasBranchNamespace() {
+        return getBeanInstance(AppNamespaceService.class).findChildNamespace(this) != null;
+    }
+
+
+
+
+    public AppEnvClusterNamespace getNamespacesBranchNamespace() {
+        return getBeanInstance(AppNamespaceService.class).findChildNamespace(this);
     }
 
 
