@@ -1,9 +1,10 @@
 import React, { Fragment } from 'react';
-import { Card, Table, Button, Input, Divider, Popconfirm } from 'antd';
+import { Card, Table, Button, Input, Divider, Popconfirm, message } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import styles from './index.less';
 import { UserEditModal } from './user/index';
+import { auth } from '@/services/auth';
 
 class User extends React.Component {
   constructor(props) {
@@ -15,19 +16,19 @@ class User extends React.Component {
     };
   }
   // ----------------------------------生命周期----------------------------------------
-  componentDidMount() { 
+  componentDidMount() {
     this.onFetchList()
   }
   componentDidUpdate(prevProps, prevState) {
     const { searchObj } = this.state;
-    if(prevState.searchObj !== searchObj) {
+    if (prevState.searchObj !== searchObj) {
       this.onFetchList();
     }
   }
   // ----------------------------------事件----------------------------------------
   onFetchList = () => {
     const { searchObj } = this.state;
-    const { dispatch} = this.props;
+    const { dispatch } = this.props;
     dispatch({
       type: 'auth/userList',
       payload: searchObj
@@ -38,6 +39,7 @@ class User extends React.Component {
     this.setState({
       searchObj: {
         ...searchObj,
+        pageNo: 1,
         condition: value
       }
     })
@@ -68,15 +70,19 @@ class User extends React.Component {
       currentUser: record
     })
   }
-  onDelete = (userId) => {
-    console.log('onDelete-->', userId)
+  onDelete = async (userId) => {
+    let res = await auth.userDelete({ userId });
+    if (res && res.code == '1') {
+      message.success('删除成功');
+      this.onFetchList();
+    }
   }
   onCancel = () => {
     this.setState({
       showEditModal: false
     })
   }
-  onSave=()=>{
+  onSave = () => {
     this.onFetchList();
   }
   // ----------------------------------View----------------------------------------
@@ -137,7 +143,7 @@ class User extends React.Component {
               <Divider type="vertical" />
               <Popconfirm
                 title="确定删除吗?"
-                onConfirm={() => this.onDelete(record.userId)}
+                onConfirm={() => this.onDelete(record.id)}
                 okText="确定"
                 cancelText="取消"
               >
@@ -162,7 +168,7 @@ class User extends React.Component {
           pageSize: list.pageSize ? list.pageSize : 10,
         }}
         rowKey={record => {
-          return record.userId;
+          return record.id;
         }}
       />
     )
@@ -178,7 +184,7 @@ class User extends React.Component {
         {
           this.renderTable()
         }
-        {showEditModal && <UserEditModal onCancel={this.onCancel} currentUser={currentUser} onSave={this.onSave}/>}
+        {showEditModal && <UserEditModal onCancel={this.onCancel} currentUser={currentUser} onSave={this.onSave} />}
       </Card>
     );
   }

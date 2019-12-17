@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Modal, Form, Input, message } from 'antd';
+import { Modal, Form, Input, message, Radio } from 'antd';
 import { auth } from '@/services/auth';
 
 
@@ -33,7 +33,7 @@ class UserEditModal extends React.Component {
         this.setState({
           loading: true
         })
-        if (currentUser.userId) {
+        if (currentUser.id) {
           this.onEdit(values)
         } else {
           this.onAdd(values)
@@ -55,7 +55,7 @@ class UserEditModal extends React.Component {
   }
   onEdit = async (values) => {
     const { onCancel, onSave, currentUser } = this.props;
-    let res = await auth.userEdit({ ...values, userId: currentUser.userId });
+    let res = await auth.userEdit({ ...values, userId: currentUser.id });
     if (res && res.code == '1') {
       message.success('修改成功');
       onCancel();
@@ -71,13 +71,13 @@ class UserEditModal extends React.Component {
     const { currentUser } = this.props;
     return (
       <Form {...formItemLayout} onSubmit={this.onSubmit} autoComplete="off">
-        <FormItem label="用户名">
+        <FormItem label="用户名" autoComplete="off">
           {getFieldDecorator('username', {
             initialValue: currentUser.username,
             rules: [
               { required: true, message: "用户名为14位以内数字字母下划线的组合", pattern: /^\w{1,14}$/ }
             ]
-          })(<Input placeholder="请输入用户名" autoComplete="new-password" />)}
+          })(<Input placeholder="请输入用户名" autoComplete="new-username"/>)}
         </FormItem>
         <FormItem label="全名">
           {getFieldDecorator('realName', {
@@ -113,7 +113,7 @@ class UserEditModal extends React.Component {
           })(<Input placeholder="请输入邮箱" />)}
         </FormItem>
         {
-          currentUser.userId &&
+          currentUser.id &&
           <FormItem label="是否重置密码">
             {getFieldDecorator('resetPas', {
               initialValue: 0,
@@ -129,7 +129,7 @@ class UserEditModal extends React.Component {
           </FormItem>
         }
         {
-          (!currentUser.userId || getFieldValue('resetPas') === 1) &&
+          (!currentUser.id || getFieldValue('resetPas') === 1) &&
           <FormItem label="密码">
             {getFieldDecorator('password', {
               initialValue: currentUser.password,
@@ -147,7 +147,7 @@ class UserEditModal extends React.Component {
     const { loading } = this.state;
     return (
       <Modal
-        title={currentUser.userId ? '编辑用户' : '新增用户'}
+        title={currentUser.id ? '编辑用户' : '新增用户'}
         visible={true}
         onOk={this.onSubmit}
         onCancel={onCancel}

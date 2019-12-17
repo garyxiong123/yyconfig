@@ -16,9 +16,17 @@ const ProjectModel = {
   },
   reducers: {
     setProject(state, { payload = {} }) {
+      let rows = state.appList && state.appList.rows ? state.appList.rows : [];
+      let data = payload.data || {};
       return {
         ...state,
-        appList: payload.data || {},
+        appList: {
+          ...data,
+          rows: [
+            ...rows,
+            ...data.rows
+          ]
+        },
       };
     },
   },
