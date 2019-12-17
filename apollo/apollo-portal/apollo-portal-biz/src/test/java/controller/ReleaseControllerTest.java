@@ -2,7 +2,7 @@ package controller;
 
 import com.google.common.base.Joiner;
 import com.google.gson.Gson;
-import com.yofish.apollo.controller.ReleaseController;
+//import com.yofish.apollo.controller.ReleaseController;
 import com.yofish.apollo.dto.ReleaseDTO;
 import com.yofish.apollo.message.Topics;
 import com.yofish.apollo.repository.ReleaseRepository;
@@ -31,21 +31,36 @@ public class ReleaseControllerTest extends AbstractControllerTest {
 
   @Autowired
   ReleaseRepository releaseRepository;
+  @Autowired
+//  ReleaseController releaseController;
+
+  @Test
+  public void testRelease4Main() {
+
+//    releaseController.
+  }
+
+  @Test
+  public void testRelease4Branch() {
+
+  }
+
+  @Test
+  public void testRelease4Rollback() {
+
+  }
 
   @Test
 //  @Sql(scripts = "/controller/test-release.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
 //  @Sql(scripts = "/controller/cleanup.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
   public void testReleaseBuild() {
     String appId = "someAppId";
-    AppDTO app =
-        restTemplate.getForObject("http://localhost:" + port + "/apps/" + appId, AppDTO.class);
+    AppDTO app = restTemplate.getForObject("http://localhost:" + port + "/apps/" + appId, AppDTO.class);
 
-    ClusterDTO cluster = restTemplate.getForObject(
-        "http://localhost:" + port + "/apps/" + app.getAppId() + "/clusters/default",
+    ClusterDTO cluster = restTemplate.getForObject("http://localhost:" + port + "/apps/" + app.getAppId() + "/clusters/default",
         ClusterDTO.class);
 
-    NamespaceDTO namespace =
-        restTemplate.getForObject("http://localhost:" + port + "/apps/" + app.getAppId()
+    NamespaceDTO namespace = restTemplate.getForObject("http://localhost:" + port + "/apps/" + app.getAppId()
             + "/clusters/" + cluster.getName() + "/namespaces/application", NamespaceDTO.class);
 
     Assert.assertEquals("someAppId", app.getAppId());
