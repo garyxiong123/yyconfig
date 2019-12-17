@@ -125,11 +125,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public PageData<UserQueryRspDTO> getPage(UserQueryReqDTO userQueryReqDTO) {
-        Pageable pageable = PageRequest.of(userQueryReqDTO.getPageNo(), userQueryReqDTO.getPageSize());
+        //Pageable 从0开始算
+        Pageable pageable = PageRequest.of(userQueryReqDTO.getPageNo()-1, userQueryReqDTO.getPageSize());
 
         Example example = this.toExample(userQueryReqDTO);
 
-        Page userPage = this.userRepository.findAll(example, pageable);
+        Page<User> userPage = this.userRepository.findAll(example, pageable);
         List<UserQueryRspDTO> userQueryRsps = copyProperty4List(userPage.getContent(), UserQueryRspDTO.class);
 
         PageData<UserQueryRspDTO> pageData = PageDataHelper.toPageData(userPage, userQueryRsps);
