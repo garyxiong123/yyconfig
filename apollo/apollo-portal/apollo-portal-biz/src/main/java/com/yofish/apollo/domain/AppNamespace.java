@@ -1,6 +1,5 @@
 package com.yofish.apollo.domain;
 
-import com.yofish.apollo.enums.NamespaceType;
 import com.yofish.gary.dao.entity.BaseEntity;
 import framework.apollo.core.enums.ConfigFileFormat;
 import lombok.*;
@@ -14,7 +13,6 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -28,7 +26,17 @@ public class AppNamespace extends BaseEntity {
 
     private ConfigFileFormat format;
 
-    private NamespaceType type;
-
     private String comment;
+
+    public AppNamespace(Long id, String name, App app, ConfigFileFormat format, String comment) {
+        super(id);
+        this.name = name;
+        this.app = app;
+        this.format = format;
+        this.comment = comment;
+    }
+
+    public boolean isPublic() {
+        return false;
+    }
 }

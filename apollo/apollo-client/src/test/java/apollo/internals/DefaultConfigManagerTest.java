@@ -54,7 +54,7 @@ public class DefaultConfigManagerTest {
     Config anotherConfig = defaultConfigManager.getOrCreateConfig(someNamespace);
 
     assertThat(
-        "Get config multiple times with the same namespace should return the same config instance",
+        "Get config multiple times with the same appNamespace should return the same config instance",
         config, equalTo(anotherConfig));
   }
 
@@ -81,7 +81,7 @@ public class DefaultConfigManagerTest {
         defaultConfigManager.getOrCreateConfigFile(someNamespace, someConfigFileFormat);
 
     assertThat(
-        "Get config file multiple times with the same namespace should return the same config file instance",
+        "Get config file multiple times with the same appNamespace should return the same config file instance",
         someConfigFile, equalTo(anotherConfigFile));
 
   }

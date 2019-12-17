@@ -3,7 +3,7 @@ package com.yofish.apollo.model.model;
 
 import framework.apollo.core.enums.ConfigFileFormat;
 import framework.apollo.core.enums.Env;
-import framework.apollo.core.utils.StringUtils;
+import common.utils.YyStringUtils;
 
 public class NamespaceTextModel implements Verifiable {
 
@@ -18,7 +18,7 @@ public class NamespaceTextModel implements Verifiable {
 
   @Override
   public boolean isInvalid() {
-    return StringUtils.isContainEmpty(appId, env, clusterName, namespaceName) || namespaceId <= 0;
+    return YyStringUtils.isContainEmpty(appId, env, clusterName, namespaceName) || namespaceId <= 0;
   }
 
   public String getAppId() {

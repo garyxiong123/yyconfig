@@ -32,4 +32,9 @@ public class ServerConfig extends BaseEntity {
     @Column(name = "Comment", nullable = false)
     private String comment;
 
+    private String cluster;
+
+//    @Column(name = "Cluster", nullable = false)
+//    private String cluster;
+
 }

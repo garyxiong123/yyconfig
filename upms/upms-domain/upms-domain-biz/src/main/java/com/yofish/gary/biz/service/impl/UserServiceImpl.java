@@ -24,12 +24,13 @@ import com.yofish.gary.api.login.UpmsLoginLogoutRealm;
 import com.yofish.gary.api.properties.ShiroProperties;
 import com.yofish.gary.biz.domain.Permission;
 import com.yofish.gary.biz.domain.User;
-import com.yofish.gary.biz.repository.PermissionRepository;
+import com.yofish.gary.biz.helper.PageDataHelper;
 import com.yofish.gary.biz.repository.UserRepository;
 import com.yofish.gary.biz.service.UserService;
 import com.yofish.gary.tuple.Tuple2;
 import com.youyu.common.api.PageData;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -124,7 +125,46 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public PageData<UserQueryRspDTO> getPage(UserQueryReqDTO userQueryReqDTO) {
-        return null;
+        //Pageable 从0开始算
+        Pageable pageable = PageRequest.of(userQueryReqDTO.getPageNo()-1, userQueryReqDTO.getPageSize());
+
+        Example example = this.toExample(userQueryReqDTO);
+
+        Page<User> userPage = this.userRepository.findAll(example, pageable);
+        List<UserQueryRspDTO> userQueryRsps = copyProperty4List(userPage.getContent(), UserQueryRspDTO.class);
+
+        PageData<UserQueryRspDTO> pageData = PageDataHelper.toPageData(userPage, userQueryRsps);
+
+        return pageData;
+    }
+
+    @Override
+    public List<UserQueryRspDTO> getList(UserQueryReqDTO userQueryReqDTO) {
+        Example example = this.toExample(userQueryReqDTO);
+        List userList = this.userRepository.findAll(example);
+
+        List<UserQueryRspDTO> userQueryRsps = copyProperty4List(userList, UserQueryRspDTO.class);
+
+        return userQueryRsps;
+    }
+
+    private Example toExample(UserQueryReqDTO userQueryReqDTO) {
+        User user = User.builder()
+                .id(userQueryReqDTO.getUserId())
+                .username(userQueryReqDTO.getUserName())
+                .realName(userQueryReqDTO.getRealName())
+                .phone(userQueryReqDTO.getPhone())
+                .email(userQueryReqDTO.getEmail())
+                .status(userQueryReqDTO.getStatus())
+                .build();
+
+        Example example = Example.of(user, ExampleMatcher.matching()
+                .withMatcher("username", matcher -> matcher.stringMatcher(ExampleMatcher.StringMatcher.CONTAINING))
+                .withMatcher("realName", matcher -> matcher.stringMatcher(ExampleMatcher.StringMatcher.CONTAINING))
+                .withMatcher("phone", matcher -> matcher.stringMatcher(ExampleMatcher.StringMatcher.CONTAINING))
+                .withMatcher("status", matcher -> matcher.stringMatcher(ExampleMatcher.StringMatcher.CONTAINING))
+        );
+        return example;
     }
 
     @Override

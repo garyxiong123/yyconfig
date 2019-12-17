@@ -2,12 +2,9 @@ package com.yofish.apollo.service;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
-import com.yofish.apollo.domain.App;
-import com.yofish.apollo.domain.AppNamespace;
+import com.yofish.apollo.domain.*;
 import com.yofish.apollo.enums.NamespaceType;
-import com.yofish.apollo.repository.AppNamespaceRepository;
-import com.yofish.apollo.repository.AppRepository;
-import com.youyu.common.helper.YyRequestInfoHelper;
+import com.yofish.apollo.repository.*;
 import common.exception.BadRequestException;
 import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.enums.ConfigFileFormat;
@@ -32,19 +29,19 @@ public class AppNamespaceService {
     @Autowired
     private AppNamespaceRepository appNamespaceRepository;
     @Autowired
+    private AppNamespace4PublicRepository appNamespace4PublicRepository;
+    @Autowired
+    private AppNamespace4ProtectRepository appNamespace4ProtectRepository;
+    @Autowired
+    private AppNamespace4PrivateRepository appNamespace4PrivateRepository;
+    @Autowired
     private AppRepository appRepository;
     @Autowired
-    private NamespaceService namespaceService;
+    private AppEnvClusterNamespaceService appEnvClusterNamespaceService;
 
-    /**
-     * 公共的app ns,能被其它项目关联到的app ns
-     */
-    public List<AppNamespace> findPublicAppNamespaces() {
-        return appNamespaceRepository.findByType(NamespaceType.Public);
-    }
 
     public AppNamespace findPublicAppNamespace(String namespaceName) {
-        List<AppNamespace> appNamespaces = appNamespaceRepository.findByNameAndType(namespaceName, NamespaceType.Public);
+        List<AppNamespace4Public> appNamespaces = appNamespace4PublicRepository.findByName(namespaceName);
 
         if (CollectionUtils.isEmpty(appNamespaces)) {
             return null;
@@ -53,8 +50,9 @@ public class AppNamespaceService {
         return appNamespaces.get(0);
     }
 
-    private List<AppNamespace> findAllPrivateAppNamespaces(String namespaceName) {
-        return appNamespaceRepository.findByNameAndType(namespaceName, NamespaceType.Public);
+    private List<AppNamespace4Private> findAllPrivateAppNamespaces(String namespaceName) {
+        List<AppNamespace4Private> appNamespaceList = appNamespace4PrivateRepository.findByName(namespaceName);
+        return appNamespaceList;
     }
 
     public AppNamespace findByAppIdAndName(Long appId, String namespaceName) {
@@ -66,21 +64,20 @@ public class AppNamespaceService {
     }
 
     @Transactional
-    public void createDefaultAppNamespace(Long appId) {
+    public AppNamespace createDefaultAppNamespace(Long appId) {
         if (!isAppNamespaceNameUnique(appId, ConfigConsts.NAMESPACE_APPLICATION)) {
-            throw new BadRequestException(String.format("App already has application namespace. AppId = %s", appId));
+            throw new BadRequestException(String.format("App already has application appNamespace. AppId = %s", appId));
         }
 
-        AppNamespace appNs = new AppNamespace();
-        appNs.setApp(App.builder().id(appId).build());
-        appNs.setName(ConfigConsts.NAMESPACE_APPLICATION);
-        appNs.setComment("default app namespace");
-        appNs.setFormat(ConfigFileFormat.Properties);
-        String userId = YyRequestInfoHelper.getCurrentUserRealName();
-        appNs.setCreateAuthor(userId);
-        appNs.setUpdateAuthor(userId);
+        AppNamespace4Private appNs = AppNamespace4Private.builder()
+                .app(App.builder().id(appId).build())
+                .name(ConfigConsts.NAMESPACE_APPLICATION)
+                .comment("default app appNamespace")
+                .format(ConfigFileFormat.Properties)
+                .build();
 
-        appNamespaceRepository.save(appNs);
+        appNs = appNamespace4PrivateRepository.save(appNs);
+        return appNs;
     }
 
 
@@ -90,9 +87,22 @@ public class AppNamespaceService {
         return Objects.isNull(appNamespaceRepository.findByAppIdAndName(appId, namespaceName));
     }
 
+    public AppNamespace4Private createAppNamespace4Private(AppNamespace4Private namespace4Private) {
+
+        return null;
+    }
+    public AppNamespace4Private createAppNamespace4Protect(AppNamespace4Protect namespace4Protect) {
+
+        return null;
+    }
+    public AppNamespace4Private createAppNamespace4Public(AppNamespace4Public namespace4Public) {
+
+        return null;
+    }
+
     @Transactional
     public AppNamespace createAppNamespace(AppNamespace appNamespace, boolean appendNamespacePrefix) {
-        Long appId = appNamespace.getApp().getId();
+        /*Long appId = appNamespace.getApp().getId();
 
         //add app org id as prefix
         App app = this.appRepository.findById(appId).orElse(null);
@@ -112,29 +122,30 @@ public class AppNamespaceService {
             appNamespace.setComment("");
         }
 
-        // globally uniqueness check for public app namespace
+        // globally uniqueness check for public app appNamespace
         if (appNamespace.getType().equals(NamespaceType.Public)) {
             checkAppNamespaceGlobalUniqueness(appNamespace);
         } else {
-            // check private app namespace
+            // check private app appNamespace
             if (appNamespaceRepository.findByAppIdAndName(appNamespace.getApp().getId(), appNamespace.getName()) != null) {
                 throw new BadRequestException("Private AppNamespace " + appNamespace.getName() + " already exists!");
             }
-            // should not have the same with public app namespace
+            // should not have the same with public app appNamespace
             checkPublicAppNamespaceGlobalUniqueness(appNamespace);
         }
 
         AppNamespace createdAppNamespace = appNamespaceRepository.save(appNamespace);
 
-        namespaceService.createNamespaceForAppNamespaceInAllCluster(appNamespace.getApp().getId(), appNamespace.getName());
-
+        appEnvClusterNamespaceService.createNamespaceForAppNamespaceInAllCluster(appNamespace);
         return createdAppNamespace;
+*/
+        return null;
     }
 
     private void checkAppNamespaceGlobalUniqueness(AppNamespace appNamespace) {
         checkPublicAppNamespaceGlobalUniqueness(appNamespace);
 
-        List<AppNamespace> privateAppNamespaces = findAllPrivateAppNamespaces(appNamespace.getName());
+        List<AppNamespace4Private> privateAppNamespaces = findAllPrivateAppNamespaces(appNamespace.getName());
 
         if (!CollectionUtils.isEmpty(privateAppNamespaces)) {
             Set<Long> appIds = Sets.newHashSet();
@@ -154,8 +165,15 @@ public class AppNamespaceService {
     private void checkPublicAppNamespaceGlobalUniqueness(AppNamespace appNamespace) {
         AppNamespace publicAppNamespace = findPublicAppNamespace(appNamespace.getName());
         if (publicAppNamespace != null) {
-            throw new BadRequestException("AppNamespace " + appNamespace.getName() + " already exists as public namespace in appId: " + publicAppNamespace.getApp().getId() + "!");
+            throw new BadRequestException("AppNamespace " + appNamespace.getName() + " already exists as public appNamespace in appId: " + publicAppNamespace.getApp().getId() + "!");
         }
     }
 
+    public AppEnvClusterNamespace findAppEnvClusterNamespace4Branch(AppEnvClusterNamespace namespace) {
+        return null;
+    }
+
+    public AppEnvClusterNamespace findChildNamespace(AppEnvClusterNamespace namespace) {
+        return null;
+    }
 }

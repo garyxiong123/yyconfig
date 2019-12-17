@@ -53,9 +53,9 @@ public class ConfigService {
   }
 
   /**
-   * Get the config instance for the namespace.
+   * Get the config instance for the appNamespace.
    *
-   * @param namespace the namespace of the config
+   * @param namespace the appNamespace of the config
    * @return config instance
    */
   public static Config getConfig(String namespace) {
@@ -71,9 +71,9 @@ public class ConfigService {
   }
 
   /**
-   * Manually set the config for the namespace specified, use with caution.
+   * Manually set the config for the appNamespace specified, use with caution.
    *
-   * @param namespace the namespace
+   * @param namespace the appNamespace
    * @param config    the config instance
    */
   static void setConfig(String namespace, final Config config) {
@@ -96,9 +96,9 @@ public class ConfigService {
   }
 
   /**
-   * Manually set the config factory for the namespace specified, use with caution.
+   * Manually set the config factory for the appNamespace specified, use with caution.
    *
-   * @param namespace the namespace
+   * @param namespace the appNamespace
    * @param factory   the factory instance
    */
   static void setConfigFactory(String namespace, ConfigFactory factory) {

@@ -15,7 +15,7 @@ public class ConfigFileChangeEvent {
   /**
    * Constructor.
    *
-   * @param namespace the namespace of the config file change event
+   * @param namespace the appNamespace of the config file change event
    * @param oldValue the value before change
    * @param newValue the value after change
    * @param changeType the change type
@@ -47,7 +47,7 @@ public class ConfigFileChangeEvent {
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder("ConfigFileChangeEvent{");
-    sb.append("namespace='").append(namespace).append('\'');
+    sb.append("appNamespace='").append(namespace).append('\'');
     sb.append(", oldValue='").append(oldValue).append('\'');
     sb.append(", newValue='").append(newValue).append('\'');
     sb.append(", changeType=").append(changeType);

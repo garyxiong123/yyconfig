@@ -8,7 +8,7 @@ import apollo.model.ConfigChangeEvent;
  */
 public interface ConfigChangeListener {
   /**
-   * Invoked when there is any config change for the namespace.
+   * Invoked when there is any config change for the appNamespace.
    * @param changeEvent the event for this change
    */
   public void onChange(ConfigChangeEvent changeEvent);

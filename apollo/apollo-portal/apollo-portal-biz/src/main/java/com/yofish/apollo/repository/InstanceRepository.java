@@ -1,5 +1,6 @@
 package com.yofish.apollo.repository;
 
+import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.domain.Instance;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public interface InstanceRepository extends JpaRepository<Instance, Long> {
 
-    Instance findByAppIdAndClusterNameAndDataCenterAndIp(String appId, String clusterName, String dataCenter, String ip);
+//    Instance findByAppIdAndClusterNameAndDataCenterAndIp(String appId, String clusterName, String dataCenter, String ip);
+    Instance findByAppNamespaceAndDataCenterAndIp(AppNamespace appNamespace, String dataCenter, String ip);
 
 }

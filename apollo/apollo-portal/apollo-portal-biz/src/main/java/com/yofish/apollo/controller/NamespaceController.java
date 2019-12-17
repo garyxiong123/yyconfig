@@ -1,10 +1,10 @@
 package com.yofish.apollo.controller;
 
-import com.yofish.apollo.domain.AppNamespace;
+import com.yofish.apollo.domain.*;
 import com.yofish.apollo.model.model.AppNamespaceModel;
 import com.yofish.apollo.model.model.NamespaceCreationModel;
 import com.yofish.apollo.service.AppNamespaceService;
-import com.yofish.apollo.service.NamespaceService;
+import com.yofish.apollo.service.AppEnvClusterNamespaceService;
 import com.youyu.common.api.Result;
 import common.dto.NamespaceDTO;
 import common.exception.BadRequestException;
@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static common.utils.RequestPrecondition.checkModel;
@@ -28,7 +29,7 @@ import static common.utils.RequestPrecondition.checkModel;
 public class NamespaceController {
 
     @Autowired
-    private NamespaceService namespaceService;
+    private AppEnvClusterNamespaceService appEnvClusterNamespaceService;
     @Autowired
     private AppNamespaceService appNamespaceService;
 
@@ -41,6 +42,38 @@ public class NamespaceController {
 //  @Autowired
 //  private PermissionValidator permissionValidator;
 //
+//  @PreAuthorize(value = "@permissionValidator.hasCreateAppNamespacePermission(#appId, #appNamespace)")
+    @RequestMapping(value = "/apps/{appId:\\d+}/namespaces/private", method = RequestMethod.POST)
+    public Result<AppNamespace4Private> createAppPrivateNamespace(@PathVariable long appId, @Valid @RequestBody AppNamespaceModel model) {
+
+        AppNamespace4Private appNamespace4Private = AppNamespace4Private.builder().app(new App(appId)).name(model.getName()).format(model.getFormat()).comment(model.getComment()).build();
+
+        appNamespace4Private = appNamespaceService.createAppNamespace4Private(appNamespace4Private);
+
+//    if (portalConfig.canAppAdminCreatePrivateNamespace() || createdAppNamespace.isPublic()) {
+//      assignNamespaceRoleToOperator(appId, appNamespaceModel.getName());
+//    }
+
+//    publisher.publishEvent(new AppNamespaceCreationEvent(createdAppNamespace));
+
+        return Result.ok(appNamespace4Private);
+    }
+
+    @RequestMapping(value = "/apps/{appId:\\d+}/namespaces/protect", method = RequestMethod.POST)
+    public Result<AppNamespace4Protect> createAppProtectNamespace(@PathVariable long appId, @Valid @RequestBody AppNamespaceModel model) {
+        AppNamespace4Protect appNamespace4Protect = AppNamespace4Protect.builder().app(new App(appId)).name(model.getName()).format(model.getFormat()).comment(model.getComment()).build();
+
+        return Result.ok(appNamespace4Protect);
+    }
+
+    @RequestMapping(value = "/apps/{appId:\\d+}/namespaces/public", method = RequestMethod.POST)
+    public Result<AppNamespace4Public> createAppPublicNamespace(@PathVariable long appId, @Valid @RequestBody AppNamespaceModel model) {
+        AppNamespace4Public appNamespace4Public = AppNamespace4Public.builder().app(new App(appId)).name(model.getName()).format(model.getFormat()).comment(model.getComment()).build();
+
+        return Result.ok(appNamespace4Public);
+    }
+
+
 //
 //  @RequestMapping(value = "/appnamespaces/public", method = RequestMethod.GET)
 //  public List<AppNamespace> findPublicAppNamespaces() {
@@ -75,7 +108,7 @@ public class NamespaceController {
 //    return namespaceBO;
 //  }
 //
-//  @RequestMapping(value = "/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/associated-public-namespace",
+//  @RequestMapping(value = "/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/associated-public-appNamespace",
 //      method = RequestMethod.GET)
 //  public NamespaceBO findPublicNamespaceForAssociatedNamespace(@PathVariable String env,
 //                                                               @PathVariable String appId,
@@ -86,26 +119,26 @@ public class NamespaceController {
 //  }
 //
 //  @PreAuthorize(value = "@permissionValidator.hasCreateNamespacePermission(#appId)")
-    @RequestMapping(value = "/apps/{appId}/namespaces", method = RequestMethod.POST)
+/*    @RequestMapping(value = "/apps/{appId}/namespaces", method = RequestMethod.POST)
     public Result createNamespace(@PathVariable String appId,
                                   @RequestBody List<NamespaceCreationModel> models) {
 
         checkModel(!CollectionUtils.isEmpty(models));
 
         for (NamespaceCreationModel model : models) {
-            NamespaceDTO namespace = model.getNamespace();
-            RequestPrecondition.checkArgumentsNotEmpty(model.getEnv(), namespace.getAppId(),
-                    namespace.getClusterName(), namespace.getNamespaceName());
+            NamespaceDTO appNamespace = model.getAppNamespace();
+            RequestPrecondition.checkArgumentsNotEmpty(model.getEnv(), appNamespace.getAppId(),
+                    appNamespace.getClusterName(), appNamespace.getNamespaceName());
 
             try {
-                namespaceService.createNamespace(model.getEnv(), namespace);
+                appEnvClusterNamespaceService.createNamespace(model.getEnv(), appNamespace);
             } catch (Exception e) {
-                log.error("create namespace fail.", e);
+                log.error("create appNamespace fail.", e);
             }
         }
 
         return Result.ok();
-    }
+    }*/
 
     //
 //  @PreAuthorize(value = "@permissionValidator.hasDeleteNamespacePermission(#appId)")
@@ -141,37 +174,12 @@ public class NamespaceController {
 //    return BeanUtils.transform(AppNamespaceDTO.class, appNamespace);
 //  }
 //
-//  @PreAuthorize(value = "@permissionValidator.hasCreateAppNamespacePermission(#appId, #appNamespace)")
-    @RequestMapping(value = "/apps/{appId}/appnamespaces", method = RequestMethod.POST)
-    public AppNamespace createAppNamespace(@PathVariable String appId,
-                                           @RequestParam(defaultValue = "true") boolean appendNamespacePrefix,
-                                           @RequestBody AppNamespaceModel appNamespaceModel) {
-
-        RequestPrecondition.checkArgumentsNotEmpty(appNamespaceModel.getAppId(), appNamespaceModel.getName());
-        if (!InputValidator.isValidAppNamespace(appNamespaceModel.getName())) {
-            throw new BadRequestException(String.format("Namespace格式错误: %s",
-                    InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE + " & "
-                            + InputValidator.INVALID_NAMESPACE_NAMESPACE_MESSAGE));
-        }
-        AppNamespace appNamespace = BeanUtils.transform(AppNamespace.class, appNamespaceModel);
-        AppNamespace createdAppNamespace = appNamespaceService.createAppNamespace(appNamespace, appendNamespacePrefix);
-
-//    if (portalConfig.canAppAdminCreatePrivateNamespace() || createdAppNamespace.isPublic()) {
-//      assignNamespaceRoleToOperator(appId, appNamespaceModel.getName());
-//    }
-
-//    publisher.publishEvent(new AppNamespaceCreationEvent(createdAppNamespace));
-
-        return createdAppNamespace;
-    }
-
-
 //
 //  *
-//   * env -> appEnvCluster -> appEnvCluster has not published namespace?
+//   * env -> appEnvCluster -> appEnvCluster has not published appNamespace?
 //   * Example:
 //   * dev ->
-//   *  default -> true   (default appEnvCluster has not published namespace)
+//   *  default -> true   (default appEnvCluster has not published appNamespace)
 //   *  customCluster -> false (customCluster appEnvCluster's all namespaces had published)
 //
 //  @RequestMapping(value = "/apps/{appId}/namespaces/publish_info", method = RequestMethod.GET)
@@ -190,7 +198,7 @@ public class NamespaceController {
 //  }
 //
 //  private void assignNamespaceRoleToOperator(String appId, String namespaceName) {
-//    //default assign modify、release namespace role to namespace creator
+//    //default assign modify、release appNamespace role to appNamespace creator
 //    String operator = userInfoHolder.getUser().getUserId();
 //
 //    rolePermissionService

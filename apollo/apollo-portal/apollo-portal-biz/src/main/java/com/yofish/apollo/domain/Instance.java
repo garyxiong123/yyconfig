@@ -15,7 +15,7 @@ import java.util.Date;
 @Data
 @Entity
 public class Instance extends BaseEntity {
-
+    @ManyToOne
     private AppNamespace appNamespace;
 
     @Column(name = "DataCenter", nullable = false)

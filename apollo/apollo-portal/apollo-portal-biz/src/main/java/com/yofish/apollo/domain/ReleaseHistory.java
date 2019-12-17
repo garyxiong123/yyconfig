@@ -32,4 +32,5 @@ public class ReleaseHistory extends BaseEntity {
     @Column(name = "OperationContext", nullable = false)
     private String operationContext;
 
+
 }

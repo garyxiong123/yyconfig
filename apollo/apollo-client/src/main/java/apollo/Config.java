@@ -166,7 +166,7 @@ public interface Config extends ConfigChangePublisher, RepositoryChangeListener 
   public long getDurationProperty(String key, long defaultValue);
 
   /**
-   * Add change listener to this config instance, will be notified when any key is changed in this namespace.
+   * Add change listener to this config instance, will be notified when any key is changed in this appNamespace.
    *
    * @param listener the config change listener
    */

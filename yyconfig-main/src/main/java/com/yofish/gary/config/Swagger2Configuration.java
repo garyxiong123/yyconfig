@@ -44,8 +44,8 @@ public class Swagger2Configuration {
 //        list.add(new ParameterBuilder().name("X-Rn").description("user name").modelRef(new ModelRef("string")).parameterType("header").required(false).build());
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(new ApiInfoBuilder()
-                        .title("权限")
-                        .description("ops")
+                        .title("Apollo Mini")
+                        .description("配置中小服务")
                         .contact(new Contact("熊成威", "", "xiongchengwei@yofish.com"))
                         .version("1.0")
                         .build())

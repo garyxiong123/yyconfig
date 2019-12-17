@@ -48,7 +48,7 @@ public class PropertiesConfigFile extends AbstractConfigFile {
     } catch (Throwable ex) {
       ApolloConfigException exception =
           new ApolloConfigException(String
-              .format("Parse properties file content failed for namespace: %s, cause: %s",
+              .format("Parse properties file content failed for appNamespace: %s, cause: %s",
                   m_namespace, ExceptionUtil.getDetailMessage(ex)));
       Tracer.logError(exception);
       throw exception;

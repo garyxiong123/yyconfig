@@ -1,6 +1,8 @@
 package com.yofish.apollo.repository;
 
+import com.yofish.apollo.domain.AppEnvCluster;
 import com.yofish.apollo.domain.AppEnvClusterNamespace;
+import com.yofish.apollo.domain.AppNamespace;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -10,9 +12,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @since 1.0
  */
 public interface AppEnvClusterNamespaceRepository extends JpaRepository<AppEnvClusterNamespace, Long> {
-//    @Query
-//    AppEnvClusterNamespace findByAppIdAndEnvAndClusterNameAndnamespaceName(String appId, String env, String clusterName, String namespaceName);
 
-
-
+    AppEnvClusterNamespace findByAppEnvClusterAndAppNamespace(AppEnvCluster appEnvCluster, AppNamespace appNamespace);
 }

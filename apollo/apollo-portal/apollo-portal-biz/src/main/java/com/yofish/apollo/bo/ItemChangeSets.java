@@ -2,6 +2,8 @@ package com.yofish.apollo.bo;
 
 
 import com.yofish.apollo.domain.Item;
+import com.yofish.gary.dao.entity.BaseEntity;
+import common.dto.BaseDTO;
 import lombok.Data;
 
 import java.util.LinkedList;
@@ -11,7 +13,7 @@ import java.util.List;
  * storage cud result
  */
 @Data
-public class ItemChangeSets {
+public class ItemChangeSets extends BaseEntity {
 
     private List<Item> createItems = new LinkedList<>();
     private List<Item> updateItems = new LinkedList<>();

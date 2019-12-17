@@ -10,6 +10,7 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @NoArgsConstructor
@@ -19,6 +20,7 @@ import javax.persistence.Table;
 @Entity
 public class GrayReleaseRule extends BaseEntity {
 
+    @ManyToOne
     private Release release;
 
 

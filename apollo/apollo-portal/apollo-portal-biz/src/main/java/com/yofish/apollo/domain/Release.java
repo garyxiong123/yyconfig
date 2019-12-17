@@ -1,9 +1,21 @@
 package com.yofish.apollo.domain;
 
+import com.yofish.apollo.repository.ReleaseRepository;
+import com.yofish.apollo.service.ReleaseHistoryService;
+import com.yofish.apollo.service.ReleaseService;
 import com.yofish.gary.dao.entity.BaseEntity;
+import common.constants.ReleaseOperation;
+import common.exception.BadRequestException;
+import common.exception.NotFoundException;
 import lombok.*;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Map;
+
+import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
 
 /**
  * @Author: xiongchengwei
@@ -32,8 +44,17 @@ public class Release extends BaseEntity {
     @Lob
     private String configurations;
 
-    @Column(name = "Comment", nullable = false)
-    private String comment;
+    private boolean isEmergencyPublish;
+
+
+
+    private boolean abandoned;
+
+
+
+    public Release publish(){
+        return null;
+    }
 
 
 }

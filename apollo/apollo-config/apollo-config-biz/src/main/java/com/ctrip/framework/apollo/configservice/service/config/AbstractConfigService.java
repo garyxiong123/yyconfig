@@ -1,6 +1,7 @@
 package com.ctrip.framework.apollo.configservice.service.config;
 
 import com.yofish.apollo.domain.Release;
+import com.yofish.apollo.grayReleaseRule.GrayReleaseRulesHolder;
 import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.dto.ApolloNotificationMessages;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,8 @@ import static java.util.Objects.isNull;
  * @author Jason Song(song_s@ctrip.com)
  */
 public abstract class AbstractConfigService implements ConfigService {
-//  @Autowired
-//  private GrayReleaseRulesHolder grayReleaseRulesHolder;
+  @Autowired
+  private GrayReleaseRulesHolder grayReleaseRulesHolder;
 
   @Override
   public Release loadConfig4SingleClient(String clientAppId, String clientIp, String configAppId, String configClusterName,
@@ -65,7 +66,7 @@ public abstract class AbstractConfigService implements ConfigService {
    * @param clientIp the client ip
    * @param configAppId the requested config's app id
    * @param configClusterName the requested config's cluster name
-   * @param configNamespace the requested config's namespace name
+   * @param configNamespace the requested config's appNamespace name
    * @param clientMessages the messages received in client side
    * @return the release
    */
@@ -93,7 +94,7 @@ public abstract class AbstractConfigService implements ConfigService {
   protected abstract Release findActiveOne(long id, ApolloNotificationMessages clientMessages);
 
   /**
-   * Find active release by app id, cluster name and namespace name
+   * Find active release by app id, cluster name and appNamespace name
    */
   protected abstract Release findLatestActiveRelease(String configAppId, String configClusterName,
       String configNamespaceName, ApolloNotificationMessages clientMessages);

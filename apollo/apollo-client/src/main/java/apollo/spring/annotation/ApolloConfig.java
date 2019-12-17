@@ -22,7 +22,7 @@ import java.lang.annotation.*;
 @Documented
 public @interface ApolloConfig {
   /**
-   * Apollo namespace for the config, if not specified then default to application
+   * Apollo appNamespace for the config, if not specified then default to application
    */
   String value() default ConfigConsts.NAMESPACE_APPLICATION;
 }

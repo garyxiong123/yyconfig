@@ -96,6 +96,15 @@ public interface UserService{
     PageData<UserQueryRspDTO> getPage(UserQueryReqDTO userQueryReqDTO);
 
     /**
+     * 查询用户列表
+     *
+     * @param userQueryReqDTO
+     * @return
+     */
+    List<UserQueryRspDTO> getList(UserQueryReqDTO userQueryReqDTO);
+
+
+    /**
      * 默认未授权访问处理
      */
     void unauthorized();

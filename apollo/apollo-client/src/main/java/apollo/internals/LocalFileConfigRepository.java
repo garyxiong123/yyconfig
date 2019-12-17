@@ -38,7 +38,7 @@ public class LocalFileConfigRepository extends AbstractConfigRepository
   /**
    * Constructor.
    *
-   * @param namespace the namespace
+   * @param namespace the appNamespace
    */
   public LocalFileConfigRepository(String namespace) {
     this(namespace, null);

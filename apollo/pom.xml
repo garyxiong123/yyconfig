@@ -15,8 +15,8 @@
         <module>apollo-common</module>
         <module>apollo-client</module>
         <module>apollo-portal</module>
-        <module>apollo-config</module>
         <module>apollo-client-test</module>
+        <module>apollo-config</module>
     </modules>
 
 

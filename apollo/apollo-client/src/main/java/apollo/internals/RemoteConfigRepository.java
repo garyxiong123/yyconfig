@@ -76,7 +76,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
     /**
      * Constructor.
      *
-     * @param namespace the namespace
+     * @param namespace the appNamespace
      */
     public RemoteConfigRepository(String namespace) {
         m_namespace = namespace;
@@ -123,7 +123,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
                     @Override
                     public void run() {
                         Tracer.logEvent("Apollo.ConfigService", String.format("periodicRefresh: %s", m_namespace));
-                        logger.debug("refresh config for namespace: {}", m_namespace);
+                        logger.debug("refresh config for appNamespace: {}", m_namespace);
                         trySync();
                         Tracer.logEvent("Apollo.Client.Version", Apollo.VERSION);
                     }
@@ -227,7 +227,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
 
         }
         String message = String.format(
-                "Load Apollo Config failed - appId: %s, appEnvCluster: %s, namespace: %s, url: %s",
+                "Load Apollo Config failed - appId: %s, appEnvCluster: %s, appNamespace: %s, url: %s",
                 appId, cluster, m_namespace, url);
         throw new ApolloConfigException(message, exception);
     }

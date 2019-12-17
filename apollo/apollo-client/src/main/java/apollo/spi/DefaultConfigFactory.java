@@ -49,7 +49,7 @@ public class DefaultConfigFactory implements ConfigFactory {
   LocalFileConfigRepository createLocalConfigRepository(String namespace) {
     if (m_configUtil.isInLocalMode()) {
       logger.warn(
-          "==== Apollo is in local mode! Won't pull configs from remote server for namespace {} ! ====",
+          "==== Apollo is in local mode! Won't pull configs from remote server for appNamespace {} ! ====",
           namespace);
       return new LocalFileConfigRepository(namespace);
     }

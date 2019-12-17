@@ -16,7 +16,7 @@ public class ConfigChange {
 
   /**
    * Constructor.
-   * @param namespace the namespace of the key
+   * @param namespace the appNamespace of the key
    * @param propertyName the key whose value is changed
    * @param oldValue the value before change
    * @param newValue the value after change
@@ -66,7 +66,7 @@ public class ConfigChange {
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder("ConfigChange{");
-    sb.append("namespace='").append(namespace).append('\'');
+    sb.append("appNamespace='").append(namespace).append('\'');
     sb.append(", propertyName='").append(propertyName).append('\'');
     sb.append(", oldValue='").append(oldValue).append('\'');
     sb.append(", newValue='").append(newValue).append('\'');

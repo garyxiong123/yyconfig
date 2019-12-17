@@ -9,9 +9,10 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.repository.AppNamespaceRepository;
+import com.yofish.apollo.service.PortalConfig;
 import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.utils.ApolloThreadFactory;
-import framework.apollo.core.utils.StringUtils;
+import common.utils.YyStringUtils;
 import framework.apollo.tracer.Tracer;
 import framework.apollo.tracer.spi.Transaction;
 import org.slf4j.Logger;
@@ -41,7 +42,7 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
   private AppNamespaceRepository appNamespaceRepository;
 
   @Autowired
-  private BizConfig bizConfig;
+  private PortalConfig bizConfig;
 
   private int scanInterval;
   private TimeUnit scanIntervalTimeUnit;
@@ -73,7 +74,7 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
   }
 
   public AppNamespace findByAppIdAndNamespace(String appId, String namespaceName) {
-    Preconditions.checkArgument(!StringUtils.isContainEmpty(appId, namespaceName), "appId and namespaceName must not be empty");
+    Preconditions.checkArgument(!YyStringUtils.isContainEmpty(appId, namespaceName), "appId and namespaceName must not be empty");
     return appNamespaceCache.get(STRING_JOINER.join(appId, namespaceName));
   }
 
@@ -182,7 +183,7 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
     }
     List<List<Long>> partitionIds = Lists.partition(ids, 500);
     for (List<Long> toRebuild : partitionIds) {
-      Iterable<AppNamespace> appNamespaces = appNamespaceRepository.findAll(toRebuild);
+      Iterable<AppNamespace> appNamespaces = appNamespaceRepository.findAllById(toRebuild);
 
       if (appNamespaces == null) {
         continue;
@@ -202,8 +203,7 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
     for (AppNamespace appNamespace : appNamespaces) {
       foundIds.add(appNamespace.getId());
       AppNamespace thatInCache = appNamespaceIdCache.get(appNamespace.getId());
-      if (thatInCache != null && appNamespace.getDataChangeLastModifiedTime().after(thatInCache
-          .getDataChangeLastModifiedTime())) {
+      if (thatInCache != null ) {
         appNamespaceIdCache.put(appNamespace.getId(), appNamespace);
         String oldKey = assembleAppNamespaceKey(thatInCache);
         String newKey = assembleAppNamespaceKey(appNamespace);
@@ -244,7 +244,7 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
       appNamespaceCache.remove(assembleAppNamespaceKey(deleted));
       if (deleted.isPublic()) {
         AppNamespace publicAppNamespace = publicAppNamespaceCache.get(deleted.getName());
-        // in case there is some dirty data, e.g. public namespace deleted in some app and now created in another app
+        // in case there is some dirty data, e.g. public appNamespace deleted in some app and now created in another app
         if (publicAppNamespace == deleted) {
           publicAppNamespaceCache.remove(deleted.getName());
         }
@@ -254,14 +254,14 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
   }
 
   private String assembleAppNamespaceKey(AppNamespace appNamespace) {
-    return STRING_JOINER.join(appNamespace.getAppId(), appNamespace.getName());
+    return STRING_JOINER.join(appNamespace.getApp().getAppCode(), appNamespace.getName());
   }
 
   private void populateDataBaseInterval() {
-    scanInterval = bizConfig.appNamespaceCacheScanInterval();
-    scanIntervalTimeUnit = bizConfig.appNamespaceCacheScanIntervalTimeUnit();
-    rebuildInterval = bizConfig.appNamespaceCacheRebuildInterval();
-    rebuildIntervalTimeUnit = bizConfig.appNamespaceCacheRebuildIntervalTimeUnit();
+//    scanInterval = bizConfig.appNamespaceCacheScanInterval();
+//    scanIntervalTimeUnit = bizConfig.appNamespaceCacheScanIntervalTimeUnit();
+//    rebuildInterval = bizConfig.appNamespaceCacheRebuildInterval();
+//    rebuildIntervalTimeUnit = bizConfig.appNamespaceCacheRebuildIntervalTimeUnit();
   }
 
   //only for test use

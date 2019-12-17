@@ -13,17 +13,17 @@ import java.util.List;
 import java.util.Set;
 
 public interface InstanceConfigRepository extends PagingAndSortingRepository<InstanceConfig, Long> {
-
+/*
   InstanceConfig findByInstanceIdAndConfigAppIdAndConfigNamespaceName(long instanceId, String
           configAppId, String configNamespaceName);
 
-  Page<InstanceConfig> findByReleaseKeyAndDataChangeLastModifiedTimeAfter(String releaseKey, Date
+  Page<InstanceConfig> findByReleaseKeyAndUpdateTimeAfter(String releaseKey, Date
           validDate, Pageable pageable);
 
-  Page<InstanceConfig> findByConfigAppIdAndConfigClusterNameAndConfigNamespaceNameAndDataChangeLastModifiedTimeAfter(
+  Page<InstanceConfig> findByConfigAppIdAndConfigClusterNameAndConfigNamespaceNameAndUpdateTimeAfter(
           String appId, String clusterName, String namespaceName, Date validDate, Pageable pageable);
 
-  List<InstanceConfig> findByConfigAppIdAndConfigClusterNameAndConfigNamespaceNameAndDataChangeLastModifiedTimeAfterAndReleaseKeyNotIn(
+  List<InstanceConfig> findByConfigAppIdAndConfigClusterNameAndConfigNamespaceNameAndUpdateTimeAfterAndReleaseKeyNotIn(
           String appId, String clusterName, String namespaceName, Date validDate, Set<String> releaseKey);
 
   @Modifying
@@ -43,5 +43,5 @@ public interface InstanceConfigRepository extends PagingAndSortingRepository<Ins
   Page<Object[]> findInstanceIdsByNamespaceAndInstanceAppId(
           @Param("instanceAppId") String instanceAppId, @Param("configAppId") String configAppId,
           @Param("clusterName") String clusterName, @Param("namespaceName") String namespaceName,
-          @Param("validDate") Date validDate, Pageable pageable);
+          @Param("validDate") Date validDate, Pageable pageable);*/
 }

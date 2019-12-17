@@ -2,6 +2,7 @@ package com.ctrip.framework.apollo.configservice.service.config;
 
 
 import com.yofish.apollo.domain.Release;
+import com.yofish.apollo.message.ReleaseMessageListener;
 import framework.apollo.core.dto.ApolloNotificationMessages;
 
 /**
@@ -16,7 +17,7 @@ public interface ConfigService extends ReleaseMessageListener {
    * @param clientIp the client ip
    * @param configAppId the requested config's app id
    * @param configClusterName the requested config's appEnvCluster name
-   * @param configNamespace the requested config's namespace name
+   * @param configNamespace the requested config's appNamespace name
    * @param dataCenter the client data center
    * @param clientMessages the messages received in client side
    * @return the Release

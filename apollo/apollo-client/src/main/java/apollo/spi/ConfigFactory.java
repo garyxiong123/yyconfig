@@ -10,16 +10,16 @@ import framework.apollo.core.enums.ConfigFileFormat;
  */
 public interface ConfigFactory {
   /**
-   * Create the config instance for the namespace.
+   * Create the config instance for the appNamespace.
    *
-   * @param namespace the namespace
+   * @param namespace the appNamespace
    * @return the newly created config instance
    */
   public Config create(String namespace);
 
   /**
-   * Create the config file instance for the namespace
-   * @param namespace the namespace
+   * Create the config file instance for the appNamespace
+   * @param namespace the appNamespace
    * @return the newly created config file instance
    */
   public ConfigFile createConfigFile(String namespace, ConfigFileFormat configFileFormat);

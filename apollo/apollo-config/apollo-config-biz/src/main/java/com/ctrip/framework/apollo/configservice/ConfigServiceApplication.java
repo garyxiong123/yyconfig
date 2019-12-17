@@ -1,6 +1,7 @@
 package com.ctrip.framework.apollo.configservice;
 
-import com.yofish.apollo.api.ApolloCommonConfig;
+import com.yofish.apollo.ApolloBizConfig;
+import common.ApolloCommonConfig;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.ApplicationPidFileWriter;

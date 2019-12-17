@@ -24,6 +24,7 @@ public interface AppRepository extends JpaRepository<App, Long> {
     App findByAppCode(String appCode);
 
 
+
     /**
      * findByAppCodeContainingOrNameContaining
      *

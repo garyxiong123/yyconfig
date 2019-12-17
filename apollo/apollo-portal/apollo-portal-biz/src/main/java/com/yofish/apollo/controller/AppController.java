@@ -11,6 +11,7 @@ import com.youyu.common.api.Result;
 import common.exception.BadRequestException;
 import common.utils.InputValidator;
 import common.utils.RequestPrecondition;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -23,7 +24,7 @@ import javax.validation.Valid;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
+@Api(description = "项目")
 @RestController
 @RequestMapping("/apps")
 public class AppController {
@@ -48,25 +49,18 @@ public class AppController {
 
         App createdApp = appService.createApp(app);
 
-    /*Set<String> admins = appModel.getAdmins();
-    if (!CollectionUtils.isEmpty(admins)) {
-      rolePermissionService
-              .assignRoleToUsers(RoleUtils.buildAppMasterRoleName(createdApp.getAppCode()),
-                      admins, YyRequestInfoHelper.getCurrentUserId());
-    }*/
-
         return Result.ok(createdApp);
     }
 
 
     @GetMapping("/search")
     @ApiOperation("查询项目")
-    public PageData<App> searchByAppCodeOrAppName(@RequestParam(required = false) String query, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "20") int size) {
+    public Result<PageData<App>> searchByAppCodeOrAppName(@RequestParam(required = false) String query, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "20") int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
         if (StringUtils.isEmpty(query)) {
-            return appService.findAll(pageable);
+            return Result.ok(appService.findAll(pageable));
         } else {
-            return appService.searchByAppCodeOrAppName(query, pageable);
+            return Result.ok(appService.searchByAppCodeOrAppName(query, pageable));
         }
     }
 
@@ -79,6 +73,16 @@ public class AppController {
 
         App updatedApp = appService.updateApp(app);
         return Result.ok(updatedApp);
+    }
+
+    @GetMapping("/{appId:\\d+}")
+    @ApiOperation("查询项目信息")
+    public Result<App> update(@PathVariable Long appId) {
+        App app = appService.getApp(appId);
+        if (app == null) {
+            throw new BadRequestException("项目不存在！");
+        }
+        return Result.ok(app);
     }
 
 

@@ -1,12 +1,12 @@
 package framework.apollo.core.enums;
 
 
-import framework.apollo.core.utils.StringUtils;
+import common.utils.YyStringUtils;
 
 public final class EnvUtils {
 
     public static Env transformEnv(String envName) {
-        if (StringUtils.isBlank(envName)) {
+        if (YyStringUtils.isBlank(envName)) {
             return Env.UNKNOWN;
         }
         switch (envName.trim().toUpperCase()) {
