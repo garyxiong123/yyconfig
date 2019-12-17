@@ -42,7 +42,7 @@ public class UserEditReqDTO implements Serializable {
 
     @ApiModelProperty("用户id")
     @NotNull
-    private Long userId;
+    private Long id;
 
     @ApiModelProperty("真实姓名")
     @Size(max = 32)
