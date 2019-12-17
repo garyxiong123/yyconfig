@@ -33,8 +33,8 @@ public class ReleaseControllerTest extends AbstractControllerTest {
   ReleaseRepository releaseRepository;
 
   @Test
-  @Sql(scripts = "/controller/test-release.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
-  @Sql(scripts = "/controller/cleanup.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
+//  @Sql(scripts = "/controller/test-release.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
+//  @Sql(scripts = "/controller/cleanup.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
   public void testReleaseBuild() {
     String appId = "someAppId";
     AppDTO app =

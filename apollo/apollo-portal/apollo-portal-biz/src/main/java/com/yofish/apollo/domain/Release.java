@@ -44,47 +44,17 @@ public class Release extends BaseEntity {
     @Lob
     private String configurations;
 
-    @Column(name = "Comment", nullable = false)
-    private String comment;
+    private boolean isEmergencyPublish;
+
+
 
     private boolean abandoned;
 
 
-    @Transactional
-    public Release rollback() {
-        if (this == null) {
-            throw new NotFoundException("release not found");
-        }
-        if (isAbandoned()) {
-            throw new BadRequestException("release is not active");
-        }
 
-        PageRequest page = new PageRequest(0, 2);
-        List<Release> twoLatestActiveReleases = this.getAppEnvClusterNamespace().findLatestActiveReleases(page);
-        if (twoLatestActiveReleases == null || twoLatestActiveReleases.size() < 2) {
-//            throw new BadRequestException(String.format("Can't rollback appNamespace(appId=%s, clusterName=%s, namespaceName=%s) because there is only one active release",
-//                    appId,
-//                    clusterName,
-//                    namespaceName));
-        }
-
-        setAbandoned(true);
-
-        getBeanInstance(ReleaseRepository.class).save(this);
-
-        getBeanInstance(ReleaseHistoryService.class).createReleaseHistory(this, twoLatestActiveReleases.get(1).getId(), ReleaseOperation.ROLLBACK, null);
-
-        //publish child appNamespace if appNamespace has child 灰度回滚
-        if (this.getAppEnvClusterNamespace().hasBranchNamespace()) {
-            getBeanInstance(ReleaseService.class).rollbackChildNamespace(this, twoLatestActiveReleases);
-        }
-        return this;
+    public Release publish(){
+        return null;
     }
 
-
-    public void publish(String releaseName, String releaseComment, boolean isEmergencyPublish) {
-        Map<String, String> operateNamespaceItems = null;
-        this.getAppEnvClusterNamespace().publish(operateNamespaceItems, releaseName, releaseComment, isEmergencyPublish);
-    }
 
 }

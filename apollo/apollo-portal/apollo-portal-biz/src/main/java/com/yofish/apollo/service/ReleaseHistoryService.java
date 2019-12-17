@@ -26,15 +26,13 @@ public class ReleaseHistoryService {
 //  private AuditService auditService;
 
 
-  public Page<ReleaseHistory> findReleaseHistoriesByNamespace(String appId, String clusterName,
-                                                              String namespaceName, Pageable
+  public Page<ReleaseHistory> findReleaseHistoriesByNamespace(Release release, Pageable
                                                                   pageable) {
-    return releaseHistoryRepository.findByAppIdAndClusterNameAndNamespaceNameOrderByIdDesc(appId, clusterName,
-                                                                                           namespaceName, pageable);
+    return releaseHistoryRepository.findReleaseHistoriesByRelease(release, pageable);
   }
 
-  public Page<ReleaseHistory> findByReleaseIdAndOperation(long releaseId, int operation, Pageable page) {
-    return releaseHistoryRepository.findByReleaseIdAndOperationOrderByIdDesc(releaseId, operation, page);
+  public Page<ReleaseHistory> findByReleaseIdAndOperation(Release release, int operation, Pageable page) {
+    return releaseHistoryRepository.findReleaseHistorysByReleaseAndOperationOrderByIdDesc(release, operation, page);
   }
 
   public Page<ReleaseHistory> findByPreviousReleaseIdAndOperation(long previousReleaseId, int operation, Pageable page) {

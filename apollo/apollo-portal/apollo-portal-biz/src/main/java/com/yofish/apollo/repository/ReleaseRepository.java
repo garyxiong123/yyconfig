@@ -3,8 +3,10 @@ package com.yofish.apollo.repository;
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.Release;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.NamedNativeQuery;
 import java.util.List;
 import java.util.Set;
 
@@ -18,11 +20,10 @@ import java.util.Set;
 public interface ReleaseRepository extends JpaRepository<Release, Long> {
 
 
-    Release findByIdAndIsAbandonedFalse(long releaseId);
-
-    List<Release> findReleaseByReleaseKeyIn(Set<String> releaseKeys);
-
+//    Release findByIdAndIsAbandonedFalse(long releaseId);
+//
+    @Query(value = "select * from tb_task t where t.task_name = ?1", nativeQuery = true)
     Release findFirstByAppIdAndClusterNameAndNamespaceNameAndIsAbandonedFalseOrderByIdDesc(String appId, String clusterName, String namespaceName);
 
-    int batchDelete(String appId, String clusterName, String namespaceName, String operator);
+//    int batchDelete(String appId, String clusterName, String namespaceName, String operator);
 }
