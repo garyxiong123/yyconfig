@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Modal, Form, Input } from 'antd';
-
+import { Modal, Form, Input, message } from 'antd';
+import { department } from '@/services/auth';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -20,21 +20,51 @@ class DepartEditModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-
+      loading: false
     };
   }
   componentDidMount() { }
 
   onSubmit = (e) => {
-    const { onOk } = this.props;
+    const { currentItem } = this.props;
     e && e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        onOk(values);
+        this.setState({
+          loading: true
+        })
+        if (currentItem.id) {
+          this.onEdit(values)
+        } else {
+          this.onAdd(values)
+        }
       }
     });
   }
-
+  onAdd = async (values) => {
+    const { onCancel, onSave } = this.props;
+    let res = await department.departmentAdd(values);
+    if (res && res.code == '1') {
+      message.success('添加成功');
+      onCancel();
+      onSave();
+    }
+    this.setState({
+      loading: false
+    })
+  }
+  onEdit = async (values) => {
+    const { onCancel, onSave, currentItem } = this.props;
+    let res = await department.departmentEdit({ ...values, departmentId: currentItem.id });
+    if (res && res.code == '1') {
+      message.success('修改成功');
+      onCancel();
+      onSave();
+    }
+    this.setState({
+      loading: false
+    })
+  }
   renderForm() {
     const { getFieldDecorator, getFieldValue } = this.props.form;
     const { currentItem } = this.props;
@@ -48,9 +78,17 @@ class DepartEditModal extends React.Component {
             ]
           })(<Input placeholder="请输入部门名称" />)}
         </FormItem>
+        <FormItem label="code">
+          {getFieldDecorator('code', {
+            initialValue: currentItem.code,
+            rules: [
+              { required: true, message: "请输入code" }
+            ]
+          })(<Input placeholder="请输入code" disabled={currentItem.id ? true : false} />)}
+        </FormItem>
         <FormItem label="备注">
-          {getFieldDecorator('remark', {
-            initialValue: currentItem.realName,
+          {getFieldDecorator('comment', {
+            initialValue: currentItem.comment,
             // rules: [
             //   { required: true, }
             // ]
@@ -60,13 +98,15 @@ class DepartEditModal extends React.Component {
     )
   }
   render() {
-    const { visible, onCancel, currentItem } = this.props;
+    const { onCancel, currentItem } = this.props;
+    const { loading } = this.state;
     return (
       <Modal
         title={currentItem.id ? '编辑部门' : '新增部门'}
-        visible={visible}
+        visible={true}
         onOk={this.onSubmit}
         onCancel={onCancel}
+        confirmLoading={loading}
       >
         {
           this.renderForm()
