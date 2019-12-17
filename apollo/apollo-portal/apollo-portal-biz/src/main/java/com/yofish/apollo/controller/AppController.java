@@ -75,6 +75,16 @@ public class AppController {
         return Result.ok(updatedApp);
     }
 
+    @GetMapping("/{appId:\\d+}")
+    @ApiOperation("查询项目信息")
+    public Result<App> update(@PathVariable Long appId) {
+        App app = appService.getApp(appId);
+        if (app == null) {
+            throw new BadRequestException("项目不存在！");
+        }
+        return Result.ok(app);
+    }
+
 
     private App transformToApp(AppModel appModel) {
         String appCode = appModel.getAppCode();
