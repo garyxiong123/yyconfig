@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Button, Descriptions, Icon } from 'antd';
+import { Card, Button, Descriptions, Icon, Row, Col } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 
 class ProjectDetail extends React.Component {
@@ -27,16 +27,30 @@ class ProjectDetail extends React.Component {
   renderEdit() {
     return (
       <a>
-        <Icon type="edit" theme="twoTone" style={{fontSize: 20}} title="编辑项目"/>
+        <Icon type="edit" theme="twoTone" style={{ fontSize: 20 }} title="编辑项目" />
       </a>
+    )
+  }
+  renderEnv() {
+    return (
+      <Card title="环境列表">
+
+      </Card>
     )
   }
   render() {
     return (
       <PageHeaderWrapper title="项目信息" content={this.renderBaseInfo()} extra={this.renderEdit()}>
-        <Card>
-
-        </Card>
+        <Row type="flex" gutter={24}>
+          <Col span={6}>
+            {this.renderEnv()}
+          </Col>
+          <Col span={18}>
+            <Card>
+              666
+            </Card>
+          </Col>
+        </Row>
       </PageHeaderWrapper>
     );
   }

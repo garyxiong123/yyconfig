@@ -1,7 +1,10 @@
 import React, { Fragment } from 'react';
-import { Card, Table, Button, Input, Divider, Popconfirm, Select, Row, Col } from 'antd';
+import { Card, Table, Button, Input, Divider, Popconfirm, Select, Row, Col, message } from 'antd';
 import styles from './index.less';
-import { DepartmentModal } from './department/index'
+import { DepartmentModal } from './department/index';
+import { connect } from 'dva';
+import moment from 'moment';
+import { department } from '@/services/auth';
 
 const { Option } = Select;
 
@@ -10,16 +13,23 @@ class Department extends React.Component {
     super(props);
     this.state = {
       searchObj: {},
-      list: [{}, {}, {}],
       showEditModal: false,
       currentItem: {}
-
     };
   }
   // ----------------------------------生命周期----------------------------------------
-  componentDidMount() { }
-
+  componentDidMount() {
+    this.onFetchList()
+  }
   // ----------------------------------事件----------------------------------------
+  onFetchList = () => {
+    const { dispatch } = this.props;
+    const { searchObj } = this.state;
+    dispatch({
+      type: 'auth/departmentList',
+      payload: searchObj
+    })
+  }
   onSearch = (value) => {
     const { searchObj } = this.state;
     this.setState({
@@ -29,26 +39,6 @@ class Department extends React.Component {
       }
     })
   }
-  //分页,筛选,排序
-  onTableChange = (pagination, filters, sorter) => {
-    const { current, pageSize } = pagination;
-    const { order, field } = sorter;
-    const { searchObj } = this.state;
-    // const { list } = this.props;
-    // let sort = order ? {
-    //   sortValue: order === 'ascend' ? 'asc' : order === 'descend' ? 'desc' : '',
-    //   sortName: field ? field : ''
-    // } : {};
-    // let params = {
-    //   ...searchObj,
-    //   ...sort,
-    //   pageNo: pageSize === list.pageSize ? parseInt(current) : 1,
-    //   pageSize: parseInt(pageSize),
-    // };
-    // this.setState({
-    //   searchObj: params
-    // });
-  };
   onEdit = (record = {}) => {
     this.setState({
       currentItem: record,
@@ -60,28 +50,42 @@ class Department extends React.Component {
       showEditModal: false
     })
   }
-  onDelete=(id)=>{
-    console.log('onDelete-->', id)
+  onDelete = async (departmentId) => {
+    let res = await department.departmentDelete({ departmentId });
+    if (res && res.code === '1') {
+      message.success('刪除成功');
+      this.onFetchList();
+    }
+  }
+  onSave = () => {
+    this.onFetchList();
   }
   // ----------------------------------View----------------------------------------
   renderTable() {
-    const { list } = this.state;
+    const { list, loading } = this.props;
     const columns = [
       {
         title: '部门名称',
         dataIndex: 'name',
       },
-      // {
-      //   title: '部门类型',
-      //   dataIndex: 'type',
-      // },
+      {
+        title: 'code',
+        dataIndex: 'code',
+      },
       {
         title: '备注',
-        dataIndex: 'email'
+        dataIndex: 'comment'
       },
       {
         title: '创建人',
-        dataIndex: 'updateAuthor',
+        dataIndex: 'createAuthor',
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (text, record) => (
+          <span>{text ? moment(text).format('YYYY-MM-DD HH:mm') : ''}</span>
+        )
       },
       {
         title: '操作',
@@ -114,19 +118,8 @@ class Department extends React.Component {
       <Table
         columns={columns}
         dataSource={list || []}
-        onChange={this.onTableChange}
-        // loading={loading}
-        // pagination={{
-        //   pageSizeOptions: ['10', '20', '30', '50'],
-        //   total: list.totalCount || 0,
-        //   showTotal: (total, range) =>
-        //     `共${list.totalCount || 0}条，当前${list.pageNum ? list.pageNum : 1}/${
-        //     list.totalPage ? list.totalPage : 1
-        //     }页`,
-        //   showSizeChanger: true,
-        //   current: list.pageNum ? list.pageNum : 1,
-        //   pageSize: list.pageSize ? list.pageSize : 10,
-        // }}
+        loading={loading}
+        pagination={false}
         rowKey={record => {
           return record.id;
         }}
@@ -164,9 +157,13 @@ class Department extends React.Component {
         {
           this.renderTable()
         }
-        {showEditModal && <DepartmentModal visible={showEditModal} onCancel={this.onCancel} currentItem={currentItem} />}
+        {showEditModal && <DepartmentModal onCancel={this.onCancel} currentItem={currentItem} onSave={this.onSave} />}
       </Card>
     );
   }
 }
-export default Department;
+
+export default connect(({ auth, loading }) => ({
+  list: auth.departmentList,
+  loading: loading.effects["auth/departmentList"]
+}))(Department);

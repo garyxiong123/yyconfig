@@ -114,11 +114,11 @@ const BasicLayout = props => {
    */
 
   useEffect(() => {
-    // if (dispatch) {
-    //   dispatch({
-    //     type: 'user/fetchCurrent',
-    //   });
-    // }
+    if (dispatch) {
+      dispatch({
+        type: 'auth/userListAll',
+      });
+    }
   }, []);
   /**
    * init variables
@@ -172,7 +172,7 @@ const BasicLayout = props => {
           );
       }}
       footerRender={null}
-      menuDataRender={()=>menuDataRender}
+      menuDataRender={() => menuDataRender}
       formatMessage={formatMessage}
       rightContentRender={rightProps => <RightContent {...rightProps} />}
       {...props}

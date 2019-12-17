@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Modal, Form, Input } from 'antd';
+import { Modal, Form, Input, message } from 'antd';
+import { auth } from '@/services/auth';
 
 
 const FormItem = Form.Item;
@@ -19,29 +20,60 @@ class UserEditModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      detail: {}
+      loading: false
     };
   }
   componentDidMount() { }
 
   onSubmit = (e) => {
-    const { onOk } = this.props;
+    const { currentUser } = this.props;
     e && e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        onOk(values);
+        this.setState({
+          loading: true
+        })
+        if (currentUser.userId) {
+          this.onEdit(values)
+        } else {
+          this.onAdd(values)
+        }
       }
     });
+  }
+  onAdd = async (values) => {
+    const { onCancel, onSave } = this.props;
+    let res = await auth.userAdd(values);
+    if (res && res.code == '1') {
+      message.success('添加成功');
+      onCancel();
+      onSave();
+    }
+    this.setState({
+      loading: false
+    })
+  }
+  onEdit = async (values) => {
+    const { onCancel, onSave, currentUser } = this.props;
+    let res = await auth.userEdit({ ...values, userId: currentUser.userId });
+    if (res && res.code == '1') {
+      message.success('修改成功');
+      onCancel();
+      onSave();
+    }
+    this.setState({
+      loading: false
+    })
   }
 
   renderForm() {
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { detail } = this.state;
+    const { currentUser } = this.props;
     return (
       <Form {...formItemLayout} onSubmit={this.onSubmit} autoComplete="off">
         <FormItem label="用户名">
           {getFieldDecorator('username', {
-            initialValue: detail.username,
+            initialValue: currentUser.username,
             rules: [
               { required: true, message: "用户名为14位以内数字字母下划线的组合", pattern: /^\w{1,14}$/ }
             ]
@@ -49,7 +81,7 @@ class UserEditModal extends React.Component {
         </FormItem>
         <FormItem label="全名">
           {getFieldDecorator('realName', {
-            initialValue: detail.realName,
+            initialValue: currentUser.realName,
             rules: [
               { required: true, message: "请输入32位以下中文字母标点符号的组合", pattern: /^[a-zA-Z,.?;:，。“”！（）？\u4E00-\u9FA5]{1,32}$/, }
             ]
@@ -57,7 +89,7 @@ class UserEditModal extends React.Component {
         </FormItem>
         <FormItem label="邮箱">
           {getFieldDecorator('email', {
-            initialValue: detail.email,
+            initialValue: currentUser.email,
             rules: [
               {
                 required: true,
@@ -80,17 +112,46 @@ class UserEditModal extends React.Component {
             ]
           })(<Input placeholder="请输入邮箱" />)}
         </FormItem>
+        {
+          currentUser.userId &&
+          <FormItem label="是否重置密码">
+            {getFieldDecorator('resetPas', {
+              initialValue: 0,
+              rules: [
+                { required: false }
+              ]
+            })(
+              <Radio.Group>
+                <Radio value={1}>是</Radio>
+                <Radio value={0}>否</Radio>
+              </Radio.Group>
+            )}
+          </FormItem>
+        }
+        {
+          (!currentUser.userId || getFieldValue('resetPas') === 1) &&
+          <FormItem label="密码">
+            {getFieldDecorator('password', {
+              initialValue: currentUser.password,
+              rules: [
+                { required: true, message: "请输入密码(不含空格)", pattern: /^\S*$/ }
+              ]
+            })(<Input.Password placeholder="请输入密码" autoComplete="new-password" />)}
+          </FormItem>
+        }
       </Form>
     )
   }
   render() {
-    const { visible, onCancel, currentUser } = this.props;
+    const { onCancel, currentUser } = this.props;
+    const { loading } = this.state;
     return (
       <Modal
-        title={currentUser.id ? '编辑用户' : '新增用户'}
-        visible={visible}
+        title={currentUser.userId ? '编辑用户' : '新增用户'}
+        visible={true}
         onOk={this.onSubmit}
         onCancel={onCancel}
+        confirmLoading={loading}
       >
         {
           this.renderForm()

@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import { Card, Table, Button, Input, Divider, Popconfirm } from 'antd';
+import { connect } from 'dva';
 import moment from 'moment';
 import styles from './index.less';
 import { UserEditModal } from './user/index';
@@ -9,15 +10,29 @@ class User extends React.Component {
     super(props);
     this.state = {
       searchObj: {},
-      list: [{}, {}, {}],
       showEditModal: false,
       currentUser: {}
     };
   }
   // ----------------------------------生命周期----------------------------------------
-  componentDidMount() { }
-
+  componentDidMount() { 
+    this.onFetchList()
+  }
+  componentDidUpdate(prevProps, prevState) {
+    const { searchObj } = this.state;
+    if(prevState.searchObj !== searchObj) {
+      this.onFetchList();
+    }
+  }
   // ----------------------------------事件----------------------------------------
+  onFetchList = () => {
+    const { searchObj } = this.state;
+    const { dispatch} = this.props;
+    dispatch({
+      type: 'auth/userList',
+      payload: searchObj
+    })
+  }
   onSearch = (value) => {
     const { searchObj } = this.state;
     this.setState({
@@ -32,20 +47,20 @@ class User extends React.Component {
     const { current, pageSize } = pagination;
     const { order, field } = sorter;
     const { searchObj } = this.state;
-    // const { list } = this.props;
-    // let sort = order ? {
-    //   sortValue: order === 'ascend' ? 'asc' : order === 'descend' ? 'desc' : '',
-    //   sortName: field ? field : ''
-    // } : {};
-    // let params = {
-    //   ...searchObj,
-    //   ...sort,
-    //   pageNo: pageSize === list.pageSize ? parseInt(current) : 1,
-    //   pageSize: parseInt(pageSize),
-    // };
-    // this.setState({
-    //   searchObj: params
-    // });
+    const { list } = this.props;
+    let sort = order ? {
+      sortValue: order === 'ascend' ? 'asc' : order === 'descend' ? 'desc' : '',
+      sortName: field ? field : ''
+    } : {};
+    let params = {
+      ...searchObj,
+      ...sort,
+      pageNo: pageSize === list.pageSize ? parseInt(current) : 1,
+      pageSize: parseInt(pageSize),
+    };
+    this.setState({
+      searchObj: params
+    });
   };
   onAdd = (record = {}) => {
     this.setState({
@@ -61,9 +76,12 @@ class User extends React.Component {
       showEditModal: false
     })
   }
+  onSave=()=>{
+    this.onFetchList();
+  }
   // ----------------------------------View----------------------------------------
   renderTable() {
-    const { list } = this.state;
+    const { list, loading } = this.props;
     const columns = [
       {
         title: '用户名',
@@ -133,21 +151,16 @@ class User extends React.Component {
     return (
       <Table
         columns={columns}
-        dataSource={list || []}
+        dataSource={list.rows || []}
         onChange={this.onTableChange}
-        pagination={false}
-        // loading={loading}
-        // pagination={{
-        //   pageSizeOptions: ['10', '20', '30', '50'],
-        //   total: list.totalCount || 0,
-        //   showTotal: (total, range) =>
-        //     `共${list.totalCount || 0}条，当前${list.pageNum ? list.pageNum : 1}/${
-        //     list.totalPage ? list.totalPage : 1
-        //     }页`,
-        //   showSizeChanger: true,
-        //   current: list.pageNum ? list.pageNum : 1,
-        //   pageSize: list.pageSize ? list.pageSize : 10,
-        // }}
+        loading={loading}
+        pagination={{
+          pageSizeOptions: ['10', '20', '30', '50'],
+          total: list.totalCount || 0,
+          showSizeChanger: true,
+          current: list.pageNum ? list.pageNum : 1,
+          pageSize: list.pageSize ? list.pageSize : 10,
+        }}
         rowKey={record => {
           return record.userId;
         }}
@@ -165,9 +178,12 @@ class User extends React.Component {
         {
           this.renderTable()
         }
-        {showEditModal && <UserEditModal visible={showEditModal} onCancel={this.onCancel} currentUser={currentUser} />}
+        {showEditModal && <UserEditModal onCancel={this.onCancel} currentUser={currentUser} onSave={this.onSave}/>}
       </Card>
     );
   }
 }
-export default User;
+export default connect(({ auth, loading }) => ({
+  list: auth.userList,
+  loading: loading.effects["auth/userList"]
+}))(User);
