@@ -15,5 +15,5 @@ import java.util.List;
 @Component
 public interface FavoriteRepository extends JpaRepository<Favorites,Long> {
 
-    Favorites findByUserAndApps(User user, List<App> apps);
+    Favorites findByUserAndApp(User user, App app);
 }
