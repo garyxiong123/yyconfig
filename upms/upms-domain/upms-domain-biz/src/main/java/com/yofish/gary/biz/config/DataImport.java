@@ -10,7 +10,6 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-
 import java.util.List;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
@@ -20,7 +19,7 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  * @date 2019-12-05
  */
 @Slf4j
-@Component
+@Component("userDataImport")
 @DependsOn("strategyNumBean")
 public class DataImport {
     @Autowired
@@ -41,9 +40,6 @@ public class DataImport {
             log.info("用户已存在！\n UserName:{},Password:{}", defaultAdminUser.getUsername(), defaultAdminUser.getPassword());
             return;
         }
-        createInitServerConfig();
-
-        createDefaultDepartment();
 
         UserAddReqDTO initAdmin = createInitAdmin();
         Long initAdminId = this.userService.add(initAdmin);
@@ -51,15 +47,7 @@ public class DataImport {
         log.info("初始用户成功！\n UserName:{},Password:{}", initAdminUser.getUsername(), initAdminUser.getPassword());
 
     }
-    //TODO
-    private void createDefaultDepartment() {
 
-    }
-
-    //TODO
-    private void createInitServerConfig() {
-
-    }
 
     private UserAddReqDTO createInitAdmin() {
         List<Long> initRoles = createInitRoles();

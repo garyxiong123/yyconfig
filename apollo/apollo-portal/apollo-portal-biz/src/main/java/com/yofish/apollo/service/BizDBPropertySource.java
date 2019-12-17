@@ -40,7 +40,7 @@ public class BizDBPropertySource extends RefreshablePropertySource {
 
   @Override
   public void refresh() {
-    Iterable<ServerConfig> dbConfigs = serverConfigRepository.findAll();
+    /*Iterable<ServerConfig> dbConfigs = serverConfigRepository.findAll();
 
     Map<String, Object> newConfigs = Maps.newHashMap();
     //default cluster's configs
@@ -82,7 +82,7 @@ public class BizDBPropertySource extends RefreshablePropertySource {
 
       this.source.put(key, value);
 
-    }
+    }*/
 
   }
 
