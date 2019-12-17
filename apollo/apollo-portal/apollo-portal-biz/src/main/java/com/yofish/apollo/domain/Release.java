@@ -1,5 +1,8 @@
 package com.yofish.apollo.domain;
 
+import com.yofish.apollo.repository.ReleaseRepository;
+import com.yofish.apollo.service.ReleaseHistoryService;
+import com.yofish.apollo.service.ReleaseService;
 import com.yofish.gary.dao.entity.BaseEntity;
 import common.constants.ReleaseOperation;
 import common.exception.BadRequestException;
@@ -10,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Map;
+
+import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
 
 /**
  * @Author: xiongchengwei
@@ -21,7 +27,7 @@ import java.util.List;
 @Builder
 @Data
 @Entity
-@Table(name="releases")
+@Table(name = "releases")
 public class Release extends BaseEntity {
 
 
@@ -45,42 +51,40 @@ public class Release extends BaseEntity {
 
 
     @Transactional
-    public Release rollback(long releaseId, String operator) {
-        Release release = findOne(releaseId);
-        if (release == null) {
+    public Release rollback() {
+        if (this == null) {
             throw new NotFoundException("release not found");
         }
-        if (release.isAbandoned()) {
+        if (isAbandoned()) {
             throw new BadRequestException("release is not active");
         }
 
-        String appId = release.getAppId();
-        String clusterName = release.getClusterName();
-        String namespaceName = release.getNamespaceName();
-
         PageRequest page = new PageRequest(0, 2);
-        List<Release> twoLatestActiveReleases = findActiveReleases(appId, clusterName, namespaceName, page);
+        List<Release> twoLatestActiveReleases = this.getAppEnvClusterNamespace().findLatestActiveReleases(page);
         if (twoLatestActiveReleases == null || twoLatestActiveReleases.size() < 2) {
-            throw new BadRequestException(String.format(
-                    "Can't rollback appNamespace(appId=%s, clusterName=%s, namespaceName=%s) because there is only one active release",
-                    appId,
-                    clusterName,
-                    namespaceName));
+//            throw new BadRequestException(String.format("Can't rollback appNamespace(appId=%s, clusterName=%s, namespaceName=%s) because there is only one active release",
+//                    appId,
+//                    clusterName,
+//                    namespaceName));
         }
 
-        release.setAbandoned(true);
+        setAbandoned(true);
 
-        releaseRepository.save(release);
+        getBeanInstance(ReleaseRepository.class).save(this);
 
-        releaseHistoryService.createReleaseHistory(appId, clusterName,
-                namespaceName, clusterName, twoLatestActiveReleases.get(1).getId(),
-                release.getId(), ReleaseOperation.ROLLBACK, null, operator);
+        getBeanInstance(ReleaseHistoryService.class).createReleaseHistory(this, twoLatestActiveReleases.get(1).getId(), ReleaseOperation.ROLLBACK, null);
 
-        //publish child appNamespace if appNamespace has child
-        rollbackChildNamespace(appId, clusterName, namespaceName, twoLatestActiveReleases, operator);
-
-        return release;
+        //publish child appNamespace if appNamespace has child 灰度回滚
+        if (this.getAppEnvClusterNamespace().hasBranchNamespace()) {
+            getBeanInstance(ReleaseService.class).rollbackChildNamespace(this, twoLatestActiveReleases);
+        }
+        return this;
     }
 
+
+    public void publish(String releaseName, String releaseComment, boolean isEmergencyPublish) {
+        Map<String, String> operateNamespaceItems = null;
+        this.getAppEnvClusterNamespace().publish(operateNamespaceItems, releaseName, releaseComment, isEmergencyPublish);
+    }
 
 }

@@ -47,7 +47,7 @@ public class ReleaseController {
         checkModel(Objects.nonNull(namespaceReleaseModel));
         AppEnvClusterNamespace appEnvClusterNamespace = appEnvClusterNamespaceRepository.findById(namespaceReleaseModel.getAppEnvClusterNamespaceId()).get();
         if (namespaceReleaseModel.isEmergencyPublish() && !portalConfig.isEmergencyPublishAllowed(Env.valueOf(appEnvClusterNamespace.getAppEnvCluster().getEnv()))) {
-            throw new BadRequestException(String.format("Env: %s is not supported emergency publish now", env));
+            throw new BadRequestException(String.format("Env: %s is not supported emergency publish now", null));
         }
 
         Release publish = releaseService.publish(appEnvClusterNamespace, namespaceReleaseModel.getReleaseTitle(), namespaceReleaseModel.getReleaseComment(), namespaceReleaseModel.getReleasedBy(), namespaceReleaseModel.isEmergencyPublish());
@@ -78,17 +78,17 @@ public class ReleaseController {
                                         @RequestBody NamespaceReleaseModel model) {
 
         checkModel(Objects.nonNull(model));
-        model.setAppId(appId);
-        model.setEnv(env);
-        model.setClusterName(branchName);
-        model.setNamespaceName(namespaceName);
+//        model.setAppId(appId);
+//        model.setEnv(env);
+//        model.setClusterName(branchName);
+//        model.setNamespaceName(namespaceName);
 
         if (model.isEmergencyPublish() && !portalConfig.isEmergencyPublishAllowed(Env.valueOf(env))) {
             throw new BadRequestException(String.format("Env: %s is not supported emergency publish now", env));
         }
 
-        ReleaseDTO createdRelease = releaseService.publish(model);
-
+        Release createdRelease = releaseService.publish(null,  model.getReleaseTitle(),  model.getReleaseComment(),  null,  model.isEmergencyPublish());
+        ReleaseDTO releaseDTO = transformRelease2Dto(createdRelease);
         ConfigPublishEvent event = ConfigPublishEvent.instance();
         event.withAppId(appId)
                 .withCluster(clusterName)
@@ -99,7 +99,7 @@ public class ReleaseController {
 
         publisher.publishEvent(event);
 
-        return createdRelease;
+        return releaseDTO;
     }
 
 

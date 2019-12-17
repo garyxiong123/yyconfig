@@ -6,24 +6,29 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import java.util.Map;
 
 /**
  * @Author: xiongchengwei
  * @Date: 2019/12/15 下午10:14
  */
-@NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Entity
-@DiscriminatorValue("AppEnvClusterNamespace4Branch")
+@DiscriminatorValue("branch")
 public class AppEnvClusterNamespace4Branch extends AppEnvClusterNamespace {
+
+    private Long parentId;
+
+
     public AppEnvClusterNamespace4Branch(AppEnvCluster appEnvCluster, AppNamespace appNamespace) {
         super(appEnvCluster, appNamespace);
     }
 
     @Override
-    public Release publish(String releaseName, String releaseComment, boolean isEmergencyPublish) {
+    public Release publish(Map<String, String> operateNamespaceItems, String releaseName, String releaseComment, boolean isEmergencyPublish) {
 
-        return publishBranchNamespace(namespace, namespace, operateNamespaceItems, releaseName, releaseComment, operator, isEmergencyPublish);
+//        return publishBranchNamespace(namespace, namespace, operateNamespaceItems, releaseName, releaseComment, operator, isEmergencyPublish);
+        return null;
     }
 }

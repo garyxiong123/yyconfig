@@ -1,11 +1,17 @@
 package com.yofish.apollo.domain;
 
+import com.yofish.apollo.repository.ReleaseRepository;
 import com.yofish.apollo.service.AppNamespaceService;
 import com.yofish.gary.dao.entity.BaseEntity;
 import lombok.*;
+import org.springframework.data.domain.PageRequest;
 
 import javax.persistence.*;
 
+import java.util.List;
+import java.util.Map;
+
+import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass;
 import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
 
 /**
@@ -29,6 +35,11 @@ public class AppEnvClusterNamespace extends BaseEntity {
     @ManyToOne(cascade = CascadeType.ALL)
     private AppNamespace appNamespace;
 
+
+    public Release findLatestActiveRelease(String appId, String clusterName, String namespaceName) {
+        return getBeanByClass(ReleaseRepository.class).findFirstByAppIdAndClusterNameAndNamespaceNameAndIsAbandonedFalseOrderByIdDesc(appId, clusterName, namespaceName);
+    }
+
     public boolean isBranchNamespace() {
         return getBeanInstance(AppNamespaceService.class).findAppEnvClusterNamespace4Branch(this) != null;
     }
@@ -45,8 +56,16 @@ public class AppEnvClusterNamespace extends BaseEntity {
         return getBeanInstance(AppNamespaceService.class).findChildNamespace(this);
     }
 
-    public Release publish(String releaseName, String releaseComment, boolean isEmergencyPublish) {
+    public Release publish(Map<String, String> operateNamespaceItems, String releaseName, String releaseComment, boolean isEmergencyPublish) {
 
+        return null;
+    }
+
+    public Release findLatestActiveRelease() {
+        return null;
+    }
+
+    public List<Release> findLatestActiveReleases(PageRequest page) {
         return null;
     }
 }
