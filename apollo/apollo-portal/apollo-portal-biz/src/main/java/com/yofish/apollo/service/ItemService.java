@@ -3,10 +3,7 @@ package com.yofish.apollo.service;
 import com.yofish.apollo.bo.ItemChangeSets;
 import com.yofish.apollo.component.txtresolver.ConfigChangeContentBuilder;
 import com.yofish.apollo.component.txtresolver.ConfigTextResolver;
-import com.yofish.apollo.domain.AppEnvClusterNamespace;
-import com.yofish.apollo.domain.AppNamespace;
-import com.yofish.apollo.domain.Commit;
-import com.yofish.apollo.domain.Item;
+import com.yofish.apollo.domain.*;
 import com.yofish.apollo.dto.CreateItemReq;
 import com.yofish.apollo.dto.ItemReq;
 import com.yofish.apollo.dto.ModifyItemsByTextsReq;
@@ -57,8 +54,14 @@ public class ItemService {
     private ConfigTextResolver propertyResolver;
 
     public Item createItem(CreateItemReq createItemReq) {
-        Item item = new Item(createItemReq);
+        AppEnvClusterNamespace appEnvClusterNamespace=appEnvClusterNamespaceRepository.findAppEnvClusterNamespace(
+                createItemReq.getAppId(),createItemReq.getEnv(),createItemReq.getNamespaceName(),createItemReq.getClusterName()
+        );
+        createItemReq.setAppEnvClusterNamespaceId(appEnvClusterNamespace.getId());
+        Item item = new Item(createItemReq.getKey(),createItemReq.getValue(),createItemReq.getComment(),appEnvClusterNamespace,
+                createItemReq.getLineNum());
         return itemRepository.save(item);
+        //return new Item();
     }
 
 
@@ -80,26 +83,18 @@ public class ItemService {
 
 
     public void updateConfigItemByText(ModifyItemsByTextsReq model) {
-
-        String appId = model.getAppId();
-        //todo 缺少clusterNamespace
-        AppEnvClusterNamespace appEnvClusterNamespace = new AppEnvClusterNamespace();
-        String clusterName = model.getClusterName();
-        String namespaceName = model.getNamespaceName();
+        AppEnvClusterNamespace appEnvClusterNamespace=appEnvClusterNamespaceRepository.findAppEnvClusterNamespace(
+                model.getAppId(),model.getEnv(),model.getNamespaceName(),model.getClusterName()
+        );
         long namespaceId = model.getNamespaceId();
         String configText = model.getConfigText();
-
         ConfigTextResolver resolver = findResolver(model.getFormat());
-
         List<Item> items = itemRepository.findAllByAppEnvClusterNamespace(appEnvClusterNamespace);
-
         ItemChangeSets changeSets = resolver.resolve(namespaceId, configText, items);
         if (changeSets.isEmpty()) {
             return;
         }
-
         updateItems(appEnvClusterNamespace, changeSets);
-
         Commit commit = Commit.builder().appEnvClusterNamespace(appEnvClusterNamespace).changeSets(toJSONString(changeSets)).build();
         commitRepository.save(commit);
 
