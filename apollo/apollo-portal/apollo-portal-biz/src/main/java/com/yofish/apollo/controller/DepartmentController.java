@@ -36,7 +36,7 @@ public class DepartmentController {
     public Result<Department> create(@RequestBody @Valid DepartmentModel model) {
         Department byName = this.departmentRepository.findByName(model.getName());
         YyAssert.paramCheck(!ObjectUtils.isEmpty(byName), "部门名称不能重复");
-        Department department = this.modelToEntity(model);
+        Department department = Department.builder().name(model.getName()).code(model.getCode()).comment(model.getComment()).build();
         this.departmentRepository.save(department);
         return Result.ok(department);
     }
@@ -78,9 +78,5 @@ public class DepartmentController {
 
         this.departmentRepository.delete(department);
         return Result.ok();
-    }
-
-    private Department modelToEntity(DepartmentModel model) {
-        return Department.builder().name(model.getName()).code(model.getCode()).build();
     }
 }
