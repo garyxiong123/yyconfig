@@ -58,7 +58,6 @@ import static org.apache.commons.lang3.StringUtils.isNoneBlank;
 @Setter
 @Getter
 @Entity
-@Builder
 @Table(name = "user")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "DISCRIMINATOR", discriminatorType = DiscriminatorType.STRING, length = 30)
@@ -160,6 +159,20 @@ public class User extends BaseEntity {
         }
     }
 
+    @Builder
+    public User(Long id, String username, String password, String realName, Integer sex, String phone, String email, String remark, String status, HashMap extInfo, Set<Role> roles) {
+        super(id);
+        this.username = username;
+        this.password = password;
+        this.realName = realName;
+        this.sex = sex;
+        this.phone = phone;
+        this.email = email;
+        this.remark = remark;
+        this.status = status;
+        this.extInfo = extInfo;
+        this.roles = roles;
+    }
 
     public void checkStatus() {
         exception2MatchingExpression(eq(status, INVALID.getCode()), USER_STATUS_INVALID);

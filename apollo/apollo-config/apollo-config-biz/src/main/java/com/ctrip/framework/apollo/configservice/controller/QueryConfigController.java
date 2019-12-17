@@ -36,7 +36,7 @@ import static framework.apollo.core.ConfigConsts.NO_APPID_PLACEHOLDER;
 @RestController
 @RequestMapping("/configs")
 public class QueryConfigController {
-    private static final Splitter X_FORWARDED_FOR_SPLITTER = Splitter.on(",").omitEmptyStrings()
+    /*private static final Splitter X_FORWARDED_FOR_SPLITTER = Splitter.on(",").omitEmptyStrings()
             .trimResults();
     @Autowired
     private ConfigService configService;
@@ -145,11 +145,11 @@ public class QueryConfigController {
         return appNamespace != null;
     }
 
-    /**
+    *//**
      * @param clientAppId the application which uses public config
      * @param namespace   the appNamespace
      * @param dataCenter  the datacenter
-     */
+     *//*
     private Release findPublicConfig(String clientAppId, String clientIp, String clusterName,
                                      String namespace, String dataCenter, ApolloNotificationMessages clientMessages) {
         AppNamespace appNamespace = appNamespaceService.findPublicNamespaceByName(namespace);
@@ -165,10 +165,10 @@ public class QueryConfigController {
                 clientMessages);
     }
 
-    /**
+    *//**
      * Merge configurations of releases.
      * Release in lower index override those in higher index
-     */
+     *//*
     Map<String, String> mergeReleaseConfigurations(List<Release> releases) {
         Map<String, String> result = Maps.newHashMap();
         for (Release release : Lists.reverse(releases)) {
@@ -217,5 +217,5 @@ public class QueryConfigController {
         }
 
         return notificationMessages;
-    }
+    }*/
 }

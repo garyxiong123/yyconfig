@@ -4,6 +4,7 @@ import com.yofish.apollo.bo.ItemChangeSets;
 import com.yofish.apollo.component.txtresolver.ConfigChangeContentBuilder;
 import com.yofish.apollo.component.txtresolver.ConfigTextResolver;
 import com.yofish.apollo.domain.AppEnvClusterNamespace;
+import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.domain.Commit;
 import com.yofish.apollo.domain.Item;
 import com.yofish.apollo.dto.CreateItemReq;
@@ -176,6 +177,26 @@ public class ItemService {
     public List<Item> findItemsWithoutOrdered(Long id) {
         return null;
     }
+
+    @Transactional
+    public ItemChangeSets updateSet(AppNamespace namespace, ItemChangeSets changeSets){
+        return new ItemChangeSets();
+    }
+
+    @Transactional
+    public ItemChangeSets updateSet(String appId, String clusterName,
+                                    String namespaceName, ItemChangeSets changeSet) {
+
+        return new ItemChangeSets();
+
+    }
+
+    private void createCommit(String appId, String clusterName, String namespaceName, String configChangeContent,
+                              String operator) {
+
+
+    }
+
 }
 
 

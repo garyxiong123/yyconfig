@@ -60,7 +60,7 @@ public class InstanceConfigAuditUtil implements InitializingBean {
     return this.audits.offer(new InstanceConfigAuditModel(appId, clusterName, dataCenter, ip,
         configAppId, configClusterName, configNamespace, releaseKey));
   }
-
+/*
   void doAudit(InstanceConfigAuditModel auditModel) {
     String instanceCacheKey = assembleInstanceKey(auditModel.getAppId(), auditModel
         .getClusterName(), auditModel.getIp(), auditModel.getDataCenter());
@@ -144,11 +144,11 @@ public class InstanceConfigAuditUtil implements InitializingBean {
 //          instance.getDataCenter(), instance.getIp()).getId();
       return 1;
     }
-  }
+  }*/
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    auditExecutorService.submit(() -> {
+    /*auditExecutorService.submit(() -> {
       while (!auditStopped.get() && !Thread.currentThread().isInterrupted()) {
         try {
           InstanceConfigAuditModel model = audits.poll();
@@ -161,7 +161,7 @@ public class InstanceConfigAuditUtil implements InitializingBean {
           Tracer.logError(ex);
         }
       }
-    });
+    });*/
   }
 
   private String assembleInstanceKey(String appId, String cluster, String ip, String datacenter) {

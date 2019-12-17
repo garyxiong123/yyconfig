@@ -110,6 +110,16 @@ public interface UserApi {
     Result<PageData<UserQueryRspDTO>> getPage(@RequestBody UserQueryReqDTO userQueryReqDTO);
 
     /**
+     * 查询用户列表
+     *
+     * @param userQueryReqDTO
+     * @return
+     */
+    @ApiOperation("查询用户列表")
+    @PostMapping("/getList")
+    Result<List<UserQueryRspDTO>> getList(@RequestBody UserQueryReqDTO userQueryReqDTO);
+
+    /**
      * 未授权访问处理
      *
      * @return

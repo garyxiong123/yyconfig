@@ -29,7 +29,7 @@ import static common.utils.RequestPrecondition.checkModel;
 
 @RestController
 public class ReleaseController {
-
+/*
     @Autowired
     private ReleaseService releaseService;
     @Autowired
@@ -164,5 +164,5 @@ public class ReleaseController {
                 .setEnv(Env.valueOf(env));
 
         publisher.publishEvent(event);
-    }
+    }*/
 }

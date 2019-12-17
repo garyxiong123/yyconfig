@@ -20,6 +20,6 @@ public interface ItemRepository  extends JpaRepository<Item, Long> {
 
 
    List<Item> findAllByAppEnvClusterNamespace(AppEnvClusterNamespace appEnvClusterNamespace);
-   Item findFirstByClusterNamespaceOrderByLineNumDesc(AppEnvClusterNamespace clusterNamespace);
+//   Item findFirstByClusterNamespaceOrderByLineNumDesc(AppEnvClusterNamespace clusterNamespace);
 
 }

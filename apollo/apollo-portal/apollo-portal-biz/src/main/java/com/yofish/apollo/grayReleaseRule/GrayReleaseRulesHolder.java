@@ -59,19 +59,21 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
     executorService = Executors.newScheduledThreadPool(1, ApolloThreadFactory
         .create("GrayReleaseRulesHolder", true));
   }
-
   @Override
   public void afterPropertiesSet() throws Exception {
+/*
     populateDataBaseInterval();
     //force sync load for the first time
     periodicScanRules();
     executorService.scheduleWithFixedDelay(this::periodicScanRules,
         getDatabaseScanIntervalSecond(), getDatabaseScanIntervalSecond(), getDatabaseScanTimeUnit()
     );
+    */
   }
 
   @Override
   public void handleReleaseMessage(ReleaseMessage message, String channel) {
+/*
     logger.info("message received - channel: {}, message: {}", channel, message);
     String releaseMessage = message.getMessage();
     if (!Topics.APOLLO_RELEASE_TOPIC.equals(channel) || Strings.isNullOrEmpty(releaseMessage)) {
@@ -90,8 +92,9 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
     List<GrayReleaseRule> rules = grayReleaseRuleRepository.findByAppIdAndClusterNameAndNamespaceName(appId, cluster, namespace);
 
     mergeGrayReleaseRules(rules);
+*/
   }
-
+/*
   private void periodicScanRules() {
     Transaction transaction = Tracer.newTransaction("Apollo.GrayReleaseRulesScanner",
         "scanGrayReleaseRules");
@@ -105,7 +108,7 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
     } finally {
       transaction.complete();
     }
-  }
+  }*/
 
   public Long findReleaseIdFromGrayReleaseRule(String clientAppId, String clientIp, String
       configAppId, String configCluster, String configNamespaceName) {
@@ -138,6 +141,7 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
         (assembleReversedGrayReleaseRuleKey(clientAppId, namespaceName, GrayReleaseRuleItemDTO
             .ALL_IP));
   }
+/*
 
   private void scanGrayReleaseRules() {
     long maxIdScanned = 0;
@@ -156,6 +160,8 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
       hasMore = rulesScanned == 500;
     }
   }
+*/
+/*
 
   private void mergeGrayReleaseRules(List<GrayReleaseRule> grayReleaseRules) {
     if (CollectionUtils.isEmpty(grayReleaseRules)) {
@@ -200,6 +206,7 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
       }
     }
   }
+*/
 
   private void addCache(String key, GrayReleaseRuleCache ruleCache) {
     if (ruleCache.getBranchStatus() == NamespaceBranchStatus.ACTIVE) {
@@ -222,6 +229,7 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
       }
     }
   }
+/*
 
   private GrayReleaseRuleCache transformRuleToRuleCache(GrayReleaseRule grayReleaseRule) {
     Set<GrayReleaseRuleItemDTO> ruleItems;
@@ -238,6 +246,7 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
 
     return ruleCache;
   }
+*/
 
   private void populateDataBaseInterval() {
     databaseScanInterval = bizConfig.grayReleaseRuleScanInterval();

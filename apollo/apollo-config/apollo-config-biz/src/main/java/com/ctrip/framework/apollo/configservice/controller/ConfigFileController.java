@@ -97,7 +97,7 @@ public class ConfigFileController implements ReleaseMessageListener {
         jsonResponseHeaders.add("Content-Type", "application/json;charset=UTF-8");
         NOT_FOUND_RESPONSE = new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
+/*
     @RequestMapping(value = "/{appId}/{clusterName}/{namespace:.+}", method = RequestMethod.GET)
     public ResponseEntity<String> queryConfigAsProperties(@PathVariable String appId,
                                                           @PathVariable String clusterName,
@@ -129,7 +129,7 @@ public class ConfigFileController implements ReleaseMessageListener {
         }
 
         return new ResponseEntity<>(result, jsonResponseHeaders, HttpStatus.OK);
-    }
+    }*/
 
 
 
@@ -155,7 +155,7 @@ public class ConfigFileController implements ReleaseMessageListener {
         }
     }
 
-
+/*
     private String queryConfig(ConfigReqDto configReqDto) throws IOException {
 
         String queryConfigRs = null;
@@ -189,7 +189,7 @@ public class ConfigFileController implements ReleaseMessageListener {
         }
 
         return queryConfigRs;
-    }
+    }*/
 
     private String paramsCheckAndFilter(ConfigReqDto configReqDto) {
         namespaceUtil.filterAndNormalizeNamespace(configReqDto.getAppId(), configReqDto.getNamespace());
@@ -220,15 +220,15 @@ public class ConfigFileController implements ReleaseMessageListener {
         queryConfigRs = localCache.getIfPresent(cacheKey);
         return queryConfigRs != null;
     }
-
+/*
     private String loadConfigByGrayRule(ConfigReqDto configReqDto) throws IOException {
         return loadConfigFromConfigController(configReqDto);
-    }
+    }*/
 
     private boolean hasGrayRule4CurrentClient(ConfigReqDto configReqDto) {
         return grayReleaseRulesHolder.hasGrayReleaseRule(configReqDto.getAppId(), configReqDto.getClientIp(), configReqDto.getNamespace());
     }
-
+/*
     private String loadConfigFromConfigController(ConfigReqDto configReqDto) throws IOException {
         ApolloConfig apolloConfig = queryConfigController.queryConfig4Client(configReqDto.getAppId(), configReqDto.getClusterName(), configReqDto.getNamespace(), configReqDto.getDataCenter(), "-1", configReqDto.getClientIp(), null, request, response);
 
@@ -238,7 +238,7 @@ public class ConfigFileController implements ReleaseMessageListener {
         String result = configReqDto.getConfigResult(apolloConfig.getConfigurations());
 
         return result;
-    }
+    }*/
 
     private ConfigReqDto createConfigReqDto4Json( String appId, String clusterName, String namespace, String dataCenter, String clientIp) {
         return ConfigReqDto4Json.builder().appId(appId).clusterName(clusterName).namespace(namespace).dataCenter(dataCenter).clientIp(clientIp).build();

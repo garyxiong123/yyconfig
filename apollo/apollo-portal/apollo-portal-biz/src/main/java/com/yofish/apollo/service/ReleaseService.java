@@ -31,7 +31,7 @@ import static org.apache.commons.lang.StringUtils.isEmpty;
  */
 @Service
 public class ReleaseService {
-
+/*
     private static final FastDateFormat TIMESTAMP_FORMAT = FastDateFormat.getInstance("yyyyMMddHHmmss");
     private Gson gson = new Gson();
 
@@ -377,5 +377,5 @@ public class ReleaseService {
     public void rollback(Env env, long releaseId) {
 
 
-    }
+    }*/
 }

@@ -25,8 +25,8 @@ public class Favorites extends BaseEntity {
     @ManyToOne(cascade = CascadeType.DETACH)
     private User user;
 
-    @ManyToMany
-    private List<App> apps;
+    @ManyToOne(cascade = CascadeType.DETACH)
+    private App app;
 
 
 }

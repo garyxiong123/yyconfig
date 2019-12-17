@@ -22,4 +22,6 @@ public class DepartmentModel {
 
     @NotBlank(message = "name cannot be blank")
     private String name;
+
+    private String comment;
 }

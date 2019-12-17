@@ -33,31 +33,27 @@ public class FavoriteService {
     public Result addOrCancelFavorite(String appCode) {
 
         Long userId = YyRequestInfoHelper.getCurrentUserId();
-        if (null == userId){
+        if (null == userId) {
             throw new BadRequestException("Logger not be found");
         }
-        
+
         App app = appRepository.findByAppCode(appCode);
-        if (app == null){
+        if (app == null) {
             throw new BadRequestException("Application not be found");
         }
-
-        List<App> apps = new ArrayList<>();
-        apps.add(app);
 
         User user = new User();
         user.setId(userId);
 
-        Favorites favoriteInDB = favoriteRepository.findByUserAndApps(user,apps);
-
-        if (null == favoriteInDB){
+        Favorites favoriteInDB = favoriteRepository.findByUserAndApp(user, app);
+        if (null == favoriteInDB) {
             // add favorite
             Favorites favorites = new Favorites();
             favorites.setUser(user);
-            favorites.setApps(apps);
+            favorites.setApp(app);
             favoriteRepository.save(favorites);
             return Result.okDesc("add favorite success");
-        }else{
+        } else {
             // delete favorite
             favoriteRepository.delete(favoriteInDB);
             return Result.okDesc("cancel favorite success");

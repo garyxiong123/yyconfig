@@ -72,7 +72,7 @@ public class InstanceConfigAuditUtilTest {
     assertTrue(result);
     assertTrue(Objects.equals(someAuditModel, audit));
   }
-
+/*
   @Test
   public void testDoAudit() throws Exception {
     long someInstanceId = 1;
@@ -89,7 +89,7 @@ public class InstanceConfigAuditUtilTest {
     verify(instanceService, times(1)).findInstanceConfig(someInstanceId, someConfigAppId,
         someConfigNamespace);
     verify(instanceService, times(1)).createInstanceConfig(any(InstanceConfig.class));
-  }
+  }*/
 
 
 }
