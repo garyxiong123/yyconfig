@@ -83,4 +83,8 @@ public class PermissionValidator {
     public boolean isSuperAdmin() {
         return userRepository.findById(getCurrentUserId()).get().isAdmin();
     }
+
+    public boolean shouldHideConfigToCurrentUser(String appId, String env, String namespaceName) {
+        return false;
+    }
 }

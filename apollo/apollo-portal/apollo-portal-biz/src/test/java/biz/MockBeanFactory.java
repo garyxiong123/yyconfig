@@ -33,7 +33,7 @@ public class MockBeanFactory {
 
         instance.setKey(key);
         instance.setValue(value);
-        instance.setCluster(cluster);
+//        instance.setCluster(cluster);
 
         return instance;
     }

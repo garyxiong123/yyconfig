@@ -1,32 +1,25 @@
 package com.yofish.apollo.controller;
 
-import com.yofish.apollo.domain.*;
+import com.yofish.apollo.domain.App;
+import com.yofish.apollo.domain.AppNamespace4Private;
+import com.yofish.apollo.domain.AppNamespace4Protect;
+import com.yofish.apollo.domain.AppNamespace4Public;
 import com.yofish.apollo.model.model.AppNamespaceModel;
-import com.yofish.apollo.model.model.NamespaceCreationModel;
-import com.yofish.apollo.service.AppNamespaceService;
 import com.yofish.apollo.service.AppEnvClusterNamespaceService;
+import com.yofish.apollo.service.AppNamespaceService;
 import com.youyu.common.api.Result;
-import common.dto.NamespaceDTO;
-import common.exception.BadRequestException;
-import common.utils.BeanUtils;
-import common.utils.InputValidator;
-import common.utils.RequestPrecondition;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
-
-import static common.utils.RequestPrecondition.checkModel;
 
 //import com.yofish.apollo.model.bo.NamespaceBO;
 //import com.yofish.apollo.model.model.NamespaceCreationModel;
 
 @Slf4j
 @RestController
-public class NamespaceController {
+public class AppNamespaceController {
 
     @Autowired
     private AppEnvClusterNamespaceService appEnvClusterNamespaceService;

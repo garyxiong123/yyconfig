@@ -15,6 +15,7 @@
  */
 package com.yofish.gary.biz.service.impl;
 
+import com.yofish.gary.api.ShiroSimpleHashStrategy;
 import com.yofish.gary.api.dto.req.*;
 import com.yofish.gary.api.dto.rsp.UserDetailRspDTO;
 import com.yofish.gary.api.dto.rsp.UserLoginRspDTO;
@@ -39,7 +40,9 @@ import java.util.List;
 import java.util.Set;
 
 import static com.yofish.gary.api.enums.UpmsResultCode.*;
+import static com.yofish.gary.api.enums.UserStatusEnum.VALID;
 import static com.yofish.gary.api.login.UpmsLoginLogoutRealm.getUserId;
+import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
 import static com.yofish.gary.biz.helper.exception.ExceptionHelper.loginException;
 import static com.yofish.gary.utils.BizExceptionUtil.exception;
 import static com.yofish.gary.utils.BizExceptionUtil.exception2MatchingExpression;
@@ -48,6 +51,7 @@ import static com.yofish.gary.utils.OrikaCopyUtil.copyProperty4List;
 import static com.yofish.gary.utils.StringUtil.eq;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -113,14 +117,21 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void edit(UserEditReqDTO userEditReqDTO) {
-        User existUser = userRepository.findById(userEditReqDTO.getUserId()).get();
+        User existUser = userRepository.findById(userEditReqDTO.getId()).get();
         if (!eq(existUser.getEmail(), userEditReqDTO.getEmail())) {
             checkUserEmail(userEditReqDTO.getEmail());
         }
+        String password = getBeanInstance(ShiroSimpleHashStrategy.class, shiroProperties.getHashAlgorithmName()).signature(userEditReqDTO.getPassword());
+        existUser.setRealName(userEditReqDTO.getRealName());
+        existUser.setSex(userEditReqDTO.getSex());
+        existUser.setPhone(userEditReqDTO.getPhone());
+        existUser.setEmail(userEditReqDTO.getEmail());
+        existUser.setStatus(defaultIfBlank(userEditReqDTO.getStatus(), VALID.getCode()));
+        existUser.setRemark(userEditReqDTO.getRemark());
+        existUser.setPassword(password);
 
-        User user = new User(userEditReqDTO, shiroProperties.getHashAlgorithmName());
-        userRepository.save(user);
-        updateUserRoles(user, userEditReqDTO.getRoleIds());
+        userRepository.save(existUser);
+        updateUserRoles(existUser, userEditReqDTO.getRoleIds());
     }
 
     @Override

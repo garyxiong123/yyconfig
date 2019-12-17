@@ -20,21 +20,13 @@ import javax.persistence.Entity;
 @Getter
 @Entity
 public class ServerConfig extends BaseEntity {
-    @Column(name = "`Key`", nullable = false)
+    @Column(name = "`Key`", nullable = false, unique = true)
     private String key;
-
-//    @Column(name = "AppEnvCluster", nullable = false)
-//    private String appEnvCluster;
 
     @Column(name = "Value", nullable = false)
     private String value;
 
     @Column(name = "Comment", nullable = false)
     private String comment;
-
-    private String cluster;
-
-//    @Column(name = "Cluster", nullable = false)
-//    private String cluster;
 
 }

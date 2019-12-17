@@ -6,10 +6,17 @@ import com.yofish.apollo.dto.CreateItemReq;
 import com.yofish.apollo.dto.ItemReq;
 import com.yofish.apollo.dto.ModifyItemsByTextsReq;
 import com.yofish.apollo.dto.UpdateItemReq;
+import com.yofish.apollo.model.NamespaceTextModel;
 import com.yofish.apollo.service.ItemService;
 import com.youyu.common.api.Result;
 import common.exception.BadRequestException;
+import framework.apollo.core.enums.ConfigFileFormat;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -61,9 +68,7 @@ public class ItemController {
 
   @RequestMapping(value = "/findItems", method = RequestMethod.GET)
   public Result<List<Item>> findItems(@RequestBody ItemReq req) {
-
     List<Item> items = itemService.findItems(req);
-
     return Result.ok(items);
   }
 
@@ -99,6 +104,30 @@ public class ItemController {
   }
 */
 
+  @PostMapping(value = "syntax-check")
+  public ResponseEntity<Void> syntaxCheckText(@RequestBody NamespaceTextModel model) {
+
+    doSyntaxCheck(model);
+
+    return ResponseEntity.ok().build();
+  }
+
+  private void doSyntaxCheck(NamespaceTextModel model) {
+    if (StringUtils.isBlank(model.getConfigText())) {
+      return;
+    }
+
+    // only support yaml syntax check
+    if (model.getFormat() != ConfigFileFormat.YAML && model.getFormat() != ConfigFileFormat.YML) {
+      return;
+    }
+
+    // use YamlPropertiesFactoryBean to check the yaml syntax
+    YamlPropertiesFactoryBean yamlPropertiesFactoryBean = new YamlPropertiesFactoryBean();
+    yamlPropertiesFactoryBean.setResources(new ByteArrayResource(model.getConfigText().getBytes()));
+    // this call converts yaml to properties and will throw exception if the conversion fails
+    yamlPropertiesFactoryBean.getObject();
+  }
 
 
 }

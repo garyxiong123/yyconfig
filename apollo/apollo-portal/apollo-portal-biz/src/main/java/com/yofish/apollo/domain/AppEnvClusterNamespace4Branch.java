@@ -1,12 +1,17 @@
 package com.yofish.apollo.domain;
 
+import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import java.util.Map;
+
+import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass;
 
 /**
  * @Author: xiongchengwei
@@ -20,15 +25,24 @@ public class AppEnvClusterNamespace4Branch extends AppEnvClusterNamespace {
 
     private Long parentId;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    private GrayReleaseRule grayReleaseRule;
+
+    private String branchName;
+
+    public AppEnvClusterNamespace4Branch(Long parentId){
+        this.parentId = parentId;
+    }
+
 
     public AppEnvClusterNamespace4Branch(AppEnvCluster appEnvCluster, AppNamespace appNamespace) {
         super(appEnvCluster, appNamespace);
     }
 
-    @Override
-    public Release publish(Map<String, String> operateNamespaceItems, String releaseName, String releaseComment, boolean isEmergencyPublish) {
 
-//        return publishBranchNamespace(namespace, namespace, operateNamespaceItems, releaseName, releaseComment, operator, isEmergencyPublish);
-        return null;
+    public AppEnvClusterNamespace4Main getMainNamespace() {
+        AppEnvClusterNamespace4Main appEnvClusterNamespace = (AppEnvClusterNamespace4Main) getBeanByClass(AppEnvClusterNamespaceRepository.class).findById(parentId).orElseGet(null);
+        return appEnvClusterNamespace;
     }
+
 }

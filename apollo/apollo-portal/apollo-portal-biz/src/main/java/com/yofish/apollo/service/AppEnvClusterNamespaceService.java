@@ -2,7 +2,9 @@ package com.yofish.apollo.service;
 
 import com.yofish.apollo.domain.AppEnvCluster;
 import com.yofish.apollo.domain.AppEnvClusterNamespace;
+import com.yofish.apollo.domain.AppEnvClusterNamespace4Branch;
 import com.yofish.apollo.domain.AppNamespace;
+import com.yofish.apollo.repository.AppEnvClusterNamespace4BranchRepository;
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.repository.AppEnvClusterRepository;
 import common.dto.NamespaceDTO;
@@ -29,6 +31,12 @@ public class AppEnvClusterNamespaceService {
     private AppEnvClusterRepository appEnvClusterRepository;
     @Autowired
     private ServerConfigService serverConfigService;
+    @Autowired
+    private AppEnvClusterNamespace4BranchRepository branchRepository;
+
+    public  AppEnvClusterNamespace4Branch findChildNamespace(Long parentId) {
+        return branchRepository.findAppEnvClusterNamespace4BranchByParentId(parentId);
+    }
 
 /*
     public NamespaceDTO createNamespace(String env, NamespaceDTO dto) {

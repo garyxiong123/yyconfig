@@ -1,7 +1,7 @@
 package com.yofish.apollo.repository;
 
+import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppNamespace;
-import com.yofish.apollo.enums.NamespaceType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,7 +14,7 @@ import java.util.List;
 @Repository
 public interface AppNamespaceRepository extends JpaRepository<AppNamespace, Long> {
 
-    AppNamespace findByAppIdAndName(Long appId, String namespaceName);
+    AppNamespace findByAppAndName(App app, String namespaceName);
 
     AppNamespace findByName(String namespaceName);
 

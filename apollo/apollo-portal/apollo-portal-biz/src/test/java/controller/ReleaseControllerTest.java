@@ -3,8 +3,12 @@ package controller;
 import com.google.common.base.Joiner;
 import com.google.gson.Gson;
 //import com.yofish.apollo.controller.ReleaseController;
+import com.yofish.apollo.controller.ReleaseController;
+import com.yofish.apollo.domain.*;
 import com.yofish.apollo.dto.ReleaseDTO;
 import com.yofish.apollo.message.Topics;
+import com.yofish.apollo.model.model.NamespaceReleaseModel;
+import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.repository.ReleaseRepository;
 import com.yofish.apollo.service.ReleaseService;
 import common.dto.AppDTO;
@@ -12,6 +16,7 @@ import common.dto.ClusterDTO;
 import common.dto.ItemDTO;
 import common.dto.NamespaceDTO;
 import framework.apollo.core.ConfigConsts;
+import framework.apollo.core.enums.Env;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,82 +30,108 @@ import org.springframework.util.MultiValueMap;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.yofish.apollo.DomainCreate.createAppEnvClusterNamespace4Main;
+import static com.yofish.apollo.DomainCreate.createNamespace4Main;
 import static org.mockito.Mockito.*;
 
 public class ReleaseControllerTest extends AbstractControllerTest {
 
-  @Autowired
-  ReleaseRepository releaseRepository;
-  @Autowired
-//  ReleaseController releaseController;
+    @Autowired
+    ReleaseRepository releaseRepository;
+    @Autowired
+    ReleaseController releaseController;
+    @Autowired
+    private AppEnvClusterNamespaceRepository namespaceRepository;
 
-  @Test
-  public void testRelease4Main() {
+    @Test
+    public void testRelease4Main() {
+        AppEnvClusterNamespace4Main namespace = createNamespace4Main();
+        namespaceRepository.save(namespace);
+        NamespaceReleaseModel namespaceReleaseModel = NamespaceReleaseModel.builder().releaseTitle("测试发布标题").releaseComment("测试发布").AppEnvClusterNamespaceId(namespace.getId()).build();
+        releaseController.createRelease(namespaceReleaseModel);
+    }
 
-//    releaseController.
-  }
+    @Test
+    public void testRelease4MainWithBranch() {
+        AppEnvClusterNamespace4Main namespace = createNamespace4MainWithBranch();
+        namespaceRepository.save(namespace);
+        NamespaceReleaseModel namespaceReleaseModel = NamespaceReleaseModel.builder().releaseTitle("测试发布标题").releaseComment("测试发布").AppEnvClusterNamespaceId(namespace.getId()).build();
+        releaseController.createRelease(namespaceReleaseModel);
+    }
 
-  @Test
-  public void testRelease4Branch() {
+    @Test
+    public void testRelease4Branch() {
 
-  }
+    }
 
-  @Test
-  public void testRelease4Rollback() {
+    @Test
+    public void testRelease4Rollback() {
 
-  }
+    }
+    private AppEnvClusterNamespace4Main createNamespace4MainWithBranch() {
+        AppEnvClusterNamespace4Main appEnvClusterNamespace4Main = createAppEnvClusterNamespace4Main();
+        createAppEnvClusterNamespace4Branch(appEnvClusterNamespace4Main);
 
-  @Test
+        return null;
+    }
+
+    private void createAppEnvClusterNamespace4Branch(AppEnvClusterNamespace4Main appEnvClusterNamespace4Main) {
+
+    }
+
+
+
+    @Test
 //  @Sql(scripts = "/controller/test-release.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
 //  @Sql(scripts = "/controller/cleanup.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
-  public void testReleaseBuild() {
-    String appId = "someAppId";
-    AppDTO app = restTemplate.getForObject("http://localhost:" + port + "/apps/" + appId, AppDTO.class);
+    public void testReleaseBuild() {
+        String appId = "someAppId";
+        AppDTO app = restTemplate.getForObject("http://localhost:" + port + "/apps/" + appId, AppDTO.class);
 
-    ClusterDTO cluster = restTemplate.getForObject("http://localhost:" + port + "/apps/" + app.getAppId() + "/clusters/default",
-        ClusterDTO.class);
+        ClusterDTO cluster = restTemplate.getForObject("http://localhost:" + port + "/apps/" + app.getAppId() + "/clusters/default",
+                ClusterDTO.class);
 
-    NamespaceDTO namespace = restTemplate.getForObject("http://localhost:" + port + "/apps/" + app.getAppId()
-            + "/clusters/" + cluster.getName() + "/namespaces/application", NamespaceDTO.class);
+        NamespaceDTO namespace = restTemplate.getForObject("http://localhost:" + port + "/apps/" + app.getAppId()
+                + "/clusters/" + cluster.getName() + "/namespaces/application", NamespaceDTO.class);
 
-    Assert.assertEquals("someAppId", app.getAppId());
-    Assert.assertEquals("default", cluster.getName());
-    Assert.assertEquals("application", namespace.getNamespaceName());
+        Assert.assertEquals("someAppId", app.getAppId());
+        Assert.assertEquals("default", cluster.getName());
+        Assert.assertEquals("application", namespace.getNamespaceName());
 
-    ItemDTO[] items =
-        restTemplate.getForObject(
-            "http://localhost:" + port + "/apps/" + app.getAppId() + "/clusters/"
-                + cluster.getName() + "/namespaces/" + namespace.getNamespaceName() + "/items",
-            ItemDTO[].class);
-    Assert.assertEquals(3, items.length);
+        ItemDTO[] items =
+                restTemplate.getForObject(
+                        "http://localhost:" + port + "/apps/" + app.getAppId() + "/clusters/"
+                                + cluster.getName() + "/namespaces/" + namespace.getNamespaceName() + "/items",
+                        ItemDTO[].class);
+        Assert.assertEquals(3, items.length);
 
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-    MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
-    parameters.add("name", "someReleaseName");
-    parameters.add("comment", "someComment");
-    parameters.add("operator", "test");
-    HttpEntity<MultiValueMap<String, String>> entity =
-        new HttpEntity<MultiValueMap<String, String>>(parameters, headers);
-    ResponseEntity<ReleaseDTO> response = restTemplate.postForEntity(
-        "http://localhost:" + port + "/apps/" + app.getAppId() + "/clusters/" + cluster.getName()
-            + "/namespaces/" + namespace.getNamespaceName() + "/releases",
-        entity, ReleaseDTO.class);
-    Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-    ReleaseDTO release = response.getBody();
-    Assert.assertEquals("someReleaseName", release.getName());
-    Assert.assertEquals("someComment", release.getComment());
-    Assert.assertEquals("someAppId", release.getAppId());
-    Assert.assertEquals("default", release.getClusterName());
-    Assert.assertEquals("application", release.getNamespaceName());
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
+        parameters.add("name", "someReleaseName");
+        parameters.add("comment", "someComment");
+        parameters.add("operator", "test");
+        HttpEntity<MultiValueMap<String, String>> entity =
+                new HttpEntity<MultiValueMap<String, String>>(parameters, headers);
+        ResponseEntity<ReleaseDTO> response = restTemplate.postForEntity(
+                "http://localhost:" + port + "/apps/" + app.getAppId() + "/clusters/" + cluster.getName()
+                        + "/namespaces/" + namespace.getNamespaceName() + "/releases",
+                entity, ReleaseDTO.class);
+        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        ReleaseDTO release = response.getBody();
+        Assert.assertEquals("someReleaseName", release.getName());
+        Assert.assertEquals("someComment", release.getComment());
+        Assert.assertEquals("someAppId", release.getAppId());
+        Assert.assertEquals("default", release.getClusterName());
+        Assert.assertEquals("application", release.getNamespaceName());
 
-    Map<String, String> configurations = new HashMap<String, String>();
-    configurations.put("k1", "v1");
-    configurations.put("k2", "v2");
-    configurations.put("k3", "v3");
-    Gson gson = new Gson();
-    Assert.assertEquals(gson.toJson(configurations), release.getConfigurations());
-  }
+        Map<String, String> configurations = new HashMap<String, String>();
+        configurations.put("k1", "v1");
+        configurations.put("k2", "v2");
+        configurations.put("k3", "v3");
+        Gson gson = new Gson();
+        Assert.assertEquals(gson.toJson(configurations), release.getConfigurations());
+    }
 
 //  @Test
 //  public void testMessageSendAfterBuildRelease() throws Exception {
