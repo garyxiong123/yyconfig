@@ -16,5 +16,6 @@ public class ModifyItemsByTextsReq {
     private long namespaceId;
     private ConfigFileFormat format;
     private String configText;
+    private String type;
 
 }

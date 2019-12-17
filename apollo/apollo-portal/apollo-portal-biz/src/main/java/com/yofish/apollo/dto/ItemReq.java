@@ -8,6 +8,7 @@ import lombok.Data;
  */
 @Data
 public class ItemReq {
+    private Long itemId;
     private Long clusterNamespaceId;
     private String appId;
     private String env;

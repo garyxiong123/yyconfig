@@ -11,6 +11,7 @@ import com.yofish.apollo.dto.UpdateItemReq;
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.repository.CommitRepository;
 import com.yofish.apollo.repository.ItemRepository;
+import com.youyu.common.exception.BizException;
 import common.exception.NotFoundException;
 import common.utils.BeanUtils;
 import framework.apollo.core.enums.ConfigFileFormat;
@@ -19,10 +20,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
+import static com.alibaba.fastjson.JSON.toJSON;
 import static com.alibaba.fastjson.JSON.toJSONString;
 
 /**
@@ -52,39 +58,103 @@ public class ItemService {
     @Autowired
     @Qualifier("propertyResolver")
     private ConfigTextResolver propertyResolver;
+    @Autowired
+    private CommitService commitService;
+
 
     public Item createItem(CreateItemReq createItemReq) {
+        Item entity=new Item();
         AppEnvClusterNamespace appEnvClusterNamespace=appEnvClusterNamespaceRepository.findAppEnvClusterNamespace(
-                createItemReq.getAppId(),createItemReq.getEnv(),createItemReq.getNamespaceName(),createItemReq.getClusterName()
+                createItemReq.getAppId(),createItemReq.getEnv(),createItemReq.getNamespaceName()
+                ,createItemReq.getClusterName(),createItemReq.getType()
         );
-        createItemReq.setAppEnvClusterNamespaceId(appEnvClusterNamespace.getId());
-        Item item = new Item(createItemReq.getKey(),createItemReq.getValue(),createItemReq.getComment(),appEnvClusterNamespace,
-                createItemReq.getLineNum());
-        return itemRepository.save(item);
-        //return new Item();
+        ConfigChangeContentBuilder builder = new ConfigChangeContentBuilder();
+        Item managedEntity=  findOne(appEnvClusterNamespace,createItemReq.getKey());
+        if (managedEntity != null) {
+            throw new BizException("500","item already exists");
+        } else {
+            Item item = new Item(createItemReq.getKey(),createItemReq.getValue(),createItemReq.getComment(),appEnvClusterNamespace,
+                    createItemReq.getLineNum());
+            entity=  itemRepository.save(item);
+            builder.createItem(entity);
+            //添加commit
+            commitService.saveCommit(appEnvClusterNamespace,builder.build());
+        }
+        return entity;
     }
 
 
     public void updateItem(UpdateItemReq updateItemReq) {
-        Item item = new Item(updateItemReq);
-        itemRepository.save(item);
+       /* AppEnvClusterNamespace appEnvClusterNamespace=appEnvClusterNamespaceRepository.findAppEnvClusterNamespace(
+                updateItemReq.getAppId(),updateItemReq.getEnv(),updateItemReq.getNamespaceName()
+                ,updateItemReq.getClusterName(),updateItemReq.getType()
+        );
+        Item toUpdateItem = findOne(appEnvClusterNamespace,updateItemReq.getKey());
+        if (toUpdateItem == null) {
+            throw new NotFoundException(
+                    String.format("item not found for %s",toJSONString(updateItemReq)));
+        }
+        //protect. only value,comment,lastModifiedBy can be modified
+        toUpdateItem.setComment(updateItemReq.getComment());
+        toUpdateItem.setValue(updateItemReq.getValue());
+        itemService.updateItem(appId, Env.fromString(env), clusterName, namespaceName, toUpdateItem);
+        itemRepository.save(item);*/
+       if(updateItemReq.getItemId()!=null&&updateItemReq.getItemId()>0){
+           updateItemById(updateItemReq.getItemId(),updateItemReq.getValue(),updateItemReq.getComment());
+       }
+    }
+
+
+    public void updateItemById(Long itemId,String value,String comment) {
+        ConfigChangeContentBuilder builder = new ConfigChangeContentBuilder();
+        Item managedEntity = findOne(itemId);
+        if (managedEntity == null) {
+            throw new BizException("item not exist");
+        }
+
+        Item beforeUpdateItem = BeanUtils.transform(Item.class, managedEntity);
+
+        //protect. only value,comment,lastModifiedBy can be modified
+        managedEntity.setValue(value);
+        managedEntity.setComment(comment);
+
+        Item entity = update(managedEntity);
+        builder.updateItem(beforeUpdateItem, entity);
+
+        if (builder.hasContent()) {
+            commitService.saveCommit(entity.getAppEnvClusterNamespace(),builder.build());
+        }
 
     }
 
-    public void deleteItem(ItemReq deleteItemReq) {
 
+    public void deleteItem(ItemReq deleteItemReq) {
+        ConfigChangeContentBuilder builder=new ConfigChangeContentBuilder();
+        Item entity = findOne(deleteItemReq.getItemId());
+        if (entity == null) {
+            throw new BizException("item not found for itemId " + deleteItemReq.getItemId());
+        }
+        delete(entity.getId());
+        builder.deleteItem(entity);
+        commitService.saveCommit(entity.getAppEnvClusterNamespace(),builder.build());
     }
 
     public List<Item> findItems(ItemReq itemReq) {
+        AppEnvClusterNamespace appEnvClusterNamespace=new AppEnvClusterNamespace();
+        appEnvClusterNamespace.setId(itemReq.getClusterNamespaceId());
+           List<Item> items=itemRepository.findAllByAppEnvClusterNamespace(appEnvClusterNamespace);
+            if (items != null) {
+                return items;
+            } else {
+                return Collections.emptyList();
+            }
 
-
-        return new ArrayList<>();
     }
 
 
     public void updateConfigItemByText(ModifyItemsByTextsReq model) {
         AppEnvClusterNamespace appEnvClusterNamespace=appEnvClusterNamespaceRepository.findAppEnvClusterNamespace(
-                model.getAppId(),model.getEnv(),model.getNamespaceName(),model.getClusterName()
+                model.getAppId(),model.getEnv(),model.getNamespaceName(),model.getClusterName(),model.getType()
         );
         long namespaceId = model.getNamespaceId();
         String configText = model.getConfigText();
@@ -95,8 +165,7 @@ public class ItemService {
             return;
         }
         updateItems(appEnvClusterNamespace, changeSets);
-        Commit commit = Commit.builder().appEnvClusterNamespace(appEnvClusterNamespace).changeSets(toJSONString(changeSets)).build();
-        commitRepository.save(commit);
+        commitService.saveCommit(appEnvClusterNamespace,toJSONString(changeSets));
 
     }
 
@@ -151,10 +220,22 @@ public class ItemService {
 
     @Transactional
     public Item delete(long id) {
-        return new Item();
+        Item item = itemRepository.findById(id).orElse(null);
+        if (item == null) {
+            throw new IllegalArgumentException("item not exist. ID:" + id);
+        }
+        Item managedItem=new Item();
+        BeanUtils.copyEntityProperties(item, managedItem);
+        itemRepository.deleteById(id);
+        return managedItem;
     }
+
+    @Transactional
     public Item update(Item  item){
-        return new Item();
+        Item managedItem = itemRepository.findById(item.getId()).orElse(null);
+        BeanUtils.copyEntityProperties(item, managedItem);
+        managedItem = itemRepository.save(managedItem);
+        return managedItem;
     }
     @Transactional
     public int batchDelete(long namespaceId, String operator) {
@@ -166,9 +247,23 @@ public class ItemService {
     }
 
     public Item findOne(Long id){
-        return new Item();
+        return itemRepository.findById(id).get();
+    }
+    public Item findOne(AppEnvClusterNamespace appEnvClusterNamespace,String key){
+        if (appEnvClusterNamespace == null) {
+            throw new BizException("500","namespace没有发现");
+        }
+        Item item = itemRepository.findItemByAppEnvClusterNamespaceAndKey(appEnvClusterNamespace, key);
+        return item;
     }
 
+
+    public Item findOne(String appCode,String env,String namespace,String cluster,String type,String key) {
+       AppEnvClusterNamespace appEnvClusterNamespace=appEnvClusterNamespaceRepository.findAppEnvClusterNamespace(
+               appCode,env,namespace,cluster,type
+       );
+       return findOne(appEnvClusterNamespace,key);
+    }
     public List<Item> findItemsWithoutOrdered(Long id) {
         return null;
     }
@@ -191,6 +286,8 @@ public class ItemService {
 
 
     }
+
+
 
 }
 
