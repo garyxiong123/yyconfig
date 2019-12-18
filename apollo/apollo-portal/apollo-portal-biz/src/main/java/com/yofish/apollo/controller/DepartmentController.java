@@ -10,9 +10,15 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -66,8 +72,16 @@ public class DepartmentController {
 
 
     @GetMapping
-    public Result<List<Department>> selectAll() {
-        List<Department> departmentList = this.departmentRepository.findAll();
+    public Result<List<Department>> selectAll(String keyword) {
+        Specification<Department> specification = (Specification<Department>) (root, query, criteriaBuilder) -> {
+            if (StringUtils.hasText(keyword)) {
+                Predicate code = criteriaBuilder.like(root.get("code").as(String.class), "%" + keyword + "%");
+                Predicate name = criteriaBuilder.like(root.get("name").as(String.class), "%" + keyword + "%");
+                return criteriaBuilder.or(code, name);
+            }
+            return null;
+        };
+        List<Department> departmentList = this.departmentRepository.findAll(specification);
         return Result.ok(departmentList);
     }
 
