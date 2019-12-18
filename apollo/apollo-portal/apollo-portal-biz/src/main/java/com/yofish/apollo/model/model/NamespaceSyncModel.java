@@ -1,28 +1,17 @@
 package com.yofish.apollo.model.model;
 
+import com.yofish.apollo.domain.Item;
 import com.yofish.apollo.model.vo.NamespaceIdentifier;
 import common.dto.ItemDTO;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
-public class NamespaceSyncModel implements Verifiable {
+public class NamespaceSyncModel {
 
     private List<NamespaceIdentifier> syncToNamespaces;
-    private List<ItemDTO> syncItems;
+    private List<Item> syncItems;
 
-    @Override
-    public boolean isInvalid() {
-        if (CollectionUtils.isEmpty(syncToNamespaces) || CollectionUtils.isEmpty(syncItems)) {
-            return true;
-        }
-        for (NamespaceIdentifier namespaceIdentifier : syncToNamespaces) {
-            if (namespaceIdentifier.isInvalid()) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     public List<NamespaceIdentifier> getSyncToNamespaces() {
         return syncToNamespaces;
@@ -32,11 +21,11 @@ public class NamespaceSyncModel implements Verifiable {
         this.syncToNamespaces = syncToNamespaces;
     }
 
-    public List<ItemDTO> getSyncItems() {
+    public List<Item> getSyncItems() {
         return syncItems;
     }
 
-    public void setSyncItems(List<ItemDTO> syncItems) {
+    public void setSyncItems(List<Item> syncItems) {
         this.syncItems = syncItems;
     }
 }

@@ -85,4 +85,10 @@ public class AppEnvClusterNamespaceService {
         }
     }
 
+    public AppEnvClusterNamespace findAppEnvClusterNamespace(String appCode,String env,String namespace,String cluster,String type){
+        return namespaceRepository.findAppEnvClusterNamespace(appCode,env,namespace,cluster,type);
+    }
+    public AppEnvClusterNamespace findAppEnvClusterNamespace(Long id){
+        return namespaceRepository.findAppEnvClusterNamespaceById(id);
+    }
 }

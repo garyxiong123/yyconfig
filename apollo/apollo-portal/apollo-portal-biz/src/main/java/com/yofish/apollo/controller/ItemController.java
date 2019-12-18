@@ -7,6 +7,9 @@ import com.yofish.apollo.dto.ItemReq;
 import com.yofish.apollo.dto.ModifyItemsByTextsReq;
 import com.yofish.apollo.dto.UpdateItemReq;
 import com.yofish.apollo.model.NamespaceTextModel;
+import com.yofish.apollo.model.model.NamespaceSyncModel;
+import com.yofish.apollo.model.vo.ItemDiffs;
+import com.yofish.apollo.model.vo.NamespaceIdentifier;
 import com.yofish.apollo.service.ItemService;
 import com.youyu.common.api.Result;
 import common.exception.BadRequestException;
@@ -68,42 +71,32 @@ public class ItemController {
 
   @RequestMapping(value = "/findItems", method = RequestMethod.GET)
   public Result<List<Item>> findItems(@RequestBody ItemReq req) {
-    List<Item> items = itemService.findItems(req);
+    List<Item> items = itemService.findItemsWithoutOrdered(req);
     return Result.ok(items);
   }
 
 //todo 配置同步
 
-  /*@RequestMapping(value = "/apps/{appId}/namespaces/{namespaceName}/items", method = RequestMethod.PUT, consumes = {
-      "application/json"})
-  public ResponseEntity<Void> update(@PathVariable String appId, @PathVariable String namespaceName,
+  @RequestMapping(value = "updateEnv")
+  public Result updateEnv(@PathVariable String appId, @PathVariable String namespaceName,
                                      @RequestBody NamespaceSyncModel model) {
-    checkModel(Objects.nonNull(model) && !model.isInvalid());
-    boolean hasPermission = permissionValidator.hasModifyNamespacePermission(appId, namespaceName);
-    Env envNoPermission = null;
-    // if uses has ModifyNamespace permission then he has permission
-    if (!hasPermission) {
-      // else check if user has every env's ModifyNamespace permission
-      hasPermission = true;
-      for (NamespaceIdentifier namespaceIdentifier : model.getSyncToNamespaces()) {
-        // once user has not one of the env's ModifyNamespace permission, then break the loop
-        hasPermission &= permissionValidator.hasModifyNamespacePermission(namespaceIdentifier.getAppId(), namespaceIdentifier.getNamespaceName(), namespaceIdentifier.getEnv().toString());
-        if (!hasPermission) {
-          envNoPermission = namespaceIdentifier.getEnv();
-          break;
-        }
+    itemService.syncItems(model.getSyncToNamespaces(), model.getSyncItems());
+   return Result.ok();
+  }
+  @PostMapping(value = "/diff")
+  public List<ItemDiffs> diff(@RequestBody NamespaceSyncModel model) {
+
+    List<ItemDiffs> itemDiffs = itemService.compare(model.getSyncToNamespaces(), model.getSyncItems());
+
+    for (ItemDiffs diff : itemDiffs) {
+      NamespaceIdentifier namespace = diff.getNamespace();
+      if (namespace == null) {
+        continue;
       }
     }
-    if (hasPermission) {
-      configService.syncItems(model.getSyncToNamespaces(), model.getSyncItems());
-      return ResponseEntity.status(HttpStatus.OK).build();
-    }
-    else {
-      throw new AccessDeniedException(String.format("您没有修改环境%s的权限", envNoPermission));
-    }
-  }
-*/
 
+    return itemDiffs;
+  }
   @PostMapping(value = "syntax-check")
   public ResponseEntity<Void> syntaxCheckText(@RequestBody NamespaceTextModel model) {
 
