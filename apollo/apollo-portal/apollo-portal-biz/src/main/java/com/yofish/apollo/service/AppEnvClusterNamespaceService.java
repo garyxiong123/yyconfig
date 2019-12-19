@@ -35,7 +35,7 @@ public class AppEnvClusterNamespaceService {
     private AppEnvClusterNamespace4BranchRepository branchRepository;
 
     public  AppEnvClusterNamespace4Branch findChildNamespace(Long parentId) {
-        return branchRepository.findAppEnvClusterNamespace4BranchByParentId(parentId);
+        return branchRepository.findByParentId(parentId);
     }
 
 /*

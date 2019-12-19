@@ -7,13 +7,13 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class NamespaceBO {
+public class NamespaceVO {
   private NamespaceDTO baseInfo;
   private int itemModifiedCnt;
   private List<ItemBO> items;
   private String format;
   private boolean isPublic;
-  private String parentAppId;
+  private String parentAppCode;
   private String comment;
   // is the configs hidden to current user?
   private boolean isConfigHidden;

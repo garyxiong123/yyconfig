@@ -1,8 +1,10 @@
 package com.yofish.apollo.domain;
 
+import com.google.gson.Gson;
 import com.yofish.apollo.repository.ReleaseRepository;
 import com.yofish.apollo.service.ReleaseHistoryService;
 import com.yofish.apollo.service.ReleaseService;
+import com.yofish.apollo.strategy.PublishStrategy;
 import com.yofish.gary.dao.entity.BaseEntity;
 import common.constants.ReleaseOperation;
 import common.exception.BadRequestException;
@@ -27,11 +29,11 @@ import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
 @Builder
 @Data
 @Entity
-@Table(name="releases")
+@Table(name = "releases")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 30)
 public class Release extends BaseEntity {
-
+    public Gson gson = new Gson();
 
     @Column(nullable = false)
     private String releaseKey;
@@ -48,17 +50,28 @@ public class Release extends BaseEntity {
 
     private boolean isEmergencyPublish;
 
+    protected PublishStrategy publishStrategy;
 
 
     private boolean abandoned;
 
-
-
-    public Release publish(){
-//        release = releaseRepository.save(release);
-
-        return null;
+    public Release(AppEnvClusterNamespace namespace, String name, String comment, Map<String, String> configurations, boolean isEmergencyPublish) {
+        this.setName(name);
+        this.setAppEnvClusterNamespace(namespace);
+        this.isEmergencyPublish = isEmergencyPublish;
+        this.setConfigurations(gson.toJson(configurations));
     }
 
 
+    public Release publish() {
+        publishStrategy.publish(this);
+
+        return this;
+    }
+
+
+    public Release getPreviousRelease() {
+        return null;
+
+    }
 }

@@ -14,5 +14,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface AppEnvClusterNamespace4BranchRepository extends JpaRepository<AppEnvClusterNamespace4Branch, Long> {
 
-    AppEnvClusterNamespace4Branch findAppEnvClusterNamespace4BranchByParentId(Long parentId);
+    AppEnvClusterNamespace4Branch findByParentId(Long parentId);
+
 }

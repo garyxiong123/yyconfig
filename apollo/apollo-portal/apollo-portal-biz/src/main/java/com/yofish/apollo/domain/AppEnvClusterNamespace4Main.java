@@ -1,6 +1,7 @@
 package com.yofish.apollo.domain;
 
 import com.google.common.collect.Maps;
+import com.yofish.apollo.repository.AppEnvClusterNamespace4BranchRepository;
 import com.yofish.apollo.service.AppNamespaceService;
 import common.constants.ReleaseOperation;
 import common.constants.ReleaseOperationContext;
@@ -35,12 +36,8 @@ public class AppEnvClusterNamespace4Main extends AppEnvClusterNamespace {
     }
 
     public boolean hasBranchNamespace() {
-        return getBeanInstance(AppNamespaceService.class).findChildNamespace(this) != null;
+        return getBeanInstance(AppEnvClusterNamespace4BranchRepository.class).findByParentId(this.getId()) != null;
     }
-
-
-
-
 
 
 }
