@@ -229,7 +229,7 @@ public class NamespaceBranchService {
 
         NamespaceDTO namespaceDTO = namespace.getBaseInfo();
         //先从当前appId下面找,包含私有的和公共的
-        AppNamespace appNamespace = appNamespaceService.findByAppIdAndName(namespaceDTO.getAppId(), namespaceDTO.getNamespaceName());
+        AppNamespace appNamespace = appNamespaceService.findByAppIdAndName(namespaceDTO.getId(), namespaceDTO.getNamespaceName());
         //再从公共的app namespace里面找
         if (appNamespace == null) {
             appNamespace = appNamespaceService.findPublicAppNamespace(namespaceDTO.getNamespaceName());

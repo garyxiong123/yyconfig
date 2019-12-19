@@ -33,6 +33,8 @@ import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 30)
 public class Release extends BaseEntity {
+
+    @Transient
     public Gson gson = new Gson();
 
     @Column(nullable = false)
@@ -50,6 +52,7 @@ public class Release extends BaseEntity {
 
     private boolean isEmergencyPublish;
 
+    @Transient
     protected PublishStrategy publishStrategy;
 
 
