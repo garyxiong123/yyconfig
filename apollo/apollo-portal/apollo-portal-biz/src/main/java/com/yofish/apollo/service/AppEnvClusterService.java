@@ -41,13 +41,13 @@ public class AppEnvClusterService {
 //
 //    @Autowired
 //    private PortalSettings portalSettings;
-//
-//
-//    public List<ClusterEntity> findClusters(Env env, String appId) {
-//
-//        return clusterRepository.findByAppIdAndEnv(appId, env.name());
-//    }
-//
+
+
+    public List<AppEnvCluster> findClusters(String env, long appId) {
+
+        return appEnvClusterRepository.findByAppIdAndEnv(appId, env);
+    }
+
 
     public AppEnvCluster createCluster(String env, AppEnvCluster appEnvCluster) {
         appEnvCluster.setEnv(env);

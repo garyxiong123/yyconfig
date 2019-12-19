@@ -20,4 +20,5 @@ public class CreateItemReq {
     private String comment;
     private Long appEnvClusterNamespaceId;
     private Integer lineNum;
+    private String type;
 }

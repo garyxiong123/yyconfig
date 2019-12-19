@@ -6,3 +6,12 @@
 .buttonMarginL {
   margin-left: 30px;
 }
+.marginTop20 {
+  margin-top: 20px;
+}
+.detailRightBox :global .ant-collapse {
+  background-color: transparent;
+}
+.textCenter {
+  text-align: center;
+}

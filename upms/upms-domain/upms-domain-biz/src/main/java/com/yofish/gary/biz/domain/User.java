@@ -147,7 +147,7 @@ public class User extends BaseEntity {
 
     public User(UserEditReqDTO userEditReqDTO, String hashAlgorithmName) {
         this();
-        setId(userEditReqDTO.getUserId());
+        setId(userEditReqDTO.getId());
         this.realName = userEditReqDTO.getRealName();
         this.sex = userEditReqDTO.getSex();
         this.phone = userEditReqDTO.getPhone();

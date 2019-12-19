@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Card, Row, Col, Icon, Button } from 'antd';
+import { Card, Row, Col, Icon, Button, Table } from 'antd';
 import router from 'umi/router';
 import styles from '../index.less';
 import CreateProject from '../create/';
@@ -9,12 +9,26 @@ class MyProject extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showCreate: false
+      showCreate: false,
+      searchObj: {
+        page: 1,
+        size: 2
+      }
     };
   }
   // ----------------------------------生命周期-----------------------------
   componentDidMount() {
-    this.onFetchlist();
+    const { list } = this.props;
+    if(!list.rows) {
+      this.onFetchlist();
+    }
+    
+  }
+  componentDidUpdate(prevProps, prevState) {
+    const { searchObj } = this.state;
+    if (prevState.searchObj !== searchObj) {
+      this.onFetchlist()
+    }
   }
   // ----------------------------------事件-----------------------------
   onRouteTo = (pathname, data) => {
@@ -25,9 +39,10 @@ class MyProject extends React.Component {
   }
   onFetchlist = () => {
     const { dispatch } = this.props;
+    const { searchObj } = this.state;
     dispatch({
       type: 'project/appList',
-      payload: {}
+      payload: searchObj
     })
   }
   onShowCreate = () => {
@@ -40,8 +55,17 @@ class MyProject extends React.Component {
       showCreate: false
     })
   }
-  onSave=()=>{
+  onSave = () => {
     this.onFetchlist();
+  }
+  onQueryMore = () => {
+    const { searchObj } = this.state;
+    this.setState({
+      searchObj: {
+        ...searchObj,
+        page: searchObj.page + 1
+      }
+    })
   }
   // ----------------------------------渲染-----------------------------
   render() {
@@ -59,7 +83,7 @@ class MyProject extends React.Component {
           {
             list.rows && list.rows.map((item, i) => (
               <Col span={8} key={i}>
-                <Card className={styles.listCard} onClick={() => { this.onRouteTo('/project-details') }}>
+                <Card className={styles.listCard} onClick={() => { this.onRouteTo('/project/details') }}>
                   <h2>{item.appCode}</h2>
                   <p>{item.name}</p>
                 </Card>
@@ -68,7 +92,13 @@ class MyProject extends React.Component {
           }
         </Row>
         {
-          showCreate && <CreateProject onCancel={this.onCancel} onSave={this.onSave}/>
+          list.totalPage !== list.pageNum &&
+          <div className={styles.textCenter}>
+            <Button type="link" onClick={this.onQueryMore}>加载更多<Icon type="down" style={{ fontSize: 13 }} /></Button>
+          </div>
+        }
+        {
+          showCreate && <CreateProject onCancel={this.onCancel} onSave={this.onSave} />
         }
       </Fragment>
     );

@@ -12,7 +12,7 @@ public class UpdateItemReq {
     private String appId;
     private String env;
     private String clusterName;
-    private String nameSpaceName;
+    private String namespaceName;
     private String key;
 
     private String value;
@@ -20,4 +20,5 @@ public class UpdateItemReq {
     private String comment;
 
     private int lineNum;
+    private String type;
 }

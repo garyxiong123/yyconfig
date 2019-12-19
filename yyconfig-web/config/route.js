@@ -34,7 +34,7 @@ const routes = [
             component: './project/create/index',
           },
           {
-            path: '/project-details',
+            path: '/project/details',
             name: 'projectDetails',
             component: './project/details/index',
           },

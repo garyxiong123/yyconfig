@@ -15,6 +15,9 @@ const auth = {
   userEdit: async function (params = {}) {
     return requestPost('/user/edit', params);
   },
+  userDelete: async function (params = {}) {
+    return requestPost('/user/delete', params);
+  },
 
 }
 const department = {

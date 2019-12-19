@@ -1,7 +1,10 @@
 package com.yofish.apollo.service;
 
 import com.yofish.apollo.domain.App;
+import com.yofish.apollo.domain.Department;
+import com.yofish.apollo.repository.DepartmentRepository;
 import com.yofish.gary.biz.domain.User;
+import com.yofish.gary.biz.repository.UserRepository;
 import com.youyu.common.api.PageData;
 import org.junit.Assert;
 import org.junit.Test;
@@ -12,7 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.ObjectUtils;
 
-import static org.junit.Assert.*;
+import java.util.List;
 
 /**
  * @author WangSongJun
@@ -23,11 +26,21 @@ import static org.junit.Assert.*;
 public class AppServiceTest {
     @Autowired
     private AppService appService;
+    @Autowired
+    private DepartmentRepository departmentRepository;
+    @Autowired
+    private UserRepository userRepository;
 
 
     @Test
     public void createApp() {
-        App app = App.builder().name("测试项目").appCode("test-app").appOwner(new User(1L)).build();
+        List<Department> departmentList = this.departmentRepository.findAll();
+        Assert.assertTrue(!ObjectUtils.isEmpty(departmentList));
+
+        List<User> allUser = userRepository.findAll();
+        Assert.assertTrue(!ObjectUtils.isEmpty(allUser));
+
+        App app = App.builder().name("测试项目").appCode("test-app").appOwner(allUser.get(0)).department(departmentList.get(0)).build();
         App createApp = this.appService.createApp(app);
         Assert.assertTrue(!ObjectUtils.isEmpty(createApp.getId()));
     }

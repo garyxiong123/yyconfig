@@ -78,7 +78,7 @@ class CreateProject extends React.Component {
   }
   renderForm() {
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { departmentList } = this.props;
+    const { departmentList, userListAll } = this.props;
     return (
       <Form onSubmit={this.onSubmit} {...formItemLayout}>
         <FormItem label="部门">
@@ -118,7 +118,11 @@ class CreateProject extends React.Component {
             ]
           })(
             <Select placeholder="请选择项目负责人" showSearch>
-              <Option value="1">项目负责人1</Option>
+              {
+                userListAll.map((item) => (
+                  <Option value={item.id} key={item.id}>{item.realName}</Option>
+                ))
+              }
             </Select>
           )}
         </FormItem>
@@ -129,7 +133,11 @@ class CreateProject extends React.Component {
             // ]
           })(
             <Select placeholder="请选择项目管理员" mode="multiple" showSearch allowClear>
-              <Option value="1">项目管理员1</Option>
+              {
+                userListAll.map((item) => (
+                  <Option value={item.id} key={item.id}>{item.realName}</Option>
+                ))
+              }
             </Select>
           )}
         </FormItem>
@@ -155,5 +163,6 @@ class CreateProject extends React.Component {
 }
 
 export default Form.create()(connect(({ auth }) => ({
-  departmentList: auth.departmentList
+  departmentList: auth.departmentList,
+  userListAll: auth.userListAll
 }))(CreateProject));
