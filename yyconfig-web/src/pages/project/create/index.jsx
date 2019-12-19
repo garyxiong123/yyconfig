@@ -23,13 +23,33 @@ class CreateProject extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: false
+      loading: false,
+      appDetail: {}
     };
   }
   componentDidMount() {
-    const { departmentList, appId } = this.props;
+    const { departmentList } = this.props;
     if (!departmentList.length) {
       this.onFetchDepartmentList()
+    }
+    this.onSetAppDetail();
+  }
+  
+  onSetAppDetail = () => {
+    const { appId, appDetail } = this.props;
+    if (appId) {
+      let appAdminIds = [];
+      if (appDetail.appAdmins && appDetail.appAdmins.length) {
+        appDetail.appAdmins.map((item) => {
+          appAdminIds.push(item.id)
+        })
+      }
+      this.setState({
+        appDetail: {
+          ...appDetail,
+          appAdminIds
+        }
+      })
     }
   }
   onFetchDepartmentList = () => {
@@ -52,9 +72,6 @@ class CreateProject extends React.Component {
         } else {
           this.onAddProject(values)
         }
-        this.setState({
-          loading: false
-        })
       }
     })
   }
@@ -66,6 +83,9 @@ class CreateProject extends React.Component {
       onCancel();
       onSave();
     }
+    this.setState({
+      loading: false
+    })
   }
   onEditProject = async (values) => {
     const { onCancel, onSave } = this.props;
@@ -75,15 +95,20 @@ class CreateProject extends React.Component {
       onCancel();
       onSave();
     }
+    this.setState({
+      loading: false
+    })
   }
   renderForm() {
     const { getFieldDecorator, getFieldValue } = this.props.form;
     const { departmentList, userListAll } = this.props;
+    const { appDetail } = this.state;
+    let department = appDetail.department || {}, appOwner = appDetail.appOwner || {};
     return (
       <Form onSubmit={this.onSubmit} {...formItemLayout}>
         <FormItem label="部门">
           {getFieldDecorator('orgId', {
-            // initialValue:  undefined,
+            initialValue: department.id,
             rules: [
               { required: true, message: '请选择部门' }
             ]
@@ -99,6 +124,7 @@ class CreateProject extends React.Component {
         </FormItem>
         <FormItem label="项目Id">
           {getFieldDecorator('appCode', {
+            initialValue: appDetail.appCode,
             rules: [
               { required: true, message: "请输入项目Id" }
             ]
@@ -106,6 +132,7 @@ class CreateProject extends React.Component {
         </FormItem>
         <FormItem label="项目名称">
           {getFieldDecorator('name', {
+            initialValue: appDetail.name,
             rules: [
               { required: true, message: "请输入项目名称" }
             ]
@@ -113,6 +140,7 @@ class CreateProject extends React.Component {
         </FormItem>
         <FormItem label="项目负责人">
           {getFieldDecorator('ownerId', {
+            initialValue: appOwner.id,
             rules: [
               { required: true, message: '请选择项目负责人' }
             ]
@@ -128,6 +156,7 @@ class CreateProject extends React.Component {
         </FormItem>
         <FormItem label="项目管理员">
           {getFieldDecorator('admins', {
+            initialValue: appDetail.appAdminIds,
             // rules: [
             //   { required: true, message: '请选择项目管理员' }
             // ]
@@ -145,11 +174,11 @@ class CreateProject extends React.Component {
     )
   }
   render() {
-    const { onCancel } = this.props;
+    const { onCancel, appId } = this.props;
     const { loading } = this.state;
     return (
       <Modal
-        title="创建项目"
+        title={appId ? '修改项目' : '创建项目'}
         visible={true}
         onCancel={onCancel}
         onOk={this.onSubmit}
@@ -162,7 +191,8 @@ class CreateProject extends React.Component {
   }
 }
 
-export default Form.create()(connect(({ auth }) => ({
+export default Form.create()(connect(({ auth, project }) => ({
   departmentList: auth.departmentList,
-  userListAll: auth.userListAll
+  userListAll: auth.userListAll,
+  appDetail: project.appDetail
 }))(CreateProject));

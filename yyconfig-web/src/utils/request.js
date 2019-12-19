@@ -40,8 +40,8 @@ const errorHandler = error => {
 /**
  * 配置request请求时的默认参数
  */
-const SERVER_HOME = '.';
-// const SERVER_HOME = 'http://test.lb.gs.youyuwo.com:60008';
+// const SERVER_HOME = '.';
+const SERVER_HOME = 'http://test.lb.gs.youyuwo.com:60008';
 
 const request = extend({
   errorHandler,
