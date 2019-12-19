@@ -1,18 +1,17 @@
 package com.yofish.apollo.model.vo;
 
 
-import common.dto.ClusterDTO;
-import framework.apollo.core.enums.Env;
+import com.yofish.apollo.domain.AppEnvCluster;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
 public class EnvClusterInfo {
-    private Env env;
-    private List<ClusterDTO> clusters;
+    private String env;
+    private List<AppEnvCluster> clusters;
 
-    public EnvClusterInfo(Env env) {
+    public EnvClusterInfo(String env) {
         this.env = env;
     }
 
