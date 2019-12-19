@@ -13,6 +13,7 @@ import com.yofish.apollo.service.ServerConfigService;
 import com.yofish.gary.biz.domain.User;
 import com.youyu.common.api.PageData;
 import com.youyu.common.api.Result;
+import common.condition.PermissionAuth;
 import common.exception.BadRequestException;
 import common.utils.InputValidator;
 import common.utils.RequestPrecondition;
@@ -52,6 +53,7 @@ public class AppController {
      */
     @PostMapping
     @ApiOperation("创建项目")
+    @PermissionAuth(PermissionAuth.PermissionType.admin)
     public Result<App> create(@Valid @RequestBody AppModel appModel) {
 
         App app = transformToApp(appModel);
