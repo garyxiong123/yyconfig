@@ -10,7 +10,6 @@ package com.yofish.apollo.service;
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppEnvCluster;
 import com.yofish.apollo.repository.AppEnvClusterRepository;
-import framework.apollo.core.ConfigConsts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +35,8 @@ public class AppEnvClusterService {
     private AppEnvClusterRepository appEnvClusterRepository;
     @Autowired
     private ServerConfigService serverConfigService;
+    @Autowired
+    private AppEnvClusterNamespaceService appEnvClusterNamespaceService;
 //    @Autowired
 //    private NamespaceService namespaceService;
 //
@@ -49,10 +50,20 @@ public class AppEnvClusterService {
     }
 
 
-    public AppEnvCluster createCluster(String env, AppEnvCluster appEnvCluster) {
-        appEnvCluster.setEnv(env);
-        return appEnvClusterRepository.save(appEnvCluster);
+    public AppEnvCluster createAppEnvCluster(AppEnvCluster appEnvCluster) {
+        AppEnvCluster cluster = appEnvClusterRepository.save(appEnvCluster);
+        //todo 创建集群
+        return cluster;
     }
+
+    public AppEnvCluster getAppEnvCluster(long appId, String env, String clusterName) {
+        return appEnvClusterRepository.findClusterByAppIdAndEnvAndName(appId, env, clusterName);
+    }
+
+    public void deleteAppEnvCluster(AppEnvCluster appEnvCluster) {
+        appEnvClusterRepository.delete(appEnvCluster);
+    }
+
 
     //    public void deleteCluster(Env env, String appId, String clusterName) {
 ////    clusterAPI.delete(env, appId, clusterName, userInfoHolder.getUser().getUserId());
@@ -72,8 +83,7 @@ public class AppEnvClusterService {
     public boolean isClusterNameUnique(Long appId, String env, String clusterName) {
         Objects.requireNonNull(appId, "AppId must not be null");
         Objects.requireNonNull(clusterName, "ClusterName must not be null");
-        return ObjectUtils.isEmpty((appEnvClusterRepository.findClusterByAppAndEnvAndName(new App(appId), env, clusterName)));
-
+        return ObjectUtils.isEmpty((appEnvClusterRepository.findClusterByAppIdAndEnvAndName(appId, env, clusterName)));
     }
 //
 //    public ClusterEntity findOne(String appId, String name, String env) {
@@ -157,15 +167,15 @@ public class AppEnvClusterService {
 //    }
 
     @Transactional
-    public void createDefaultCluster(long appId) {
+    public void createClusterInEachActiveEnv(long appId, String clusterName) {
         List<String> envs = serverConfigService.getActiveEnvs();
         //每次遍历，都要new，防止覆盖
         envs.forEach((env -> {
-                    if (isClusterNameUnique(appId, env, ConfigConsts.CLUSTER_NAME_DEFAULT)) {
+                    if (isClusterNameUnique(appId, env, clusterName)) {
                         AppEnvCluster appEnvCluster = AppEnvCluster.builder()
                                 .app(new App(appId))
                                 .env(env)
-                                .name(ConfigConsts.CLUSTER_NAME_DEFAULT)
+                                .name(clusterName)
                                 .build();
                         appEnvClusterRepository.save(appEnvCluster);
                     }
