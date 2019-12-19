@@ -12,6 +12,7 @@ import com.yofish.gary.biz.service.UserService;
 import com.youyu.common.api.PageData;
 import common.exception.BadRequestException;
 import common.utils.PageDataAdapter;
+import framework.apollo.core.ConfigConsts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,7 +56,7 @@ public class AppService {
 
         AppNamespace defaultAppNamespace = appNamespaceService.createDefaultAppNamespace(createdApp.getId());
 
-        appEnvClusterService.createDefaultCluster(createdApp.getId());
+        appEnvClusterService.createClusterInEachActiveEnv(createdApp.getId(), ConfigConsts.CLUSTER_NAME_DEFAULT);
 
         appEnvClusterNamespaceService.createNamespaceForAppNamespaceInAllCluster(defaultAppNamespace);
 
