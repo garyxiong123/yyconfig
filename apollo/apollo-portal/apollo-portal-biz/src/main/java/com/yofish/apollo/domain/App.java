@@ -5,10 +5,7 @@ import com.yofish.gary.biz.domain.User;
 import com.yofish.gary.dao.entity.BaseEntity;
 import lombok.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -26,6 +23,7 @@ import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
 @Entity
 public class App extends BaseEntity {
 
+    @Column(unique = true)
     private String appCode;
     private String name;
 
