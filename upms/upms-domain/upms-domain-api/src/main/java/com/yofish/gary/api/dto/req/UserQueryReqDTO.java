@@ -21,8 +21,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 /**
  * @author pqq
  * @version v1.0
@@ -37,19 +35,10 @@ public class UserQueryReqDTO extends PageQuery {
     private static final long serialVersionUID = 4270708928228954721L;
 
     @ApiModelProperty("用户id")
-    private Long userId;
+    private Long id;
 
-    @ApiModelProperty("查询条件(模糊查询):用户名")
-    private String userName;
-
-    @ApiModelProperty("查询条件(模糊查询):真实姓名")
-    private String realName;
-
-    @ApiModelProperty("查询条件(模糊查询):手机号")
-    private String phone;
-
-    @ApiModelProperty("查询条件(模糊查询):邮箱")
-    private String email;
+    @ApiModelProperty("查询条件(模糊查询):用户名,真实姓名,手机号,邮箱")
+    private String condition;
 
     @ApiModelProperty("状态")
     private String status;

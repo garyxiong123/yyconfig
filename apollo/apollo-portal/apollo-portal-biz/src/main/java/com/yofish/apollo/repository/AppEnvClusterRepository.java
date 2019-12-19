@@ -16,9 +16,14 @@ import java.util.List;
 @Component
 public interface AppEnvClusterRepository extends JpaRepository<AppEnvCluster, Long> {
 
-    AppEnvCluster findClusterByAppAndEnvAndName(App app, String env, String name);
+    AppEnvCluster findClusterByAppIdAndEnvAndName(long appId, String env, String name);
 
-    AppEnvCluster findByParentClusterId(Long parentClusterId);
 
-    List<AppEnvCluster> findByAppAndParentClusterId(App app, Long parentClusterId);
+    List<AppEnvCluster> findByApp(App app);
+
+    List<AppEnvCluster> findByAppIdAndEnv(long appId,String env);
+
+
+
+
 }

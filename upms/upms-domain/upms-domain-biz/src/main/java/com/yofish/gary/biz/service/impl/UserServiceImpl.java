@@ -30,11 +30,17 @@ import com.yofish.gary.biz.repository.UserRepository;
 import com.yofish.gary.biz.service.UserService;
 import com.yofish.gary.tuple.Tuple2;
 import com.youyu.common.api.PageData;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.Predicate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -135,13 +141,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public PageData<UserQueryRspDTO> getPage(UserQueryReqDTO userQueryReqDTO) {
+    public PageData<UserQueryRspDTO> getPage(UserQueryReqDTO req) {
         //Pageable 从0开始算
-        Pageable pageable = PageRequest.of(userQueryReqDTO.getPageNo()-1, userQueryReqDTO.getPageSize());
+        Pageable pageable = PageRequest.of(req.getPageNo() - 1, req.getPageSize());
 
-        Example example = this.toExample(userQueryReqDTO);
-
-        Page<User> userPage = this.userRepository.findAll(example, pageable);
+        Specification<User> specification = this.getSpecification(req);
+        Page<User> userPage = this.userRepository.findAll(specification, pageable);
         List<UserQueryRspDTO> userQueryRsps = copyProperty4List(userPage.getContent(), UserQueryRspDTO.class);
 
         PageData<UserQueryRspDTO> pageData = PageDataHelper.toPageData(userPage, userQueryRsps);
@@ -151,31 +156,38 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserQueryRspDTO> getList(UserQueryReqDTO userQueryReqDTO) {
-        Example example = this.toExample(userQueryReqDTO);
-        List userList = this.userRepository.findAll(example);
+        Specification<User> specification = this.getSpecification(userQueryReqDTO);
+        List userList = this.userRepository.findAll(specification);
 
         List<UserQueryRspDTO> userQueryRsps = copyProperty4List(userList, UserQueryRspDTO.class);
 
         return userQueryRsps;
     }
 
-    private Example toExample(UserQueryReqDTO userQueryReqDTO) {
-        User user = User.builder()
-                .id(userQueryReqDTO.getUserId())
-                .username(userQueryReqDTO.getUserName())
-                .realName(userQueryReqDTO.getRealName())
-                .phone(userQueryReqDTO.getPhone())
-                .email(userQueryReqDTO.getEmail())
-                .status(userQueryReqDTO.getStatus())
-                .build();
+    private Specification<User> getSpecification(UserQueryReqDTO req) {
+        Specification<User> specification = (Specification<User>) (root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicatesList = new ArrayList<>();
+            if (!StringUtils.isBlank(req.getStatus())) {
+                Predicate status = criteriaBuilder.equal(root.get("status").as(String.class), req.getStatus());
+                predicatesList.add(status);
+            }
+            if (req.getId() != null) {
+                Predicate userId = criteriaBuilder.equal(root.get("id").as(Long.class), req.getId());
+                predicatesList.add(userId);
+            }
 
-        Example example = Example.of(user, ExampleMatcher.matching()
-                .withMatcher("username", matcher -> matcher.stringMatcher(ExampleMatcher.StringMatcher.CONTAINING))
-                .withMatcher("realName", matcher -> matcher.stringMatcher(ExampleMatcher.StringMatcher.CONTAINING))
-                .withMatcher("phone", matcher -> matcher.stringMatcher(ExampleMatcher.StringMatcher.CONTAINING))
-                .withMatcher("status", matcher -> matcher.stringMatcher(ExampleMatcher.StringMatcher.CONTAINING))
-        );
-        return example;
+            String condition = req.getCondition();
+            if (!StringUtils.isBlank(condition)) {
+                Predicate username = criteriaBuilder.like(root.get("username").as(String.class), "%" + condition + "%");
+                Predicate realName = criteriaBuilder.like(root.get("realName").as(String.class), "%" + condition + "%");
+                Predicate email = criteriaBuilder.like(root.get("email").as(String.class), "%" + condition + "%");
+
+                predicatesList.add(criteriaBuilder.or(username, realName, email));
+            }
+
+            return criteriaBuilder.and(predicatesList.toArray(new Predicate[predicatesList.size()]));
+        };
+        return specification;
     }
 
     @Override

@@ -9,7 +9,7 @@ import javax.validation.constraints.Pattern;
 public class NamespaceDTO extends BaseDTO {
     private long id;
 
-    private Long appId;
+    private String appCode;
 
     private String clusterName;
 

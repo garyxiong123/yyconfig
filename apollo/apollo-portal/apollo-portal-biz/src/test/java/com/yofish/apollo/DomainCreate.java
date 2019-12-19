@@ -12,6 +12,8 @@ import framework.apollo.core.enums.Env;
  */
 public class DomainCreate {
 
+    public static final String branchName = "2017-1222-branch";
+
     public static AppEnvClusterNamespace4Main createNamespace4Main() {
         AppEnvClusterNamespace4Main appEnvClusterNamespace4Main = createAppEnvClusterNamespace4Main();
         return appEnvClusterNamespace4Main;

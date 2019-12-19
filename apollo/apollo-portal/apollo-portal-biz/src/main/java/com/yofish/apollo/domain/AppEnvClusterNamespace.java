@@ -2,6 +2,7 @@ package com.yofish.apollo.domain;
 
 import com.yofish.apollo.repository.ReleaseRepository;
 import com.yofish.apollo.service.AppNamespaceService;
+import com.yofish.apollo.service.ItemService;
 import com.yofish.gary.dao.entity.BaseEntity;
 import lombok.*;
 import org.springframework.data.domain.PageRequest;
@@ -48,4 +49,10 @@ public class AppEnvClusterNamespace extends BaseEntity {
     public List<Release> findLatestActiveReleases(PageRequest page) {
         return null;
     }
+
+    public List<Item> getItems() {
+        List<Item> items = getBeanByClass(ItemService.class).findItemsWithoutOrdered(this.getId());
+        return items;
+    }
+
 }

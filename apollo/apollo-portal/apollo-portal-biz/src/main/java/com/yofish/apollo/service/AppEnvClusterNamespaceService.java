@@ -7,11 +7,7 @@ import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.repository.AppEnvClusterNamespace4BranchRepository;
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.repository.AppEnvClusterRepository;
-import common.dto.NamespaceDTO;
-import common.exception.BadRequestException;
-import common.utils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,7 +31,7 @@ public class AppEnvClusterNamespaceService {
     private AppEnvClusterNamespace4BranchRepository branchRepository;
 
     public  AppEnvClusterNamespace4Branch findChildNamespace(Long parentId) {
-        return branchRepository.findAppEnvClusterNamespace4BranchByParentId(parentId);
+        return branchRepository.findByParentId(parentId);
     }
 
 /*
@@ -73,7 +69,7 @@ public class AppEnvClusterNamespaceService {
     }*/
 
     public void createNamespaceForAppNamespaceInAllCluster(AppNamespace appNamespace) {
-        List<AppEnvCluster> appEnvClusters = this.appEnvClusterRepository.findByAppAndParentClusterId(appNamespace.getApp(), 0L);
+        List<AppEnvCluster> appEnvClusters = this.appEnvClusterRepository.findByApp(appNamespace.getApp());
         for (AppEnvCluster appEnvCluster : appEnvClusters) {
             // in case there is some dirty data, e.g. public appNamespace deleted in other app and now created in this app
             if (!this.isNamespaceUnique(appEnvCluster, appNamespace)) {
@@ -85,4 +81,10 @@ public class AppEnvClusterNamespaceService {
         }
     }
 
+    public AppEnvClusterNamespace findAppEnvClusterNamespace(String appCode,String env,String namespace,String cluster,String type){
+        return namespaceRepository.findAppEnvClusterNamespace(appCode,env,namespace,cluster,type);
+    }
+    public AppEnvClusterNamespace findAppEnvClusterNamespace(Long id){
+        return namespaceRepository.findAppEnvClusterNamespaceById(id);
+    }
 }

@@ -84,7 +84,7 @@ public class PermissionValidator {
         return userRepository.findById(getCurrentUserId()).get().isAdmin();
     }
 
-    public boolean shouldHideConfigToCurrentUser(String appId, String env, String namespaceName) {
+    public boolean shouldHideConfigToCurrentUser() {
         return false;
     }
 }

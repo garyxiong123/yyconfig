@@ -17,7 +17,6 @@ import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass;
  * @Author: xiongchengwei
  * @Date: 2019/12/15 下午10:14
  */
-@AllArgsConstructor
 @Data
 @Entity
 @DiscriminatorValue("branch")
@@ -30,7 +29,10 @@ public class AppEnvClusterNamespace4Branch extends AppEnvClusterNamespace {
 
     private String branchName;
 
-    public AppEnvClusterNamespace4Branch(Long parentId){
+    public AppEnvClusterNamespace4Branch() {
+    }
+
+    public AppEnvClusterNamespace4Branch(Long parentId) {
         this.parentId = parentId;
     }
 

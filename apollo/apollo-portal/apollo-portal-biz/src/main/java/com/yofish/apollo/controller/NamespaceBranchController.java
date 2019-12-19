@@ -1,11 +1,9 @@
 package com.yofish.apollo.controller;
 
 import com.yofish.apollo.component.PermissionValidator;
-import com.yofish.apollo.domain.AppEnvClusterNamespace;
-import com.yofish.apollo.domain.AppEnvClusterNamespace4Branch;
 import com.yofish.apollo.domain.Release;
 import com.yofish.apollo.listener.ConfigPublishEvent;
-import com.yofish.apollo.model.bo.NamespaceBO;
+import com.yofish.apollo.model.bo.NamespaceVO;
 import com.yofish.apollo.model.model.NamespaceReleaseModel;
 import com.yofish.apollo.service.NamespaceBranchService;
 import com.yofish.apollo.service.PortalConfig;
@@ -33,25 +31,21 @@ public class NamespaceBranchController {
     private PortalConfig portalConfig;
 
     @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/branches", method = RequestMethod.GET)
-    public NamespaceBO findBranch(@PathVariable String appId,
-                                  @PathVariable String env,
-                                  @PathVariable String clusterName,
-                                  @PathVariable String namespaceName) {
-        NamespaceBO namespaceBO = null;
-//            namespaceBranchService.findBranch(appId, Env.valueOf(env), clusterName, namespaceName);
+    public NamespaceVO findBranch(@PathVariable Long namespaceId) {
+        NamespaceVO namespaceVO = namespaceBranchService.findBranch(namespaceId);
 
-        if (namespaceBO != null && permissionValidator.shouldHideConfigToCurrentUser(appId, env, namespaceName)) {
-            namespaceBO.hideItems();
+        if (namespaceVO != null && permissionValidator.shouldHideConfigToCurrentUser()) {
+            namespaceVO.hideItems();
         }
 
-        return namespaceBO;
+        return namespaceVO;
     }
 
     @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, #env)")
     @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/branches", method = RequestMethod.POST)
-    public NamespaceDTO createBranch(@PathVariable Long namespaceId) {
+    public NamespaceDTO createBranch(@PathVariable Long namespaceId, @PathVariable String branchName) {
 
-        return namespaceBranchService.createBranch(namespaceId);
+        return namespaceBranchService.createBranch(namespaceId, branchName);
     }
 
     @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}", method = RequestMethod.DELETE)

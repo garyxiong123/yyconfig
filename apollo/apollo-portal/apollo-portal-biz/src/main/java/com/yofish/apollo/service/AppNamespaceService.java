@@ -173,7 +173,5 @@ public class AppNamespaceService {
         return null;
     }
 
-    public AppEnvClusterNamespace findChildNamespace(AppEnvClusterNamespace namespace) {
-        return null;
-    }
+
 }
