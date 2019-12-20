@@ -43,7 +43,8 @@ public class AppEnvClusterNamespace extends BaseEntity {
 
 
     public Release findLatestActiveRelease() {
-        return null;
+
+        return getBeanByClass(ReleaseRepository.class).findFirstByAppEnvClusterNamespace_IdAndAbandonedIsFalseOrderByIdDesc(this.getId());
     }
 
     public List<Release> findLatestActiveReleases(PageRequest page) {

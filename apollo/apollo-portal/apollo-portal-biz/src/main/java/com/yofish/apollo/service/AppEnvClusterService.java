@@ -45,8 +45,11 @@ public class AppEnvClusterService {
 
 
     public List<AppEnvCluster> findClusters(String env, long appId) {
-
         return appEnvClusterRepository.findByAppIdAndEnv(appId, env);
+    }
+
+    public List<AppEnvCluster> findClusters(String env, String appCode) {
+        return appEnvClusterRepository.findByAppAppCodeAndEnv(appCode, env);
     }
 
 
