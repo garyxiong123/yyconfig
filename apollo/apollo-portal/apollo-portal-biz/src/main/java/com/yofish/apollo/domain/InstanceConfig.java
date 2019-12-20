@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @NoArgsConstructor
@@ -21,5 +22,5 @@ public class InstanceConfig extends BaseEntity {
     @Column(name = "ReleaseKey", nullable = false)
     private String releaseKey;
 
-
+    private LocalDateTime releaseDeliveryTime;
 }
