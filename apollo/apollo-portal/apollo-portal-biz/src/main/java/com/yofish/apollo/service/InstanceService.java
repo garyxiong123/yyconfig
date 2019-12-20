@@ -117,7 +117,7 @@ public class InstanceService {
             otherReleaseKeys.add(instanceConfig.getReleaseKey());
         }
 
-        List<Instance> instances = instanceRepository.findInstancesByIds(instanceConfigMap.keySet());
+        List<Instance> instances = instanceRepository.findInstancesByIdIn(instanceConfigMap.keySet());
 
         if (CollectionUtils.isEmpty(instances)) {
             return Collections.emptyList();

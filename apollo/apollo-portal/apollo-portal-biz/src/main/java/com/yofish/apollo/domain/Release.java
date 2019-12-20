@@ -44,7 +44,7 @@ public class Release extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.DETACH)
     private AppEnvClusterNamespace appEnvClusterNamespace;
 
     @Column(name = "Configurations", nullable = false)

@@ -18,9 +18,12 @@ import java.util.List;
 public interface InstanceRepository extends JpaRepository<Instance, Long> {
 
 //    Instance findByAppIdAndClusterNameAndDataCenterAndIp(String appId, String clusterName, String dataCenter, String ip);
-    Instance findByAppNamespaceAndDataCenterAndIp(AppNamespace appNamespace, String dataCenter, String ip);
+
+//    Instance findByAppNamespaceAndDataCenterAndIp(AppNamespace appNamespace, String dataCenter, String ip);
+
     List<Instance> findAllByAppEnvClusterNamespace(AppEnvClusterNamespace appEnvClusterNamespace);
-    List<Instance> findInstancesByIds(Iterable<Long> ids);
+
+    List<Instance> findInstancesByIdIn(Iterable<Long> ids);
 
 
 }
