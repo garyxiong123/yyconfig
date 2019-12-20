@@ -19,10 +19,9 @@ class MyProject extends React.Component {
   // ----------------------------------生命周期-----------------------------
   componentDidMount() {
     const { list } = this.props;
-    if(!list.rows) {
-      this.onFetchlist();
-    }
-    
+    const { searchObj } = this.state;
+    this.onFetchlist();
+
   }
   componentDidUpdate(prevProps, prevState) {
     const { searchObj } = this.state;
@@ -34,7 +33,7 @@ class MyProject extends React.Component {
   onRouteTo = (pathname, data) => {
     router.push({
       pathname,
-      data
+      query: data
     })
   }
   onFetchlist = () => {
@@ -56,7 +55,13 @@ class MyProject extends React.Component {
     })
   }
   onSave = () => {
-    this.onFetchlist();
+    const { searchObj } = this.state;
+    this.setState({
+      searchObj: {
+        ...searchObj,
+        page: 1
+      }
+    })
   }
   onQueryMore = () => {
     const { searchObj } = this.state;
@@ -83,7 +88,7 @@ class MyProject extends React.Component {
           {
             list.rows && list.rows.map((item, i) => (
               <Col span={8} key={i}>
-                <Card className={styles.listCard} onClick={() => { this.onRouteTo('/project/details') }}>
+                <Card className={styles.listCard} onClick={() => { this.onRouteTo('/project/details', {appId: item.id}) }}>
                   <h2>{item.appCode}</h2>
                   <p>{item.name}</p>
                 </Card>
