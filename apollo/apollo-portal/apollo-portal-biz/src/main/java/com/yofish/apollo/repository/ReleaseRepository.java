@@ -35,4 +35,7 @@ public interface ReleaseRepository extends JpaRepository<Release, Long> {
     int batchDelete(String appId, String clusterName, String namespaceName, String operator);
 
 //    int batchDelete(String appId, String clusterName, String namespaceName, String operator);
+
+    Release findFirstByAppEnvClusterNamespace_IdAndAbandonedIsFalseOrderByIdDesc(Long namespaceId );
+
 }

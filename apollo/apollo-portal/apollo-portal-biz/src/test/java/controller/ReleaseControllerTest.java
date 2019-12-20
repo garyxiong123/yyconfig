@@ -64,16 +64,15 @@ public class ReleaseControllerTest extends AbstractControllerTest {
 
     @Test
     public void testRelease4Main() {
-        CreateItemReq req = createItemReq();
-        itemController.createItem(req);
+//        CreateItemReq req = createItemReq();
+//        itemController.createItem(req);
+
         NamespaceReleaseModel namespaceReleaseModel = NamespaceReleaseModel.builder().releaseTitle("测试发布标题").releaseComment("测试发布").AppEnvClusterNamespaceId(namespace.getId()).build();
         releaseController.createRelease(namespaceReleaseModel);
 
     }
 
     private CreateItemReq createItemReq() {
-        AppEnvClusterNamespace4Main namespace = DomainCreate.createAppEnvClusterNamespace4Main();
-        namespaceRepository.save(namespace);
         Long namespaceId = namespace.getId();
         CreateItemReq itemReq = DomainCreate.createItemReq();
         itemReq.setAppEnvClusterNamespaceId(namespaceId);
