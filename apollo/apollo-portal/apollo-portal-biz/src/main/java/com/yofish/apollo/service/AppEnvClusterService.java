@@ -52,7 +52,8 @@ public class AppEnvClusterService {
 
     public AppEnvCluster createAppEnvCluster(AppEnvCluster appEnvCluster) {
         AppEnvCluster cluster = appEnvClusterRepository.save(appEnvCluster);
-        //todo 创建集群
+        // create linked namespace
+        this.appEnvClusterNamespaceService.instanceOfAppNamespaces(appEnvCluster);
         return cluster;
     }
 
@@ -62,6 +63,7 @@ public class AppEnvClusterService {
 
     public void deleteAppEnvCluster(AppEnvCluster appEnvCluster) {
         appEnvClusterRepository.delete(appEnvCluster);
+        // TODO: 2019-12-20 delete linked namespaces
     }
 
 

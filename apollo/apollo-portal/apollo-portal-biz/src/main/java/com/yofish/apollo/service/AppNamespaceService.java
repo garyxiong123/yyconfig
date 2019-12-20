@@ -86,18 +86,21 @@ public class AppNamespaceService {
         Objects.requireNonNull(namespaceName, "Namespace must not be null");
         return Objects.isNull(appNamespaceRepository.findByAppAndName(new App(appId), namespaceName));
     }
-
-    public AppNamespace4Private createAppNamespace4Private(AppNamespace4Private namespace4Private) {
-
-        return null;
+    public boolean isAppNamespaceNameUnique(AppNamespace appNamespace) {
+        Objects.requireNonNull(appNamespace, "AppNamespace must not be null");
+        Objects.requireNonNull(appNamespace.getApp(), "App must not be null");
+        return isAppNamespaceNameUnique(appNamespace.getApp().getId(), appNamespace.getName());
     }
-    public AppNamespace4Private createAppNamespace4Protect(AppNamespace4Protect namespace4Protect) {
 
-        return null;
-    }
-    public AppNamespace4Private createAppNamespace4Public(AppNamespace4Public namespace4Public) {
+    public <T extends AppNamespace> T createAppNamespace(T  appNamespace) {
+        if (!isAppNamespaceNameUnique(appNamespace)) {
+            throw new BadRequestException(String.format("App already has application appNamespace. AppId = %s", appNamespace.getApp().getId()));
+        }
+        appNamespace = appNamespaceRepository.save(appNamespace);
 
-        return null;
+        appEnvClusterNamespaceService.createNamespaceForAppNamespaceInAllCluster(appNamespace);
+
+        return appNamespace;
     }
 
     @Transactional
