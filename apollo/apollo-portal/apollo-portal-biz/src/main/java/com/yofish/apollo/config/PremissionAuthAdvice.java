@@ -16,6 +16,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Aspect
+@Component
 public class PremissionAuthAdvice {
 
     @Autowired
@@ -46,6 +48,12 @@ public class PremissionAuthAdvice {
 
     @Before("@annotation(common.condition.PermissionAuth)")
     public void validate(JoinPoint joinPoint) {
+
+
+        //TODO 上线待删除
+        log.info("====================   测试阶段没有用户登录，暂不做验证！！       ====================");
+        if (true) return;
+
         //当前用户ID
         Long currentUserId = YyRequestInfoHelper.getCurrentUserId();
         YyAssert.isTrue(!ObjectUtils.isEmpty(currentUserId), "403", "用户未登录！");
@@ -55,6 +63,18 @@ public class PremissionAuthAdvice {
             return;
         }
 
+        // 获取目标接口的权限验证类型
+        Class targetClass = joinPoint.getTarget().getClass();
+        String methodName = joinPoint.getSignature().getName();
+        Class<?>[] parameterTypes = ((MethodSignature) joinPoint.getSignature()).getMethod().getParameterTypes();
+        PermissionAuth.PermissionType permissionType = this.getPermissionType(targetClass, methodName, parameterTypes);
+        log.info("permissionType:[{}]", permissionType);
+
+        if (permissionType.equals(PermissionAuth.PermissionType.admin)){
+            boolean adminPermission = false;
+            YyAssert.isTrue(adminPermission, "当前用户没有[" + permissionType + "]权限。");
+        }
+
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
         log.info("进行 @Premission 权限验证：[{}]", request.getRequestURL());
@@ -62,13 +82,6 @@ public class PremissionAuthAdvice {
         Long appId = ((Map<String, Long>) request.getAttribute(View.PATH_VARIABLES)).get("appId");
 
         YyAssert.paramCheck(ObjectUtils.isEmpty(appId), "pathVariables 没有 appId！");
-
-        // 获取目标接口的权限验证类型
-        Class targetClass = joinPoint.getTarget().getClass();
-        String methodName = joinPoint.getSignature().getName();
-        Class<?>[] parameterTypes = ((MethodSignature) joinPoint.getSignature()).getMethod().getParameterTypes();
-        PermissionAuth.PermissionType permissionType = this.getPermissionType(targetClass, methodName, parameterTypes);
-        log.info("permissionType:[{}]", permissionType);
 
         //进行权限验证
         if (permissionType.equals(PermissionAuth.PermissionType.leader)) {
