@@ -1,33 +1,33 @@
 package com.yofish.apollo.service;
 
-import com.google.common.collect.Maps;
+import com.google.gson.Gson;
 import com.yofish.apollo.bo.ItemChangeSets;
 import com.yofish.apollo.domain.*;
 import com.yofish.apollo.dto.ReleaseDTO;
-import com.yofish.apollo.model.bo.NamespaceBO;
+import com.yofish.apollo.model.bo.ItemBO;
+import com.yofish.apollo.model.bo.NamespaceVO;
 import com.yofish.apollo.repository.AppEnvClusterNamespace4BranchRepository;
+import com.yofish.apollo.repository.AppEnvClusterNamespace4MainRepository;
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.repository.GrayReleaseRuleRepository;
-import common.constants.ReleaseOperation;
-import common.constants.ReleaseOperationContext;
+import common.constants.GsonType;
 import common.dto.GrayReleaseRuleDTO;
 import common.dto.ItemDTO;
 import common.dto.NamespaceDTO;
 import common.exception.BadRequestException;
-import common.utils.GrayReleaseRuleItemTransformer;
+import common.utils.BeanUtils;
+import framework.apollo.core.enums.ConfigFileFormat;
 import framework.apollo.core.enums.Env;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class NamespaceBranchService {
 
-//    @Autowired
+    //    @Autowired
 //    private ItemsComparator itemsComparator;
     @Autowired
     private AppNamespaceService appNamespaceService;
@@ -42,26 +42,38 @@ public class NamespaceBranchService {
     @Autowired
     private AppEnvClusterNamespace4BranchRepository branchNamespaceRepository;
     @Autowired
+    private AppEnvClusterNamespace4MainRepository branchNamespaceRepository4Main;
+    @Autowired
     private GrayReleaseRuleRepository grayReleaseRuleRepository;
+    private Gson gson = new Gson();
 
 
     @Transactional
-    public NamespaceDTO createBranch(Long namespaceId) {
-        AppEnvClusterNamespace namespace = namespaceRepository.findById(namespaceId).get();
-        AppEnvClusterNamespace4Branch namespace4Branch = (AppEnvClusterNamespace4Branch) creteBranchNamespace(namespace);
+    public NamespaceDTO createBranch(Long namespaceId, String branchName) {
+        AppEnvClusterNamespace4Main namespace = (AppEnvClusterNamespace4Main) namespaceRepository.findById(namespaceId).get();
+        if (namespace.hasBranchNamespace()) {
+            throw new BadRequestException("namespace already has branch");
+        }
+        AppEnvClusterNamespace4Branch namespace4Branch = (AppEnvClusterNamespace4Branch) creteBranchNamespace(namespace, branchName);
         namespaceRepository.save(namespace4Branch);
-
-        return null;
+        NamespaceDTO namespaceDTO = transform2Dto(namespace4Branch);
+        return namespaceDTO;
 
     }
 
-    private AppEnvClusterNamespace creteBranchNamespace(AppEnvClusterNamespace namespace) {
-        AppEnvClusterNamespace4Branch appEnvClusterNamespace4Branch = new AppEnvClusterNamespace4Branch(namespace.getAppEnvCluster(), namespace.getAppNamespace());
-        return appEnvClusterNamespace4Branch;
+    private NamespaceDTO transform2Dto(AppEnvClusterNamespace4Branch namespace4Branch) {
+        return null;
+    }
+
+    private AppEnvClusterNamespace creteBranchNamespace(AppEnvClusterNamespace namespace, String branchName) {
+        AppEnvClusterNamespace4Branch namespace4Branch = new AppEnvClusterNamespace4Branch(namespace.getAppEnvCluster(), namespace.getAppNamespace());
+        namespace4Branch.setBranchName(branchName);
+        namespace4Branch.setParentId(namespace.getId());
+        return namespace4Branch;
     }
 
     public GrayReleaseRuleDTO findBranchGrayRules(Long namespaceId) {
-        AppEnvClusterNamespace4Branch branchNamespace = branchNamespaceRepository.findAppEnvClusterNamespace4BranchByParentId(namespaceId);
+        AppEnvClusterNamespace4Branch branchNamespace = branchNamespaceRepository.findByParentId(namespaceId);
         GrayReleaseRule grayReleaseRule = branchNamespace.getGrayReleaseRule();
 
         GrayReleaseRuleDTO grayReleaseRuleDTO = transform2Dto(grayReleaseRule);
@@ -120,19 +132,125 @@ public class NamespaceBranchService {
     }
 
 
-    public NamespaceDTO findBranch(String appId, Env env, String clusterName, String namespaceName) {
-//        NamespaceDTO namespaceDTO = findBranchBaseInfo(appId, env, clusterName, namespaceName);
-//        if (namespaceDTO == null) {
-//            return null;
+    public NamespaceVO findBranch(Long namespaceId) {
+        AppEnvClusterNamespace4Branch branchNamespace = branchNamespaceRepository.findByParentId(namespaceId);
+        NamespaceVO namespaceVO = null;
+//                transform2BO(branchNamespace);
+        return namespaceVO;
+    }
+
+//    private NamespaceVO transform2BO(AppEnvClusterNamespace4Branch branchNamespace) {
+//        NamespaceVO namespaceVO = new NamespaceVO();
+//        Env env = null;
+//        namespaceVO.setBaseInfo(null);
+//
+//        String appId = branchNamespace.getAppId();
+//        String clusterName = branchNamespace.getClusterName();
+//        String namespaceName = branchNamespace.getNamespaceName();
+//
+//        fillAppNamespaceProperties(namespaceVO);
+//
+//        List<ItemBO> itemBOs = new LinkedList<>();
+//        namespaceVO.setItems(itemBOs);
+//
+//        //latest Release
+//        Map<String, String> releaseItems = new HashMap<>();
+//
+//        Release latestRelease = branchNamespace.findLatestActiveRelease();
+//        if (latestRelease != null) {
+//            releaseItems = gson.fromJson(latestRelease.getConfigurations(), GsonType.CONFIG);
 //        }
-//        return appNamespaceService.loadNamespaceBO(appId, env, namespaceDTO.getClusterName(), namespaceName);
-        return null;
-    }
+//
+//
+//        //not Release config items
+//        List<ItemDTO> items = itemService.findItems(appId, env, clusterName, namespaceName);
+//        int modifiedItemCnt = 0;
+//        for (ItemDTO itemDTO : items) {
+//
+//            ItemBO itemBO = transformItem2BO(itemDTO, releaseItems);
+//
+//            if (itemBO.isModified()) {
+//                modifiedItemCnt++;
+//            }
+//
+//            itemBOs.add(itemBO);
+//        }
+//
+//        //deleted items
+//        List<ItemBO> deletedItems = parseDeletedItems(items, releaseItems);
+//        itemBOs.addAll(deletedItems);
+//        modifiedItemCnt += deletedItems.size();
+//
+//        namespaceVO.setItemModifiedCnt(modifiedItemCnt);
+//        return null;
+//    }
+//
+//    private List<ItemBO> parseDeletedItems(List<ItemDTO> newItems, Map<String, String> releaseItems) {
+//        Map<String, ItemDTO> newItemMap = BeanUtils.mapByKey("key", newItems);
+//
+//        List<ItemBO> deletedItems = new LinkedList<>();
+//        for (Map.Entry<String, String> entry : releaseItems.entrySet()) {
+//            String key = entry.getKey();
+//            if (newItemMap.get(key) == null) {
+//                ItemBO deletedItem = new ItemBO();
+//
+//                deletedItem.setDeleted(true);
+//                ItemDTO deletedItemDto = new ItemDTO();
+//                deletedItemDto.setKey(key);
+//                String oldValue = entry.getValue();
+//                deletedItem.setItem(deletedItemDto);
+//
+//                deletedItemDto.setValue(oldValue);
+//                deletedItem.setModified(true);
+//                deletedItem.setOldValue(oldValue);
+//                deletedItem.setNewValue("");
+//                deletedItems.add(deletedItem);
+//            }
+//        }
+//        return deletedItems;
+//    }
+//    private ItemBO transformItem2BO(ItemDTO itemDTO, Map<String, String> releaseItems) {
+//        String key = itemDTO.getKey();
+//        ItemBO itemBO = new ItemBO();
+//        itemBO.setItem(itemDTO);
+//        String newValue = itemDTO.getValue();
+//        String oldValue = releaseItems.get(key);
+//        //new item or modified
+//        if (!StringUtils.isEmpty(key) && (oldValue == null || !newValue.equals(oldValue))) {
+//            itemBO.setModified(true);
+//            itemBO.setOldValue(oldValue == null ? "" : oldValue);
+//            itemBO.setNewValue(newValue);
+//        }
+//        return itemBO;
+//    }
 
 
-    public AppEnvClusterNamespace4Branch findBranch(Long appId) {
-        return appEnvClusterNamespaceService.findChildNamespace(appId);
+    private void fillAppNamespaceProperties(NamespaceVO namespace) {
+
+        NamespaceDTO namespaceDTO = namespace.getBaseInfo();
+        //先从当前appId下面找,包含私有的和公共的
+        AppNamespace appNamespace = appNamespaceService.findByAppIdAndName(namespaceDTO.getId(), namespaceDTO.getNamespaceName());
+        //再从公共的app namespace里面找
+        if (appNamespace == null) {
+            appNamespace = appNamespaceService.findPublicAppNamespace(namespaceDTO.getNamespaceName());
+        }
+
+        String format;
+        boolean isPublic;
+        if (appNamespace == null) {
+            //dirty data
+            format = ConfigFileFormat.Properties.getValue();
+            isPublic = true; // set to true, because public namespace allowed to delete by user
+        } else {
+            format = appNamespace.getFormat().getValue();
+            isPublic = appNamespace.isPublic();
+            namespace.setParentAppCode(appNamespace.getApp().getAppCode());
+            namespace.setComment(appNamespace.getComment());
+        }
+        namespace.setFormat(format);
+        namespace.setPublic(isPublic);
     }
+
 
 
     @Transactional
@@ -166,4 +284,7 @@ public class NamespaceBranchService {
         return childNamespace;
     }
 
+    public GrayReleaseRule updateRulesReleaseId(Release4Branch release4Branch) {
+        return null;
+    }
 }

@@ -1,7 +1,6 @@
 package com.yofish.apollo.domain;
 
 import com.yofish.gary.dao.entity.BaseEntity;
-import framework.apollo.core.enums.Env;
 import lombok.*;
 
 import javax.persistence.CascadeType;
@@ -25,10 +24,7 @@ public class AppEnvCluster extends BaseEntity {
 
     private String env;
 
-    @ManyToOne(cascade = CascadeType.DETACH)
+    @ManyToOne(cascade = CascadeType.ALL)
     private App app;
-
-    private Long parentClusterId;
-
 
 }

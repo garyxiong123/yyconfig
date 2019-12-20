@@ -4,6 +4,7 @@ package com.yofish.apollo.service;
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.domain.Department;
+import com.yofish.apollo.model.vo.EnvClusterInfo;
 import com.yofish.apollo.repository.AppRepository;
 import com.yofish.apollo.repository.DepartmentRepository;
 import com.yofish.gary.biz.domain.User;
@@ -11,6 +12,7 @@ import com.yofish.gary.biz.service.UserService;
 import com.youyu.common.api.PageData;
 import common.exception.BadRequestException;
 import common.utils.PageDataAdapter;
+import framework.apollo.core.ConfigConsts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +37,8 @@ public class AppService {
     private AppEnvClusterService appEnvClusterService;
     @Autowired
     private DepartmentRepository departmentRepository;
+    @Autowired
+    private AppEnvClusterService clusterService;
 
 
     @Transactional
@@ -52,7 +56,7 @@ public class AppService {
 
         AppNamespace defaultAppNamespace = appNamespaceService.createDefaultAppNamespace(createdApp.getId());
 
-        appEnvClusterService.createDefaultCluster(createdApp.getId());
+        appEnvClusterService.createClusterInEachActiveEnv(createdApp.getId(), ConfigConsts.CLUSTER_NAME_DEFAULT);
 
         appEnvClusterNamespaceService.createNamespaceForAppNamespaceInAllCluster(defaultAppNamespace);
 
@@ -128,6 +132,12 @@ public class AppService {
         App app = appRepository.findById(appId).orElse(null);
         return app;
     }
+
+    public EnvClusterInfo createEnvNavNode(String  env, long appId) {
+        EnvClusterInfo node = new EnvClusterInfo(env);
+        node.setClusters(clusterService.findClusters(env, appId));
+        return node;
+    }
 /*
   public List<App> findAll() {
     Iterable<App> apps = appRepository.findAll();
@@ -202,12 +212,6 @@ public class AppService {
     managedApp.setDataChangeLastModifiedBy(operator);
 
     return appRepository.save(managedApp);
-  }
-
-  public EnvClusterInfo createEnvNavNode(Env env, String appId) {
-    EnvClusterInfo node = new EnvClusterInfo(env);
-    node.setClusters(clusterService.findClusters(env, appId));
-    return node;
   }
 
   @Transactional
