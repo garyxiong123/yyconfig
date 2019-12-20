@@ -20,7 +20,7 @@ public class ClusterController {
     private AppEnvClusterService appEnvClusterService;
 
     @ApiOperation("创建集群")
-    @PostMapping(value = "apps/{appId}/envs/{env:\\d+}/clusters/{clusterName}")
+    @PostMapping("/apps/{appId:\\d+}/envs/{env}/clusters/{clusterName}")
     public Result<AppEnvCluster> createCluster(@PathVariable Long appId, @PathVariable String env, @PathVariable String clusterName) {
 
         if (!InputValidator.isValidClusterNamespace(clusterName)) {
@@ -33,14 +33,14 @@ public class ClusterController {
     }
 
     @ApiOperation("删除集群")
-    @DeleteMapping(value = "apps/{appId:\\d+}/envs/{env}/clusters/{clusterName:.+}")
+    @DeleteMapping("/apps/{appId:\\d+}/envs/{env}/clusters/{clusterName:.+}")
     public Result deleteCluster(@PathVariable Long appId, @PathVariable String env, @PathVariable String clusterName) {
         this.appEnvClusterService.deleteAppEnvCluster(AppEnvCluster.builder().app(new App(appId)).env(env).name(clusterName).build());
         return Result.ok();
     }
 
     @ApiOperation("查询集群信息")
-    @GetMapping(value = "apps/{appId:\\d+}/envs/{env}/clusters/{clusterName:.+}")
+    @GetMapping("/apps/{appId:\\d+}/envs/{env}/clusters/{clusterName:.+}")
     public AppEnvCluster loadCluster(@PathVariable("appId") Long appId, @PathVariable String env, @PathVariable("clusterName") String clusterName) {
         AppEnvCluster appEnvCluster = this.appEnvClusterService.getAppEnvCluster(appId, env, clusterName);
         return appEnvCluster;

@@ -243,7 +243,7 @@ public class NamespaceBranchService {
             isPublic = true; // set to true, because public namespace allowed to delete by user
         } else {
             format = appNamespace.getFormat().getValue();
-            isPublic = appNamespace.isPublic();
+            isPublic = appNamespace instanceof AppNamespace4Public;
             namespace.setParentAppCode(appNamespace.getApp().getAppCode());
             namespace.setComment(appNamespace.getComment());
         }

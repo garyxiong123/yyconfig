@@ -4,7 +4,9 @@ import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppNamespace4Private;
 import com.yofish.apollo.domain.AppNamespace4Protect;
 import com.yofish.apollo.domain.AppNamespace4Public;
+import com.yofish.apollo.model.bo.NamespaceVO;
 import com.yofish.apollo.model.model.AppNamespaceModel;
+import com.yofish.apollo.service.AppEnvClusterNamespaceService;
 import com.yofish.apollo.service.AppNamespaceService;
 import com.youyu.common.api.Result;
 import io.swagger.annotations.Api;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 
 @Slf4j
@@ -23,9 +26,11 @@ public class AppNamespaceController {
 
     @Autowired
     private AppNamespaceService appNamespaceService;
+    @Autowired
+    private AppEnvClusterNamespaceService appEnvClusterNamespaceService;
 
     @ApiOperation("创建项目私有命名空间")
-    @RequestMapping(value = "/apps/{appId:\\d+}/namespaces/private", method = RequestMethod.POST)
+    @PostMapping("/apps/{appId:\\d+}/namespaces/private")
     public Result<AppNamespace4Private> createAppPrivateNamespace(@PathVariable long appId, @Valid @RequestBody AppNamespaceModel model) {
 
         AppNamespace4Private appNamespace4Private = AppNamespace4Private.builder().app(new App(appId)).name(model.getName()).format(model.getFormat()).comment(model.getComment()).build();
@@ -36,7 +41,7 @@ public class AppNamespaceController {
     }
 
     @ApiOperation("创建项目受保护命名空间")
-    @RequestMapping(value = "/apps/{appId:\\d+}/namespaces/protect", method = RequestMethod.POST)
+    @PostMapping("/apps/{appId:\\d+}/namespaces/protect")
     public Result<AppNamespace4Protect> createAppProtectNamespace(@PathVariable long appId, @Valid @RequestBody AppNamespaceModel model) {
         AppNamespace4Protect appNamespace4Protect = AppNamespace4Protect.builder().app(new App(appId)).name(model.getName()).format(model.getFormat()).comment(model.getComment()).build();
 
@@ -46,7 +51,7 @@ public class AppNamespaceController {
     }
 
     @ApiOperation("创建项目公开命名空间")
-    @RequestMapping(value = "/apps/{appId:\\d+}/namespaces/public", method = RequestMethod.POST)
+    @PostMapping("/apps/{appId:\\d+}/namespaces/public")
     public Result<AppNamespace4Public> createAppPublicNamespace(@PathVariable long appId, @Valid @RequestBody AppNamespaceModel model) {
         AppNamespace4Public appNamespace4Public = AppNamespace4Public.builder().app(new App(appId)).name(model.getName()).format(model.getFormat()).comment(model.getComment()).build();
 
@@ -55,6 +60,14 @@ public class AppNamespaceController {
         return Result.ok(appNamespace4Public);
     }
 
+    @ApiOperation("项目环境集群下的所有命名空间配置信息")
+    @GetMapping("/apps/{appCode}/envs/{env}/clusters/{clusterName}/namespaces")
+    public Result<List<NamespaceVO>> findNamespaces(@PathVariable String appCode, @PathVariable String env,
+                                                    @PathVariable String clusterName) {
+        // TODO: 2019-12-19 待实现
+        this.appEnvClusterNamespaceService.findNamespaceVOs(appCode, env, clusterName);
+        return Result.ok();
+    }
 
 //
 //  @RequestMapping(value = "/appnamespaces/public", method = RequestMethod.GET)

@@ -6,6 +6,8 @@ import com.yofish.apollo.domain.AppNamespace;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 /**
  * Created on 2018/2/5.
  *
@@ -23,4 +25,8 @@ public interface AppEnvClusterNamespaceRepository extends JpaRepository<AppEnvCl
             "where app.app_code=?1 and aec.env=?2 and an.name=?3 and aec.name=?4 and aecn.type=?5")
     AppEnvClusterNamespace findAppEnvClusterNamespace(String appCode,String env,String namespace,String cluster,String type);
     AppEnvClusterNamespace findAppEnvClusterNamespaceById(Long id);
+
+    //    List<AppEnvClusterNamespace> findByAppCodeAndAppEnvClusterNameOrderByIdAsc(String appCode, String clusterName);
+    List<AppEnvClusterNamespace> findByAppEnvClusterOrderByIdAsc(AppEnvCluster appEnvCluster);
+
 }

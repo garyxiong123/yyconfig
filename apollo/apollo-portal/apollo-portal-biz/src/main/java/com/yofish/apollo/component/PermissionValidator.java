@@ -1,6 +1,7 @@
 package com.yofish.apollo.component;
 
 import com.yofish.apollo.domain.AppNamespace;
+import com.yofish.apollo.domain.AppNamespace4Public;
 import com.yofish.apollo.repository.AppRepository;
 import com.yofish.apollo.service.PortalConfig;
 import com.yofish.gary.biz.repository.UserRepository;
@@ -57,7 +58,7 @@ public class PermissionValidator {
 
     public boolean hasCreateAppNamespacePermission(String appCode, AppNamespace appNamespace) {
 
-        boolean isPublicAppNamespace = appNamespace.isPublic();
+        boolean isPublicAppNamespace = appNamespace instanceof AppNamespace4Public;
 
         if (portalConfig.canAppAdminCreatePrivateNamespace() || isPublicAppNamespace) {
             return hasCreateNamespacePermission(appCode);
