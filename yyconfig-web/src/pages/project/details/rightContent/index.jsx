@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Button, Icon, Collapse, Tabs, Table, Spin } from 'antd';
+import { Button, Icon, Collapse, Tabs, Table, Spin, Tag, Row, Col, Dropdown, Menu } from 'antd';
 import styles from '../../index.less';
 import TextContent from './TextContent';
 import TableList from './TableList';
@@ -20,21 +20,58 @@ class RightContent extends React.Component {
   //------------------------生命周期--------------------------------
   componentDidMount() { }
   //------------------------事件------------------------------------
-
+  onPublish(e) {
+    e && e.stopPropagation();
+    console.log('发布--》')
+  }
   //------------------------渲染------------------------------------
   renderRightItemHeader = (item) => {
     let baseInfo = item.baseInfo || {};
     return (
-      <Fragment>
-        <span>{baseInfo.namespaceName}</span>
-      </Fragment>
-    )
-  }
-  rendeRightItemExtra = () => {
-    return (
-      <Fragment>
-        <Button size="small">发布</Button>
-      </Fragment>
+      <Row type="flex" justify="space-between">
+        <Col>
+          <Row type="flex" gutter={8}>
+            <Col>{baseInfo.namespaceName}</Col>
+            <Col>
+              <Tag color="#87d068">{item.format}</Tag>
+            </Col>
+          </Row>
+        </Col>
+        <Col>
+          <Row type="flex" gutter={8}>
+            <Col>
+              <Button type="primary" size="small" onClick={(e)=>this.onPublish(e)}>发布</Button>
+            </Col>
+            <Col>
+              <Button size="small">回滚</Button>
+            </Col>
+            <Col>
+              <Button size="small">发布历史</Button>
+            </Col>
+            <Col>
+              <Button size="small">授权</Button>
+            </Col>
+            <Col>
+              <Button size="small">灰度</Button>
+            </Col>
+            <Col>
+              <Dropdown overlay={
+                <Menu>
+                  <Menu.Item key="1">
+                    删除
+                  </Menu.Item>
+                </Menu>
+              } placement="bottomLeft">
+                <Button size="small">
+                  <Icon type="ellipsis" />
+                </Button>
+
+              </Dropdown>
+            </Col>
+          </Row>
+
+        </Col>
+      </Row>
     )
   }
   renderItem(item, i) {
@@ -43,7 +80,7 @@ class RightContent extends React.Component {
       <Panel
         key={baseInfo.id}
         header={this.renderRightItemHeader(item)}
-        extra={this.rendeRightItemExtra()}
+        // extra={this.rendeRightItemExtra()}
         style={{ marginBottom: 20, backgroundColor: '#fff' }}
       >
         <Tabs>
@@ -54,7 +91,7 @@ class RightContent extends React.Component {
             </TabPane>
           }
           <TabPane tab="文本" key="2">
-            <TextContent />
+            <TextContent text={item} />
           </TabPane>
           <TabPane tab="更改历史" key="3">
             <History />

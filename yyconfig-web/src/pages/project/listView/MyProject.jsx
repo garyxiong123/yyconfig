@@ -12,7 +12,7 @@ class MyProject extends React.Component {
       showCreate: false,
       searchObj: {
         page: 1,
-        size: 2
+        size: 10
       }
     };
   }
@@ -97,7 +97,7 @@ class MyProject extends React.Component {
           }
         </Row>
         {
-          list.totalPage !== list.pageNum &&
+          list.totalPage > list.pageNum &&
           <div className={styles.textCenter}>
             <Button type="link" onClick={this.onQueryMore}>加载更多<Icon type="down" style={{ fontSize: 13 }} /></Button>
           </div>

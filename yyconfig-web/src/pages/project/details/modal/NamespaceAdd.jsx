@@ -57,13 +57,13 @@ class NamespaceAdd extends React.Component {
       currentType: e.target.value
     })
   }
-  onServiceChange=(targetKeys, direction, moveKeys)=>{
+  onServiceChange = (targetKeys, direction, moveKeys) => {
     // console.log('targetKeys-->', targetKeys)
     // console.log('direction-->', direction)
     // console.log('moveKeys-->', moveKeys)
     this.setState({ rightKeys: targetKeys })
   }
-  onServiceSelectChange=(sourceSelectedKeys, targetSelectedKeys)=>{
+  onServiceSelectChange = (sourceSelectedKeys, targetSelectedKeys) => {
     // console.log('sourceSelectedKeys-->', sourceSelectedKeys)
     // console.log('targetSelectedKeys-->', targetSelectedKeys)
     this.setState({ leftKeys: [...sourceSelectedKeys, ...targetSelectedKeys] });
@@ -137,16 +137,45 @@ class NamespaceAdd extends React.Component {
             <Input placeholder="请输入项目Id" disabled />
           )}
         </FormItem>
-        <FormItem label="名称">
-          {getFieldDecorator('name', {
-            // initialValue: appDetail.appCode,
-            rules: [
-              { required: true, message: '请输入名称' }
-            ]
-          })(
-            <Input placeholder="请输入名称" addonBefore={`${department.code}.`} />
-          )}
-        </FormItem>
+        {
+          getFieldValue('type') === 'private' ?
+            <FormItem label="名称">
+              {getFieldDecorator('name', {
+                // initialValue: appDetail.appCode,
+                rules: [
+                  { required: true, message: '请输入名称' }
+                ]
+              })(
+                <Input placeholder="请输入名称" addonAfter={
+                  <Fragment>
+                    {
+                      getFieldDecorator('format', {
+                        initialValue: 'properties',
+                      })(
+                        <Select>
+                          <Option value="properties">properties</Option>
+                          <Option value="xml">xml</Option>
+                          <Option value="json">json</Option>
+                          <Option value="yaml">yaml</Option>
+                        </Select>
+                      )
+                    }
+                  </Fragment>
+                } />
+              )}
+            </FormItem> :
+            <FormItem label="名称">
+              {getFieldDecorator('name', {
+                // initialValue: appDetail.appCode,
+                rules: [
+                  { required: true, message: '请输入名称' }
+                ]
+              })(
+                <Input placeholder="请输入名称" addonBefore={`${department.code}.`} />
+              )}
+            </FormItem>
+        }
+
         <FormItem label="类型">
           {getFieldDecorator('type', {
             initialValue: 'public',
