@@ -51,6 +51,10 @@ public class ReleaseService {
         return releaseRepository.findByIdAndIsAbandonedFalse(releaseId);
     }
 
+    public Release findOne(long releaseId){
+        return releaseRepository.findById(releaseId).get();
+    }
+
     public List<Release> findByReleaseIds(Set<Long> releaseIds) {
         Iterable<Release> releases = releaseRepository.findAllById(releaseIds);
         if (releases == null) {
