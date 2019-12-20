@@ -41,6 +41,13 @@ public class AppNamespaceService {
     private AppEnvClusterNamespaceService appEnvClusterNamespaceService;
 
 
+    public List<AppNamespace4Public> findAllPublicAppNamespace() {
+        List<AppNamespace4Public> appNamespaces = appNamespace4PublicRepository.findAll();
+
+        return appNamespaces;
+    }
+
+
     public AppNamespace findPublicAppNamespace(String namespaceName) {
         List<AppNamespace4Public> appNamespaces = appNamespace4PublicRepository.findByName(namespaceName);
 
@@ -58,6 +65,14 @@ public class AppNamespaceService {
 
     public AppNamespace findByAppIdAndName(Long appId, String namespaceName) {
         return appNamespaceRepository.findByAppAndName(new App(appId), namespaceName);
+    }
+    public AppNamespace4Protect findProtectAppNamespaceByAppIdAndName(Long appId, String namespaceName) {
+        return appNamespace4ProtectRepository.findByAppIdAndName(appId, namespaceName);
+    }
+
+    public <T extends AppNamespace>  AppNamespace updateAppNamespace(T appNamespace) {
+        appNamespaceRepository.save(appNamespace);
+        return appNamespace;
     }
 
     public List<AppNamespace> findByAppId(Long appId) {
@@ -106,7 +121,10 @@ public class AppNamespaceService {
         return appNamespace;
     }
 
-
+    public AppNamespace4Protect authorizedApp(AppNamespace4Protect protect) {
+        this.appNamespace4ProtectRepository.save(protect);
+        return protect;
+    }
     private void checkAppNamespaceGlobalUniqueness(AppNamespace appNamespace) {
         checkPublicAppNamespaceGlobalUniqueness(appNamespace);
 

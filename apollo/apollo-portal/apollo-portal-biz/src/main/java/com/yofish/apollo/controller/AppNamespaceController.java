@@ -9,14 +9,17 @@ import com.yofish.apollo.model.model.AppNamespaceModel;
 import com.yofish.apollo.service.AppEnvClusterNamespaceService;
 import com.yofish.apollo.service.AppNamespaceService;
 import com.youyu.common.api.Result;
+import common.exception.BadRequestException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 
 @Slf4j
@@ -60,6 +63,18 @@ public class AppNamespaceController {
         return Result.ok(appNamespace4Public);
     }
 
+    @PostMapping("/apps/{appId:\\d+}/namespaces/{namespace:[0-9a-zA-Z_.-]+}/authorize")
+    public Result<AppNamespace4Protect> authorizedApp(@PathVariable long appId, @PathVariable String namespace, @RequestBody Set<App> apps) {
+        AppNamespace4Protect appNamespace4Protect = appNamespaceService.findProtectAppNamespaceByAppIdAndName(appId, namespace);
+        if (ObjectUtils.isEmpty(appNamespace4Protect)) {
+            throw new BadRequestException("app namespace not exist!");
+        }
+        appNamespace4Protect.setAuthorizedApp(apps);
+        appNamespaceService.updateAppNamespace(appNamespace4Protect);
+
+        return Result.ok(appNamespace4Protect);
+    }
+
     @ApiOperation("项目环境集群下的所有命名空间配置信息")
     @GetMapping("/apps/{appCode}/envs/{env}/clusters/{clusterName}/namespaces")
     public Result<List<NamespaceVO>> findNamespaces(@PathVariable String appCode, @PathVariable String env,
@@ -69,11 +84,11 @@ public class AppNamespaceController {
         return Result.ok();
     }
 
-//
-//  @RequestMapping(value = "/appnamespaces/public", method = RequestMethod.GET)
-//  public List<AppNamespace> findPublicAppNamespaces() {
-//    return appNamespaceService.findPublicAppNamespaces();
-//  }
+
+    @RequestMapping(value = "/app/namespaces/public", method = RequestMethod.GET)
+    public Result<List<AppNamespace4Public>> findPublicAppNamespaces() {
+        return Result.ok(appNamespaceService.findAllPublicAppNamespace());
+    }
 //
 //  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces", method = RequestMethod.GET)
 //  public List<NamespaceBO> findNamespaces(@PathVariable String appId, @PathVariable String env,

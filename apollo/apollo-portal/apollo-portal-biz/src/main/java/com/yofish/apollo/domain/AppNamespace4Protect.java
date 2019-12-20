@@ -5,8 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import java.util.Set;
 
 /**
  * @Author: xiongchengwei
@@ -22,4 +25,7 @@ public class AppNamespace4Protect extends AppNamespace {
     public AppNamespace4Protect(String name, App app, ConfigFileFormat format, String comment) {
         super(name, app, format, comment);
     }
+
+    @ManyToMany(cascade = CascadeType.DETACH)
+    private Set<App> authorizedApp;
 }
