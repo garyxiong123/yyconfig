@@ -53,7 +53,7 @@ public class InstanceService {
         if (release == null) {
             throw new BizException(String.format("release not found for %s", releaseId));
         }
-        Page<InstanceConfig> instanceConfigsPage = instanceConfigRepository.findByReleaseKeyAndDataChangeLastModifiedTimeAfter
+        Page<InstanceConfig> instanceConfigsPage = instanceConfigRepository.findByReleaseKeyAndUpdateTimeAfter
                 (release.getReleaseKey(),getValidInstanceConfigDate(), pageable);
 
         List<InstanceDTO> instanceDTOs = Collections.emptyList();
@@ -117,7 +117,7 @@ public class InstanceService {
             otherReleaseKeys.add(instanceConfig.getReleaseKey());
         }
 
-        List<Instance> instances = instanceRepository.findInstancesByIds(instanceConfigMap.keySet());
+        List<Instance> instances = instanceRepository.findInstancesByIdIn(instanceConfigMap.keySet());
 
         if (CollectionUtils.isEmpty(instances)) {
             return Collections.emptyList();
@@ -181,7 +181,7 @@ public class InstanceService {
     public Page<InstanceConfig> findActiveInstanceConfigsByReleaseKey(String releaseKey, Pageable
             pageable) {
         Page<InstanceConfig> instanceConfigs = instanceConfigRepository
-                .findByReleaseKeyAndDataChangeLastModifiedTimeAfter(releaseKey,
+                .findByReleaseKeyAndUpdateTimeAfter(releaseKey,
                         getValidInstanceConfigDate(), pageable);
         return instanceConfigs;
     }
