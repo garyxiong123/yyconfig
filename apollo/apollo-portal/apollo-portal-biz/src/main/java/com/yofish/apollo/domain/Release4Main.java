@@ -1,14 +1,12 @@
 package com.yofish.apollo.domain;
 
-import com.google.common.collect.Maps;
 import com.yofish.apollo.repository.ReleaseRepository;
 import com.yofish.apollo.service.ReleaseHistoryService;
 import com.yofish.apollo.service.ReleaseService;
+import com.yofish.apollo.strategy.PublishStrategy4Main;
 import com.yofish.apollo.util.ReleaseKeyGenerator;
 import common.constants.ReleaseOperation;
-import common.constants.ReleaseOperationContext;
 import common.exception.BadRequestException;
-import common.exception.NotFoundException;
 import lombok.Data;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +37,7 @@ public class Release4Main extends Release {
         super(namespace, name, comment, configurations, isEmergencyPublish);
         this.setReleaseKey(ReleaseKeyGenerator.generateReleaseKey(namespace));
         AppEnvClusterNamespace4Main appEnvClusterNamespace4Main = (AppEnvClusterNamespace4Main) this.getAppEnvClusterNamespace();
+
 //        if(appEnvClusterNamespace4Main.hasBranchNamespace()){
 //            publishStrategy = getBeanByClass(PublishStrategy4MainWithBranch.class);
 //            return;
@@ -51,14 +50,11 @@ public class Release4Main extends Release {
     @Override
     public Release publish() {
 
-        Release release = publishStrategy.publish(this);
-
+        Release release = getBeanByClass(PublishStrategy4Main.class).publish(this);
 
         return release;
     }
 
-//        this.getAppEnvClusterNamespace().publish(null, comment, null, isEmergencyPublish());
-//        return this;
 
     public Release4Branch getBranchRelease() {
         return null;
@@ -88,11 +84,16 @@ public class Release4Main extends Release {
         getBeanInstance(ReleaseHistoryService.class).createReleaseHistory(this, twoLatestActiveReleases.get(1).getId(), ReleaseOperation.ROLLBACK, null);
 
         //publish child appNamespace if appNamespace has child 灰度回滚
-
-        if (namepsace.hasBranchNamespace()) {
-            getBeanInstance(ReleaseService.class).rollbackChildNamespace(this, twoLatestActiveReleases);
+        Release4Branch  release4Branch = this.findLastBranchRelease();
+        if (release4Branch != null) {
+            release4Branch.rollback(this, twoLatestActiveReleases);
         }
         return this;
+    }
+
+    private Release4Branch findLastBranchRelease() {
+
+        return null;
     }
 
 

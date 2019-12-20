@@ -5,6 +5,7 @@ import com.yofish.apollo.repository.ReleaseRepository;
 import com.yofish.apollo.service.ReleaseHistoryService;
 import com.yofish.apollo.service.ReleaseService;
 import com.yofish.apollo.strategy.PublishStrategy;
+import com.yofish.gary.dao.StrategyConverter;
 import com.yofish.gary.dao.entity.BaseEntity;
 import common.constants.ReleaseOperation;
 import common.exception.BadRequestException;
@@ -52,7 +53,7 @@ public class Release extends BaseEntity {
 
     private boolean isEmergencyPublish;
 
-    @Transient
+    @Convert(converter = StrategyConverter.class)
     protected PublishStrategy publishStrategy;
 
 
@@ -76,5 +77,9 @@ public class Release extends BaseEntity {
     public Release getPreviousRelease() {
         return null;
 
+    }
+
+    public String getAppCode() {
+        return getAppEnvClusterNamespace().getAppNamespace().getApp().getAppCode();
     }
 }
