@@ -1,5 +1,6 @@
 package com.yofish.apollo.service;
 
+import com.yofish.apollo.model.bo.NamespaceVO;
 import common.dto.NamespaceDTO;
 import org.junit.Assert;
 import org.junit.Test;
@@ -7,6 +8,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.List;
 
 /**
  * @author WangSongJun
@@ -28,5 +31,14 @@ public class AppEnvClusterNamespaceServiceTest {
         dto.setNamespaceName("other-config");
         NamespaceDTO appNamespace = this.appEnvClusterNamespaceService.createNamespace(env, dto);
         Assert.assertEquals(dto.getNamespaceName(), appNamespace.getNamespaceName());*/
+    }
+
+    @Test
+    public void findNamespaceVOsTest() {
+        String appCode = "apollo-mini";
+        String env = "dev";
+        String cluster = "default";
+        List<NamespaceVO> namespaceVOs = this.appEnvClusterNamespaceService.findNamespaceVOs(appCode, env, cluster);
+
     }
 }

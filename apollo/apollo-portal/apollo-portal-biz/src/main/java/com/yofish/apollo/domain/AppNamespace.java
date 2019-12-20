@@ -35,8 +35,4 @@ public class AppNamespace extends BaseEntity {
         this.format = format;
         this.comment = comment;
     }
-
-    public boolean isPublic() {
-        return false;
-    }
 }

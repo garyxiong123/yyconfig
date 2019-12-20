@@ -41,7 +41,7 @@ public class AppService {
     private AppEnvClusterService clusterService;
 
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public App createApp(App app) {
         String appCode = app.getAppCode();
 
@@ -133,9 +133,19 @@ public class AppService {
         return app;
     }
 
-    public EnvClusterInfo createEnvNavNode(String  env, long appId) {
+    public App getApp(String appCode) {
+        App app = appRepository.findByAppCode(appCode);
+        return app;
+    }
+
+    public EnvClusterInfo createEnvNavNode(String env, long appId) {
         EnvClusterInfo node = new EnvClusterInfo(env);
         node.setClusters(clusterService.findClusters(env, appId));
+        return node;
+    }
+    public EnvClusterInfo createEnvNavNode(String env, String appCode) {
+        EnvClusterInfo node = new EnvClusterInfo(env);
+        node.setClusters(clusterService.findClusters(env, appCode));
         return node;
     }
 /*

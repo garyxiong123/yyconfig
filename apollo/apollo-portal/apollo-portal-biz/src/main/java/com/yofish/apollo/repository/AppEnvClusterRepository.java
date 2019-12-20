@@ -18,10 +18,13 @@ public interface AppEnvClusterRepository extends JpaRepository<AppEnvCluster, Lo
 
     AppEnvCluster findClusterByAppIdAndEnvAndName(long appId, String env, String name);
 
+    AppEnvCluster findClusterByAppAppCodeAndEnvAndName(String appCode, String env, String name);
+
 
     List<AppEnvCluster> findByApp(App app);
 
     List<AppEnvCluster> findByAppIdAndEnv(long appId,String env);
+    List<AppEnvCluster> findByAppAppCodeAndEnv(String appCode,String env);
 
 
 
