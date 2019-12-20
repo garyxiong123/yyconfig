@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.yofish.apollo.domain.AppNamespace;
+import com.yofish.apollo.domain.AppNamespace4Public;
 import com.yofish.apollo.repository.AppNamespaceRepository;
 import com.yofish.apollo.service.PortalConfig;
 import framework.apollo.core.ConfigConsts;
@@ -169,7 +170,7 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
     for (AppNamespace appNamespace : appNamespaces) {
       appNamespaceCache.put(assembleAppNamespaceKey(appNamespace), appNamespace);
       appNamespaceIdCache.put(appNamespace.getId(), appNamespace);
-      if (appNamespace.isPublic()) {
+      if (appNamespace instanceof AppNamespace4Public) {
         publicAppNamespaceCache.put(appNamespace.getName(), appNamespace);
       }
     }
@@ -214,14 +215,14 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
           appNamespaceCache.remove(oldKey);
         }
 
-        if (appNamespace.isPublic()) {
+        if (appNamespace instanceof AppNamespace4Public) {
           publicAppNamespaceCache.put(appNamespace.getName(), appNamespace);
 
           //in case namespaceName changes
-          if (!appNamespace.getName().equals(thatInCache.getName()) && thatInCache.isPublic()) {
+          if (!appNamespace.getName().equals(thatInCache.getName()) && thatInCache instanceof AppNamespace4Public) {
             publicAppNamespaceCache.remove(thatInCache.getName());
           }
-        } else if (thatInCache.isPublic()) {
+        } else if (thatInCache instanceof AppNamespace4Public) {
           //just in case isPublic changes
           publicAppNamespaceCache.remove(thatInCache.getName());
         }
@@ -242,7 +243,7 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
         continue;
       }
       appNamespaceCache.remove(assembleAppNamespaceKey(deleted));
-      if (deleted.isPublic()) {
+      if (deleted instanceof AppNamespace4Public) {
         AppNamespace publicAppNamespace = publicAppNamespaceCache.get(deleted.getName());
         // in case there is some dirty data, e.g. public appNamespace deleted in some app and now created in another app
         if (publicAppNamespace == deleted) {

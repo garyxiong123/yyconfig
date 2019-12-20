@@ -2,7 +2,9 @@ package com.yofish.apollo.strategy;
 
 import com.yofish.apollo.domain.Release;
 import com.yofish.apollo.domain.Release4Branch;
+import com.yofish.gary.annotation.StrategyNum;
 import common.constants.ReleaseOperation;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -15,7 +17,9 @@ import static com.yofish.apollo.strategy.CalculateUtil.calculateBranchNamespaceC
  * @Author: xiongchengwei
  * @Date: 2019/12/18 下午6:06
  */
-@Service
+
+@StrategyNum(superClass = PublishStrategy.class, number = "publishStrategy4Branch", describe = "分支提交发布策略")
+@Component
 public class PublishStrategy4Branch extends PublishStrategy {
 
 

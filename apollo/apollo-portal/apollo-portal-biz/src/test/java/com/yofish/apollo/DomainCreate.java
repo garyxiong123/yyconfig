@@ -4,6 +4,7 @@ import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppEnvCluster;
 import com.yofish.apollo.domain.AppEnvClusterNamespace4Main;
 import com.yofish.apollo.domain.AppNamespace;
+import com.yofish.apollo.dto.CreateItemReq;
 import framework.apollo.core.enums.Env;
 
 /**
@@ -17,6 +18,10 @@ public class DomainCreate {
     public static AppEnvClusterNamespace4Main createNamespace4Main() {
         AppEnvClusterNamespace4Main appEnvClusterNamespace4Main = createAppEnvClusterNamespace4Main();
         return appEnvClusterNamespace4Main;
+    }
+
+    public static CreateItemReq createItemReq() {
+        return CreateItemReq.builder().key("dbName").lineNum(1).value("payment").build();
     }
 
     public static AppEnvClusterNamespace4Main createAppEnvClusterNamespace4Main() {

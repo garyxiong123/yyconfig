@@ -3,11 +3,11 @@ package com.yofish.apollo.service;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 import com.yofish.apollo.domain.*;
-import com.yofish.apollo.enums.NamespaceType;
 import com.yofish.apollo.repository.*;
 import common.exception.BadRequestException;
 import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.enums.ConfigFileFormat;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +21,7 @@ import java.util.Set;
  * @author WangSongJun
  * @date 2019-12-02
  */
+@Slf4j
 @Service
 public class AppNamespaceService {
     private static final int PRIVATE_APP_NAMESPACE_NOTIFICATION_COUNT = 5;
@@ -87,60 +88,24 @@ public class AppNamespaceService {
         return Objects.isNull(appNamespaceRepository.findByAppAndName(new App(appId), namespaceName));
     }
 
-    public AppNamespace4Private createAppNamespace4Private(AppNamespace4Private namespace4Private) {
-
-        return null;
-    }
-    public AppNamespace4Private createAppNamespace4Protect(AppNamespace4Protect namespace4Protect) {
-
-        return null;
-    }
-    public AppNamespace4Private createAppNamespace4Public(AppNamespace4Public namespace4Public) {
-
-        return null;
+    public boolean isAppNamespaceNameUnique(AppNamespace appNamespace) {
+        Objects.requireNonNull(appNamespace, "AppNamespace must not be null");
+        Objects.requireNonNull(appNamespace.getApp(), "App must not be null");
+        return isAppNamespaceNameUnique(appNamespace.getApp().getId(), appNamespace.getName());
     }
 
-    @Transactional
-    public AppNamespace createAppNamespace(AppNamespace appNamespace, boolean appendNamespacePrefix) {
-        /*Long appId = appNamespace.getApp().getId();
-
-        //add app org id as prefix
-        App app = this.appRepository.findById(appId).orElse(null);
-        if (app == null) {
-            throw new BadRequestException("App not exist. AppId = " + appId);
+    public <T extends AppNamespace> T createAppNamespace(T appNamespace) {
+        if (!isAppNamespaceNameUnique(appNamespace)) {
+            throw new BadRequestException(String.format("App already has application appNamespace. AppId = %s", appNamespace.getApp().getId()));
         }
 
-        StringBuilder appNamespaceName = new StringBuilder();
-        //add prefix postfix
-        appNamespaceName
-                .append(NamespaceType.Public.equals(appNamespace.getType()) && appendNamespacePrefix ? app.getDepartment().getCode() + "." : "")
-                .append(appNamespace.getName())
-                .append(appNamespace.getFormat() == ConfigFileFormat.Properties ? "" : "." + appNamespace.getFormat());
-        appNamespace.setName(appNamespaceName.toString());
-
-        if (appNamespace.getComment() == null) {
-            appNamespace.setComment("");
-        }
-
-        // globally uniqueness check for public app appNamespace
-        if (appNamespace.getType().equals(NamespaceType.Public)) {
-            checkAppNamespaceGlobalUniqueness(appNamespace);
-        } else {
-            // check private app appNamespace
-            if (appNamespaceRepository.findByAppIdAndName(appNamespace.getApp().getId(), appNamespace.getName()) != null) {
-                throw new BadRequestException("Private AppNamespace " + appNamespace.getName() + " already exists!");
-            }
-            // should not have the same with public app appNamespace
-            checkPublicAppNamespaceGlobalUniqueness(appNamespace);
-        }
-
-        AppNamespace createdAppNamespace = appNamespaceRepository.save(appNamespace);
+        appNamespaceRepository.save(appNamespace);
 
         appEnvClusterNamespaceService.createNamespaceForAppNamespaceInAllCluster(appNamespace);
-        return createdAppNamespace;
-*/
-        return null;
+
+        return appNamespace;
     }
+
 
     private void checkAppNamespaceGlobalUniqueness(AppNamespace appNamespace) {
         checkPublicAppNamespaceGlobalUniqueness(appNamespace);

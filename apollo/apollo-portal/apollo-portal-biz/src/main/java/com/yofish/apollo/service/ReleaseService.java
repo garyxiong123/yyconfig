@@ -10,7 +10,6 @@ import com.yofish.apollo.model.vo.ReleaseCompareResult;
 import com.yofish.apollo.repository.Release4MainRepository;
 import com.yofish.apollo.repository.ReleaseRepository;
 import common.constants.GsonType;
-import common.constants.ReleaseOperation;
 import common.exception.NotFoundException;
 import framework.apollo.core.enums.Env;
 import org.apache.commons.lang.time.FastDateFormat;
@@ -32,7 +31,6 @@ import static org.apache.commons.lang.StringUtils.isEmpty;
 public class ReleaseService {
 
 
-    private static final FastDateFormat TIMESTAMP_FORMAT = FastDateFormat.getInstance("yyyyMMddHHmmss");
     private Gson gson = new Gson();
 
     @Autowired
@@ -51,6 +49,10 @@ public class ReleaseService {
 
     public Release findActiveOne(long releaseId) {
         return releaseRepository.findByIdAndIsAbandonedFalse(releaseId);
+    }
+
+    public Release findOne(long releaseId){
+        return releaseRepository.findById(releaseId).get();
     }
 
     public List<Release> findByReleaseIds(Set<Long> releaseIds) {
@@ -144,25 +146,6 @@ public class ReleaseService {
 //    }
     }
 
-    private void mergeFromMasterAndPublishBranchThenRelease(AppEnvClusterNamespace parentNamespace, AppEnvClusterNamespace childNamespace,
-                                                            Map<String, String> parentNamespaceItems,
-                                                            String releaseName, String releaseComment,
-                                                            String operator, Release masterPreviousRelease,
-                                                            Release parentRelease, boolean isEmergencyPublish) {
-        //create release for child appNamespace
-//        Map<String, String> childReleaseConfiguration = getNamespaceReleaseConfiguration(childNamespace);
-//        Map<String, String> parentNamespaceOldConfiguration = masterPreviousRelease == null ? null : gson.fromJson(masterPreviousRelease.getConfigurations(), GsonType.CONFIG);
-//
-//        Map<String, String> childNamespaceToPublishConfigs = calculateChildNamespaceToPublishConfiguration(parentNamespaceOldConfiguration, parentNamespaceItems, childNamespace);
-//
-//        //compare
-//        if (!childNamespaceToPublishConfigs.equals(childReleaseConfiguration)) {
-//            branchRelease(parentNamespace, childNamespace, releaseName, releaseComment,
-//                    childNamespaceToPublishConfigs, parentRelease.getId(), operator,
-//                    ReleaseOperation.MASTER_NORMAL_RELEASE_MERGE_TO_GRAY, isEmergencyPublish);
-//        }
-
-    }
 
 
     private Map<String, String> getConfigurations(List<Item> items) {
@@ -192,59 +175,10 @@ public class ReleaseService {
     }
 
 
-    public void rollbackChildNamespace(Release release, List<Release> parentNamespaceTwoLatestActiveRelease) {
 
-        Release parentNamespaceNewLatestRelease = parentNamespaceTwoLatestActiveRelease.get(1);
 
-        Release abandonedRelease = parentNamespaceTwoLatestActiveRelease.get(0);
-        Map<String, String> parentNamespaceAbandonedConfiguration = gson.fromJson(abandonedRelease.getConfigurations(), GsonType.CONFIG);
 
-        Map<String, String> parentNamespaceNewLatestConfiguration = gson.fromJson(parentNamespaceNewLatestRelease.getConfigurations(), GsonType.CONFIG);
 
-        Map<String, String> childNamespaceNewConfiguration = calculateChildNamespaceToPublishConfiguration(parentNamespaceAbandonedConfiguration, parentNamespaceNewLatestConfiguration, release.getAppEnvClusterNamespace());
-
-//        branchRelease(parentNamespace, childNamespace, TIMESTAMP_FORMAT.format(new Date()) + "-master-rollback-merge-to-gray", "",
-//                childNamespaceNewConfiguration, parentNamespaceNewLatestRelease.getId(), operator,
-//                ReleaseOperation.MATER_ROLLBACK_MERGE_TO_GRAY, false);
-    }
-
-    private Map<String, String> calculateChildNamespaceToPublishConfiguration(Map<String, String> parentNamespaceOldConfiguration, Map<String, String> parentNamespaceNewConfiguration,
-            AppEnvClusterNamespace childNamespace) {
-        //first. calculate child appNamespace modified configs
-        Release childNamespaceLatestActiveRelease = childNamespace.findLatestActiveRelease();
-
-        Map<String, String> childNamespaceLatestActiveConfiguration = childNamespaceLatestActiveRelease == null ? null : gson.fromJson(childNamespaceLatestActiveRelease.getConfigurations(), GsonType.CONFIG);
-
-        Map<String, String> childNamespaceModifiedConfiguration = calculateBranchModifiedItemsAccordingToRelease(parentNamespaceOldConfiguration, childNamespaceLatestActiveConfiguration);
-
-        //second. append child appNamespace modified configs to parent appNamespace new latest configuration
-        return mergeConfiguration(parentNamespaceNewConfiguration, childNamespaceModifiedConfiguration);
-    }
-
-    private Map<String, String> calculateBranchModifiedItemsAccordingToRelease(
-            Map<String, String> masterReleaseConfigs,
-            Map<String, String> branchReleaseConfigs) {
-
-        Map<String, String> modifiedConfigs = new HashMap<>();
-
-        if (CollectionUtils.isEmpty(branchReleaseConfigs)) {
-            return modifiedConfigs;
-        }
-
-        if (CollectionUtils.isEmpty(masterReleaseConfigs)) {
-            return branchReleaseConfigs;
-        }
-
-        for (Map.Entry<String, String> entry : branchReleaseConfigs.entrySet()) {
-
-            if (!Objects.equals(entry.getValue(), masterReleaseConfigs.get(entry.getKey()))) {
-                modifiedConfigs.put(entry.getKey(), entry.getValue());
-            }
-        }
-
-        return modifiedConfigs;
-
-    }
 
     @Transactional
     public int batchDelete(String appId, String clusterName, String namespaceName, String operator) {
@@ -264,19 +198,19 @@ public class ReleaseService {
         return null;
     }
 
-    public ReleaseDTO findReleaseById(Env env, long releaseId) {
-        return null;
+    public Optional<Release> findReleaseById(long releaseId) {
+        return releaseRepository.findById(releaseId);
     }
 
 
-    public void rollback(Env env, long releaseId) {
+    public void rollback(long releaseId) {
 
         Release4Main release4Main = release4MainRepository.findById(releaseId).get();
 
         if (release4Main == null) {
             throw new NotFoundException("release not found");
         }
-       release4Main.rollback();
+        release4Main.rollback();
     }
 
 

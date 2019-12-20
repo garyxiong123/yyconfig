@@ -45,14 +45,18 @@ public class AppEnvClusterService {
 
 
     public List<AppEnvCluster> findClusters(String env, long appId) {
-
         return appEnvClusterRepository.findByAppIdAndEnv(appId, env);
+    }
+
+    public List<AppEnvCluster> findClusters(String env, String appCode) {
+        return appEnvClusterRepository.findByAppAppCodeAndEnv(appCode, env);
     }
 
 
     public AppEnvCluster createAppEnvCluster(AppEnvCluster appEnvCluster) {
         AppEnvCluster cluster = appEnvClusterRepository.save(appEnvCluster);
-        //todo 创建集群
+        // create linked namespace
+        this.appEnvClusterNamespaceService.instanceOfAppNamespaces(appEnvCluster);
         return cluster;
     }
 
@@ -62,6 +66,7 @@ public class AppEnvClusterService {
 
     public void deleteAppEnvCluster(AppEnvCluster appEnvCluster) {
         appEnvClusterRepository.delete(appEnvCluster);
+        // TODO: 2019-12-20 delete linked namespaces
     }
 
 

@@ -4,3 +4,7 @@ spring:
     username: apollo_mini
     password: apollo_mini
     driver-class-name: com.mysql.jdbc.Driver
+  jpa:
+    properties:
+      hibernate:
+        format_sql: false

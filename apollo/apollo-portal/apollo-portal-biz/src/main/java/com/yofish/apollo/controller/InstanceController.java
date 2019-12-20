@@ -1,16 +1,14 @@
 package com.yofish.apollo.controller;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Sets;
-import com.yofish.apollo.domain.Instance;
-import com.yofish.apollo.domain.Release;
-import common.dto.InstanceConfigDTO;
-import common.dto.InstanceDTO;
+import com.yofish.apollo.dto.InstanceDTO;
+import com.yofish.apollo.dto.InstanceNamespaceReq;
+import com.yofish.apollo.service.InstanceService;
+import com.yofish.apollo.util.PageQuery;
+import com.youyu.common.api.Result;
+
+import com.youyu.common.exception.BizException;
 import common.dto.PageDTO;
-import common.exception.BadRequestException;
-import common.exception.NotFoundException;
-import common.utils.BeanUtils;
 import framework.apollo.core.enums.Env;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,13 +18,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping("instances")
 public class InstanceController {
+    @Autowired
+    private InstanceService instanceService;
 
     private static final Splitter RELEASES_SPLITTER = Splitter.on(",").omitEmptyStrings()
             .trimResults();
@@ -36,70 +36,20 @@ public class InstanceController {
 //    @Autowired
 //    private ReleaseService releaeService;
 
-    @RequestMapping(value = "/envs/{env}/instances/by-release", method = RequestMethod.GET)
-    public PageDTO<Instance> getByRelease(@PathVariable String env, @RequestParam long releaseId,
-                                          @RequestParam(defaultValue = "0") int page,
-                                          @RequestParam(defaultValue = "20") int size) {
-//        Pageable pageable = PageRequest.of(page, size);
-//
-//            Release release = releaeService.findOne(releaseId);
-//    if (release == null) {
-//      throw new NotFoundException(String.format("release not found for %s", releaseId));
-//    }
-//    Page<InstanceConfig> instanceConfigsPage = instanceService.findActiveInstanceConfigsByReleaseKey
-//        (release.getReleaseKey(), pageable);
-//
-//    List<InstanceDTO> instanceDTOs = Collections.emptyList();
-//
-//    if (instanceConfigsPage.hasContent()) {
-//      Multimap<Long, InstanceConfig> instanceConfigMap = HashMultimap.create();
-//      Set<String> otherReleaseKeys = Sets.newHashSet();
-//
-//      for (InstanceConfig instanceConfig : instanceConfigsPage.getContent()) {
-//        instanceConfigMap.put(instanceConfig.getInstanceId(), instanceConfig);
-//        otherReleaseKeys.add(instanceConfig.getReleaseKey());
-//      }
-//
-//      Set<Long> instanceIds = instanceConfigMap.keySet();
-//
-//      List<Instance> instances = instanceService.findInstancesByIds(instanceIds);
-//
-//      if (!CollectionUtils.isEmpty(instances)) {
-//        instanceDTOs = BeanUtils.batchTransform(InstanceDTO.class, instances);
-//      }
-//
-//      for (InstanceDTO instanceDTO : instanceDTOs) {
-//        Collection<InstanceConfig> configs = instanceConfigMap.get(instanceDTO.getId());
-//        List<InstanceConfigDTO> configDTOs = configs.stream().map(instanceConfig -> {
-//          InstanceConfigDTO instanceConfigDTO = new InstanceConfigDTO();
-//          //to save some space
-//          instanceConfigDTO.setRelease(null);
-//          instanceConfigDTO.setReleaseDeliveryTime(instanceConfig.getReleaseDeliveryTime());
-//          instanceConfigDTO.setDataChangeLastModifiedTime(instanceConfig
-//              .getDataChangeLastModifiedTime());
-//          return instanceConfigDTO;
-//        }).collect(Collectors.toList());
-//        instanceDTO.setConfigs(configDTOs);
-//      }
-//    }
-//
-//    return new PageDTO(instanceDTOs, pageable, instanceConfigsPage.getTotalElements());
-        return null;
+    @RequestMapping(value = "by-release", method = RequestMethod.GET)
+    public Result<PageDTO<InstanceDTO>> getByRelease(@RequestBody PageQuery<Long> releasePage) {
+        Pageable pageable = PageRequest.of(releasePage.getPageNo(), releasePage.getPageSize());
+        PageDTO<InstanceDTO> pa=  instanceService.getByRelease(releasePage.getData(),pageable);
+        return Result.ok(pa);
     }
 
-//        return instanceService.getByRelease(Env.valueOf(env), releaseId, page, size);
-//    }
+/*
+    @RequestMapping(value = "by-namespace", method = RequestMethod.GET)
+    public Page<InstanceDTO> getByNamespace(PageQuery<InstanceNamespaceReq> instanceNamespaceReqPageQuery) {
+        Pageable pageable = PageRequest.of(instanceNamespaceReqPageQuery.getPageNo(), instanceNamespaceReqPageQuery.getPageSize());
+      return instanceService.findInstancesByNamespace(instanceNamespaceReqPageQuery.getData().getReleaseId(),pageable);
 
-    @RequestMapping(value = "/envs/{env}/instances/by-namespace", method = RequestMethod.GET)
-    public Page<Instance> getByNamespace(@PathVariable String env, @RequestParam String appId,
-                                         @RequestParam String clusterName, @RequestParam String namespaceName,
-                                         @RequestParam(required = false) String instanceAppId,
-                                         @RequestParam(defaultValue = "0") int page,
-                                         @RequestParam(defaultValue = "20") int size) {
-
-//        return instanceService.getByNamespace(Env.valueOf(env), appId, clusterName, namespaceName, instanceAppId, page, size);
-        return null;
-    }
+    }*/
 
     @RequestMapping(value = "/envs/{env}/instances/by-namespace/count", method = RequestMethod.GET)
     public ResponseEntity<Number> getInstanceCountByNamespace(@PathVariable String env, @RequestParam String appId,
@@ -111,20 +61,18 @@ public class InstanceController {
         return null;
     }
 
-    @RequestMapping(value = "/envs/{env}/instances/by-namespace-and-releases-not-in", method = RequestMethod.GET)
-    public List<Instance> getByReleasesNotIn(@PathVariable String env, @RequestParam String appId,
-                                             @RequestParam String clusterName, @RequestParam String namespaceName,
+    @RequestMapping(value = "/by-namespace-and-releases-not-in", method = RequestMethod.GET)
+    public List<InstanceDTO> getByReleasesNotIn(@RequestParam Long appEnvClusterNamespaceId,
                                              @RequestParam String releaseIds) {
 
-//        Set<Long> releaseIdSet = RELEASES_SPLITTER.splitToList(releaseIds).stream().map(Long::parseLong)
-//                .collect(Collectors.toSet());
-//
-//        if (CollectionUtils.isEmpty(releaseIdSet)) {
-//            throw new BadRequestException("release ids can not be empty");
-//        }
-//
-//        return instanceService.getByReleasesNotIn(Env.valueOf(env), appId, clusterName, namespaceName, releaseIdSet);
-        return null;
+        Set<Long> releaseIdSet = RELEASES_SPLITTER.splitToList(releaseIds).stream().map(Long::parseLong)
+                .collect(Collectors.toSet());
+
+        if (CollectionUtils.isEmpty(releaseIdSet)) {
+            throw new BizException("release ids can not be empty");
+        }
+
+        return instanceService.getByReleasesNotIn(appEnvClusterNamespaceId, releaseIdSet);
     }
 
 

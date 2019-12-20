@@ -5,9 +5,11 @@ import com.yofish.apollo.domain.Release;
 import com.yofish.apollo.domain.Release4Main;
 import com.yofish.apollo.repository.ReleaseHistoryRepository;
 import com.yofish.apollo.repository.ReleaseRepository;
+import com.yofish.gary.annotation.StrategyNum;
 import common.constants.ReleaseOperation;
 import common.constants.ReleaseOperationContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -19,7 +21,8 @@ import static common.constants.ReleaseOperation.*;
  * @Author: xiongchengwei
  * @Date: 2019/12/18 下午6:06
  */
-@Service
+@StrategyNum(superClass = PublishStrategy.class, number = "publishStrategy4Main", describe = "主提交发布策略")
+@Component
 public class PublishStrategy4Main extends PublishStrategy {
 
     @Autowired

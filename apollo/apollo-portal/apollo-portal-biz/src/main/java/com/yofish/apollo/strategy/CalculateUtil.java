@@ -50,7 +50,10 @@ public class CalculateUtil {
     }
 
     public static Map<String, String> calculateConfigs(Release release) {
-        return Json2Map(release.getAppEnvClusterNamespace().findLatestActiveRelease().getConfigurations());
+        if(release == null){return null;}
+        Release latestActiveRelease = release.getAppEnvClusterNamespace().findLatestActiveRelease();
+        if(latestActiveRelease == null){return null;}
+        return Json2Map(latestActiveRelease.getConfigurations());
     }
 
     public static Map<String, String> Json2Map(String config) {

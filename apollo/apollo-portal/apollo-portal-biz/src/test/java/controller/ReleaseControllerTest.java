@@ -3,13 +3,17 @@ package controller;
 import com.google.common.base.Joiner;
 import com.google.gson.Gson;
 //import com.yofish.apollo.controller.ReleaseController;
+import com.yofish.apollo.DomainCreate;
+import com.yofish.apollo.controller.ItemController;
 import com.yofish.apollo.controller.ReleaseController;
 import com.yofish.apollo.domain.*;
+import com.yofish.apollo.dto.CreateItemReq;
 import com.yofish.apollo.dto.ReleaseDTO;
 import com.yofish.apollo.message.Topics;
 import com.yofish.apollo.model.model.NamespaceReleaseModel;
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.repository.ReleaseRepository;
+import com.yofish.apollo.service.CommitService;
 import com.yofish.apollo.service.ReleaseService;
 import common.dto.AppDTO;
 import common.dto.ClusterDTO;
@@ -17,7 +21,9 @@ import common.dto.ItemDTO;
 import common.dto.NamespaceDTO;
 import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.enums.Env;
+import net.bytebuddy.asm.Advice;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -27,6 +33,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,14 +49,36 @@ public class ReleaseControllerTest extends AbstractControllerTest {
     ReleaseController releaseController;
     @Autowired
     private AppEnvClusterNamespaceRepository namespaceRepository;
+    private AppEnvClusterNamespace4Main namespace;
+
+    @Autowired
+    private CommitService commitService;
+    @Autowired
+    private ItemController itemController;
+
+    @Before
+    public void setUp() {
+        namespace = createNamespace4Main();
+        namespaceRepository.save(namespace);
+    }
 
     @Test
     public void testRelease4Main() {
-        AppEnvClusterNamespace4Main namespace = createNamespace4Main();
-        namespaceRepository.save(namespace);
+//        CreateItemReq req = createItemReq();
+//        itemController.createItem(req);
+
         NamespaceReleaseModel namespaceReleaseModel = NamespaceReleaseModel.builder().releaseTitle("测试发布标题").releaseComment("测试发布").AppEnvClusterNamespaceId(namespace.getId()).build();
         releaseController.createRelease(namespaceReleaseModel);
+
     }
+
+    private CreateItemReq createItemReq() {
+        Long namespaceId = namespace.getId();
+        CreateItemReq itemReq = DomainCreate.createItemReq();
+        itemReq.setAppEnvClusterNamespaceId(namespaceId);
+        return itemReq;
+    }
+
 
     @Test
     public void testRelease4MainWithBranch() {
@@ -64,10 +93,19 @@ public class ReleaseControllerTest extends AbstractControllerTest {
 
     }
 
-    @Test
-    public void testRelease4Rollback() {
 
+    @Test
+    public void testRollback() throws AccessDeniedException {
+        Release release = createTwoRelease();
+
+        releaseController.rollback(release.getId());
     }
+
+    private Release createTwoRelease() {
+        return null;
+    }
+
+
     private AppEnvClusterNamespace4Main createNamespace4MainWithBranch() {
         AppEnvClusterNamespace4Main appEnvClusterNamespace4Main = createAppEnvClusterNamespace4Main();
         createAppEnvClusterNamespace4Branch(appEnvClusterNamespace4Main);
@@ -78,7 +116,6 @@ public class ReleaseControllerTest extends AbstractControllerTest {
     private void createAppEnvClusterNamespace4Branch(AppEnvClusterNamespace4Main appEnvClusterNamespace4Main) {
 
     }
-
 
 
     @Test

@@ -14,6 +14,7 @@ import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.repository.CommitRepository;
 import com.yofish.apollo.repository.ItemRepository;
 import com.youyu.common.exception.BizException;
+import common.dto.ItemDTO;
 import common.exception.NotFoundException;
 import common.utils.BeanUtils;
 import framework.apollo.core.enums.ConfigFileFormat;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.alibaba.fastjson.JSON.toJSON;
 import static com.alibaba.fastjson.JSON.toJSONString;
@@ -67,10 +69,12 @@ public class ItemService {
 
     public Item createItem(CreateItemReq createItemReq) {
         Item entity=new Item();
-        AppEnvClusterNamespace appEnvClusterNamespace=appEnvClusterNamespaceService.findAppEnvClusterNamespace(
+       /* AppEnvClusterNamespace appEnvClusterNamespace=appEnvClusterNamespaceService.findAppEnvClusterNamespace(
                 createItemReq.getAppId(),createItemReq.getEnv(),createItemReq.getNamespaceName()
                 ,createItemReq.getClusterName(),createItemReq.getType()
-        );
+        );*/
+        AppEnvClusterNamespace appEnvClusterNamespace=appEnvClusterNamespaceService.findAppEnvClusterNamespace(createItemReq.getAppEnvClusterNamespaceId());
+
         ConfigChangeContentBuilder builder = new ConfigChangeContentBuilder();
         Item managedEntity=  findOne(appEnvClusterNamespace,createItemReq.getKey());
         if (managedEntity != null) {
@@ -140,6 +144,17 @@ public class ItemService {
         delete(entity.getId());
         builder.deleteItem(entity);
         commitService.saveCommit(entity.getAppEnvClusterNamespace(),builder.build());
+    }
+
+    public List<Item> findDeletedItems(Long appEnvClusterNamespace) {
+        List<Commit> commits = commitService.find(appEnvClusterNamespace);
+        if (Objects.nonNull(commits)) {
+            List<Item> deletedItems = commits.stream()
+                    .map(item -> ConfigChangeContentBuilder.convertJsonString(item.getChangeSets()).getDeleteItems())
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 
     public List<Item> findItemsWithoutOrdered(ItemReq itemReq){

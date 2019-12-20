@@ -86,7 +86,7 @@ public class ReleaseController {
             throw new BadRequestException(String.format("Env: %s is not supported emergency publish now", env));
         }
 
-        Release createdRelease = releaseService.publish(null,  model.getReleaseTitle(),  model.getReleaseComment(),  null,  model.isEmergencyPublish());
+        Release createdRelease = releaseService.publish(null, model.getReleaseTitle(), model.getReleaseComment(), null, model.isEmergencyPublish());
         ReleaseDTO releaseDTO = transformRelease2Dto(createdRelease);
         ConfigPublishEvent event = ConfigPublishEvent.instance();
         event.withAppId(appId)
@@ -102,27 +102,26 @@ public class ReleaseController {
     }
 
     @RequestMapping(path = "/envs/{env}/releases/{releaseId}/rollback", method = RequestMethod.PUT)
-    public void rollback(@PathVariable String env,
-                         @PathVariable long releaseId) throws AccessDeniedException {
-        ReleaseDTO release = releaseService.findReleaseById(Env.valueOf(env), releaseId);
+    public void rollback(@PathVariable long releaseId) throws AccessDeniedException {
+        Release release = releaseService.findReleaseById(releaseId).get();
 
         if (release == null) {
             throw new NotFoundException("release not found");
         }
 
-        if (!permissionValidator.hasReleaseNamespacePermission(release.getAppId())) {
+        if (!permissionValidator.hasReleaseNamespacePermission(release.getAppCode())) {
             throw new AccessDeniedException("Access is denied");
         }
 
-        releaseService.rollback(Env.valueOf(env), releaseId);
+        releaseService.rollback(releaseId);
 
         ConfigPublishEvent event = ConfigPublishEvent.instance();
-        event.withAppId(release.getAppId())
-                .withCluster(release.getClusterName())
-                .withNamespace(release.getNamespaceName())
-                .withPreviousReleaseId(releaseId)
-                .setRollbackEvent(true)
-                .setEnv(Env.valueOf(env));
+//        event.withAppId(release.getAppId())
+//                .withCluster(release.getClusterName())
+//                .withNamespace(release.getNamespaceName())
+//                .withPreviousReleaseId(releaseId)
+//                .setRollbackEvent(true)
+//                .setEnv(Env.valueOf(env));
 
         publisher.publishEvent(event);
     }
@@ -163,7 +162,6 @@ public class ReleaseController {
 
         return releaseService.compare(Env.valueOf(env), baseReleaseId, toCompareReleaseId);
     }
-
 
 
 }

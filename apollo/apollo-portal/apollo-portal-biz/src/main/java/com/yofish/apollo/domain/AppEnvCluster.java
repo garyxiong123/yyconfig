@@ -24,7 +24,7 @@ public class AppEnvCluster extends BaseEntity {
 
     private String env;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.DETACH)
     private App app;
 
 }
