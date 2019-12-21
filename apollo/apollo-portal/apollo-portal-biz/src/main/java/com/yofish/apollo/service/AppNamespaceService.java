@@ -66,6 +66,9 @@ public class AppNamespaceService {
     public AppNamespace findByAppIdAndName(Long appId, String namespaceName) {
         return appNamespaceRepository.findByAppAndName(new App(appId), namespaceName);
     }
+    public AppNamespace findByAppCodeAndName(String  appCode, String namespaceName) {
+        return appNamespaceRepository.findByAppAppCodeAndName(appCode, namespaceName);
+    }
     public AppNamespace4Protect findProtectAppNamespaceByAppIdAndName(Long appId, String namespaceName) {
         return appNamespace4ProtectRepository.findByAppIdAndName(appId, namespaceName);
     }

@@ -4,13 +4,14 @@ import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.yofish.apollo.bo.ItemChangeSets;
 import com.yofish.apollo.domain.*;
-import com.yofish.apollo.dto.ReleaseDTO;
 import com.yofish.apollo.model.bo.ReleaseBO;
 import com.yofish.apollo.model.vo.ReleaseCompareResult;
 import com.yofish.apollo.repository.Release4MainRepository;
 import com.yofish.apollo.repository.ReleaseRepository;
 import common.constants.GsonType;
+import common.dto.ReleaseDTO;
 import common.exception.NotFoundException;
+import common.utils.BeanUtils;
 import framework.apollo.core.enums.Env;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +91,17 @@ public class ReleaseService {
 //        }
 //        return releases;
         return null;
+    }
+
+    public ReleaseDTO loadLatestRelease(String appId, String clusterName, String namespaceName) {
+        Release release = findLatestActiveRelease(appId, clusterName, namespaceName);
+        return BeanUtils.transform(ReleaseDTO.class, release);
+    }
+
+    public Release findLatestActiveRelease(String appId, String clusterName, String namespaceName) {
+        return releaseRepository.findFirstByAppIdAndClusterNameAndNamespaceNameAndIsAbandonedFalseOrderByIdDesc(appId,
+                clusterName,
+                namespaceName);
     }
 
     @Transactional
