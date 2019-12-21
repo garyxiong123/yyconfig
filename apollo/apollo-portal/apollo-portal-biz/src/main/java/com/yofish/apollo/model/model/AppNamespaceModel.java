@@ -23,7 +23,7 @@ public class AppNamespaceModel {
     )
     private String name;
 
-    private ConfigFileFormat format;
+    private ConfigFileFormat format = ConfigFileFormat.Properties;
 
     private String comment;
 
