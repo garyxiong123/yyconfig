@@ -36,7 +36,12 @@ public class AppNamespaceController {
     @PostMapping("/apps/{appId:\\d+}/namespaces/private")
     public Result<AppNamespace4Private> createAppPrivateNamespace(@PathVariable long appId, @Valid @RequestBody AppNamespaceModel model) {
 
-        AppNamespace4Private appNamespace4Private = AppNamespace4Private.builder().app(new App(appId)).name(model.getName()).format(model.getFormat()).comment(model.getComment()).build();
+        AppNamespace4Private appNamespace4Private = AppNamespace4Private.builder()
+                .app(new App(appId))
+                .name(model.getName())
+                .format(model.getFormat())
+                .comment(model.getComment())
+                .build();
 
         appNamespace4Private = appNamespaceService.createAppNamespace(appNamespace4Private);
 
@@ -46,7 +51,13 @@ public class AppNamespaceController {
     @ApiOperation("创建项目受保护命名空间")
     @PostMapping("/apps/{appId:\\d+}/namespaces/protect")
     public Result<AppNamespace4Protect> createAppProtectNamespace(@PathVariable long appId, @Valid @RequestBody AppNamespaceModel model) {
-        AppNamespace4Protect appNamespace4Protect = AppNamespace4Protect.builder().app(new App(appId)).name(model.getName()).format(model.getFormat()).comment(model.getComment()).build();
+        AppNamespace4Protect appNamespace4Protect = AppNamespace4Protect.builder()
+                .app(new App(appId))
+                .name(model.getName())
+                .authorizedApp(model.getAuthorizedApp())
+                .format(model.getFormat())
+                .comment(model.getComment())
+                .build();
 
         appNamespace4Protect = appNamespaceService.createAppNamespace(appNamespace4Protect);
 
@@ -56,13 +67,19 @@ public class AppNamespaceController {
     @ApiOperation("创建项目公开命名空间")
     @PostMapping("/apps/{appId:\\d+}/namespaces/public")
     public Result<AppNamespace4Public> createAppPublicNamespace(@PathVariable long appId, @Valid @RequestBody AppNamespaceModel model) {
-        AppNamespace4Public appNamespace4Public = AppNamespace4Public.builder().app(new App(appId)).name(model.getName()).format(model.getFormat()).comment(model.getComment()).build();
+        AppNamespace4Public appNamespace4Public = AppNamespace4Public.builder()
+                .app(new App(appId))
+                .name(model.getName())
+                .format(model.getFormat())
+                .comment(model.getComment())
+                .build();
 
         appNamespace4Public = appNamespaceService.createAppNamespace(appNamespace4Public);
 
         return Result.ok(appNamespace4Public);
     }
 
+    @ApiOperation("项目受保护命名空间授权")
     @PostMapping("/apps/{appId:\\d+}/namespaces/{namespace:[0-9a-zA-Z_.-]+}/authorize")
     public Result<AppNamespace4Protect> authorizedApp(@PathVariable long appId, @PathVariable String namespace, @RequestBody Set<App> apps) {
         AppNamespace4Protect appNamespace4Protect = appNamespaceService.findProtectAppNamespaceByAppIdAndName(appId, namespace);
@@ -84,8 +101,8 @@ public class AppNamespaceController {
         return Result.ok();
     }
 
-
-    @RequestMapping(value = "/app/namespaces/public", method = RequestMethod.GET)
+    @ApiOperation("查询所有的公共命名空间")
+    @GetMapping("/app/namespaces/public")
     public Result<List<AppNamespace4Public>> findPublicAppNamespaces() {
         return Result.ok(appNamespaceService.findAllPublicAppNamespace());
     }

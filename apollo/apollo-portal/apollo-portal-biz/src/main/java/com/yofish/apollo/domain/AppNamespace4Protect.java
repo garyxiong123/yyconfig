@@ -22,8 +22,9 @@ import java.util.Set;
 @DiscriminatorValue("Namespace4Protect")
 public class AppNamespace4Protect extends AppNamespace {
     @Builder
-    public AppNamespace4Protect(String name, App app, ConfigFileFormat format, String comment) {
+    public AppNamespace4Protect(String name, App app, ConfigFileFormat format, String comment, Set<App> authorizedApp) {
         super(name, app, format, comment);
+        this.authorizedApp = authorizedApp;
     }
 
     @ManyToMany(cascade = CascadeType.DETACH)
