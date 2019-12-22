@@ -15,7 +15,6 @@ class ProjectDetail extends React.Component {
     super(props);
     this.state = {
       showProjectEdit: false,
-      list: [{}, {}, {}],
       appId: '',
       showClusterModal: false,
       showNamespace: false
@@ -154,17 +153,17 @@ class ProjectDetail extends React.Component {
       )
     } else {
       return (
-        <Menu.Item key={clusters[0].id} onClick={() => this.onEnvClick(item)}>{item.env}</Menu.Item>
+        <Menu.Item key={clusters[0] && clusters[0].id} onClick={() => this.onEnvClick(item)}>{item.env}</Menu.Item>
       )
     }
   }
   renderEnv() {
     const { envList, currentEnv } = this.props;
     let cluster = currentEnv.cluster || {};
-    console.log('cluster-->', cluster)
+    let curentKey = cluster.id && cluster.id.toString();
     return (
       <Card title="环境列表">
-        <Menu mode="inline" style={{ width: '100%' }}>
+        <Menu mode="inline" style={{ width: '100%' }} selectedKeys={[curentKey]}>
           {
             envList && envList.map((item, i) => this.renderSubMenuOrItem(item, i))
           }

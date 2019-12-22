@@ -1,11 +1,13 @@
 package com.yofish.apollo.model.model;
 
+import com.yofish.apollo.domain.App;
 import common.utils.InputValidator;
 import framework.apollo.core.enums.ConfigFileFormat;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.util.Set;
 
 /**
  * @author WangSongJun
@@ -21,7 +23,10 @@ public class AppNamespaceModel {
     )
     private String name;
 
-    private ConfigFileFormat format;
+    private ConfigFileFormat format = ConfigFileFormat.Properties;
 
     private String comment;
+
+    private Set<App> authorizedApp;
+
 }

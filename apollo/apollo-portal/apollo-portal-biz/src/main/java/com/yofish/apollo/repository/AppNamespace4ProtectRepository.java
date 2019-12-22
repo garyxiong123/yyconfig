@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface AppNamespace4ProtectRepository extends JpaRepository<AppNamespace4Protect, Long> {
+    AppNamespace4Protect findByAppIdAndName(long appId, String name);
 }

@@ -78,7 +78,7 @@ class TableList extends React.Component {
         // loading={loading}
         pagination={false}
         rowKey={record => {
-          return record.id;
+          return record.item.id;
         }}
       />
     )
