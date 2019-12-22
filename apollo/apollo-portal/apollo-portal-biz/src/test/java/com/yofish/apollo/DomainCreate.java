@@ -35,7 +35,7 @@ public class DomainCreate {
     }
 
     public static App createApp() {
-        return App.builder().appCode("middleground").name("中台支付").build();
+        return App.builder().appCode("middleground12").name("中台支付").build();
     }
 
     public static AppEnvCluster createAppEnvCluster(App app) {
