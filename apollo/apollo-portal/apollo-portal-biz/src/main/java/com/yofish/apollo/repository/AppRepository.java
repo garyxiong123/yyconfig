@@ -4,6 +4,7 @@ import com.yofish.apollo.domain.App;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Component;
  * @since 1.0
  */
 @Component
-public interface AppRepository extends JpaRepository<App, Long> {
+public interface AppRepository extends JpaRepository<App, Long>, JpaSpecificationExecutor<App> {
 
     /**
      * findByAppCode
@@ -34,4 +35,5 @@ public interface AppRepository extends JpaRepository<App, Long> {
      * @return
      */
     Page<App> findByAppCodeContainingOrNameContaining(String appId, String name, Pageable pageable);
+
 }

@@ -1,26 +1,36 @@
 package com.yofish.apollo.service;
 
 
+import com.google.common.collect.Lists;
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.domain.Department;
 import com.yofish.apollo.model.vo.EnvClusterInfo;
 import com.yofish.apollo.repository.AppRepository;
 import com.yofish.apollo.repository.DepartmentRepository;
+import com.yofish.gary.api.feign.UserApi;
 import com.yofish.gary.biz.domain.User;
 import com.yofish.gary.biz.service.UserService;
 import com.youyu.common.api.PageData;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
+import com.youyu.common.helper.YyRequestInfoHelper;
+import com.youyu.common.utils.YyAssert;
 import common.utils.PageDataAdapter;
 import framework.apollo.core.ConfigConsts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.SetJoin;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -40,6 +50,8 @@ public class AppService {
     private DepartmentRepository departmentRepository;
     @Autowired
     private AppEnvClusterService clusterService;
+    @Autowired
+    private UserApi userApi;
 
 
     @Transactional(rollbackFor = Exception.class)
@@ -93,7 +105,32 @@ public class AppService {
     }
 
     public PageData<App> findAll(Pageable pageable) {
-        Page<App> apps = appRepository.findAll(pageable);
+
+        //当前用户ID
+        Long currentUserId = YyRequestInfoHelper.getCurrentUserId();
+        YyAssert.isTrue(!ObjectUtils.isEmpty(currentUserId), "403", "用户未登录！");
+        if (userApi.isAdmin(currentUserId).ifNotSuccessThrowException().getData()) {
+            //用户是管理员
+            Page<App> apps = appRepository.findAll(pageable);
+            return PageDataAdapter.toPageData(apps);
+        }
+
+        // jpa分页查询
+        Specification<App> querySpeci = (Specification<App>) (root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = Lists.newArrayList();
+
+            Join<App, User> ownerJoin = root.join("appOwner", JoinType.LEFT);
+            Predicate predicate1 = criteriaBuilder.equal(ownerJoin.get("id").as(Long.class), currentUserId);
+
+            SetJoin<App, User> userSetJoin = root.join(root.getModel().getSet("appAdmins", User.class), JoinType.LEFT);
+            Predicate predicate2 = criteriaBuilder.equal(userSetJoin.get("id").as(Long.class), currentUserId);
+
+            predicates.add(criteriaBuilder.or(predicate1, predicate2));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+
+        };
+
+        Page<App> apps = appRepository.findAll(querySpeci, pageable);
 
         return PageDataAdapter.toPageData(apps);
     }
