@@ -12,7 +12,8 @@ import com.yofish.apollo.model.vo.ItemDiffs;
 import com.yofish.apollo.model.vo.NamespaceIdentifier;
 import com.yofish.apollo.service.ItemService;
 import com.youyu.common.api.Result;
-import common.exception.BadRequestException;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
 import framework.apollo.core.enums.ConfigFileFormat;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +65,7 @@ public class ItemController {
   @RequestMapping(value = "deleteItem", method = RequestMethod.DELETE)
   public void deleteItem(@RequestBody ItemReq req) {
     if (req.getItemId() <= 0) {
-      throw new BadRequestException("item id invalid");
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "item id invalid");
     }
     itemService.deleteItem(req);
   }

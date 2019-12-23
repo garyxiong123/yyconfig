@@ -10,7 +10,8 @@ import com.yofish.apollo.repository.DepartmentRepository;
 import com.yofish.gary.biz.domain.User;
 import com.yofish.gary.biz.service.UserService;
 import com.youyu.common.api.PageData;
-import common.exception.BadRequestException;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
 import common.utils.PageDataAdapter;
 import framework.apollo.core.ConfigConsts;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,7 @@ public class AppService {
         App managedApp = appRepository.findByAppCode(appCode);
 
         if (managedApp != null) {
-            throw new BadRequestException(String.format("App already exists. AppCode = %s", appCode));
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("App already exists. AppCode = %s", appCode));
         }
         this.checkOwnerAndAdminsAndDepartmentIsExist(app);
 
@@ -67,7 +68,7 @@ public class AppService {
         //owner
         com.yofish.gary.api.dto.rsp.UserDetailRspDTO userDetail = userService.getUserDetail(app.getAppOwner().getId());
         if (userDetail == null) {
-            throw new BadRequestException("Application's owner not exist.");
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "Application's owner not exist.");
         }
 
         //admins
@@ -76,7 +77,7 @@ public class AppService {
         //department
         Department department = departmentRepository.findById(app.getDepartment().getId()).orElse(null);
         if (department == null) {
-            throw new BadRequestException("Application's department not exist.");
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "Application's department not exist.");
         }
     }
 
@@ -85,7 +86,7 @@ public class AppService {
             for (User appAdmin : appAdmins) {
                 com.yofish.gary.api.dto.rsp.UserDetailRspDTO userDetailRspDTO = userService.getUserDetail(appAdmin.getId());
                 if (userDetailRspDTO == null) {
-                    throw new BadRequestException("Application's admin [" + appAdmin.getId() + "] not exist.");
+                    throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "Application's admin [" + appAdmin.getId() + "] not exist.");
                 }
             }
         }
@@ -115,7 +116,7 @@ public class AppService {
 
         App managedApp = appRepository.findById(appId).orElse(null);
         if (managedApp == null) {
-            throw new BadRequestException(String.format("App not exists. AppId = %s", appId));
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("App not exists. AppId = %s", appId));
         }
 
         managedApp.setName(app.getName());
@@ -203,7 +204,7 @@ public class AppService {
 
     App managedApp = appRepository.findByAppId(appId);
     if (managedApp == null) {
-      throw new BadRequestException(String.format("App not exists. AppId = %s", appId));
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("App not exists. AppId = %s", appId));
     }
 
     managedApp.setName(app.getName());
@@ -213,7 +214,7 @@ public class AppService {
     String ownerName = app.getOwnerName();
     UserInfo owner = userService.findByUserId(ownerName);
     if (owner == null) {
-      throw new BadRequestException(String.format("App's owner not exists. owner = %s", ownerName));
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("App's owner not exists. owner = %s", ownerName));
     }
     managedApp.setOwnerName(owner.getUserId());
     managedApp.setOwnerEmail(owner.getEmail());
@@ -228,7 +229,7 @@ public class AppService {
   public App deleteAppInLocal(String appId) {
     App managedApp = appRepository.findByAppId(appId);
     if (managedApp == null) {
-      throw new BadRequestException(String.format("App not exists. AppId = %s", appId));
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("App not exists. AppId = %s", appId));
     }
     String operator = userInfoHolder.getUser().getUserId();
 

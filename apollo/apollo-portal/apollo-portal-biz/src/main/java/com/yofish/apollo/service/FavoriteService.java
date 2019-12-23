@@ -7,7 +7,8 @@ import com.yofish.apollo.repository.FavoriteRepository;
 import com.yofish.gary.biz.domain.User;
 import com.youyu.common.api.Result;
 import com.youyu.common.helper.YyRequestInfoHelper;
-import common.exception.BadRequestException;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,12 +35,12 @@ public class FavoriteService {
 
         Long userId = YyRequestInfoHelper.getCurrentUserId();
         if (null == userId) {
-            throw new BadRequestException("Logger not be found");
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "Logger not be found");
         }
 
         App app = appRepository.findByAppCode(appCode);
         if (app == null) {
-            throw new BadRequestException("Application not be found");
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "Application not be found");
         }
 
         User user = new User();

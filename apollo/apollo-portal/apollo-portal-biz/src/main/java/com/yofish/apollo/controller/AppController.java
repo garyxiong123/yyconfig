@@ -14,7 +14,8 @@ import com.yofish.gary.biz.domain.User;
 import com.youyu.common.api.PageData;
 import com.youyu.common.api.Result;
 import common.condition.PermissionAuth;
-import common.exception.BadRequestException;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
 import common.utils.InputValidator;
 import common.utils.RequestPrecondition;
 import io.swagger.annotations.Api;
@@ -91,7 +92,7 @@ public class AppController {
     public Result<App> getApp(@PathVariable Long appId) {
         App app = appService.getApp(appId);
         if (app == null) {
-            throw new BadRequestException("项目不存在！");
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "项目不存在！");
         }
         return Result.ok(app);
     }
@@ -101,7 +102,7 @@ public class AppController {
     public Result<App> getAppByCode(@PathVariable String appCode) {
         App app = appService.getApp(appCode);
         if (app == null) {
-            throw new BadRequestException("项目不存在！");
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "项目不存在！");
         }
         return Result.ok(app);
     }
@@ -141,7 +142,7 @@ public class AppController {
         RequestPrecondition.checkArgumentsNotEmpty(appCode, appName, ownerId, orgId);
 
         if (!InputValidator.isValidClusterNamespace(appModel.getAppCode())) {
-            throw new BadRequestException(
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG,
                     String.format("AppCode格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
         }
         return App.builder()

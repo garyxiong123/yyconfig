@@ -4,7 +4,8 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 import com.yofish.apollo.domain.*;
 import com.yofish.apollo.repository.*;
-import common.exception.BadRequestException;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
 import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.enums.ConfigFileFormat;
 import lombok.extern.slf4j.Slf4j;
@@ -85,7 +86,7 @@ public class AppNamespaceService {
     @Transactional
     public AppNamespace createDefaultAppNamespace(Long appId) {
         if (!isAppNamespaceNameUnique(appId, ConfigConsts.NAMESPACE_APPLICATION)) {
-            throw new BadRequestException(String.format("App already has application appNamespace. AppId = %s", appId));
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("App already has application appNamespace. AppId = %s", appId));
         }
 
         AppNamespace4Private appNs = AppNamespace4Private.builder()
@@ -114,7 +115,7 @@ public class AppNamespaceService {
 
     public <T extends AppNamespace> T createAppNamespace(T appNamespace) {
         if (!isAppNamespaceNameUnique(appNamespace)) {
-            throw new BadRequestException(String.format("App already has application appNamespace. AppId = %s", appNamespace.getApp().getId()));
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("App already has application appNamespace. AppId = %s", appNamespace.getApp().getId()));
         }
 
         appNamespaceRepository.save(appNamespace);
@@ -142,7 +143,7 @@ public class AppNamespaceService {
                 }
             }
 
-            throw new BadRequestException(
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG,
                     "Public AppNamespace " + appNamespace.getName() + " already exists as private AppNamespace in appId: "
                             + APP_NAMESPACE_JOINER.join(appIds) + ", etc. Please select another name!");
         }
@@ -151,7 +152,7 @@ public class AppNamespaceService {
     private void checkPublicAppNamespaceGlobalUniqueness(AppNamespace appNamespace) {
         AppNamespace publicAppNamespace = findPublicAppNamespace(appNamespace.getName());
         if (publicAppNamespace != null) {
-            throw new BadRequestException("AppNamespace " + appNamespace.getName() + " already exists as public appNamespace in appId: " + publicAppNamespace.getApp().getId() + "!");
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "AppNamespace " + appNamespace.getName() + " already exists as public appNamespace in appId: " + publicAppNamespace.getApp().getId() + "!");
         }
     }
 

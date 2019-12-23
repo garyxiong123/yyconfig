@@ -130,7 +130,7 @@ public class AppEnvClusterService {
 //    @Transactional
 //    public ClusterEntity saveWithoutInstanceOfAppNamespaces(ClusterEntity entity) {
 //        if (!isClusterNameUnique(entity.getAppId(), entity.getName())) {
-//            throw new BadRequestException("clusterEntity not unique");
+//            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "clusterEntity not unique");
 //        }
 //        entity.setId(0);//protection
 //        ClusterEntity clusterEntity = clusterRepository.save(entity);
@@ -145,7 +145,7 @@ public class AppEnvClusterService {
 //    public void delete(long id, String operator) {
 //        ClusterEntity clusterEntity = clusterRepository.findById(id).get();
 //        if (clusterEntity == null) {
-//            throw new BadRequestException("clusterEntity not exist");
+//            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "clusterEntity not exist");
 //        }
 //
 //        //delete linked namespaces
@@ -193,7 +193,7 @@ public class AppEnvClusterService {
 //        //TODO fix
 //        ClusterEntity parentClusterEntity = findOne(appId, parentClusterName, env);
 //        if (parentClusterEntity == null) {
-//            throw new BadRequestException("parent appEnvCluster not exist");
+//            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "parent appEnvCluster not exist");
 //        }
 //
 //        return clusterRepository.findByParentClusterId(parentClusterEntity.getId());

@@ -6,7 +6,8 @@ import com.yofish.apollo.service.ReleaseService;
 import com.yofish.apollo.strategy.PublishStrategy4Main;
 import com.yofish.apollo.util.ReleaseKeyGenerator;
 import common.constants.ReleaseOperation;
-import common.exception.BadRequestException;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
 import lombok.Data;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,14 +65,14 @@ public class Release4Main extends Release {
     public Release rollback() {
 
         if (isAbandoned()) {
-            throw new BadRequestException("release is not active");
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "release is not active");
         }
         AppEnvClusterNamespace4Main namepsace = (AppEnvClusterNamespace4Main) this.getAppEnvClusterNamespace();
 
         PageRequest page = new PageRequest(0, 2);
         List<Release> twoLatestActiveReleases = namepsace.findLatestActiveReleases(page);
         if (twoLatestActiveReleases == null || twoLatestActiveReleases.size() < 2) {
-//            throw new BadRequestException(String.format("Can't rollback appNamespace(appId=%s, clusterName=%s, namespaceName=%s) because there is only one active release",
+//            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("Can't rollback appNamespace(appId=%s, clusterName=%s, namespaceName=%s) because there is only one active release",
 //                    appId,
 //                    clusterName,
 //                    namespaceName));

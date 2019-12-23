@@ -14,7 +14,8 @@ import common.constants.GsonType;
 import common.dto.GrayReleaseRuleDTO;
 import common.dto.ItemDTO;
 import common.dto.NamespaceDTO;
-import common.exception.BadRequestException;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
 import common.utils.BeanUtils;
 import framework.apollo.core.enums.ConfigFileFormat;
 import framework.apollo.core.enums.Env;
@@ -52,7 +53,7 @@ public class NamespaceBranchService {
     public NamespaceDTO createBranch(Long namespaceId, String branchName) {
         AppEnvClusterNamespace4Main namespace = (AppEnvClusterNamespace4Main) namespaceRepository.findById(namespaceId).get();
         if (namespace.hasBranchNamespace()) {
-            throw new BadRequestException("namespace already has branch");
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "namespace already has branch");
         }
         AppEnvClusterNamespace4Branch namespace4Branch = (AppEnvClusterNamespace4Branch) creteBranchNamespace(namespace, branchName);
         namespaceRepository.save(namespace4Branch);
@@ -111,11 +112,11 @@ public class NamespaceBranchService {
 //        NamespaceBO parentNamespace = appNamespaceService.loadNamespaceBO(appId, env, clusterName, namespaceName);
 //
 //        if (parentNamespace == null) {
-//            throw new BadRequestException("base namespace not existed");
+//            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "base namespace not existed");
 //        }
 //
 //        if (parentNamespace.getItemModifiedCnt() > 0) {
-//            throw new BadRequestException("Merge operation failed. Because master has modified items");
+//            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "Merge operation failed. Because master has modified items");
 //        }
 //
 //        List<ItemDTO> masterItems = itemService.findItems(appId, env, clusterName, namespaceName);

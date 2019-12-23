@@ -1,7 +1,8 @@
 package common.utils;
 
 
-import common.exception.BadRequestException;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
 import org.springframework.util.ObjectUtils;
 
 public class RequestPrecondition {
@@ -27,14 +28,14 @@ public class RequestPrecondition {
 
     public static void checkArguments(boolean expression, Object errorMessage) {
         if (!expression) {
-            throw new BadRequestException(String.valueOf(errorMessage));
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.valueOf(errorMessage));
         }
     }
 
     public static void checkNumberPositive(int... args) {
         for (int num : args) {
             if (num <= 0) {
-                throw new BadRequestException(ILLEGAL_NUMBER);
+                throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, ILLEGAL_NUMBER);
             }
         }
     }
@@ -42,7 +43,7 @@ public class RequestPrecondition {
     public static void checkNumberPositive(long... args) {
         for (long num : args) {
             if (num <= 0) {
-                throw new BadRequestException(ILLEGAL_NUMBER);
+                throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, ILLEGAL_NUMBER);
             }
         }
     }
@@ -50,7 +51,7 @@ public class RequestPrecondition {
     public static void checkNumberNotNegative(int... args) {
         for (int num : args) {
             if (num < 0) {
-                throw new BadRequestException(ILLEGAL_NUMBER);
+                throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, ILLEGAL_NUMBER);
             }
         }
     }
