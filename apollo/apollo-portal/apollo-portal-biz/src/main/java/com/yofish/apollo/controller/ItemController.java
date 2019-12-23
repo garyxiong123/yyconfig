@@ -38,10 +38,11 @@ public class ItemController {
 
   @RequestMapping(value = "/modifyItemsByTexts", method = RequestMethod.POST, consumes = {
       "application/json"})
-  public void modifyItemsByText(@RequestBody ModifyItemsByTextsReq model) {
+  public Result modifyItemsByText(@RequestBody ModifyItemsByTextsReq model) {
 
     checkModel(model != null);
     itemService.updateConfigItemByText(model);
+    return Result.ok();
   }
 
 
@@ -62,7 +63,7 @@ public class ItemController {
 
   @RequestMapping(value = "deleteItem", method = RequestMethod.DELETE)
   public void deleteItem(@RequestBody ItemReq req) {
-    if (req.getClusterNamespaceId() <= 0) {
+    if (req.getItemId() <= 0) {
       throw new BadRequestException("item id invalid");
     }
     itemService.deleteItem(req);
@@ -78,8 +79,7 @@ public class ItemController {
 //todo 配置同步
 
   @RequestMapping(value = "updateEnv")
-  public Result updateEnv(@PathVariable String appId, @PathVariable String namespaceName,
-                                     @RequestBody NamespaceSyncModel model) {
+  public Result updateEnv(@RequestBody NamespaceSyncModel model) {
     itemService.syncItems(model.getSyncToNamespaces(), model.getSyncItems());
    return Result.ok();
   }
