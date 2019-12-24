@@ -3,9 +3,6 @@ package com.yofish.apollo;
 import com.google.common.collect.Sets;
 import com.yofish.apollo.domain.*;
 import com.yofish.apollo.repository.*;
-import com.yofish.gary.biz.domain.User;
-import com.yofish.gary.biz.repository.UserRepository;
-import framework.apollo.core.enums.Env;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,10 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @Author: xiongchengwei
@@ -37,6 +31,8 @@ public class ReleaseRepositoryTest {
 
     private AppEnvClusterNamespace namespace;
 
+    private String releaseKey = "123";
+
 
     @Before
     public void setUp() throws Exception {
@@ -45,7 +41,7 @@ public class ReleaseRepositoryTest {
         Map<String, String> configMap = new HashMap<>();
 //        configMap.put("name","22");
 
-        Release4Main release4Main = Release4Main.builder().namespace(namespace).isEmergencyPublish(false).configurations(configMap).comment("comment").name("123").releaseKey("123").build();
+        Release4Main release4Main = Release4Main.builder().namespace(namespace).isEmergencyPublish(false).configurations(configMap).comment("comment").name("123").releaseKey(releaseKey).build();
 
         releaseRepository.save(release4Main);
     }
@@ -56,6 +52,23 @@ public class ReleaseRepositoryTest {
 
         Release release = releaseRepository.findFirstByAppEnvClusterNamespace_IdAndAbandonedIsFalseOrderByIdDesc(namespace.getId());
         Assert.assertNotNull(release);
+    }
+
+
+    @Test
+    public void testFindByReleaseKeys() {
+        Set<String> releaseKeys = Sets.newHashSet(releaseKey);
+
+        List<Release> releases = releaseRepository.findReleasesByReleaseKeyIn(releaseKeys);
+        Assert.assertNotNull(releases);
+    }
+
+
+    @Test
+    public void testFindById() {
+        Long id = releaseRepository.findAll().get(0).getId();
+        Release releases = releaseRepository.findByIdAndAbandonedFalse(id);
+        Assert.assertNotNull(releases);
     }
 
 

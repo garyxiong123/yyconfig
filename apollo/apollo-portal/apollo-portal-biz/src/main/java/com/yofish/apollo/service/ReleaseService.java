@@ -8,12 +8,10 @@ import com.yofish.apollo.model.bo.ReleaseBO;
 import com.yofish.apollo.model.vo.ReleaseCompareResult;
 import com.yofish.apollo.repository.Release4MainRepository;
 import com.yofish.apollo.repository.ReleaseRepository;
-import common.constants.GsonType;
 import common.dto.ReleaseDTO;
 import common.exception.NotFoundException;
 import common.utils.BeanUtils;
 import framework.apollo.core.enums.Env;
-import org.apache.commons.lang.time.FastDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,7 +20,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
-import static com.yofish.apollo.strategy.CalculateUtil.mergeConfiguration;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 
 /**
@@ -49,7 +46,7 @@ public class ReleaseService {
 
 
     public Release findActiveOne(long releaseId) {
-        return releaseRepository.findByIdAndIsAbandonedFalse(releaseId);
+        return releaseRepository.findByIdAndAbandonedFalse(releaseId);
     }
 
     public Release findOne(long releaseId){
@@ -65,7 +62,7 @@ public class ReleaseService {
     }
 
     public List<Release> findByReleaseKeys(Set<String> releaseKeys) {
-        return releaseRepository.findReleaseByReleaseKeyIn(releaseKeys);
+        return releaseRepository.findReleasesByReleaseKeyIn(releaseKeys);
     }
 
 
