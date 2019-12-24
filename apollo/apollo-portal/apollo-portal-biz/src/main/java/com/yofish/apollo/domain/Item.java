@@ -19,7 +19,7 @@ import javax.persistence.*;
 @Entity
 public class Item extends BaseEntity {
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.DETACH)
     private AppEnvClusterNamespace appEnvClusterNamespace;
 
     @Column(name = "keynumber", nullable = false)
@@ -29,7 +29,7 @@ public class Item extends BaseEntity {
     @Lob
     private String value;
 
-    @Column(name = "commentdesc", nullable = false)
+    @Column(name = "comment_desc")
     private String comment;
 
     private Integer lineNum;

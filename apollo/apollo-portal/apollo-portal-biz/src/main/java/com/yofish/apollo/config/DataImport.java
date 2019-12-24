@@ -1,10 +1,9 @@
 package com.yofish.apollo.config;
 
-import com.yofish.apollo.domain.Department;
-import com.yofish.apollo.domain.ServerConfig;
+import com.yofish.apollo.domain.*;
 import com.yofish.apollo.enums.ServerConfigKey;
-import com.yofish.apollo.repository.DepartmentRepository;
-import com.yofish.apollo.repository.ServerConfigRepository;
+import com.yofish.apollo.repository.*;
+import framework.apollo.core.enums.ConfigFileFormat;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,11 +22,20 @@ public class DataImport {
     private ServerConfigRepository serverConfigRepository;
     @Autowired
     private DepartmentRepository departmentRepository;
+    @Autowired
+    private AppRepository appRepository;
+    @Autowired
+    private AppNamespaceRepository appNamespaceRepository;
+    @Autowired
+    private AppEnvClusterNamespaceRepository namespaceRepository;
+    @Autowired
+    private AppEnvClusterRepository clusterRepository;
 
     private final String activeEvns = "dev,test,pre,prod";
     private final String defaultDepartment = "默认部门";
     private final String defaultDepartmentCode = "DefaultDepartment";
-
+    private final String defaultAppName = "中台支付";
+    private final String defaultAppCode = "payment";
 
     @PostConstruct
     public void activeDefaultEnvs() {
@@ -43,13 +51,66 @@ public class DataImport {
     }
 
     @PostConstruct
-    private void createDefaultDepartment() {
+    private void createDefaultData() {
         log.info("初始化部门信息...");
         Department department = this.departmentRepository.findByName(defaultDepartment);
-        if (ObjectUtils.isEmpty(department)) {
-            department = Department.builder().code(defaultDepartmentCode).name(defaultDepartment).comment("系统初始化默认部门").build();
-            this.departmentRepository.save(department);
+        if (!ObjectUtils.isEmpty(department)) {
+            return;
         }
+        department = Department.builder().code(defaultDepartmentCode).name(defaultDepartment).comment("系统初始化默认部门").build();
+        this.departmentRepository.save(department);
+
         log.info("初始化部门信息完成:{}", department.getName());
+
+
+        App app = createDefaultApp(department);
+        AppNamespace appNamespace = createDefaultAppNamespace(app);
+        AppEnvCluster appEnvCluster = createDefaultCluster(app);
+
+        AppEnvClusterNamespace namespace = createDefaultNamespace4Main(appEnvCluster, appNamespace);
+
     }
+
+    private AppEnvClusterNamespace createDefaultNamespace4Main(AppEnvCluster appEnvCluster, AppNamespace appNamespace) {
+        AppEnvClusterNamespace4Main namespace = new AppEnvClusterNamespace4Main();
+        namespace.setAppNamespace(appNamespace);
+        namespace.setAppEnvCluster(appEnvCluster);
+
+        namespaceRepository.save(namespace);
+        return namespace;
+    }
+
+    private AppEnvCluster createDefaultCluster(App app) {
+        AppEnvCluster appEnvCluster = AppEnvCluster.builder().app(app).env("test").name("default").build();
+        clusterRepository.save(appEnvCluster);
+        return appEnvCluster;
+    }
+
+    private App createDefaultApp(Department department) {
+        App app = App.builder().name(defaultAppName).appCode(defaultAppCode).department(department).build();
+        appRepository.save(app);
+        return app;
+    }
+
+    private AppNamespace createDefaultAppNamespace(App app) {
+        AppNamespace appNamespace = new AppNamespace();
+        String appNamespaceName = "application";
+        appNamespace.setName(appNamespaceName);
+        appNamespace.setComment("项目命名空间");
+        appNamespace.setFormat(ConfigFileFormat.Properties);
+        appNamespace.setApp(app);
+
+        appNamespaceRepository.save(appNamespace);
+
+        return appNamespace;
+    }
+
+
+//
+//    private AppEnvClusterNamespace createDefaultAppEnvClusterNamespace(App app) {
+//
+//        return null;
+//    }
+
+
 }

@@ -93,16 +93,11 @@ public class ReleaseService {
         return null;
     }
 
-    public ReleaseDTO loadLatestRelease(String appId, String clusterName, String namespaceName) {
-        Release release = findLatestActiveRelease(appId, clusterName, namespaceName);
+    public ReleaseDTO loadLatestRelease(AppEnvClusterNamespace namespace) {
+        Release release = namespace.findLatestActiveRelease();
         return BeanUtils.transform(ReleaseDTO.class, release);
     }
 
-    public Release findLatestActiveRelease(String appId, String clusterName, String namespaceName) {
-        return releaseRepository.findFirstByAppIdAndClusterNameAndNamespaceNameAndIsAbandonedFalseOrderByIdDesc(appId,
-                clusterName,
-                namespaceName);
-    }
 
     @Transactional
     public Release mergeBranchChangeSetsAndRelease(AppNamespace namespace, String branchName, String releaseName,
@@ -177,10 +172,11 @@ public class ReleaseService {
 
     private Release createRelease(AppEnvClusterNamespace namespace, String name, String comment, Map<String, String> configurations, boolean isEmergencyPublish) {
         if (namespace instanceof AppEnvClusterNamespace4Branch) {
-            Release4Branch release4Branch = new Release4Branch(namespace, name, comment, configurations, isEmergencyPublish);
+            Release4Branch release4Branch = new Release4Branch(namespace, name, comment, configurations, isEmergencyPublish, null);
             return release4Branch;
         }
-        Release4Main release = new Release4Main(namespace, name, comment, configurations, isEmergencyPublish);
+        //TODO Fix error
+        Release4Main release =  new Release4Main(namespace, name, comment, configurations, isEmergencyPublish, null);
 
 
         return release;

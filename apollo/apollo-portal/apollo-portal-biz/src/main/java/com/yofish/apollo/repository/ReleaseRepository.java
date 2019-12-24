@@ -22,8 +22,6 @@ public interface ReleaseRepository extends JpaRepository<Release, Long> {
 
 //    Release findByIdAndIsAbandonedFalse(long releaseId);
 //
-    @Query(value = "select * from tb_task t where t.task_name = ?1", nativeQuery = true)
-    Release findFirstByAppIdAndClusterNameAndNamespaceNameAndIsAbandonedFalseOrderByIdDesc(String appId, String clusterName, String namespaceName);
 
     @Query(value = "select * from tb_task t where t.task_name = ?1", nativeQuery = true)
     Release findByIdAndIsAbandonedFalse(long releaseId);
@@ -35,6 +33,7 @@ public interface ReleaseRepository extends JpaRepository<Release, Long> {
     int batchDelete(String appId, String clusterName, String namespaceName, String operator);
 
 //    int batchDelete(String appId, String clusterName, String namespaceName, String operator);
+
 
     Release findFirstByAppEnvClusterNamespace_IdAndAbandonedIsFalseOrderByIdDesc(Long namespaceId );
 

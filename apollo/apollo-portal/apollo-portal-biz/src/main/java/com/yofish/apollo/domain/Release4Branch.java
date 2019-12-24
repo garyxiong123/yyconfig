@@ -3,6 +3,7 @@ package com.yofish.apollo.domain;
 import com.yofish.apollo.strategy.PublishStrategy4Branch;
 import com.yofish.apollo.strategy.PublishStrategy4Main;
 import common.constants.GsonType;
+import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.springframework.util.CollectionUtils;
@@ -24,13 +25,9 @@ import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass;
 @DiscriminatorValue("Release4Branch")
 public class Release4Branch extends Release {
 
-    @Column(name = "Comment", nullable = false)
-    private String comment;
-
-    public Release4Branch(AppEnvClusterNamespace namespace, String name, String comment, Map<String, String> configurations, boolean isEmergencyPublish) {
-        super(namespace, name, comment, configurations, isEmergencyPublish);
-        this.setComment(comment);
-
+    @Builder
+    public Release4Branch(AppEnvClusterNamespace namespace, String name, String comment, Map<String, String> configurations, boolean isEmergencyPublish, String releaseKey) {
+        super(namespace, name, comment, configurations, isEmergencyPublish, releaseKey);
     }
 
     public Release4Branch() {
