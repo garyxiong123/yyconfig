@@ -9,12 +9,13 @@ import com.yofish.apollo.controller.ReleaseController;
 import com.yofish.apollo.domain.*;
 import com.yofish.apollo.dto.CreateItemReq;
 import com.yofish.apollo.dto.ReleaseDTO;
+import com.yofish.apollo.dto.ReleaseHistoryDTO;
 import com.yofish.apollo.message.Topics;
+import com.yofish.apollo.model.bo.ReleaseHistoryBO;
 import com.yofish.apollo.model.model.NamespaceReleaseModel;
-import com.yofish.apollo.repository.AppEnvClusterNamespace4MainRepository;
-import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
-import com.yofish.apollo.repository.ReleaseRepository;
+import com.yofish.apollo.repository.*;
 import com.yofish.apollo.service.CommitService;
+import com.yofish.apollo.service.ReleaseHistoryService;
 import com.yofish.apollo.service.ReleaseService;
 import common.dto.AppDTO;
 import common.dto.ClusterDTO;
@@ -27,6 +28,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.*;
 import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.test.annotation.Rollback;
@@ -38,6 +40,7 @@ import org.springframework.util.MultiValueMap;
 
 import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.yofish.apollo.DomainCreate.createAppEnvClusterNamespace4Main;
@@ -56,11 +59,16 @@ public class ReleaseControllerTest extends AbstractControllerTest {
     private AppEnvClusterNamespace4MainRepository namespaceRepository4Main;
 
     private AppEnvClusterNamespace4Main namespace;
-
+    @Autowired
+    private CommitRepository commitRepository;
     @Autowired
     private CommitService commitService;
     @Autowired
     private ItemController itemController;
+    @Autowired
+    private ReleaseHistoryRepository releaseHistoryRepository;
+    @Autowired
+    private ReleaseHistoryService releaseHistoryService;
 
 //    @Rollback()
     @Before
@@ -75,7 +83,11 @@ public class ReleaseControllerTest extends AbstractControllerTest {
 
         NamespaceReleaseModel namespaceReleaseModel = NamespaceReleaseModel.builder().releaseTitle("测试发布标题").releaseComment("测试发布").AppEnvClusterNamespaceId(namespace.getId()).build();
         common.dto.ReleaseDTO release = releaseController.createRelease(namespaceReleaseModel);
-//        Assert.assertNotNull(release);
+
+        Iterable<ReleaseHistory> releaseHistoryRepositories = releaseHistoryRepository.findAll();
+        Page<ReleaseHistoryDTO> namespaceReleaseHistory = releaseHistoryService.findNamespaceReleaseHistory(namespace.getId(), 0, 10);
+
+        Assert.assertNotNull(releaseHistoryRepositories);
 
     }
 
@@ -108,6 +120,7 @@ public class ReleaseControllerTest extends AbstractControllerTest {
     }
 
     private Release createTwoRelease() {
+
         return null;
     }
 

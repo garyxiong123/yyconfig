@@ -9,9 +9,7 @@ import common.constants.ReleaseOperation;
 import common.constants.ReleaseOperationContext;
 import common.utils.GrayReleaseRuleItemTransformer;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.yofish.apollo.strategy.CalculateUtil.Json2Map;
@@ -60,7 +58,7 @@ public class PublishStrategy4Branch extends PublishStrategy {
 
         createReleaseAndUnlock(release4Branch);
 
-        createReleaseHistory(release4Branch);
+        createReleaseHistory(release4Branch, releaseOperationContext, releaseOperation);
 
     }
 

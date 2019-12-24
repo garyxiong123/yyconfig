@@ -62,7 +62,7 @@ public class PublishStrategy4Main extends PublishStrategy {
 
         createReleaseAndUnlock(release4Main);
 
-        createReleaseHistory(release4Main);
+        createReleaseHistory(release4Main,operationContext, releaseOperation);
 
         return release4Main;
     }

@@ -1,22 +1,14 @@
 package com.yofish.apollo.strategy;
 
-import com.google.common.collect.Maps;
 import com.google.gson.Gson;
-import com.yofish.apollo.domain.AppEnvClusterNamespace4Branch;
-import com.yofish.apollo.domain.GrayReleaseRule;
 import com.yofish.apollo.domain.Release;
-import com.yofish.apollo.domain.Release4Branch;
 import com.yofish.apollo.repository.Release4MainRepository;
 import com.yofish.apollo.repository.ReleaseHistoryRepository;
 import com.yofish.apollo.repository.ReleaseRepository;
 import com.yofish.apollo.service.NamespaceBranchService;
 import com.yofish.apollo.service.ReleaseHistoryService;
-import common.constants.GsonType;
-import common.constants.ReleaseOperationContext;
-import common.utils.GrayReleaseRuleItemTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -48,14 +40,9 @@ public abstract class PublishStrategy {
     }
 
 
-
-
-
-
-
-    protected void createReleaseHistory(Release release) {
-//        Release previousRelease = release4Branch.getPreviousRelease();
-////        releaseHistoryService.createReleaseHistory(release4Branch, previousRelease, releaseOperation, releaseOperationContext);
+    protected void createReleaseHistory(Release release, Map<String, Object> operationContext, int releaseOperation) {
+        Release previousRelease = release.getPreviousRelease();
+        releaseHistoryService.createReleaseHistory(release.getAppEnvClusterNamespace().getId(),release, previousRelease, releaseOperation, operationContext);
 
     }
 
@@ -63,11 +50,6 @@ public abstract class PublishStrategy {
         releaseRepository.save(release);
         return release;
     }
-
-
-
-
-
 
 
 }

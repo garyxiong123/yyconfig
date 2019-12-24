@@ -71,7 +71,7 @@ public class Release4Main extends Release {
 
         getBeanInstance(ReleaseRepository.class).save(this);
 
-        getBeanInstance(ReleaseHistoryService.class).createReleaseHistory(this, twoLatestActiveReleases.get(1).getId(), ReleaseOperation.ROLLBACK, null);
+        getBeanInstance(ReleaseHistoryService.class).createReleaseHistory(namepsace.getId(), this, twoLatestActiveReleases.get(1), ReleaseOperation.ROLLBACK, null);
 
         //publish child appNamespace if appNamespace has child 灰度回滚
         Release4Branch release4Branch = this.findLastBranchRelease();
