@@ -11,7 +11,8 @@ import common.constants.GsonType;
 import common.dto.ItemDTO;
 import common.dto.NamespaceDTO;
 import common.dto.ReleaseDTO;
-import common.exception.BadRequestException;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
 import common.utils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -82,7 +83,7 @@ public class AppEnvClusterNamespaceService {
     public List<NamespaceVO> findNamespaceVOs(String appCode, String env, String clusterName) {
         AppEnvCluster appEnvCluster = appEnvClusterRepository.findClusterByAppAppCodeAndEnvAndName(appCode, env, clusterName);
         if (ObjectUtils.isEmpty(appEnvCluster)) {
-            throw new BadRequestException("namespaces not exist");
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "namespaces not exist");
         }
         List<AppEnvClusterNamespace> namespaces = findNamespaces(appEnvCluster);
 

@@ -2,7 +2,8 @@ package com.yofish.apollo.component.txtresolver;
 
 import com.yofish.apollo.bo.ItemChangeSets;
 import com.yofish.apollo.domain.Item;
-import common.exception.BadRequestException;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
 import common.utils.BeanUtils;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +31,7 @@ public class PropertyResolver implements ConfigTextResolver {
      String[] newItems = configText.split(ITEM_SEPARATOR);
 
       if (isHasRepeatKey(newItems)) {
-        throw new BadRequestException("config text has repeat key please check.");
+        throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "config text has repeat key please check.");
       }
 
      ItemChangeSets changeSets = new ItemChangeSets();
@@ -76,7 +77,7 @@ public class PropertyResolver implements ConfigTextResolver {
                 if (kv != null) {
                     keys.add(kv[0]);
                 } else {
-//                    throw new BadRequestException("line:" + lineCounter + " key value must separate by '='");
+//                    throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "line:" + lineCounter + " key value must separate by '='");
                 }
             }
             lineCounter++;
@@ -117,7 +118,7 @@ public class PropertyResolver implements ConfigTextResolver {
         String[] kv = parseKeyValueFromItem(newItem);
 
         if (kv == null) {
-//            throw new BadRequestException("line:" + lineCounter + " key value must separate by '='");
+//            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "line:" + lineCounter + " key value must separate by '='");
         }
 
         String newKey = kv[0];

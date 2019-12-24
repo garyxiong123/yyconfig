@@ -16,6 +16,10 @@
             <artifactId>sword-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.yofish.platform</groupId>
+            <artifactId>sword-handler</artifactId>
+        </dependency>
+        <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
         </dependency>

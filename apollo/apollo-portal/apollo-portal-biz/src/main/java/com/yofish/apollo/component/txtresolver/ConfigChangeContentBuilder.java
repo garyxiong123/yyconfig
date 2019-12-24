@@ -64,6 +64,7 @@ public class ConfigChangeContentBuilder {
             item.setDataChangeLastModifiedTime(now);
         }*/
         return gson.toJson(this);
+
     }
 
     static class ItemPair {

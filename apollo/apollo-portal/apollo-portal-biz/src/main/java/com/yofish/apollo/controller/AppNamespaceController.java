@@ -9,7 +9,8 @@ import com.yofish.apollo.model.model.AppNamespaceModel;
 import com.yofish.apollo.service.AppEnvClusterNamespaceService;
 import com.yofish.apollo.service.AppNamespaceService;
 import com.youyu.common.api.Result;
-import common.exception.BadRequestException;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -84,7 +85,7 @@ public class AppNamespaceController {
     public Result<AppNamespace4Protect> authorizedApp(@PathVariable long appId, @PathVariable String namespace, @RequestBody Set<App> apps) {
         AppNamespace4Protect appNamespace4Protect = appNamespaceService.findProtectAppNamespaceByAppIdAndName(appId, namespace);
         if (ObjectUtils.isEmpty(appNamespace4Protect)) {
-            throw new BadRequestException("app namespace not exist!");
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "app namespace not exist!");
         }
         appNamespace4Protect.setAuthorizedApp(apps);
         appNamespaceService.updateAppNamespace(appNamespace4Protect);
@@ -194,7 +195,7 @@ public class AppNamespaceController {
 //    AppNamespace appNamespace = appNamespaceService.findByAppIdAndName(appId, namespaceName);
 //
 //    if (appNamespace == null) {
-//      throw new BadRequestException(
+//      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG,
 //          String.format("AppNamespace not exists. AppId = %s, NamespaceName = %s", appId, namespaceName));
 //    }
 //

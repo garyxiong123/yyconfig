@@ -148,7 +148,7 @@ public class ReleaseService {
 //    if (!isEmergencyPublish) {
 //      AppNamespaceLock lock = namespaceLockService.findLock(appNamespace.getId());
 //      if (lock != null && lock.getDataChangeCreatedBy().equals(operator)) {
-//        throw new BadRequestException("Config can not be published by yourself.");
+//        throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "Config can not be published by yourself.");
 //      }
 //    }
     }

@@ -4,7 +4,8 @@ import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppEnvCluster;
 import com.yofish.apollo.service.AppEnvClusterService;
 import com.youyu.common.api.Result;
-import common.exception.BadRequestException;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
 import common.utils.InputValidator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,7 +25,7 @@ public class ClusterController {
     public Result<AppEnvCluster> createCluster(@PathVariable Long appId, @PathVariable String env, @PathVariable String clusterName) {
 
         if (!InputValidator.isValidClusterNamespace(clusterName)) {
-            throw new BadRequestException(String.format("Cluster格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("Cluster格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
         }
 
         AppEnvCluster appEnvCluster = AppEnvCluster.builder().app(new App(appId)).env(env).name(clusterName).build();

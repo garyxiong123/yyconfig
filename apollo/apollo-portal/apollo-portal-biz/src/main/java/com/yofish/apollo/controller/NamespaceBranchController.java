@@ -10,7 +10,8 @@ import com.yofish.apollo.service.PortalConfig;
 import com.yofish.apollo.service.ReleaseService;
 import common.dto.GrayReleaseRuleDTO;
 import common.dto.NamespaceDTO;
-import common.exception.BadRequestException;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
 import framework.apollo.core.enums.Env;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -79,7 +80,7 @@ public class NamespaceBranchController {
                          @RequestBody NamespaceReleaseModel model) {
 
         if (model.isEmergencyPublish() && !portalConfig.isEmergencyPublishAllowed(Env.fromString(env))) {
-            throw new BadRequestException(String.format("Env: %s is not supported emergency publish now", env));
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("Env: %s is not supported emergency publish now", env));
         }
         Release createdRelease = null;
 //        Release createdRelease = namespaceBranchService.

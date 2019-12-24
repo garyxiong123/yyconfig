@@ -19,7 +19,7 @@ public class UserInfoController {
   @RequestMapping(value = "/users", method = RequestMethod.POST)
   public void createOrUpdateUser(@RequestBody UserPO user) {
     if (StringUtils.isContainEmpty(user.getUsername(), user.getPassword())) {
-      throw new BadRequestException("Username and password can not be empty.");
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "Username and password can not be empty.");
     }
 
     if (userService instanceof SpringSecurityUserService) {

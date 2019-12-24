@@ -14,7 +14,8 @@ import com.yofish.apollo.domain.ReleaseMessage;
 import com.yofish.apollo.message.ReleaseMessageListener;
 import com.yofish.apollo.message.Topics;
 import com.yofish.apollo.service.PortalConfig;
-import common.exception.BadRequestException;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
 import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.dto.ApolloConfigNotification;
 import framework.apollo.core.utils.ApolloThreadFactory;
@@ -246,7 +247,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
         }
 
         if (isEmpty(namespaces)) {
-            throw new BadRequestException("Invalid format of notifications: " + notificationsAsString);
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "Invalid format of notifications: " + notificationsAsString);
         }
         return clientSideNotifications;
     }
@@ -254,7 +255,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
     private Map<String, ApolloConfigNotification> createAndFilterClientNotification(String notificationsAsString, String appId) {
         List<ApolloConfigNotification> clientNotifications = gson.fromJson(notificationsAsString, notificationsTypeReference);
         if (isEmpty(clientNotifications)) {
-//      throw new BadRequestException("Invalid format of notifications: " + notificationsAsString);
+//      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "Invalid format of notifications: " + notificationsAsString);
         }
         Map<String, ApolloConfigNotification> filteredNotificationMap = filterNotifications(appId, clientNotifications);
         return filteredNotificationMap;
