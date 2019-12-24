@@ -3,6 +3,8 @@ package com.yofish.apollo.config;
 import com.yofish.apollo.domain.*;
 import com.yofish.apollo.enums.ServerConfigKey;
 import com.yofish.apollo.repository.*;
+import com.yofish.apollo.service.AppService;
+import com.yofish.apollo.service.NamespaceBranchService;
 import framework.apollo.core.enums.ConfigFileFormat;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +32,18 @@ public class DataImport {
     private AppEnvClusterNamespaceRepository namespaceRepository;
     @Autowired
     private AppEnvClusterRepository clusterRepository;
+    @Autowired
+    private AppService appService;
+
+    @Autowired
+    private NamespaceBranchService namespaceBranchService;
 
     private final String activeEvns = "dev,test,pre,prod";
     private final String defaultDepartment = "默认部门";
     private final String defaultDepartmentCode = "DefaultDepartment";
     private final String defaultAppName = "中台支付";
     private final String defaultAppCode = "payment";
+    private final String defaultNamespaceName = "application";
 
     @PostConstruct
     public void activeDefaultEnvs() {
@@ -64,11 +72,11 @@ public class DataImport {
 
 
         App app = createDefaultApp(department);
-        AppNamespace appNamespace = createDefaultAppNamespace(app);
-        AppEnvCluster appEnvCluster = createDefaultCluster(app);
-
-        AppEnvClusterNamespace namespace = createDefaultNamespace4Main(appEnvCluster, appNamespace);
-        AppEnvClusterNamespace namespace4Branch =  createDefaultNamespace4Branch(namespace, appEnvCluster, appNamespace);
+//        AppNamespace appNamespace = appNamespaceRepository.findByAppAndName(app, defaultNamespaceName);
+//
+//
+//        AppEnvClusterNamespace namespace =  namespaceRepository.findByAppEnvClusterAndAppNamespace();
+//        namespaceBranchService.createBranch(namespace.getId(), "shanghai-DB");
 
     }
 
@@ -90,30 +98,14 @@ public class DataImport {
         return namespace;
     }
 
-    private AppEnvCluster createDefaultCluster(App app) {
-        AppEnvCluster appEnvCluster = AppEnvCluster.builder().app(app).env("test").name("default").build();
-        clusterRepository.save(appEnvCluster);
-        return appEnvCluster;
-    }
 
     private App createDefaultApp(Department department) {
+
         App app = App.builder().name(defaultAppName).appCode(defaultAppCode).department(department).build();
-        appRepository.save(app);
+        appService.createApp(app);
         return app;
     }
 
-    private AppNamespace createDefaultAppNamespace(App app) {
-        AppNamespace4Private appNamespace = new AppNamespace4Private();
-        String appNamespaceName = "application";
-        appNamespace.setName(appNamespaceName);
-        appNamespace.setComment("项目命名空间");
-        appNamespace.setFormat(ConfigFileFormat.Properties);
-        appNamespace.setApp(app);
-
-        appNamespaceRepository.save(appNamespace);
-
-        return appNamespace;
-    }
 
 
 //
