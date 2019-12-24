@@ -24,7 +24,7 @@ public class AppEnvClusterNamespace4Branch extends AppEnvClusterNamespace {
 
     private Long parentId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.DETACH)
     private GrayReleaseRule grayReleaseRule;
 
     private String branchName;

@@ -142,7 +142,8 @@ public class AppEnvClusterNamespaceService {
         Map<String, String> releaseItems = new HashMap<>(16);
         Map<String, ItemDTO> deletedItemDTOs = new HashMap<>(16);
         // TODO: 2019-12-21 这个地方还要测试
-        latestRelease = releaseService.loadLatestRelease(appCode, clusterName, namespaceName);
+
+        latestRelease = releaseService.loadLatestRelease(appEnvClusterNamespace);
         if (latestRelease != null) {
             releaseItems = gson.fromJson(latestRelease.getConfigurations(), GsonType.CONFIG);
         }

@@ -29,7 +29,7 @@ public class Item extends BaseEntity {
     @Lob
     private String value;
 
-    @Column(name = "commentdesc", nullable = false)
+    @Column(name = "comment_desc")
     private String comment;
 
     private Integer lineNum;

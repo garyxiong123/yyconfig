@@ -5,9 +5,10 @@ import com.yofish.apollo.service.ReleaseHistoryService;
 import com.yofish.apollo.service.ReleaseService;
 import com.yofish.apollo.strategy.PublishStrategy4Main;
 import com.yofish.apollo.util.ReleaseKeyGenerator;
-import common.constants.ReleaseOperation;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
+import common.constants.ReleaseOperation;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,23 +31,10 @@ import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
 @DiscriminatorValue("Release4Main")
 public class Release4Main extends Release {
 
-    @Column(name = "Comment", nullable = false)
-    private String comment;
-
-
-    public Release4Main(AppEnvClusterNamespace namespace, String name, String comment, Map<String, String> configurations, boolean isEmergencyPublish) {
-        super(namespace, name, comment, configurations, isEmergencyPublish);
-        this.setReleaseKey(ReleaseKeyGenerator.generateReleaseKey(namespace));
-        AppEnvClusterNamespace4Main appEnvClusterNamespace4Main = (AppEnvClusterNamespace4Main) this.getAppEnvClusterNamespace();
-
-//        if(appEnvClusterNamespace4Main.hasBranchNamespace()){
-//            publishStrategy = getBeanByClass(PublishStrategy4MainWithBranch.class);
-//            return;
-//        }
-//        publishStrategy =  getBeanByClass(PublishStrategy4MainWithoutBranch.class);
-
+    @Builder
+    public Release4Main(AppEnvClusterNamespace namespace, String name, String comment, Map<String, String> configurations, boolean isEmergencyPublish, String releaseKey) {
+        super(namespace, name, comment, configurations, isEmergencyPublish, releaseKey);
     }
-
 
     @Override
     public Release publish() {
@@ -85,7 +73,7 @@ public class Release4Main extends Release {
         getBeanInstance(ReleaseHistoryService.class).createReleaseHistory(this, twoLatestActiveReleases.get(1).getId(), ReleaseOperation.ROLLBACK, null);
 
         //publish child appNamespace if appNamespace has child 灰度回滚
-        Release4Branch  release4Branch = this.findLastBranchRelease();
+        Release4Branch release4Branch = this.findLastBranchRelease();
         if (release4Branch != null) {
             release4Branch.rollback(this, twoLatestActiveReleases);
         }

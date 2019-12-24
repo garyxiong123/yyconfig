@@ -6,6 +6,7 @@ import com.yofish.apollo.service.AppNamespaceService;
 import common.constants.ReleaseOperation;
 import common.constants.ReleaseOperationContext;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.DiscriminatorValue;

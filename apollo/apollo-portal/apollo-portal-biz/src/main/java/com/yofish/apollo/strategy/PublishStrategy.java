@@ -6,6 +6,7 @@ import com.yofish.apollo.domain.AppEnvClusterNamespace4Branch;
 import com.yofish.apollo.domain.GrayReleaseRule;
 import com.yofish.apollo.domain.Release;
 import com.yofish.apollo.domain.Release4Branch;
+import com.yofish.apollo.repository.Release4MainRepository;
 import com.yofish.apollo.repository.ReleaseHistoryRepository;
 import com.yofish.apollo.repository.ReleaseRepository;
 import com.yofish.apollo.service.NamespaceBranchService;
@@ -28,6 +29,8 @@ public abstract class PublishStrategy {
 
     @Autowired
     protected ReleaseRepository releaseRepository;
+    @Autowired
+    protected Release4MainRepository releaseRepository4Main;
 
     @Autowired
     protected ReleaseHistoryRepository releaseHistoryRepository;
