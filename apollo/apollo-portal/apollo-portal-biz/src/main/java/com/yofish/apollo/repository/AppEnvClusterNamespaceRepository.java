@@ -29,4 +29,6 @@ public interface AppEnvClusterNamespaceRepository extends JpaRepository<AppEnvCl
     //    List<AppEnvClusterNamespace> findByAppCodeAndAppEnvClusterNameOrderByIdAsc(String appCode, String clusterName);
     List<AppEnvClusterNamespace> findByAppEnvClusterOrderByIdAsc(AppEnvCluster appEnvCluster);
 
+
+
 }

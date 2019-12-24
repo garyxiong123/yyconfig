@@ -1,6 +1,6 @@
 package com.yofish.apollo.controller;
 
-//import com.yofish.apollo.model.model.NamespaceTextModel;
+
 import com.yofish.apollo.domain.Item;
 import com.yofish.apollo.dto.CreateItemReq;
 import com.yofish.apollo.dto.ItemReq;
@@ -12,17 +12,19 @@ import com.yofish.apollo.model.vo.ItemDiffs;
 import com.yofish.apollo.model.vo.NamespaceIdentifier;
 import com.yofish.apollo.service.ItemService;
 import com.youyu.common.api.Result;
-import common.exception.BadRequestException;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
 import framework.apollo.core.enums.ConfigFileFormat;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
 import java.util.List;
 
 import static common.utils.RequestPrecondition.checkModel;
@@ -36,23 +38,23 @@ public class ItemController {
   private ItemService itemService;
 
 
-  @RequestMapping(value = "/modifyItemsByTexts", method = RequestMethod.POST, consumes = {
-      "application/json"})
-  public void modifyItemsByText(@RequestBody ModifyItemsByTextsReq model) {
+  @PostMapping(value = "/modifyItemsByTexts")
+  public Result modifyItemsByText(@RequestBody ModifyItemsByTextsReq model) {
 
     checkModel(model != null);
     itemService.updateConfigItemByText(model);
+    return Result.ok();
   }
 
 
-  @RequestMapping(value = "/createItem", method = RequestMethod.POST)
+  @PostMapping(value = "/createItem")
   public Result<Item> createItem(@RequestBody CreateItemReq req) {
     Item item= itemService.createItem(req);
     return Result.ok(item);
   }
 
 
-  @RequestMapping(value = "/updateItem", method = RequestMethod.PUT)
+  @PostMapping(value = "/updateItem")
   public Result updateItem(@RequestBody UpdateItemReq req) {
      itemService.updateItem(req);
     return Result.ok();
@@ -60,16 +62,16 @@ public class ItemController {
 
 
 
-  @RequestMapping(value = "deleteItem", method = RequestMethod.DELETE)
+  @PostMapping(value = "deleteItem")
   public void deleteItem(@RequestBody ItemReq req) {
-    if (req.getClusterNamespaceId() <= 0) {
-      throw new BadRequestException("item id invalid");
+    if (req.getItemId() <= 0) {
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "item id invalid");
     }
     itemService.deleteItem(req);
   }
 
 
-  @RequestMapping(value = "/findItems", method = RequestMethod.GET)
+  @PostMapping(value = "/findItems")
   public Result<List<Item>> findItems(@RequestBody ItemReq req) {
     List<Item> items = itemService.findItemsWithoutOrdered(req);
     return Result.ok(items);
@@ -77,9 +79,8 @@ public class ItemController {
 
 //todo 配置同步
 
-  @RequestMapping(value = "updateEnv")
-  public Result updateEnv(@PathVariable String appId, @PathVariable String namespaceName,
-                                     @RequestBody NamespaceSyncModel model) {
+  @PostMapping(value = "updateEnv")
+  public Result updateEnv(@RequestBody NamespaceSyncModel model) {
     itemService.syncItems(model.getSyncToNamespaces(), model.getSyncItems());
    return Result.ok();
   }

@@ -2,7 +2,9 @@ package com.yofish.apollo.domain;
 
 import com.yofish.apollo.strategy.PublishStrategy4Branch;
 import com.yofish.apollo.strategy.PublishStrategy4Main;
+import com.yofish.apollo.util.ReleaseKeyGenerator;
 import common.constants.GsonType;
+import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.springframework.util.CollectionUtils;
@@ -24,12 +26,10 @@ import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass;
 @DiscriminatorValue("Release4Branch")
 public class Release4Branch extends Release {
 
-    @Column(name = "Comment", nullable = false)
-    private String comment;
-
+    @Builder
     public Release4Branch(AppEnvClusterNamespace namespace, String name, String comment, Map<String, String> configurations, boolean isEmergencyPublish) {
         super(namespace, name, comment, configurations, isEmergencyPublish);
-        this.setComment(comment);
+        this.setReleaseKey(ReleaseKeyGenerator.generateReleaseKey(this.getAppEnvClusterNamespace()));
 
     }
 
@@ -46,7 +46,7 @@ public class Release4Branch extends Release {
 
 
     public Release4Main getMainRelease() {
-        return null;
+       return (Release4Main)((AppEnvClusterNamespace4Branch)this.getAppEnvClusterNamespace()).getMainNamespace().findLatestActiveRelease();
     }
 
     public void rollback(Release4Main release4Main, List<Release> twoLatestActiveReleases) {

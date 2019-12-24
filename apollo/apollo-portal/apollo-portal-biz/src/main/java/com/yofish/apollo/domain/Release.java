@@ -8,7 +8,6 @@ import com.yofish.apollo.strategy.PublishStrategy;
 import com.yofish.gary.dao.StrategyConverter;
 import com.yofish.gary.dao.entity.BaseEntity;
 import common.constants.ReleaseOperation;
-import common.exception.BadRequestException;
 import common.exception.NotFoundException;
 import lombok.*;
 import org.springframework.data.domain.PageRequest;
@@ -27,7 +26,6 @@ import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Data
 @Entity
 @Table(name = "releases")
@@ -44,26 +42,31 @@ public class Release extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.DETACH)
     private AppEnvClusterNamespace appEnvClusterNamespace;
 
-    @Column(name = "Configurations", nullable = false)
+    @Column(name = "Configurations")
     @Lob
     private String configurations;
 
     private boolean isEmergencyPublish;
 
-    @Convert(converter = StrategyConverter.class)
+    @Transient
     protected PublishStrategy publishStrategy;
 
-
+    @Column(nullable = false)
     private boolean abandoned;
+
+    @Column(name = "comment", nullable = false)
+    private String comment;
+
 
     public Release(AppEnvClusterNamespace namespace, String name, String comment, Map<String, String> configurations, boolean isEmergencyPublish) {
         this.setName(name);
         this.setAppEnvClusterNamespace(namespace);
         this.isEmergencyPublish = isEmergencyPublish;
         this.setConfigurations(gson.toJson(configurations));
+        this.comment = comment;
     }
 
 

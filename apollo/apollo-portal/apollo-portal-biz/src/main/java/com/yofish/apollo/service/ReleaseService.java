@@ -4,15 +4,14 @@ import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.yofish.apollo.bo.ItemChangeSets;
 import com.yofish.apollo.domain.*;
-import com.yofish.apollo.dto.ReleaseDTO;
 import com.yofish.apollo.model.bo.ReleaseBO;
 import com.yofish.apollo.model.vo.ReleaseCompareResult;
 import com.yofish.apollo.repository.Release4MainRepository;
 import com.yofish.apollo.repository.ReleaseRepository;
-import common.constants.GsonType;
+import common.dto.ReleaseDTO;
 import common.exception.NotFoundException;
+import common.utils.BeanUtils;
 import framework.apollo.core.enums.Env;
-import org.apache.commons.lang.time.FastDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
-import static com.yofish.apollo.strategy.CalculateUtil.mergeConfiguration;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 
 /**
@@ -48,7 +46,7 @@ public class ReleaseService {
 
 
     public Release findActiveOne(long releaseId) {
-        return releaseRepository.findByIdAndIsAbandonedFalse(releaseId);
+        return releaseRepository.findByIdAndAbandonedFalse(releaseId);
     }
 
     public Release findOne(long releaseId){
@@ -64,7 +62,7 @@ public class ReleaseService {
     }
 
     public List<Release> findByReleaseKeys(Set<String> releaseKeys) {
-        return releaseRepository.findReleaseByReleaseKeyIn(releaseKeys);
+        return releaseRepository.findReleasesByReleaseKeyIn(releaseKeys);
     }
 
 
@@ -91,6 +89,12 @@ public class ReleaseService {
 //        return releases;
         return null;
     }
+
+    public ReleaseDTO loadLatestRelease(AppEnvClusterNamespace namespace) {
+        Release release = namespace.findLatestActiveRelease();
+        return BeanUtils.transform(ReleaseDTO.class, release);
+    }
+
 
     @Transactional
     public Release mergeBranchChangeSetsAndRelease(AppNamespace namespace, String branchName, String releaseName,
@@ -121,9 +125,8 @@ public class ReleaseService {
 
         checkLock(namespace, isEmergencyPublish, operator);
 
-        Map<String, String> operateNamespaceItems = getConfigurations(namespace.getItems());
 
-        Release release = createRelease(namespace, releaseComment, releaseComment, operateNamespaceItems, isEmergencyPublish
+        Release release = createRelease(namespace, releaseComment, releaseComment, null, isEmergencyPublish
         );
         Release publishedRelease = release.publish();
         return publishedRelease;
@@ -141,7 +144,7 @@ public class ReleaseService {
 //    if (!isEmergencyPublish) {
 //      AppNamespaceLock lock = namespaceLockService.findLock(appNamespace.getId());
 //      if (lock != null && lock.getDataChangeCreatedBy().equals(operator)) {
-//        throw new BadRequestException("Config can not be published by yourself.");
+//        throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "Config can not be published by yourself.");
 //      }
 //    }
     }
@@ -168,7 +171,8 @@ public class ReleaseService {
             Release4Branch release4Branch = new Release4Branch(namespace, name, comment, configurations, isEmergencyPublish);
             return release4Branch;
         }
-        Release4Main release = new Release4Main(namespace, name, comment, configurations, isEmergencyPublish);
+        //TODO Fix error
+        Release4Main release =  new Release4Main(namespace, name, comment, configurations, isEmergencyPublish);
 
 
         return release;

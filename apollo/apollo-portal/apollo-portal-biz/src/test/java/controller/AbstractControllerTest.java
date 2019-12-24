@@ -9,11 +9,13 @@ import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 
+@Transactional
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {AdminServiceTestConfiguration.class, JpaApplication.class})
 //@WebIntegrationTest(randomPort = true)

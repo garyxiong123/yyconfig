@@ -76,7 +76,7 @@ public class PermissionController {
 
     // validate env parameter
     if (Env.UNKNOWN == EnvUtils.transformEnv(env)) {
-      throw new BadRequestException("env is illegal");
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "env is illegal");
     }
 
     NamespaceEnvRolesAssignedUsers assignedUsers = new NamespaceEnvRolesAssignedUsers();
@@ -103,17 +103,17 @@ public class PermissionController {
     RequestPrecondition.checkArgumentsNotEmpty(user);
 
     if (!RoleType.isValidRoleType(roleType)) {
-      throw new BadRequestException("role type is illegal");
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "role type is illegal");
     }
 
     // validate env parameter
     if (Env.UNKNOWN == EnvUtils.transformEnv(env)) {
-      throw new BadRequestException("env is illegal");
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "env is illegal");
     }
     Set<String> assignedUser = rolePermissionService.assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, roleType, env),
         Sets.newHashSet(user), userInfoHolder.getUser().getUserId());
     if (CollectionUtils.isEmpty(assignedUser)) {
-      throw new BadRequestException(user + "已授权");
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, user + "已授权");
     }
 
     return ResponseEntity.ok().build();
@@ -126,11 +126,11 @@ public class PermissionController {
     RequestPrecondition.checkArgumentsNotEmpty(user);
 
     if (!RoleType.isValidRoleType(roleType)) {
-      throw new BadRequestException("role type is illegal");
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "role type is illegal");
     }
     // validate env parameter
     if (Env.UNKNOWN == EnvUtils.transformEnv(env)) {
-      throw new BadRequestException("env is illegal");
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "env is illegal");
     }
     rolePermissionService.removeRoleFromUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, roleType, env),
         Sets.newHashSet(user), userInfoHolder.getUser().getUserId());
@@ -163,12 +163,12 @@ public class PermissionController {
     RequestPrecondition.checkArgumentsNotEmpty(user);
 
     if (!RoleType.isValidRoleType(roleType)) {
-      throw new BadRequestException("role type is illegal");
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "role type is illegal");
     }
     Set<String> assignedUser = rolePermissionService.assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, roleType),
         Sets.newHashSet(user), userInfoHolder.getUser().getUserId());
     if (CollectionUtils.isEmpty(assignedUser)) {
-      throw new BadRequestException(user + "已授权");
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, user + "已授权");
     }
 
     return ResponseEntity.ok().build();
@@ -181,7 +181,7 @@ public class PermissionController {
     RequestPrecondition.checkArgumentsNotEmpty(user);
 
     if (!RoleType.isValidRoleType(roleType)) {
-      throw new BadRequestException("role type is illegal");
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "role type is illegal");
     }
     rolePermissionService.removeRoleFromUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, roleType),
         Sets.newHashSet(user), userInfoHolder.getUser().getUserId());
@@ -207,12 +207,12 @@ public class PermissionController {
     RequestPrecondition.checkArgumentsNotEmpty(user);
 
     if (!RoleType.isValidRoleType(roleType)) {
-      throw new BadRequestException("role type is illegal");
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "role type is illegal");
     }
     Set<String> assignedUsers = rolePermissionService.assignRoleToUsers(RoleUtils.buildAppRoleName(appId, roleType),
         Sets.newHashSet(user), userInfoHolder.getUser().getUserId());
     if (CollectionUtils.isEmpty(assignedUsers)) {
-      throw new BadRequestException(user + "已授权");
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, user + "已授权");
     }
 
     return ResponseEntity.ok().build();
@@ -225,7 +225,7 @@ public class PermissionController {
     RequestPrecondition.checkArgumentsNotEmpty(user);
 
     if (!RoleType.isValidRoleType(roleType)) {
-      throw new BadRequestException("role type is illegal");
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "role type is illegal");
     }
     rolePermissionService.removeRoleFromUsers(RoleUtils.buildAppRoleName(appId, roleType),
         Sets.newHashSet(user), userInfoHolder.getUser().getUserId());
@@ -234,7 +234,7 @@ public class PermissionController {
 
   private void checkUserExists(String userId) {
     if (userService.findByUserId(userId) == null) {
-      throw new BadRequestException(String.format("User %s does not exist!", userId));
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("User %s does not exist!", userId));
     }
   }
 

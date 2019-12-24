@@ -1,9 +1,7 @@
 package com.yofish.apollo.service;
 
-import com.yofish.apollo.domain.AppEnvCluster;
-import com.yofish.apollo.domain.AppEnvClusterNamespace;
-import com.yofish.apollo.domain.AppEnvClusterNamespace4Main;
-import com.yofish.apollo.domain.AppNamespace;
+import com.google.gson.Gson;
+import com.yofish.apollo.domain.*;
 import com.yofish.apollo.model.bo.ItemBO;
 import com.yofish.apollo.model.bo.NamespaceVO;
 import com.yofish.apollo.repository.AppEnvClusterNamespace4BranchRepository;
@@ -13,8 +11,9 @@ import common.constants.GsonType;
 import common.dto.ItemDTO;
 import common.dto.NamespaceDTO;
 import common.dto.ReleaseDTO;
-import common.exception.BadRequestException;
-import framework.apollo.core.enums.ConfigFileFormat;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
+import common.utils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +21,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author WangSongJun
@@ -43,6 +43,7 @@ public class AppEnvClusterNamespaceService {
     private ServerConfigService serverConfigService;
     @Autowired
     private AppEnvClusterNamespace4BranchRepository branchRepository;
+    private Gson gson = new Gson();
 
 
     public boolean isNamespaceUnique(AppEnvCluster appEnvCluster, AppNamespace appNamespace) {
@@ -82,9 +83,13 @@ public class AppEnvClusterNamespaceService {
     public List<NamespaceVO> findNamespaceVOs(String appCode, String env, String clusterName) {
         AppEnvCluster appEnvCluster = appEnvClusterRepository.findClusterByAppAppCodeAndEnvAndName(appCode, env, clusterName);
         if (ObjectUtils.isEmpty(appEnvCluster)) {
-            throw new BadRequestException("namespaces not exist");
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "namespaces not exist");
         }
         List<AppEnvClusterNamespace> namespaces = findNamespaces(appEnvCluster);
+
+        namespaces.forEach(namespace -> {
+            transformNamespace2BO(namespace);
+        });
 
         return null;
     }
@@ -96,31 +101,56 @@ public class AppEnvClusterNamespaceService {
         }
         return namespaces;
     }
-/*
-    private NamespaceVO transformNamespace2BO(String env, NamespaceDTO namespace) {
-        NamespaceVO namespaceBO = new NamespaceVO();
-        namespaceBO.setBaseInfo(namespace);
 
-        String appId = namespace.getAppId();
+    private NamespaceDTO transformNamespaceDTO(AppEnvClusterNamespace namespace) {
+        NamespaceDTO dto = new NamespaceDTO(
+                namespace.getCreateAuthor(),
+                namespace.getCreateTime(),
+                namespace.getUpdateAuthor(),
+                namespace.getUpdateTime(),
+                namespace.getId(),
+                namespace.getAppNamespace().getApp().getAppCode(),
+                namespace.getAppEnvCluster().getName(),
+                namespace.getAppNamespace().getName()
+        );
+        return dto;
+    }
+
+    private NamespaceVO transformNamespace2BO(AppEnvClusterNamespace appEnvClusterNamespace) {
+        NamespaceVO namespaceBO = new NamespaceVO();
+
+        String env = appEnvClusterNamespace.getAppEnvCluster().getEnv();
+        NamespaceDTO namespace = transformNamespaceDTO(appEnvClusterNamespace);
+
+        namespaceBO.setBaseInfo(namespace);
+        namespaceBO.setFormat(appEnvClusterNamespace.getAppNamespace().getFormat().getValue());
+        namespaceBO.setComment(appEnvClusterNamespace.getAppNamespace().getComment());
+        namespaceBO.setPublic(appEnvClusterNamespace.getAppNamespace() instanceof AppNamespace4Public);
+
+
+        String appCode = namespace.getAppCode();
         String clusterName = namespace.getClusterName();
         String namespaceName = namespace.getNamespaceName();
 
-        fillAppNamespaceProperties(namespaceBO);
+//        fillAppNamespaceProperties(namespaceBO);
 
         List<ItemBO> itemBOs = new LinkedList<>();
         namespaceBO.setItems(itemBOs);
 
         //latest Release
         ReleaseDTO latestRelease;
-        Map<String, String> releaseItems = new HashMap<>();
-        Map<String, ItemDTO> deletedItemDTOs = new HashMap<>();
-        latestRelease = releaseService.loadLatestRelease(appId, env, clusterName, namespaceName);
+        Map<String, String> releaseItems = new HashMap<>(16);
+        Map<String, ItemDTO> deletedItemDTOs = new HashMap<>(16);
+        // TODO: 2019-12-21 这个地方还要测试
+
+        latestRelease = releaseService.loadLatestRelease(appEnvClusterNamespace);
         if (latestRelease != null) {
             releaseItems = gson.fromJson(latestRelease.getConfigurations(), GsonType.CONFIG);
         }
 
         //not Release config items
-        List<ItemDTO> items = itemService.findItems(appId, env, clusterName, namespaceName);
+        // TODO: 2019-12-21 not release config items
+        List<ItemDTO> items = itemService.findItemsWithoutOrdered(appEnvClusterNamespace.getId()).stream().map(item -> transformItemDTO(item)).collect(Collectors.toList());
         int modifiedItemCnt = 0;
         for (ItemDTO itemDTO : items) {
 
@@ -134,9 +164,8 @@ public class AppEnvClusterNamespaceService {
         }
 
         //deleted items
-        itemService.findDeletedItems(appId, env, clusterName, namespaceName).forEach(item -> {
-            deletedItemDTOs.put(item.getKey(),item);
-        });
+        itemService.findDeletedItems(appEnvClusterNamespace.getId()).stream()
+                .forEach(item -> deletedItemDTOs.put(item.getKey(), item));
 
         List<ItemBO> deletedItems = parseDeletedItems(items, releaseItems, deletedItemDTOs);
         itemBOs.addAll(deletedItems);
@@ -147,33 +176,30 @@ public class AppEnvClusterNamespaceService {
         return namespaceBO;
     }
 
-    private void fillAppNamespaceProperties(NamespaceVO namespace) {
+    private List<ItemBO> parseDeletedItems(List<ItemDTO> newItems, Map<String, String> releaseItems, Map<String, ItemDTO> deletedItemDTOs) {
+        Map<String, ItemDTO> newItemMap = BeanUtils.mapByKey("key", newItems);
 
-        NamespaceDTO namespaceDTO = namespace.getBaseInfo();
-        //先从当前appId下面找,包含私有的和公共的
-        AppNamespace appNamespace =
-                appNamespaceService
-                        .findByAppIdAndName(namespaceDTO.getAppId(), namespaceDTO.getNamespaceName());
-        //再从公共的app namespace里面找
-        if (appNamespace == null) {
-            appNamespace = appNamespaceService.findPublicAppNamespace(namespaceDTO.getNamespaceName());
-        }
+        List<ItemBO> deletedItems = new LinkedList<>();
+        for (Map.Entry<String, String> entry : releaseItems.entrySet()) {
+            String key = entry.getKey();
+            if (newItemMap.get(key) == null) {
+                ItemBO deletedItem = new ItemBO();
 
-        String format;
-        boolean isPublic;
-        if (appNamespace == null) {
-            //dirty data
-            format = ConfigFileFormat.Properties.getValue();
-            isPublic = true; // set to true, because public namespace allowed to delete by user
-        } else {
-            format = appNamespace.getFormat();
-            isPublic = appNamespace.isPublic();
-            namespace.setParentAppId(appNamespace.getAppId());
-            namespace.setComment(appNamespace.getComment());
+                deletedItem.setDeleted(true);
+                ItemDTO deletedItemDto = deletedItemDTOs.computeIfAbsent(key, k -> new ItemDTO());
+                deletedItemDto.setKey(key);
+                String oldValue = entry.getValue();
+                deletedItem.setItem(deletedItemDto);
+
+                deletedItemDto.setValue(oldValue);
+                deletedItem.setModified(true);
+                deletedItem.setOldValue(oldValue);
+                deletedItem.setNewValue("");
+                deletedItems.add(deletedItem);
+            }
         }
-        namespace.setFormat(format);
-        namespace.setPublic(isPublic);
-    }*/
+        return deletedItems;
+    }
 
     private ItemBO transformItem2BO(ItemDTO itemDTO, Map<String, String> releaseItems) {
         String key = itemDTO.getKey();
@@ -188,6 +214,10 @@ public class AppEnvClusterNamespaceService {
             itemBO.setNewValue(newValue);
         }
         return itemBO;
+    }
+
+    private ItemDTO transformItemDTO(Item item) {
+        return new ItemDTO(item.getId(), item.getAppEnvClusterNamespace().getId(), item.getKey(), item.getValue(), item.getComment(), item.getLineNum());
     }
 
     public AppEnvClusterNamespace findAppEnvClusterNamespace(String appCode, String env, String namespace, String cluster, String type) {

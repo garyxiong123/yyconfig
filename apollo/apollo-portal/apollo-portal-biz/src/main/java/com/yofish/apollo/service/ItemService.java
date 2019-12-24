@@ -69,10 +69,6 @@ public class ItemService {
 
     public Item createItem(CreateItemReq createItemReq) {
         Item entity=new Item();
-       /* AppEnvClusterNamespace appEnvClusterNamespace=appEnvClusterNamespaceService.findAppEnvClusterNamespace(
-                createItemReq.getAppId(),createItemReq.getEnv(),createItemReq.getNamespaceName()
-                ,createItemReq.getClusterName(),createItemReq.getType()
-        );*/
         AppEnvClusterNamespace appEnvClusterNamespace=appEnvClusterNamespaceService.findAppEnvClusterNamespace(createItemReq.getAppEnvClusterNamespaceId());
 
         ConfigChangeContentBuilder builder = new ConfigChangeContentBuilder();
@@ -80,8 +76,7 @@ public class ItemService {
         if (managedEntity != null) {
             throw new BizException("500","item already exists");
         } else {
-            Item item = new Item(createItemReq.getKey(),createItemReq.getValue(),createItemReq.getComment(),appEnvClusterNamespace,
-                    createItemReq.getLineNum());
+            Item item = new Item(createItemReq.getKey(),createItemReq.getValue(),createItemReq.getComment(),appEnvClusterNamespace, createItemReq.getLineNum());
             entity=  itemRepository.save(item);
             builder.createItem(entity);
             //添加commit
@@ -146,10 +141,10 @@ public class ItemService {
         commitService.saveCommit(entity.getAppEnvClusterNamespace(),builder.build());
     }
 
-    public List<Item> findDeletedItems(Long appEnvClusterNamespace) {
+    public List<ItemDTO> findDeletedItems(Long appEnvClusterNamespace) {
         List<Commit> commits = commitService.find(appEnvClusterNamespace);
         if (Objects.nonNull(commits)) {
-            List<Item> deletedItems = commits.stream()
+            List<ItemDTO> deletedItems = commits.stream()
                     .map(item -> ConfigChangeContentBuilder.convertJsonString(item.getChangeSets()).getDeleteItems())
                     .flatMap(Collection::stream)
                     .collect(Collectors.toList());

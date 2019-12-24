@@ -5,8 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import java.util.Set;
 
 /**
  * @Author: xiongchengwei
@@ -19,7 +22,11 @@ import javax.persistence.Entity;
 @DiscriminatorValue("Namespace4Protect")
 public class AppNamespace4Protect extends AppNamespace {
     @Builder
-    public AppNamespace4Protect(String name, App app, ConfigFileFormat format, String comment) {
+    public AppNamespace4Protect(String name, App app, ConfigFileFormat format, String comment, Set<App> authorizedApp) {
         super(name, app, format, comment);
+        this.authorizedApp = authorizedApp;
     }
+
+    @ManyToMany(cascade = CascadeType.DETACH)
+    private Set<App> authorizedApp;
 }

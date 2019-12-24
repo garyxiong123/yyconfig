@@ -1,9 +1,13 @@
 package com.yofish.apollo.strategy;
 
+import com.google.common.collect.Maps;
+import com.yofish.apollo.domain.GrayReleaseRule;
 import com.yofish.apollo.domain.Release;
 import com.yofish.apollo.domain.Release4Branch;
 import com.yofish.gary.annotation.StrategyNum;
 import common.constants.ReleaseOperation;
+import common.constants.ReleaseOperationContext;
+import common.utils.GrayReleaseRuleItemTransformer;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -38,12 +42,33 @@ public class PublishStrategy4Branch extends PublishStrategy {
         return release4Branch;
     }
 
+    protected void branchRelease(Release4Branch release4Branch, int releaseOperation) {
+
+        Map<String, Object> releaseOperationContext = Maps.newHashMap();
+        if (release4Branch.getMainRelease() != null) {
+            releaseOperationContext.put(ReleaseOperationContext.BASE_RELEASE_ID, release4Branch.getMainRelease().getId());
+        }
+        releaseOperationContext.put(ReleaseOperationContext.IS_EMERGENCY_PUBLISH, release4Branch.isEmergencyPublish());
+
+
+        //update gray release rules  TODO ?? 为什么 更新灰度规则
+        GrayReleaseRule grayReleaseRule = namespaceBranchService.updateRulesReleaseId(release4Branch);
+
+        if (grayReleaseRule != null) {
+            releaseOperationContext.put(ReleaseOperationContext.RULES, GrayReleaseRuleItemTransformer.batchTransformFromJSON(grayReleaseRule.getRules()));
+        }
+
+        createReleaseAndUnlock(release4Branch);
+
+        createReleaseHistory(release4Branch);
+
+    }
+
+
     private boolean isConfigChanged(Release release4Branch, Map<String, String> configToPublish) {
         Map<String, String> currentConfig = Json2Map(release4Branch.getConfigurations());
         return !configToPublish.equals(currentConfig);
     }
-
-
 
 
 }

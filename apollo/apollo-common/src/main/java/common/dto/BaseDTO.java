@@ -1,15 +1,19 @@
 package common.dto;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class BaseDTO {
     private String createAuthor;
-    private Date createTime;
+    private LocalDateTime createTime;
     private String updateAuthor;
-    private Date updateTime;
+    private LocalDateTime updateTime;
 
 }

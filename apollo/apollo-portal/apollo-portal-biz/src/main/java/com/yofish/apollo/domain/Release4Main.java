@@ -5,8 +5,10 @@ import com.yofish.apollo.service.ReleaseHistoryService;
 import com.yofish.apollo.service.ReleaseService;
 import com.yofish.apollo.strategy.PublishStrategy4Main;
 import com.yofish.apollo.util.ReleaseKeyGenerator;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
 import common.constants.ReleaseOperation;
-import common.exception.BadRequestException;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,23 +31,11 @@ import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
 @DiscriminatorValue("Release4Main")
 public class Release4Main extends Release {
 
-    @Column(name = "Comment", nullable = false)
-    private String comment;
-
-
+    @Builder
     public Release4Main(AppEnvClusterNamespace namespace, String name, String comment, Map<String, String> configurations, boolean isEmergencyPublish) {
         super(namespace, name, comment, configurations, isEmergencyPublish);
-        this.setReleaseKey(ReleaseKeyGenerator.generateReleaseKey(namespace));
-        AppEnvClusterNamespace4Main appEnvClusterNamespace4Main = (AppEnvClusterNamespace4Main) this.getAppEnvClusterNamespace();
-
-//        if(appEnvClusterNamespace4Main.hasBranchNamespace()){
-//            publishStrategy = getBeanByClass(PublishStrategy4MainWithBranch.class);
-//            return;
-//        }
-//        publishStrategy =  getBeanByClass(PublishStrategy4MainWithoutBranch.class);
-
+        this.setReleaseKey(ReleaseKeyGenerator.generateReleaseKey(this.getAppEnvClusterNamespace()));
     }
-
 
     @Override
     public Release publish() {
@@ -64,14 +54,14 @@ public class Release4Main extends Release {
     public Release rollback() {
 
         if (isAbandoned()) {
-            throw new BadRequestException("release is not active");
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "release is not active");
         }
         AppEnvClusterNamespace4Main namepsace = (AppEnvClusterNamespace4Main) this.getAppEnvClusterNamespace();
 
         PageRequest page = new PageRequest(0, 2);
         List<Release> twoLatestActiveReleases = namepsace.findLatestActiveReleases(page);
         if (twoLatestActiveReleases == null || twoLatestActiveReleases.size() < 2) {
-//            throw new BadRequestException(String.format("Can't rollback appNamespace(appId=%s, clusterName=%s, namespaceName=%s) because there is only one active release",
+//            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("Can't rollback appNamespace(appId=%s, clusterName=%s, namespaceName=%s) because there is only one active release",
 //                    appId,
 //                    clusterName,
 //                    namespaceName));
@@ -84,7 +74,7 @@ public class Release4Main extends Release {
         getBeanInstance(ReleaseHistoryService.class).createReleaseHistory(this, twoLatestActiveReleases.get(1).getId(), ReleaseOperation.ROLLBACK, null);
 
         //publish child appNamespace if appNamespace has child 灰度回滚
-        Release4Branch  release4Branch = this.findLastBranchRelease();
+        Release4Branch release4Branch = this.findLastBranchRelease();
         if (release4Branch != null) {
             release4Branch.rollback(this, twoLatestActiveReleases);
         }

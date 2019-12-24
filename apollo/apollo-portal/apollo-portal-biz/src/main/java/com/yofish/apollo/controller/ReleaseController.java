@@ -3,7 +3,6 @@ package com.yofish.apollo.controller;
 import com.yofish.apollo.component.PermissionValidator;
 import com.yofish.apollo.domain.AppEnvClusterNamespace;
 import com.yofish.apollo.domain.Release;
-import com.yofish.apollo.dto.ReleaseDTO;
 import com.yofish.apollo.listener.ConfigPublishEvent;
 import com.yofish.apollo.model.bo.ReleaseBO;
 import com.yofish.apollo.model.model.NamespaceReleaseModel;
@@ -11,7 +10,9 @@ import com.yofish.apollo.model.vo.ReleaseCompareResult;
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.service.PortalConfig;
 import com.yofish.apollo.service.ReleaseService;
-import common.exception.BadRequestException;
+import common.dto.ReleaseDTO;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
 import common.exception.NotFoundException;
 import common.utils.RequestPrecondition;
 import framework.apollo.core.enums.Env;
@@ -46,7 +47,7 @@ public class ReleaseController {
         checkModel(Objects.nonNull(namespaceReleaseModel));
         AppEnvClusterNamespace appEnvClusterNamespace = appEnvClusterNamespaceRepository.findById(namespaceReleaseModel.getAppEnvClusterNamespaceId()).get();
         if (namespaceReleaseModel.isEmergencyPublish() && !portalConfig.isEmergencyPublishAllowed(Env.valueOf(appEnvClusterNamespace.getAppEnvCluster().getEnv()))) {
-            throw new BadRequestException(String.format("Env: %s is not supported emergency publish now", null));
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("Env: %s is not supported emergency publish now", null));
         }
 
         Release publish = releaseService.publish(appEnvClusterNamespace, namespaceReleaseModel.getReleaseTitle(), namespaceReleaseModel.getReleaseComment(), namespaceReleaseModel.getReleasedBy(), namespaceReleaseModel.isEmergencyPublish());
@@ -83,7 +84,7 @@ public class ReleaseController {
 //        model.setNamespaceName(namespaceName);
 
         if (model.isEmergencyPublish() && !portalConfig.isEmergencyPublishAllowed(Env.valueOf(env))) {
-            throw new BadRequestException(String.format("Env: %s is not supported emergency publish now", env));
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("Env: %s is not supported emergency publish now", env));
         }
 
         Release createdRelease = releaseService.publish(null, model.getReleaseTitle(), model.getReleaseComment(), null, model.isEmergencyPublish());

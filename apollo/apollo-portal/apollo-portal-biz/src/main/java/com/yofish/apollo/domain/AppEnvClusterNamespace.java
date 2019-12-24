@@ -30,16 +30,13 @@ import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 30)
 public class AppEnvClusterNamespace extends BaseEntity {
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.DETACH)
     private AppEnvCluster appEnvCluster;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.DETACH)
     private AppNamespace appNamespace;
 
 
-    public Release findLatestActiveRelease(String appId, String clusterName, String namespaceName) {
-        return getBeanByClass(ReleaseRepository.class).findFirstByAppIdAndClusterNameAndNamespaceNameAndIsAbandonedFalseOrderByIdDesc(appId, clusterName, namespaceName);
-    }
 
 
     public Release findLatestActiveRelease() {

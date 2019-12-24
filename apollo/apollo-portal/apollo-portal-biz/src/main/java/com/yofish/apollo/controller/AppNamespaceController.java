@@ -9,14 +9,18 @@ import com.yofish.apollo.model.model.AppNamespaceModel;
 import com.yofish.apollo.service.AppEnvClusterNamespaceService;
 import com.yofish.apollo.service.AppNamespaceService;
 import com.youyu.common.api.Result;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 
 @Slf4j
@@ -33,7 +37,12 @@ public class AppNamespaceController {
     @PostMapping("/apps/{appId:\\d+}/namespaces/private")
     public Result<AppNamespace4Private> createAppPrivateNamespace(@PathVariable long appId, @Valid @RequestBody AppNamespaceModel model) {
 
-        AppNamespace4Private appNamespace4Private = AppNamespace4Private.builder().app(new App(appId)).name(model.getName()).format(model.getFormat()).comment(model.getComment()).build();
+        AppNamespace4Private appNamespace4Private = AppNamespace4Private.builder()
+                .app(new App(appId))
+                .name(model.getName())
+                .format(model.getFormat())
+                .comment(model.getComment())
+                .build();
 
         appNamespace4Private = appNamespaceService.createAppNamespace(appNamespace4Private);
 
@@ -43,7 +52,13 @@ public class AppNamespaceController {
     @ApiOperation("创建项目受保护命名空间")
     @PostMapping("/apps/{appId:\\d+}/namespaces/protect")
     public Result<AppNamespace4Protect> createAppProtectNamespace(@PathVariable long appId, @Valid @RequestBody AppNamespaceModel model) {
-        AppNamespace4Protect appNamespace4Protect = AppNamespace4Protect.builder().app(new App(appId)).name(model.getName()).format(model.getFormat()).comment(model.getComment()).build();
+        AppNamespace4Protect appNamespace4Protect = AppNamespace4Protect.builder()
+                .app(new App(appId))
+                .name(model.getName())
+                .authorizedApp(model.getAuthorizedApp())
+                .format(model.getFormat())
+                .comment(model.getComment())
+                .build();
 
         appNamespace4Protect = appNamespaceService.createAppNamespace(appNamespace4Protect);
 
@@ -53,11 +68,29 @@ public class AppNamespaceController {
     @ApiOperation("创建项目公开命名空间")
     @PostMapping("/apps/{appId:\\d+}/namespaces/public")
     public Result<AppNamespace4Public> createAppPublicNamespace(@PathVariable long appId, @Valid @RequestBody AppNamespaceModel model) {
-        AppNamespace4Public appNamespace4Public = AppNamespace4Public.builder().app(new App(appId)).name(model.getName()).format(model.getFormat()).comment(model.getComment()).build();
+        AppNamespace4Public appNamespace4Public = AppNamespace4Public.builder()
+                .app(new App(appId))
+                .name(model.getName())
+                .format(model.getFormat())
+                .comment(model.getComment())
+                .build();
 
         appNamespace4Public = appNamespaceService.createAppNamespace(appNamespace4Public);
 
         return Result.ok(appNamespace4Public);
+    }
+
+    @ApiOperation("项目受保护命名空间授权")
+    @PostMapping("/apps/{appId:\\d+}/namespaces/{namespace:[0-9a-zA-Z_.-]+}/authorize")
+    public Result<AppNamespace4Protect> authorizedApp(@PathVariable long appId, @PathVariable String namespace, @RequestBody Set<App> apps) {
+        AppNamespace4Protect appNamespace4Protect = appNamespaceService.findProtectAppNamespaceByAppIdAndName(appId, namespace);
+        if (ObjectUtils.isEmpty(appNamespace4Protect)) {
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "app namespace not exist!");
+        }
+        appNamespace4Protect.setAuthorizedApp(apps);
+        appNamespaceService.updateAppNamespace(appNamespace4Protect);
+
+        return Result.ok(appNamespace4Protect);
     }
 
     @ApiOperation("项目环境集群下的所有命名空间配置信息")
@@ -69,11 +102,11 @@ public class AppNamespaceController {
         return Result.ok();
     }
 
-//
-//  @RequestMapping(value = "/appnamespaces/public", method = RequestMethod.GET)
-//  public List<AppNamespace> findPublicAppNamespaces() {
-//    return appNamespaceService.findPublicAppNamespaces();
-//  }
+    @ApiOperation("查询所有的公共命名空间")
+    @GetMapping("/app/namespaces/public")
+    public Result<List<AppNamespace4Public>> findPublicAppNamespaces() {
+        return Result.ok(appNamespaceService.findAllPublicAppNamespace());
+    }
 //
 //  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces", method = RequestMethod.GET)
 //  public List<NamespaceBO> findNamespaces(@PathVariable String appId, @PathVariable String env,
@@ -162,7 +195,7 @@ public class AppNamespaceController {
 //    AppNamespace appNamespace = appNamespaceService.findByAppIdAndName(appId, namespaceName);
 //
 //    if (appNamespace == null) {
-//      throw new BadRequestException(
+//      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG,
 //          String.format("AppNamespace not exists. AppId = %s, NamespaceName = %s", appId, namespaceName));
 //    }
 //

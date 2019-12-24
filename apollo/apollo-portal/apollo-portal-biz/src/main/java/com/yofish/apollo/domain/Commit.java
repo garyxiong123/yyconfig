@@ -20,7 +20,7 @@ public class Commit extends BaseEntity {
 
     private String name;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.DETACH)
     private AppEnvClusterNamespace appEnvClusterNamespace;
 
 

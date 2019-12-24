@@ -11,6 +11,7 @@ import com.yofish.apollo.dto.CreateItemReq;
 import com.yofish.apollo.dto.ReleaseDTO;
 import com.yofish.apollo.message.Topics;
 import com.yofish.apollo.model.model.NamespaceReleaseModel;
+import com.yofish.apollo.repository.AppEnvClusterNamespace4MainRepository;
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.repository.ReleaseRepository;
 import com.yofish.apollo.service.CommitService;
@@ -27,6 +28,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.orm.jpa.EntityManagerFactoryUtils;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -49,6 +52,9 @@ public class ReleaseControllerTest extends AbstractControllerTest {
     ReleaseController releaseController;
     @Autowired
     private AppEnvClusterNamespaceRepository namespaceRepository;
+    @Autowired
+    private AppEnvClusterNamespace4MainRepository namespaceRepository4Main;
+
     private AppEnvClusterNamespace4Main namespace;
 
     @Autowired
@@ -56,19 +62,20 @@ public class ReleaseControllerTest extends AbstractControllerTest {
     @Autowired
     private ItemController itemController;
 
+//    @Rollback()
     @Before
     public void setUp() {
-        namespace = createNamespace4Main();
-        namespaceRepository.save(namespace);
+        namespace = namespaceRepository4Main.findAll().get(0);
     }
 
     @Test
-    public void testRelease4Main() {
-//        CreateItemReq req = createItemReq();
-//        itemController.createItem(req);
+    public void testRelease4MainWithBranch() {
+        CreateItemReq req = createItemReq();
+        itemController.createItem(req);
 
         NamespaceReleaseModel namespaceReleaseModel = NamespaceReleaseModel.builder().releaseTitle("测试发布标题").releaseComment("测试发布").AppEnvClusterNamespaceId(namespace.getId()).build();
-        releaseController.createRelease(namespaceReleaseModel);
+        common.dto.ReleaseDTO release = releaseController.createRelease(namespaceReleaseModel);
+//        Assert.assertNotNull(release);
 
     }
 
@@ -76,21 +83,20 @@ public class ReleaseControllerTest extends AbstractControllerTest {
         Long namespaceId = namespace.getId();
         CreateItemReq itemReq = DomainCreate.createItemReq();
         itemReq.setAppEnvClusterNamespaceId(namespaceId);
+        itemReq.setComment("加上一个字段");
         return itemReq;
     }
 
 
-    @Test
-    public void testRelease4MainWithBranch() {
-        AppEnvClusterNamespace4Main namespace = createNamespace4MainWithBranch();
-        namespaceRepository.save(namespace);
-        NamespaceReleaseModel namespaceReleaseModel = NamespaceReleaseModel.builder().releaseTitle("测试发布标题").releaseComment("测试发布").AppEnvClusterNamespaceId(namespace.getId()).build();
-        releaseController.createRelease(namespaceReleaseModel);
-    }
 
     @Test
     public void testRelease4Branch() {
+        NamespaceReleaseModel releaseModel4Main = NamespaceReleaseModel.builder().releaseTitle("测试发布标题").releaseComment("测试发布").AppEnvClusterNamespaceId(namespace.getId()).build();
+        common.dto.ReleaseDTO release = releaseController.createRelease(releaseModel4Main);
 
+        AppEnvClusterNamespace4Branch namespace4Branch =  namespace.getBranchNamespace();
+        NamespaceReleaseModel releaseModel4Branch = NamespaceReleaseModel.builder().releaseTitle("测试发布标题").releaseComment("分支测试发布").AppEnvClusterNamespaceId(namespace4Branch.getId()).build();
+        releaseController.createRelease(releaseModel4Branch);
     }
 
 

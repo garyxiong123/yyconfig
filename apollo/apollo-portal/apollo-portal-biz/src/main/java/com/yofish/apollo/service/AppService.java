@@ -1,25 +1,36 @@
 package com.yofish.apollo.service;
 
 
+import com.google.common.collect.Lists;
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.domain.Department;
 import com.yofish.apollo.model.vo.EnvClusterInfo;
 import com.yofish.apollo.repository.AppRepository;
 import com.yofish.apollo.repository.DepartmentRepository;
+import com.yofish.gary.api.feign.UserApi;
 import com.yofish.gary.biz.domain.User;
 import com.yofish.gary.biz.service.UserService;
 import com.youyu.common.api.PageData;
-import common.exception.BadRequestException;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
+import com.youyu.common.helper.YyRequestInfoHelper;
+import com.youyu.common.utils.YyAssert;
 import common.utils.PageDataAdapter;
 import framework.apollo.core.ConfigConsts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.SetJoin;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -39,6 +50,8 @@ public class AppService {
     private DepartmentRepository departmentRepository;
     @Autowired
     private AppEnvClusterService clusterService;
+    @Autowired
+    private UserApi userApi;
 
 
     @Transactional(rollbackFor = Exception.class)
@@ -48,7 +61,7 @@ public class AppService {
         App managedApp = appRepository.findByAppCode(appCode);
 
         if (managedApp != null) {
-            throw new BadRequestException(String.format("App already exists. AppCode = %s", appCode));
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("App already exists. AppCode = %s", appCode));
         }
         this.checkOwnerAndAdminsAndDepartmentIsExist(app);
 
@@ -67,7 +80,7 @@ public class AppService {
         //owner
         com.yofish.gary.api.dto.rsp.UserDetailRspDTO userDetail = userService.getUserDetail(app.getAppOwner().getId());
         if (userDetail == null) {
-            throw new BadRequestException("Application's owner not exist.");
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "Application's owner not exist.");
         }
 
         //admins
@@ -76,7 +89,7 @@ public class AppService {
         //department
         Department department = departmentRepository.findById(app.getDepartment().getId()).orElse(null);
         if (department == null) {
-            throw new BadRequestException("Application's department not exist.");
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "Application's department not exist.");
         }
     }
 
@@ -85,14 +98,39 @@ public class AppService {
             for (User appAdmin : appAdmins) {
                 com.yofish.gary.api.dto.rsp.UserDetailRspDTO userDetailRspDTO = userService.getUserDetail(appAdmin.getId());
                 if (userDetailRspDTO == null) {
-                    throw new BadRequestException("Application's admin [" + appAdmin.getId() + "] not exist.");
+                    throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "Application's admin [" + appAdmin.getId() + "] not exist.");
                 }
             }
         }
     }
 
     public PageData<App> findAll(Pageable pageable) {
-        Page<App> apps = appRepository.findAll(pageable);
+
+        //当前用户ID
+        Long currentUserId = YyRequestInfoHelper.getCurrentUserId();
+        YyAssert.isTrue(!ObjectUtils.isEmpty(currentUserId), "403", "用户未登录！");
+        if (userApi.isAdmin(currentUserId).ifNotSuccessThrowException().getData()) {
+            //用户是管理员
+            Page<App> apps = appRepository.findAll(pageable);
+            return PageDataAdapter.toPageData(apps);
+        }
+
+        // jpa分页查询
+        Specification<App> querySpeci = (Specification<App>) (root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = Lists.newArrayList();
+
+            Join<App, User> ownerJoin = root.join("appOwner", JoinType.LEFT);
+            Predicate predicate1 = criteriaBuilder.equal(ownerJoin.get("id").as(Long.class), currentUserId);
+
+            SetJoin<App, User> userSetJoin = root.join(root.getModel().getSet("appAdmins", User.class), JoinType.LEFT);
+            Predicate predicate2 = criteriaBuilder.equal(userSetJoin.get("id").as(Long.class), currentUserId);
+
+            predicates.add(criteriaBuilder.or(predicate1, predicate2));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+
+        };
+
+        Page<App> apps = appRepository.findAll(querySpeci, pageable);
 
         return PageDataAdapter.toPageData(apps);
     }
@@ -115,7 +153,7 @@ public class AppService {
 
         App managedApp = appRepository.findById(appId).orElse(null);
         if (managedApp == null) {
-            throw new BadRequestException(String.format("App not exists. AppId = %s", appId));
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("App not exists. AppId = %s", appId));
         }
 
         managedApp.setName(app.getName());
@@ -203,7 +241,7 @@ public class AppService {
 
     App managedApp = appRepository.findByAppId(appId);
     if (managedApp == null) {
-      throw new BadRequestException(String.format("App not exists. AppId = %s", appId));
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("App not exists. AppId = %s", appId));
     }
 
     managedApp.setName(app.getName());
@@ -213,7 +251,7 @@ public class AppService {
     String ownerName = app.getOwnerName();
     UserInfo owner = userService.findByUserId(ownerName);
     if (owner == null) {
-      throw new BadRequestException(String.format("App's owner not exists. owner = %s", ownerName));
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("App's owner not exists. owner = %s", ownerName));
     }
     managedApp.setOwnerName(owner.getUserId());
     managedApp.setOwnerEmail(owner.getEmail());
@@ -228,7 +266,7 @@ public class AppService {
   public App deleteAppInLocal(String appId) {
     App managedApp = appRepository.findByAppId(appId);
     if (managedApp == null) {
-      throw new BadRequestException(String.format("App not exists. AppId = %s", appId));
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("App not exists. AppId = %s", appId));
     }
     String operator = userInfoHolder.getUser().getUserId();
 

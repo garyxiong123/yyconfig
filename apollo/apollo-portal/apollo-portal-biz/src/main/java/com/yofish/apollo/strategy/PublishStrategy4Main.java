@@ -1,8 +1,7 @@
 package com.yofish.apollo.strategy;
 
 import com.google.common.collect.Maps;
-import com.yofish.apollo.domain.Release;
-import com.yofish.apollo.domain.Release4Main;
+import com.yofish.apollo.domain.*;
 import com.yofish.apollo.repository.ReleaseHistoryRepository;
 import com.yofish.apollo.repository.ReleaseRepository;
 import com.yofish.gary.annotation.StrategyNum;
@@ -36,13 +35,21 @@ public class PublishStrategy4Main extends PublishStrategy {
     public Release publish(Release release4Main) {
 
         masterRelease(release4Main, NORMAL_RELEASE);
+        AppEnvClusterNamespace4Main namespace4Main = (AppEnvClusterNamespace4Main) release4Main.getAppEnvClusterNamespace();
 
-        if (((Release4Main) release4Main).getBranchRelease() != null) {
+        if (namespace4Main.hasBranchNamespace()) {
 
-            branchRelease(((Release4Main) release4Main).getBranchRelease(), NORMAL_RELEASE);
+            Release4Branch release4Branch =  createBranchRelease(release4Main, namespace4Main.getBranchNamespace());
+            release4Branch.publish();
+//            branchRelease(release4Branch, NORMAL_RELEASE);
         }
 
         return release4Main;
+    }
+
+    private Release4Branch createBranchRelease(Release release4Main, AppEnvClusterNamespace4Branch branchNamespace) {
+
+        return Release4Branch.builder().name(release4Main.getName()).namespace(branchNamespace).comment(release4Main.getComment()).build();
     }
 
     private Release masterRelease(Release release4Main, int releaseOperation) {

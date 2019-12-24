@@ -20,10 +20,10 @@ import javax.persistence.*;
 @Entity
 public class ReleaseHistory extends BaseEntity {
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.DETACH)
     private Release release;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.DETACH)
     private Release previousRelease;
 
     @Column(name = "Operation")
