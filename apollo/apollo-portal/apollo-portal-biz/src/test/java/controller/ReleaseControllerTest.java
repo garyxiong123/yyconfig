@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import com.google.gson.Gson;
 //import com.yofish.apollo.controller.ReleaseController;
 import com.yofish.apollo.DomainCreate;
+import com.yofish.apollo.component.PermissionValidator;
 import com.yofish.apollo.controller.ItemController;
 import com.yofish.apollo.controller.ReleaseController;
 import com.yofish.apollo.domain.*;
@@ -17,6 +18,7 @@ import com.yofish.apollo.repository.*;
 import com.yofish.apollo.service.CommitService;
 import com.yofish.apollo.service.ReleaseHistoryService;
 import com.yofish.apollo.service.ReleaseService;
+import com.youyu.common.exception.BizException;
 import common.dto.AppDTO;
 import common.dto.ClusterDTO;
 import common.dto.ItemDTO;
@@ -26,7 +28,9 @@ import framework.apollo.core.enums.Env;
 import net.bytebuddy.asm.Advice;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.*;
@@ -70,10 +74,19 @@ public class ReleaseControllerTest extends AbstractControllerTest {
     @Autowired
     private ReleaseHistoryService releaseHistoryService;
 
-//    @Rollback()
+    private PermissionValidator permissionValidator;
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    //    @Rollback()
     @Before
     public void setUp() {
         namespace = namespaceRepository4Main.findAll().get(0);
+
+        permissionValidator = mock(PermissionValidator.class);
+        ReflectionTestUtils.setField(releaseController, "permissionValidator", permissionValidator);
+        when(permissionValidator.hasReleaseNamespacePermission(namespace.getAppNamespace().getApp().getAppCode())).thenReturn(true);
     }
 
     @Test
@@ -100,13 +113,12 @@ public class ReleaseControllerTest extends AbstractControllerTest {
     }
 
 
-
     @Test
     public void testRelease4Branch() {
         NamespaceReleaseModel releaseModel4Main = NamespaceReleaseModel.builder().releaseTitle("测试发布标题").releaseComment("测试发布").AppEnvClusterNamespaceId(namespace.getId()).build();
         common.dto.ReleaseDTO release = releaseController.createRelease(releaseModel4Main);
 
-        AppEnvClusterNamespace4Branch namespace4Branch =  namespace.getBranchNamespace();
+        AppEnvClusterNamespace4Branch namespace4Branch = namespace.getBranchNamespace();
         NamespaceReleaseModel releaseModel4Branch = NamespaceReleaseModel.builder().releaseTitle("测试发布标题").releaseComment("分支测试发布").AppEnvClusterNamespaceId(namespace4Branch.getId()).build();
         releaseController.createRelease(releaseModel4Branch);
     }
@@ -114,26 +126,19 @@ public class ReleaseControllerTest extends AbstractControllerTest {
 
     @Test
     public void testRollback() throws AccessDeniedException {
-        Release release = createTwoRelease();
+
+        Release release = namespace.findLatestActiveRelease();
+
 
         releaseController.rollback(release.getId());
     }
 
-    private Release createTwoRelease() {
+    @Test(expected = BizException.class)
+    public void testRollback4Branch() throws AccessDeniedException {
 
-        return null;
-    }
+        Release release4Branch = namespace.getBranchNamespace().findLatestActiveRelease();
 
-
-    private AppEnvClusterNamespace4Main createNamespace4MainWithBranch() {
-        AppEnvClusterNamespace4Main appEnvClusterNamespace4Main = createAppEnvClusterNamespace4Main();
-        createAppEnvClusterNamespace4Branch(appEnvClusterNamespace4Main);
-
-        return null;
-    }
-
-    private void createAppEnvClusterNamespace4Branch(AppEnvClusterNamespace4Main appEnvClusterNamespace4Main) {
-
+        releaseController.rollback(release4Branch.getId());
     }
 
 

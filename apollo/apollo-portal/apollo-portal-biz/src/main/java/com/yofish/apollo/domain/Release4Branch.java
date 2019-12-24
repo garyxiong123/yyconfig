@@ -52,9 +52,11 @@ public class Release4Branch extends Release {
     public void rollback(Release4Main release4Main, List<Release> twoLatestActiveReleases) {
 
 
-        Release4Branch newRelease4Branch = createNewBranchNamespace(this, twoLatestActiveReleases);
 
-        newRelease4Branch.publish();
+        FastDateFormat TIMESTAMP_FORMAT = FastDateFormat.getInstance("yyyyMMddHHmmss");
+        this.setName( TIMESTAMP_FORMAT.format(new Date()) + "-master-rollback-merge-to-gray");
+
+        this.publish();
 
         //        branchRelease(parentNamespace, childNamespace, TIMESTAMP_FORMAT.format(new Date()) + "-master-rollback-merge-to-gray", "",
 //                childNamespaceNewConfiguration, parentNamespaceNewLatestRelease.getId(), operator,
@@ -62,24 +64,6 @@ public class Release4Branch extends Release {
 
     }
 
-    public Release4Branch createNewBranchNamespace(Release release, List<Release> parentNamespaceTwoLatestActiveRelease) {
-        FastDateFormat TIMESTAMP_FORMAT = FastDateFormat.getInstance("yyyyMMddHHmmss");
-
-        Release4Branch release4Branch = new Release4Branch();
-
-        Release parentNamespaceNewLatestRelease = parentNamespaceTwoLatestActiveRelease.get(1);
-
-        Release abandonedRelease = parentNamespaceTwoLatestActiveRelease.get(0);
-        Map<String, String> parentNamespaceAbandonedConfiguration = gson.fromJson(abandonedRelease.getConfigurations(), GsonType.CONFIG);
-
-        Map<String, String> parentNamespaceNewLatestConfiguration = gson.fromJson(parentNamespaceNewLatestRelease.getConfigurations(), GsonType.CONFIG);
-
-        Map<String, String> childNamespaceNewConfiguration = calculateBranchConfigToPublish(parentNamespaceAbandonedConfiguration, parentNamespaceNewLatestConfiguration, release.getAppEnvClusterNamespace());
-
-//        release4Branch.setName( TIMESTAMP_FORMAT.format(new Date()) + "-master-rollback-merge-to-gray", "");
-
-        return release4Branch;
-    }
 
 
     private Map<String, String> calculateBranchConfigToPublish(Map<String, String> mainNamespaceOldConfiguration, Map<String, String> mainNamespaceNewConfiguration,

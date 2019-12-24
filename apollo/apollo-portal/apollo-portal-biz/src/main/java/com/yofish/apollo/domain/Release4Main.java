@@ -10,7 +10,9 @@ import com.youyu.common.exception.BizException;
 import common.constants.ReleaseOperation;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Column;
@@ -31,6 +33,10 @@ import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
 @DiscriminatorValue("Release4Main")
 public class Release4Main extends Release {
 
+    public Release4Main() {
+
+    }
+
     @Builder
     public Release4Main(AppEnvClusterNamespace namespace, String name, String comment, Map<String, String> configurations, boolean isEmergencyPublish) {
         super(namespace, name, comment, configurations, isEmergencyPublish);
@@ -47,7 +53,11 @@ public class Release4Main extends Release {
 
 
     public Release4Branch getBranchRelease() {
-        return null;
+        AppEnvClusterNamespace4Branch branchNamespace = ((AppEnvClusterNamespace4Main) this.getAppEnvClusterNamespace()).getBranchNamespace();
+        if (branchNamespace == null) {
+            return null;
+        }
+        return (Release4Branch) branchNamespace.findLatestActiveRelease();
     }
 
     @Transactional
@@ -58,14 +68,7 @@ public class Release4Main extends Release {
         }
         AppEnvClusterNamespace4Main namepsace = (AppEnvClusterNamespace4Main) this.getAppEnvClusterNamespace();
 
-        PageRequest page = new PageRequest(0, 2);
-        List<Release> twoLatestActiveReleases = namepsace.findLatestActiveReleases(page);
-        if (twoLatestActiveReleases == null || twoLatestActiveReleases.size() < 2) {
-//            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("Can't rollback appNamespace(appId=%s, clusterName=%s, namespaceName=%s) because there is only one active release",
-//                    appId,
-//                    clusterName,
-//                    namespaceName));
-        }
+        List<Release> twoLatestActiveReleases = releaseCheck(namepsace);
 
         setAbandoned(true);
 
@@ -74,16 +77,20 @@ public class Release4Main extends Release {
         getBeanInstance(ReleaseHistoryService.class).createReleaseHistory(namepsace.getId(), this, twoLatestActiveReleases.get(1), ReleaseOperation.ROLLBACK, null);
 
         //publish child appNamespace if appNamespace has child 灰度回滚
-        Release4Branch release4Branch = this.findLastBranchRelease();
+        Release4Branch release4Branch = this.getBranchRelease();
         if (release4Branch != null) {
             release4Branch.rollback(this, twoLatestActiveReleases);
         }
         return this;
     }
 
-    private Release4Branch findLastBranchRelease() {
-
-        return null;
+    private List<Release> releaseCheck(AppEnvClusterNamespace4Main namepsace) {
+        Pageable page = new PageRequest(0, 2);
+        List<Release> twoLatestActiveReleases = namepsace.findLatestActiveReleases(page);
+        if (twoLatestActiveReleases == null || twoLatestActiveReleases.size() < 2) {
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("Can't rollback appNamespace(namepsace=%s) because there is only one active release", namepsace));
+        }
+        return twoLatestActiveReleases;
     }
 
 

@@ -103,7 +103,25 @@ public class DataImport {
 
         createThirdCreateItem(namespace);
 
+        createItem4Branch(namespace4Branch);
 
+        createRelease4Branch(namespace4Branch);
+
+
+
+
+    }
+
+    private void createRelease4Branch(AppEnvClusterNamespace4Branch namespace4Branch) {
+        String releaseName = "releaseName-Branch";
+        String releaseComment = "releaseComment-Branch";
+        boolean isEmergencyPublish = false;
+        releaseService.publish(namespace4Branch,releaseName, releaseComment, null,  isEmergencyPublish);
+    }
+
+    private void createItem4Branch(AppEnvClusterNamespace4Branch namespace4Branch) {
+        CreateItemReq itemReq = CreateItemReq.builder().appEnvClusterNamespaceId(namespace4Branch.getId()).key("dbName-branch").lineNum(1).value("payment-branch").build();
+        itemService.createItem(itemReq);
     }
 
     private void createThirdCreateItem(AppEnvClusterNamespace namespace) {
