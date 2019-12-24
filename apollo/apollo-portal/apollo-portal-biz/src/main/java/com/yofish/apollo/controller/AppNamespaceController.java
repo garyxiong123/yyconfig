@@ -1,9 +1,6 @@
 package com.yofish.apollo.controller;
 
-import com.yofish.apollo.domain.App;
-import com.yofish.apollo.domain.AppNamespace4Private;
-import com.yofish.apollo.domain.AppNamespace4Protect;
-import com.yofish.apollo.domain.AppNamespace4Public;
+import com.yofish.apollo.domain.*;
 import com.yofish.apollo.model.bo.NamespaceVO;
 import com.yofish.apollo.model.model.AppNamespaceModel;
 import com.yofish.apollo.service.AppEnvClusterNamespaceService;
@@ -58,6 +55,7 @@ public class AppNamespaceController {
                 .authorizedApp(model.getAuthorizedApp())
                 .format(model.getFormat())
                 .comment(model.getComment())
+                .openNamespaceType(new OpenNamespaceType(model.getOpenNamespaceTypeId()))
                 .build();
 
         appNamespace4Protect = appNamespaceService.createAppNamespace(appNamespace4Protect);
@@ -73,6 +71,7 @@ public class AppNamespaceController {
                 .name(model.getName())
                 .format(model.getFormat())
                 .comment(model.getComment())
+                .openNamespaceType(new OpenNamespaceType(model.getOpenNamespaceTypeId()))
                 .build();
 
         appNamespace4Public = appNamespaceService.createAppNamespace(appNamespace4Public);
