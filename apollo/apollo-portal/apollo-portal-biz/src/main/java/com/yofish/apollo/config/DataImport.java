@@ -103,7 +103,7 @@ public class DataImport {
     }
 
     private AppNamespace createDefaultAppNamespace(App app) {
-        AppNamespace appNamespace = new AppNamespace();
+        AppNamespace4Private appNamespace = new AppNamespace4Private();
         String appNamespaceName = "application";
         appNamespace.setName(appNamespaceName);
         appNamespace.setComment("项目命名空间");

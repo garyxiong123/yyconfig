@@ -28,7 +28,7 @@ public class AppNamespace extends BaseEntity {
 
     private String comment;
 
-    public AppNamespace(Long id, String name, App app, ConfigFileFormat format, String comment) {
+    protected AppNamespace(Long id, String name, App app, ConfigFileFormat format, String comment) {
         super(id);
         this.name = name;
         this.app = app;
