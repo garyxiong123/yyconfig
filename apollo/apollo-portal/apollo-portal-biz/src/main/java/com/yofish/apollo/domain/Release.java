@@ -61,12 +61,11 @@ public class Release extends BaseEntity {
     private String comment;
 
 
-    public Release(AppEnvClusterNamespace namespace, String name, String comment, Map<String, String> configurations, boolean isEmergencyPublish, String releaseKey) {
+    public Release(AppEnvClusterNamespace namespace, String name, String comment, Map<String, String> configurations, boolean isEmergencyPublish) {
         this.setName(name);
         this.setAppEnvClusterNamespace(namespace);
         this.isEmergencyPublish = isEmergencyPublish;
         this.setConfigurations(gson.toJson(configurations));
-        this.releaseKey = releaseKey;
         this.comment = comment;
     }
 

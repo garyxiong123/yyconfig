@@ -32,8 +32,9 @@ import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
 public class Release4Main extends Release {
 
     @Builder
-    public Release4Main(AppEnvClusterNamespace namespace, String name, String comment, Map<String, String> configurations, boolean isEmergencyPublish, String releaseKey) {
-        super(namespace, name, comment, configurations, isEmergencyPublish, releaseKey);
+    public Release4Main(AppEnvClusterNamespace namespace, String name, String comment, Map<String, String> configurations, boolean isEmergencyPublish) {
+        super(namespace, name, comment, configurations, isEmergencyPublish);
+        this.setReleaseKey(ReleaseKeyGenerator.generateReleaseKey(this.getAppEnvClusterNamespace()));
     }
 
     @Override

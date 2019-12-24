@@ -68,7 +68,17 @@ public class DataImport {
         AppEnvCluster appEnvCluster = createDefaultCluster(app);
 
         AppEnvClusterNamespace namespace = createDefaultNamespace4Main(appEnvCluster, appNamespace);
+        AppEnvClusterNamespace namespace4Branch =  createDefaultNamespace4Branch(namespace, appEnvCluster, appNamespace);
 
+    }
+
+    private AppEnvClusterNamespace createDefaultNamespace4Branch(AppEnvClusterNamespace namespace, AppEnvCluster appEnvCluster, AppNamespace appNamespace) {
+        AppEnvClusterNamespace4Branch namespace4Branch = new AppEnvClusterNamespace4Branch();
+        namespace4Branch.setParentId(namespace.getId());
+        namespace4Branch.setAppNamespace(appNamespace);
+        namespace4Branch.setAppEnvCluster(appEnvCluster);
+        namespaceRepository.save(namespace4Branch);
+        return namespace4Branch;
     }
 
     private AppEnvClusterNamespace createDefaultNamespace4Main(AppEnvCluster appEnvCluster, AppNamespace appNamespace) {
