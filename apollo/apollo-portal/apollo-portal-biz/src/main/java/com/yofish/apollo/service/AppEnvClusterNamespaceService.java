@@ -87,11 +87,13 @@ public class AppEnvClusterNamespaceService {
         }
         List<AppEnvClusterNamespace> namespaces = findNamespaces(appEnvCluster);
 
+        List<NamespaceVO> namespaceVOList = new LinkedList<>();
         namespaces.forEach(namespace -> {
-            transformNamespace2BO(namespace);
+            NamespaceVO namespaceVO = transformNamespace2BO(namespace);
+            namespaceVOList.add(namespaceVO);
         });
 
-        return null;
+        return namespaceVOList;
     }
 
     public List<AppEnvClusterNamespace> findNamespaces(AppEnvCluster appEnvCluster) {

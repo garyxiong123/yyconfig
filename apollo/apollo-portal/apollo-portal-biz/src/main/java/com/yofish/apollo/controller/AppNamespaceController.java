@@ -97,8 +97,8 @@ public class AppNamespaceController {
     public Result<List<NamespaceVO>> findNamespaces(@PathVariable String appCode, @PathVariable String env,
                                                     @PathVariable String clusterName) {
         // TODO: 2019-12-19 待实现
-        this.appEnvClusterNamespaceService.findNamespaceVOs(appCode, env, clusterName);
-        return Result.ok();
+        List<NamespaceVO> namespaceVOs = this.appEnvClusterNamespaceService.findNamespaceVOs(appCode, env, clusterName);
+        return Result.ok(namespaceVOs);
     }
 
     @ApiOperation("查询所有的公共命名空间")
