@@ -16,6 +16,7 @@ class ProjectDetail extends React.Component {
     this.state = {
       showProjectEdit: false,
       appId: '',
+      appCode: '',
       showClusterModal: false,
       showNamespace: false
     };
@@ -23,13 +24,14 @@ class ProjectDetail extends React.Component {
   //------------------------生命周期--------------------------------
   componentDidMount() {
     const { location } = this.props;
-    let appId = location.query ? location.query.appId : '';
+    let query = location.query ? location.query : {};
     this.setState({
-      appId: appId
+      appId: query.appId,
+      appCode: query.appCode
     }, () => {
-      this.onFetchAppItem()
-      this.onFetchEnvList();
-    })
+        this.onFetchAppItem()
+        this.onFetchEnvList();
+      })
   }
   componentDidUpdate(prevProps, prevState) {
     const { envList, dispatch, currentEnv } = this.props;
@@ -47,7 +49,8 @@ class ProjectDetail extends React.Component {
       type: 'project/clearData',
       payload: {
         envList: [],
-        currentEnv: {}
+        currentEnv: {},
+        nameSpaceList: []
       }
     })
   }
@@ -81,11 +84,12 @@ class ProjectDetail extends React.Component {
   }
   onFetchNamespaceList = () => {
     const { dispatch, appDetail, currentEnv } = this.props;
+    const { appCode } = this.state;
     let currentCluster = currentEnv.cluster || {};
     dispatch({
       type: 'project/nameSpaceList',
       payload: {
-        appCode: appDetail.appCode,
+        appCode,
         env: currentEnv.env,
         clusterName: currentCluster.name
       }
@@ -125,7 +129,7 @@ class ProjectDetail extends React.Component {
     const { appDetail } = this.props;
     let department = appDetail.department || {}, appOwner = appDetail.appOwner || {};
     return (
-      <Descriptions size="small" column={3}>
+      <Descriptions size="small" column={5}>
         <Descriptions.Item label="项目Id">{appDetail.appCode}</Descriptions.Item>
         <Descriptions.Item label="项目名">{appDetail.name}</Descriptions.Item>
         <Descriptions.Item label="部门">{department.name}</Descriptions.Item>
@@ -145,7 +149,7 @@ class ProjectDetail extends React.Component {
     let clusters = item.clusters || [];
     if (clusters.length > 1) {
       return (
-        <SubMenu title={item.env} key={index}>
+        <SubMenu title={item.env} key={`${item.env}${index}`}>
           {clusters.map((vo, i) => (
             <Menu.Item key={vo.id} onClick={() => this.onEnvClick(item, vo)}>{vo.name}</Menu.Item>
           ))}
@@ -163,11 +167,14 @@ class ProjectDetail extends React.Component {
     let curentKey = cluster.id && cluster.id.toString();
     return (
       <Card title="环境列表">
-        <Menu mode="inline" style={{ width: '100%' }} selectedKeys={[curentKey]}>
-          {
-            envList && envList.map((item, i) => this.renderSubMenuOrItem(item, i))
-          }
-        </Menu>
+        {
+          currentEnv.env &&
+          <Menu mode="inline" style={{ width: '100%' }} selectedKeys={[curentKey]} defaultOpenKeys={[currentEnv['env'] + '0']}>
+            {
+              envList && envList.map((item, i) => this.renderSubMenuOrItem(item, i))
+            }
+          </Menu>
+        }
       </Card>
     )
   }
@@ -195,11 +202,11 @@ class ProjectDetail extends React.Component {
     return (
       <PageHeaderWrapper title="项目信息" content={this.renderBaseInfo()} extra={this.renderEdit()}>
         <Row type="flex" gutter={24}>
-          <Col span={6}>
+          <Col style={{width: 256}}>
             {this.renderEnv()}
             {this.renderOpe()}
           </Col>
-          <Col span={18}>
+          <Col span={16}>
             <RightContent />
           </Col>
         </Row>

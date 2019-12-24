@@ -7,7 +7,8 @@ const ProjectModel = {
     appDetail: {},
     envList: [],
     currentEnv: {},
-    nameSpaceList: []
+    nameSpaceList: [],
+    publicNamespaceList: []
   },
   effects: {
     *appList({ payload }, { call, put }) {
@@ -35,6 +36,13 @@ const ProjectModel = {
       const response = yield call(project.nameSpaceList, payload);
       yield put({
         type: 'setNameSpaceList',
+        payload: response,
+      });
+    },
+    *publicNamespaceList({ payload }, { call, put }) {
+      const response = yield call(project.publicNamespaceList, payload);
+      yield put({
+        type: 'setPublicNamespaceList',
         payload: response,
       });
     },
@@ -76,6 +84,12 @@ const ProjectModel = {
       return {
         ...state,
         nameSpaceList: payload.data || []
+      }
+    },
+    setPublicNamespaceList(state, { payload = {} }) {
+      return {
+        ...state,
+        publicNamespaceList: payload.data || []
       }
     },
     clearData(state, { payload = {} }) {

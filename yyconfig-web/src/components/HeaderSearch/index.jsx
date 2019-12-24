@@ -6,14 +6,14 @@ import styles from './index.less';
 export default class HeaderSearch extends Component {
   static defaultProps = {
     defaultActiveFirstOption: false,
-    onPressEnter: () => {},
-    onSearch: () => {},
-    onChange: () => {},
+    onPressEnter: () => { },
+    onSearch: () => { },
+    onChange: () => { },
     className: '',
     placeholder: '',
     dataSource: [],
     defaultOpen: false,
-    onVisibleChange: () => {},
+    onVisibleChange: () => { },
   };
 
   static getDerivedStateFromProps(props) {
@@ -99,15 +99,16 @@ export default class HeaderSearch extends Component {
     return (
       <span
         className={classNames(className, styles.headerSearch)}
-        onClick={this.enterSearchMode}
-        onTransitionEnd={({ propertyName }) => {
-          if (propertyName === 'width' && !searchMode) {
-            const { onVisibleChange } = this.props;
-            onVisibleChange(searchMode);
-          }
-        }}
+        // onClick={this.enterSearchMode}
+        // onTransitionEnd={({ propertyName }) => {
+        //   if (propertyName === 'width' && !searchMode) {
+        //     const { onVisibleChange } = this.props;
+        //     onVisibleChange(searchMode);
+        //   }
+        // }}
       >
-        <Icon type="search" key="Icon" />
+        <Input.Search placeholder={placeholder} style={{border: 'none'}}/>
+        {/* <Icon type="search" key="Icon" />
         <AutoComplete
           key="AutoComplete"
           {...restProps}
@@ -125,7 +126,7 @@ export default class HeaderSearch extends Component {
             onKeyDown={this.onKeyDown}
             onBlur={this.leaveSearchMode}
           />
-        </AutoComplete>
+        </AutoComplete> */}
       </span>
     );
   }

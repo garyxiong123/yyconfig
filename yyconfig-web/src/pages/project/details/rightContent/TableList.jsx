@@ -2,15 +2,27 @@ import React, { Fragment } from 'react';
 import { connect } from 'dva';
 import { Table, Divider, Popconfirm } from 'antd';
 import moment from 'moment';
+import ConfigAdd from '../modal/ConfigAdd';
 
 class TableList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      showEdit: false
     };
   }
   componentDidMount() { }
 
+  onEdit = () => {
+    this.setState({
+      showEdit: true
+    })
+  }
+  onCancel=()=>{
+    this.setState({
+      showEdit: false
+    })
+  }
   renderTable() {
     const { tableList } = this.props;
     const columns = [
@@ -48,9 +60,9 @@ class TableList extends React.Component {
           <div>
             <span>
               <a
-              // onClick={() => {
-              //   this.onAdd(record);
-              // }}
+                onClick={() => {
+                  this.onEdit(record);
+                }}
               >
                 修改
               </a>
@@ -84,9 +96,11 @@ class TableList extends React.Component {
     )
   }
   render() {
+    const { showEdit } = this.state;
     return (
       <Fragment>
         {this.renderTable()}
+        {showEdit && <ConfigAdd onCancel={this.onCancel}/>}
       </Fragment>
     );
   }

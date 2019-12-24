@@ -4,6 +4,7 @@ import { Card, Row, Col, Icon, Button, Table } from 'antd';
 import router from 'umi/router';
 import styles from '../index.less';
 import CreateProject from '../create/';
+import Loading from '@/pages/components/loading/'
 
 class MyProject extends React.Component {
   constructor(props) {
@@ -74,26 +75,32 @@ class MyProject extends React.Component {
   }
   // ----------------------------------渲染-----------------------------
   render() {
-    const { list } = this.props;
+    const { list, loading } = this.props;
     const { showCreate } = this.state;
     return (
       <Fragment>
-        <Row gutter={48}>
-          <Col span={8}>
+        <Row gutter={48} type="flex">
+          <Col lg={6} md={8} sm={24}>
             <Button type="dashed" className={styles.listCard} onClick={this.onShowCreate}>
               <Icon type="plus" />
               <span>新增项目</span>
             </Button>
           </Col>
           {
-            list.rows && list.rows.map((item, i) => (
-              <Col span={8} key={i}>
-                <Card className={styles.listCard} onClick={() => { this.onRouteTo('/project/details', {appId: item.id}) }}>
-                  <h2>{item.appCode}</h2>
-                  <p>{item.name}</p>
-                </Card>
-              </Col>
-            ))
+            loading ? <Loading />
+              :
+              <Fragment>
+                {
+                  list.rows && list.rows.map((item, i) => (
+                    <Col lg={6} md={8} sm={24} key={i}>
+                      <Card className={styles.listCard} onClick={() => { this.onRouteTo('/project/details', { appId: item.id, appCode: item.appCode }) }}>
+                        <h2>{item.appCode}</h2>
+                        <p>{item.name}</p>
+                      </Card>
+                    </Col>
+                  ))
+                }
+              </Fragment>
           }
         </Row>
         {
