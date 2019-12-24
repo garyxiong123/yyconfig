@@ -146,10 +146,10 @@ public class ItemService {
         commitService.saveCommit(entity.getAppEnvClusterNamespace(),builder.build());
     }
 
-    public List<Item> findDeletedItems(Long appEnvClusterNamespace) {
+    public List<ItemDTO> findDeletedItems(Long appEnvClusterNamespace) {
         List<Commit> commits = commitService.find(appEnvClusterNamespace);
         if (Objects.nonNull(commits)) {
-            List<Item> deletedItems = commits.stream()
+            List<ItemDTO> deletedItems = commits.stream()
                     .map(item -> ConfigChangeContentBuilder.convertJsonString(item.getChangeSets()).getDeleteItems())
                     .flatMap(Collection::stream)
                     .collect(Collectors.toList());

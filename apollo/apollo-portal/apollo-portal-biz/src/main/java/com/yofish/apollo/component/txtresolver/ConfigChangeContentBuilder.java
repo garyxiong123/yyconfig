@@ -1,12 +1,14 @@
 package com.yofish.apollo.component.txtresolver;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.yofish.apollo.domain.Item;
+import common.dto.ItemDTO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,11 +17,16 @@ import java.util.List;
  * @date 2019-12-11
  */
 public class ConfigChangeContentBuilder {
-    private static final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
-
-    private List<Item> createItems = new LinkedList<>();
+    //private static final Gson gson = new GsonBuilder().("yyyy-MM-dd HH:mm:ss").create();
+    private static final JSON JSON=new JSONObject() {
+        @Override
+        public void writeJSONString(Appendable appendable) {
+            super.writeJSONString(appendable);
+        }
+    };
+    private List<ItemDTO> createItems = new LinkedList<>();
     private List<ItemPair> updateItems = new LinkedList<>();
-    private List<Item> deleteItems = new LinkedList<>();
+    private List<ItemDTO> deleteItems = new LinkedList<>();
 
 
     public ConfigChangeContentBuilder createItem(Item item) {
@@ -63,34 +70,38 @@ public class ConfigChangeContentBuilder {
         for (Item item : deleteItems) {
             item.setDataChangeLastModifiedTime(now);
         }*/
-        return gson.toJson(this);
+        return JSONObject.toJSONString(this);
 
     }
 
     static class ItemPair {
 
-        Item oldItem;
-        Item newItem;
+        ItemDTO oldItem;
+        ItemDTO newItem;
 
-        public ItemPair(Item oldItem, Item newItem) {
+        public ItemPair(ItemDTO oldItem, ItemDTO newItem) {
             this.oldItem = oldItem;
             this.newItem = newItem;
         }
     }
 
-    Item cloneItem(Item source) {
-        Item target = new Item();
+    ItemDTO cloneItem(Item item) {
+       /* Item target = new Item();
 
         BeanUtils.copyProperties(source, target);
 
-        return target;
+        return target;*/
+        ItemDTO itemDto= new ItemDTO();
+        BeanUtils.copyProperties(item,itemDto);
+        itemDto.setNamespaceId(item.getAppEnvClusterNamespace().getId());
+        return itemDto;
     }
 
     public static ConfigChangeContentBuilder convertJsonString(String content) {
-        return gson.fromJson(content, ConfigChangeContentBuilder.class);
+        return JSON.parseObject(content, ConfigChangeContentBuilder.class);
     }
 
-    public List<Item> getCreateItems() {
+    public List<ItemDTO> getCreateItems() {
         return createItems;
     }
 
@@ -98,7 +109,7 @@ public class ConfigChangeContentBuilder {
         return updateItems;
     }
 
-    public List<Item> getDeleteItems() {
+    public List<ItemDTO> getDeleteItems() {
         return deleteItems;
     }
 }

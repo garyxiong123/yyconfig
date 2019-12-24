@@ -1,6 +1,7 @@
 package controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yofish.apollo.DomainCreate;
 import com.yofish.apollo.controller.ItemController;
 import com.yofish.apollo.domain.Item;
 import com.yofish.apollo.dto.CreateItemReq;
@@ -9,6 +10,7 @@ import com.yofish.apollo.dto.ModifyItemsByTextsReq;
 import com.yofish.apollo.dto.UpdateItemReq;
 import com.yofish.apollo.model.NamespaceTextModel;
 import com.yofish.apollo.model.model.NamespaceSyncModel;
+import com.yofish.apollo.model.vo.ItemDiffs;
 import com.youyu.common.api.Result;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,10 +38,10 @@ public class ItemControllerTest extends AbstractControllerTest{
     public void createItem() {
        CreateItemReq req=new CreateItemReq();
        req.setAppEnvClusterNamespaceId(1L);
-       req.setKey("spring.datasource.url2");
+       req.setKey("spring.datasource.url5");
        req.setValue("jdbc:mysql://192.168.1.95:3306/ops-upms?useUnicode=true&amp;characterEncoding=UTF-8");
        req.setComment("数据库连接地址2");
-       req.setLineNum(2);
+       req.setLineNum(3);
        itemController.createItem(req);
     }
 
@@ -88,8 +90,10 @@ public class ItemControllerTest extends AbstractControllerTest{
     public void diff() {
 
         NamespaceSyncModel model=new  NamespaceSyncModel();
-        itemController.diff(model);
-
+        model.setSyncToNamespaces(DomainCreate.createNamespaceIdentifier());
+        model.setSyncItems(DomainCreate.createItemList());
+        List<ItemDiffs> itemDiffs= itemController.diff(model);
+        System.out.println(1);
     }
 
     @Test

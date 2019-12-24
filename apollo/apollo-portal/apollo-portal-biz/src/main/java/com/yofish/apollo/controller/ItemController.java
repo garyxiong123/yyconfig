@@ -1,6 +1,6 @@
 package com.yofish.apollo.controller;
 
-//import com.yofish.apollo.model.model.NamespaceTextModel;
+
 import com.yofish.apollo.domain.Item;
 import com.yofish.apollo.dto.CreateItemReq;
 import com.yofish.apollo.dto.ItemReq;
@@ -20,10 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
 import java.util.List;
 
 import static common.utils.RequestPrecondition.checkModel;
@@ -37,8 +38,7 @@ public class ItemController {
   private ItemService itemService;
 
 
-  @RequestMapping(value = "/modifyItemsByTexts", method = RequestMethod.POST, consumes = {
-      "application/json"})
+  @PostMapping(value = "/modifyItemsByTexts")
   public Result modifyItemsByText(@RequestBody ModifyItemsByTextsReq model) {
 
     checkModel(model != null);
@@ -47,14 +47,14 @@ public class ItemController {
   }
 
 
-  @RequestMapping(value = "/createItem", method = RequestMethod.POST)
+  @PostMapping(value = "/createItem")
   public Result<Item> createItem(@RequestBody CreateItemReq req) {
     Item item= itemService.createItem(req);
     return Result.ok(item);
   }
 
 
-  @RequestMapping(value = "/updateItem", method = RequestMethod.PUT)
+  @PostMapping(value = "/updateItem")
   public Result updateItem(@RequestBody UpdateItemReq req) {
      itemService.updateItem(req);
     return Result.ok();
@@ -62,7 +62,7 @@ public class ItemController {
 
 
 
-  @RequestMapping(value = "deleteItem", method = RequestMethod.DELETE)
+  @PostMapping(value = "deleteItem")
   public void deleteItem(@RequestBody ItemReq req) {
     if (req.getItemId() <= 0) {
       throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "item id invalid");
@@ -71,7 +71,7 @@ public class ItemController {
   }
 
 
-  @RequestMapping(value = "/findItems", method = RequestMethod.GET)
+  @PostMapping(value = "/findItems")
   public Result<List<Item>> findItems(@RequestBody ItemReq req) {
     List<Item> items = itemService.findItemsWithoutOrdered(req);
     return Result.ok(items);
@@ -79,7 +79,7 @@ public class ItemController {
 
 //todo 配置同步
 
-  @RequestMapping(value = "updateEnv")
+  @PostMapping(value = "updateEnv")
   public Result updateEnv(@RequestBody NamespaceSyncModel model) {
     itemService.syncItems(model.getSyncToNamespaces(), model.getSyncItems());
    return Result.ok();
