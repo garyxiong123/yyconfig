@@ -165,7 +165,6 @@ public class AppEnvClusterNamespaceService {
 
         //deleted items
         itemService.findDeletedItems(appEnvClusterNamespace.getId()).stream()
-                .map(item -> transformItemDTO(item))
                 .forEach(item -> deletedItemDTOs.put(item.getKey(), item));
 
         List<ItemBO> deletedItems = parseDeletedItems(items, releaseItems, deletedItemDTOs);
