@@ -5,10 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
+import javax.persistence.*;
 import java.util.Set;
 
 /**
@@ -22,11 +19,16 @@ import java.util.Set;
 @DiscriminatorValue("Namespace4Protect")
 public class AppNamespace4Protect extends AppNamespace {
     @Builder
-    public AppNamespace4Protect(String name, App app, ConfigFileFormat format, String comment, Set<App> authorizedApp) {
+    public AppNamespace4Protect(String name, App app, ConfigFileFormat format, String comment, Set<App> authorizedApp, OpenNamespaceType openNamespaceType) {
         super(name, app, format, comment);
         this.authorizedApp = authorizedApp;
+        this.openNamespaceType = openNamespaceType;
     }
 
     @ManyToMany(cascade = CascadeType.DETACH)
     private Set<App> authorizedApp;
+
+    @ManyToOne(cascade = CascadeType.DETACH)
+    @JoinColumn(name = "namespaceTypeId")
+    private OpenNamespaceType openNamespaceType;
 }
