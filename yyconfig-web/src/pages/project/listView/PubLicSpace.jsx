@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'dva';
 import { Card, Tabs } from 'antd';
 
 const { TabPane } = Tabs;
@@ -10,11 +11,19 @@ class PublicSpace extends React.Component {
       key: '1'
     };
   }
-  componentDidMount() { }
+  componentDidMount() { 
+    this.onFetchList();
+  }
 
   onTabChange = (key) => {
     this.setState({
       key
+    })
+  }
+  onFetchList = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'project/publicNamespaceList'
     })
   }
 
@@ -32,4 +41,7 @@ class PublicSpace extends React.Component {
     );
   }
 }
-export default PublicSpace;
+export default connect(({ project, loading }) => ({
+  list: project.publicNamespaceList,
+  loading: loading.effects["project/publicNamespaceList"]
+}))(PublicSpace);

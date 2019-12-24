@@ -5,8 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 /**
  * @Author: xiongchengwei
@@ -19,7 +21,12 @@ import javax.persistence.Entity;
 @DiscriminatorValue("Namespace4Public")
 public class AppNamespace4Public extends AppNamespace {
     @Builder
-    public AppNamespace4Public(String name, App app, ConfigFileFormat format, String comment) {
+    public AppNamespace4Public(String name, App app, ConfigFileFormat format, String comment, OpenNamespaceType openNamespaceType) {
         super(name, app, format, comment);
+        this.openNamespaceType = openNamespaceType;
     }
+
+
+    @ManyToOne(cascade = CascadeType.DETACH)
+    private OpenNamespaceType openNamespaceType;
 }

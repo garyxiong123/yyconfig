@@ -3,7 +3,7 @@ export default {
   // 拂晓蓝
   primaryColor: 'daybreak',
   layout: 'topmenu',
-  contentWidth: 'Fixed',
+  contentWidth: 'Fuild',
   fixedHeader: true,
   autoHideHeader: false,
   fixSiderbar: false,

@@ -19,7 +19,7 @@ class ClusterAdd extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      
+
     };
   }
   componentDidMount() { }
@@ -39,6 +39,7 @@ class ClusterAdd extends React.Component {
 
   renderForm() {
     const { getFieldDecorator, getFieldValue } = this.props.form;
+    const { envList } = this.props;
     return (
       <Form onSubmit={this.onSubmit} {...formItemLayout}>
         <FormItem label="项目Id">
@@ -69,8 +70,8 @@ class ClusterAdd extends React.Component {
           })(
             <Checkbox.Group>
               {
-                [{ id: 1, name: '环境一' }, { id: 2, name: '环境二' }].map((item, i) => (
-                  <Checkbox value={item.id} key={item.id}>{item.name}</Checkbox>
+                envList && envList.map((item, i) => (
+                  <Checkbox value={item.env} key={item.env}>{item.env}</Checkbox>
                 ))
               }
             </Checkbox.Group>
@@ -94,6 +95,6 @@ class ClusterAdd extends React.Component {
   }
 }
 
-export default Form.create()(connect(({ }) => ({
-
+export default Form.create()(connect(({ project }) => ({
+  envList: project.envList
 }))(ClusterAdd));

@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Modal, Form, Radio, Input, Select, Transfer } from 'antd';
+import { Modal, Form, Radio, Input, Select, Transfer, message, Button } from 'antd';
+import { project } from '@/services/project';
 import styles from '../../index.less';
 
 const FormItem = Form.Item;
@@ -32,49 +33,122 @@ class NamespaceAdd extends React.Component {
           value: 'namespace2'
         }
       ],
-      leftNoSelect: [
-        {
-          id: 1,
-          text: '1'
-        },
-        {
-          id: 2,
-          text: '2'
-        },
-        {
-          id: 3,
-          text: '3'
-        },
-      ],
+      leftNoSelect: [],
       leftKeys: [],
-      rightKeys: []
+      rightKeys: [],
+      loading: false,
+      searchObj: {
+        page: 1,
+        size: 10
+      }
     };
   }
-  componentDidMount() { }
+  componentDidMount() {
+    const { appList } = this.props;
+    if (!appList.rows) {
+      this.onFetchApplist();
+    } else {
+      this.onSetleftNoSelect();
+      this.setState({
+        page: appList.pageNum
+      })
+    }
+  }
+  componentDidUpdate(prevProps, prevState) {
+    const { appList } = this.props;
+    const { searchObj } = this.state;
+    if (prevProps.appList !== appList) {
+      this.onSetleftNoSelect()
+    }
+    if (prevState.searchObj !== searchObj) {
+      this.onFetchApplist()
+    }
+  }
 
+  onSetleftNoSelect = () => {
+    const { appList } = this.props;
+    console.log('onSetleftNoSelect-->', appList)
+    this.setState({
+      leftNoSelect: appList.rows
+    })
+  }
+  onFetchApplist = () => {
+    const { dispatch } = this.props;
+    const { searchObj } = this.state;
+    dispatch({
+      type: 'project/appList',
+      payload: searchObj
+    })
+  }
   onChange = (e) => {
     this.setState({
       currentType: e.target.value
     })
   }
   onServiceChange = (targetKeys, direction, moveKeys) => {
-    // console.log('targetKeys-->', targetKeys)
-    // console.log('direction-->', direction)
-    // console.log('moveKeys-->', moveKeys)
     this.setState({ rightKeys: targetKeys })
   }
   onServiceSelectChange = (sourceSelectedKeys, targetSelectedKeys) => {
-    // console.log('sourceSelectedKeys-->', sourceSelectedKeys)
-    // console.log('targetSelectedKeys-->', targetSelectedKeys)
     this.setState({ leftKeys: [...sourceSelectedKeys, ...targetSelectedKeys] });
   }
+  onRelationSubmit = (e) => {
+    e && e.preventDefault();
+    this.props.form.validateFieldsAndScroll((err, values) => {
+      if (!err) {
+        console.log('onCreateSubmit-values--->', values)
+      }
+    });
+  }
+  onCreateSubmit = (e) => {
+    e && e.preventDefault();
+    this.props.form.validateFieldsAndScroll((err, values) => {
+      if (!err) {
+        console.log('onCreateSubmit-values--->', values)
+        this.setState({
+          loading: true
+        })
+        this.onCreateSave(values)
+      }
+    });
+  }
+  onCreateSave = async (values) => {
+    const { appDetail, onCancel } = this.props;
+    let type = values.type;
+    switch (type) {
+      case 'public': {
+        let res = await project.nameSpacePublicAdd({ ...values, appId: appDetail.id });
+        if (res && res.code === '1') {
+          message.success('添加成功');
+          onCancel();
+        }
+        this.setState({
+          loading: false
+        })
+      } break;
+      case 'protect': {
 
+      } break;
+      case 'private': {
+
+      } break;
+    }
+  }
+  // 服务加载更多
+  onMore = () => {
+    const { searchObj } = this.state;
+    this.setState({
+      searchObj: {
+        ...searchObj,
+        page: searchObj.page + 1
+      }
+    })
+  }
   renderRelation() {
     const { getFieldDecorator, getFieldValue } = this.props.form;
     const { appDetail } = this.props;
     const { namespaceList } = this.state;
     return (
-      <Form onSubmit={this.onSubmit} {...formItemLayout}>
+      <Form onSubmit={this.onRelationSubmit} {...formItemLayout}>
         <FormItem label="项目Id">
           {getFieldDecorator('appId', {
             initialValue: appDetail.appCode,
@@ -107,6 +181,7 @@ class NamespaceAdd extends React.Component {
   }
   renderServiceItem() {
     const { leftNoSelect, leftKeys, rightKeys } = this.state;
+    console.log('leftNoSelect-->', leftNoSelect)
     return (
       <Transfer
         dataSource={leftNoSelect}
@@ -115,10 +190,19 @@ class NamespaceAdd extends React.Component {
         selectedKeys={leftKeys}
         onChange={this.onServiceChange}
         onSelectChange={this.onServiceSelectChange}
-        // onScroll={this.handleScroll}
-        render={item => item.text}
+        render={item => item.name}
         rowKey={record => record.id}
+        footer={this.renderServiceItemFooter}
       />
+    )
+  }
+  renderServiceItemFooter = () => {
+    const { appList } = this.props;
+    return (
+      <Button 
+      size="small" 
+      style={{margin: 5}}
+      onClick={() => this.onMore()} disabled={appList.pageNum < appList.totalPage ? false : true}>More</Button>
     )
   }
   renderCreate() {
@@ -126,7 +210,7 @@ class NamespaceAdd extends React.Component {
     const { appDetail } = this.props;
     let department = appDetail.department || {};
     return (
-      <Form onSubmit={this.onSubmit} {...formItemLayout}>
+      <Form onSubmit={this.onCreateSubmit} {...formItemLayout}>
         <FormItem label="项目Id">
           {getFieldDecorator('appId', {
             initialValue: appDetail.appCode,
@@ -225,13 +309,15 @@ class NamespaceAdd extends React.Component {
   }
   render() {
     const { onCancel } = this.props;
-    const { currentType } = this.state;
+    const { currentType, loading } = this.state;
     return (
       <Modal
         title="新建Namespace"
         visible={true}
         onCancel={onCancel}
+        onOk={currentType === 'relation' ? this.onRelationSubmit : this.onCreateSubmit}
         width={700}
+        confirmLoading={loading}
       >
         <div className={styles.marginBottom25} style={{ textAlign: 'right' }}>
           <Radio.Group value={currentType} buttonStyle="solid" onChange={this.onChange}>
@@ -251,5 +337,6 @@ class NamespaceAdd extends React.Component {
 }
 
 export default Form.create()(connect(({ project }) => ({
-  appDetail: project.appDetail
+  appDetail: project.appDetail,
+  appList: project.appList,
 }))(NamespaceAdd));
