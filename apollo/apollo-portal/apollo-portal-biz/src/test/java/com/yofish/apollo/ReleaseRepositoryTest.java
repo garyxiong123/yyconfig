@@ -41,7 +41,7 @@ public class ReleaseRepositoryTest {
         Map<String, String> configMap = new HashMap<>();
 //        configMap.put("name","22");
 
-        Release4Main release4Main = Release4Main.builder().namespace(namespace).isEmergencyPublish(false).configurations(configMap).comment("comment").name("123").releaseKey(releaseKey).build();
+        Release4Main release4Main = Release4Main.builder().namespace(namespace).isEmergencyPublish(false).configurations(configMap).comment("comment").name("123").build();
 
         releaseRepository.save(release4Main);
     }

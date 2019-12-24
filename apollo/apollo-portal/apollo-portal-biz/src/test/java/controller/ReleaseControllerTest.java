@@ -69,12 +69,13 @@ public class ReleaseControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void testRelease4Main() {
+    public void testRelease4MainWithBranch() {
         CreateItemReq req = createItemReq();
         itemController.createItem(req);
 
         NamespaceReleaseModel namespaceReleaseModel = NamespaceReleaseModel.builder().releaseTitle("测试发布标题").releaseComment("测试发布").AppEnvClusterNamespaceId(namespace.getId()).build();
-        releaseController.createRelease(namespaceReleaseModel);
+        common.dto.ReleaseDTO release = releaseController.createRelease(namespaceReleaseModel);
+//        Assert.assertNotNull(release);
 
     }
 
@@ -87,17 +88,15 @@ public class ReleaseControllerTest extends AbstractControllerTest {
     }
 
 
-    @Test
-    public void testRelease4MainWithBranch() {
-        AppEnvClusterNamespace4Main namespace = createNamespace4MainWithBranch();
-        namespaceRepository.save(namespace);
-        NamespaceReleaseModel namespaceReleaseModel = NamespaceReleaseModel.builder().releaseTitle("测试发布标题").releaseComment("测试发布").AppEnvClusterNamespaceId(namespace.getId()).build();
-        releaseController.createRelease(namespaceReleaseModel);
-    }
 
     @Test
     public void testRelease4Branch() {
+        NamespaceReleaseModel releaseModel4Main = NamespaceReleaseModel.builder().releaseTitle("测试发布标题").releaseComment("测试发布").AppEnvClusterNamespaceId(namespace.getId()).build();
+        common.dto.ReleaseDTO release = releaseController.createRelease(releaseModel4Main);
 
+        AppEnvClusterNamespace4Branch namespace4Branch =  namespace.getBranchNamespace();
+        NamespaceReleaseModel releaseModel4Branch = NamespaceReleaseModel.builder().releaseTitle("测试发布标题").releaseComment("分支测试发布").AppEnvClusterNamespaceId(namespace4Branch.getId()).build();
+        releaseController.createRelease(releaseModel4Branch);
     }
 
 
