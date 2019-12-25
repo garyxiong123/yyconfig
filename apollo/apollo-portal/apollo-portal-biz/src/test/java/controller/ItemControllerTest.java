@@ -17,6 +17,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -38,8 +40,8 @@ public class ItemControllerTest extends AbstractControllerTest{
     @Test
     public void createItem() {
        CreateItemReq req=new CreateItemReq();
-       req.setAppEnvClusterNamespaceId(1L);
-       req.setKey("spring.datasource.url5");
+       req.setAppEnvClusterNamespaceIds(new ArrayList<>(Arrays.asList(1L,3L)));
+       req.setKey("mmm.aa");
        req.setValue("jdbc:mysql://192.168.1.95:3306/ops-upms?useUnicode=true&amp;characterEncoding=UTF-8");
        req.setComment("数据库连接地址2");
        req.setLineNum(3);

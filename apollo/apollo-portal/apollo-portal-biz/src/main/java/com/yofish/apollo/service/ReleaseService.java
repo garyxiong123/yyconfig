@@ -4,15 +4,20 @@ import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.yofish.apollo.bo.ItemChangeSets;
 import com.yofish.apollo.domain.*;
+import com.yofish.apollo.enums.ChangeType;
+import com.yofish.apollo.model.bo.KVEntity;
 import com.yofish.apollo.model.bo.ReleaseBO;
 import com.yofish.apollo.model.vo.ReleaseCompareResult;
+import com.yofish.apollo.repository.AppEnvClusterNamespace4MainRepository;
 import com.yofish.apollo.repository.Release4MainRepository;
 import com.yofish.apollo.repository.ReleaseRepository;
 import com.youyu.common.exception.BizException;
+import common.constants.GsonType;
 import common.dto.ReleaseDTO;
 import common.utils.BeanUtils;
 import framework.apollo.core.enums.Env;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +25,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
+import static com.yofish.gary.utils.OrikaCopyUtil.copyProperty4List;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 
 /**
@@ -43,13 +49,15 @@ public class ReleaseService {
     private ReleaseHistoryService releaseHistoryService;
     @Autowired
     private Release4MainRepository release4MainRepository;
+    @Autowired
+    private AppEnvClusterNamespace4MainRepository namespace4MainRepository;
 
 
     public Release findActiveOne(long releaseId) {
         return releaseRepository.findByIdAndAbandonedFalse(releaseId);
     }
 
-    public Release findOne(long releaseId){
+    public Release findOne(long releaseId) {
         return releaseRepository.findById(releaseId).get();
     }
 
@@ -66,29 +74,14 @@ public class ReleaseService {
     }
 
 
-    public List<ReleaseBO> findAllReleases(String namespaceId, Pageable page) {
-//        List<Release> releases = releaseRepository.findByAppIdAndClusterNameAndNamespaceNameOrderByIdDesc(appId,
-//                clusterName,
-//                namespaceName,
-//                page);
-//        if (releases == null) {
-//            return Collections.emptyList();
-//        }
+    public List<ReleaseBO> findAllReleases(Long namespaceId, Pageable page) {
+        List<Release> releases = releaseRepository.findByAppEnvClusterNamespace_IdOrderByIdDesc(namespaceId, page);
+        if (releases == null) {
+            return Collections.emptyList();
+        }
         return null;
     }
 
-    public List<Release> findActiveReleases(String appId, String clusterName, String namespaceName, Pageable page) {
-//        List<Release>
-//                releases =
-//                releaseRepository.findByAppIdAndClusterNameAndNamespaceNameAndIsAbandonedFalseOrderByIdDesc(appId, clusterName,
-//                        namespaceName,
-//                        page);
-//        if (releases == null) {
-//            return Collections.emptyList();
-//        }
-//        return releases;
-        return null;
-    }
 
     public ReleaseDTO loadLatestRelease(AppEnvClusterNamespace namespace) {
         Release release = namespace.findLatestActiveRelease();
@@ -150,7 +143,6 @@ public class ReleaseService {
     }
 
 
-
     private Map<String, String> getConfigurations(List<Item> items) {
 
         if (CollectionUtils.isEmpty(items)) return null;
@@ -172,16 +164,11 @@ public class ReleaseService {
             return release4Branch;
         }
         //TODO Fix error
-        Release4Main release =  new Release4Main(namespace, name, comment, configurations, isEmergencyPublish);
+        Release4Main release = new Release4Main(namespace, name, comment, configurations, isEmergencyPublish);
 
 
         return release;
     }
-
-
-
-
-
 
 
     @Transactional
@@ -198,8 +185,57 @@ public class ReleaseService {
         return null;
     }
 
-    public ReleaseCompareResult compare(Env env, long baseReleaseId, long toCompareReleaseId) {
-        return null;
+    public ReleaseCompareResult compare(long baseReleaseId, long toCompareReleaseId) {
+
+
+        Release baseRelease = null;
+        Release toCompareRelease = null;
+        if (baseReleaseId != 0) {
+            baseRelease = releaseRepository.findById(baseReleaseId).get();
+        }
+
+        if (toCompareReleaseId != 0) {
+            toCompareRelease = releaseRepository.findById(toCompareReleaseId).get();
+        }
+
+        return calCompareResult(baseRelease, toCompareRelease);
+    }
+
+    private ReleaseCompareResult calCompareResult(Release baseRelease, Release toCompareRelease) {
+
+        Map<String, String> baseReleaseConfiguration = baseRelease == null ? new HashMap<>() : gson.fromJson(baseRelease.getConfigurations(), GsonType.CONFIG);
+        Map<String, String> toCompareReleaseConfiguration = toCompareRelease == null ? new HashMap<>() : gson.fromJson(toCompareRelease.getConfigurations(), GsonType.CONFIG);
+
+        ReleaseCompareResult compareResult = new ReleaseCompareResult();
+
+        //added and modified in firstRelease
+        for (Map.Entry<String, String> entry : baseReleaseConfiguration.entrySet()) {
+            String key = entry.getKey();
+            String firstValue = entry.getValue();
+            String secondValue = toCompareReleaseConfiguration.get(key);
+            //added
+            if (secondValue == null) {
+                compareResult.addEntityPair(ChangeType.DELETED, new KVEntity(key, firstValue),
+                        new KVEntity(key, null));
+            } else if (!com.google.common.base.Objects.equal(firstValue, secondValue)) {
+                compareResult.addEntityPair(ChangeType.MODIFIED, new KVEntity(key, firstValue),
+                        new KVEntity(key, secondValue));
+            }
+
+        }
+
+        //deleted in firstRelease
+        for (Map.Entry<String, String> entry : toCompareReleaseConfiguration.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if (baseReleaseConfiguration.get(key) == null) {
+                compareResult
+                        .addEntityPair(ChangeType.ADDED, new KVEntity(key, ""), new KVEntity(key, value));
+            }
+
+        }
+
+        return compareResult;
     }
 
     public Optional<Release> findReleaseById(long releaseId) {
@@ -209,14 +245,32 @@ public class ReleaseService {
 
     public void rollback(long releaseId) {
 
-        Release4Main release4Main = release4MainRepository.findById(releaseId).orElseGet( () -> {throw new BizException("12","release not found"); } );
+        Release4Main release4Main = release4MainRepository.findById(releaseId).orElseGet(() -> {
+            throw new BizException("12", "release not found");
+        });
 
         release4Main.rollback();
     }
 
 
+    public List<ReleaseDTO> findActiveReleases(Long namespaceId, Pageable pageable) {
+        AppEnvClusterNamespace4Main appEnvClusterNamespace4Main = namespace4MainRepository.findById(namespaceId).orElse(null);
+        Pageable page = PageRequest.of(0, 2);
 
-    public List<ReleaseDTO> findActiveReleases(String namespaceId, Pageable pageable) {
-        return null;
+        List<Release> latestActiveReleases = appEnvClusterNamespace4Main.findLatestActiveReleases(page);
+
+        return transform2Dtos(latestActiveReleases);
+    }
+
+    private List<ReleaseDTO> transform2Dtos(List<Release> latestActiveReleases) {
+        if (CollectionUtils.isEmpty(latestActiveReleases)) {
+            return null;
+        }
+        List<ReleaseDTO> releaseDTOS = copyProperty4List(latestActiveReleases, ReleaseDTO.class);
+
+//        latestActiveReleases.stream().forEach(release -> {
+//            ReleaseDTO releaseDTO = ReleaseDTO.builder().releaseKey(release.)
+//        });
+        return releaseDTOS;
     }
 }

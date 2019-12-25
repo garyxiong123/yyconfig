@@ -128,7 +128,7 @@ public class ReleaseController {
 
 
     @RequestMapping(value = "/namespaceId/{namespaceId}/releases/all", method = RequestMethod.GET)
-    public Result<List<ReleaseBO>> findAllReleases(@PathVariable String namespaceId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+    public Result<List<ReleaseBO>> findAllReleases(@PathVariable Long namespaceId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
 
         RequestPrecondition.checkNumberPositive(size);
         RequestPrecondition.checkNumberNotNegative(page);
@@ -138,7 +138,7 @@ public class ReleaseController {
     }
 
     @RequestMapping(value = "/namespaceId/{namespaceId}/releases/active", method = RequestMethod.GET)
-    public Result<List<ReleaseDTO>> findActiveReleases(@PathVariable String namespaceId, @RequestParam(defaultValue = "0") int page,
+    public Result<List<ReleaseDTO>> findActiveReleases(@PathVariable Long namespaceId, @RequestParam(defaultValue = "0") int page,
                                                @RequestParam(defaultValue = "5") int size) {
 
         RequestPrecondition.checkNumberPositive(size);
@@ -148,12 +148,10 @@ public class ReleaseController {
         return Result.ok(releaseService.findActiveReleases(namespaceId, pageable));
     }
 
-    @RequestMapping(value = "/envs/{env}/releases/compare", method = RequestMethod.GET)
-    public Result<ReleaseCompareResult> compareRelease(@PathVariable String env,
-                                               @RequestParam long baseReleaseId,
-                                               @RequestParam long toCompareReleaseId) {
+    @RequestMapping(value = "/releases/compare", method = RequestMethod.GET)
+    public Result<ReleaseCompareResult> compareRelease(@RequestParam long baseReleaseId, @RequestParam long toCompareReleaseId) {
 
-        return Result.ok(releaseService.compare(Env.valueOf(env), baseReleaseId, toCompareReleaseId));
+        return Result.ok(releaseService.compare( baseReleaseId, toCompareReleaseId));
     }
 
 

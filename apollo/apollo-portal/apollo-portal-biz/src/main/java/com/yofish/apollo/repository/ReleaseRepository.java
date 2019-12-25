@@ -38,4 +38,7 @@ public interface ReleaseRepository extends JpaRepository<Release, Long> {
 
     List<Release> findByAppEnvClusterNamespace_IdAndAbandonedIsFalseOrderByIdDesc(Long namespaceId, Pageable page );
 
+    List<Release> findByAppEnvClusterNamespace_IdOrderByIdDesc(Long namespaceId, Pageable page );
+
+
 }

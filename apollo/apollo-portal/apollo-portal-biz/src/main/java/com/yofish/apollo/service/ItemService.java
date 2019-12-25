@@ -67,22 +67,33 @@ public class ItemService {
     private CommitService commitService;
 
 
-    public Item createItem(CreateItemReq createItemReq) {
-        Item entity=new Item();
-        AppEnvClusterNamespace appEnvClusterNamespace=appEnvClusterNamespaceService.findAppEnvClusterNamespace(createItemReq.getAppEnvClusterNamespaceId());
+    public void createItem(CreateItemReq createItemReq) {
 
-        ConfigChangeContentBuilder builder = new ConfigChangeContentBuilder();
-        Item managedEntity=  findOne(appEnvClusterNamespace,createItemReq.getKey());
-        if (managedEntity != null) {
-            throw new BizException("500","item already exists");
-        } else {
-            Item item = new Item(createItemReq.getKey(),createItemReq.getValue(),createItemReq.getComment(),appEnvClusterNamespace, createItemReq.getLineNum());
-            entity=  itemRepository.save(item);
-            builder.createItem(entity);
-            //添加commit
-            commitService.saveCommit(appEnvClusterNamespace,builder.build());
+        if(createItemReq.getAppEnvClusterNamespaceIds()!=null
+                &&createItemReq.getAppEnvClusterNamespaceIds().size()>0){
+           Iterator<Long> iterable=createItemReq.getAppEnvClusterNamespaceIds().iterator();
+           while (iterable.hasNext()){
+               AppEnvClusterNamespace appEnvClusterNamespace=appEnvClusterNamespaceService.findAppEnvClusterNamespace(iterable.next());
+
+               ConfigChangeContentBuilder builder = new ConfigChangeContentBuilder();
+               Item managedEntity=  findOne(appEnvClusterNamespace,createItemReq.getKey());
+               if (managedEntity != null) {
+                   throw new BizException("500","item already exists");
+               } else {
+                   Item item = new Item(createItemReq.getKey(),createItemReq.getValue(),createItemReq.getComment(),appEnvClusterNamespace, createItemReq.getLineNum());
+                   itemRepository.save(item);
+                   Item entity = new Item();
+                   BeanUtils.copyEntityProperties(item, entity);
+                   builder.createItem(entity);
+                   //添加commit
+                   commitService.saveCommit(appEnvClusterNamespace,builder.build());
+               }
+           }
+
+
         }
-        return entity;
+
+
     }
 
 
