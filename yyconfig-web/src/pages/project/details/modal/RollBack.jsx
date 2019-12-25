@@ -23,10 +23,11 @@ class RollBackModal extends React.Component {
     }
   }
   onRollBack = async (releaseId) => {
-    const { onCancel } = this.props;
+    const { onCancel, onSave } = this.props;
     let res = await project.rollBack({ releaseId });
     if (res && res.code === '1') {
       message.success('回滚成功');
+      onSave();
       onCancel();
     }
     this.setState({

@@ -33,13 +33,13 @@ const project = {
   nameSpacePublicAdd: async function (params = {}) {
     return requestPost(`/apps/${params.appId}/namespaces/public`, params);
   },
+  //新增配置
   configAdd: async function (params = {}) {
     return requestPost(`/item/createItem`, params);
   },
   configUpdate: async function (params = {}) {
     return requestPost(`/item/updateItem`, params);
   },
-  //新建配置
   createRelease: async function (params = {}) {
     return requestPost(`/createRelease`, params);
   },
@@ -55,6 +55,7 @@ const project = {
   rollBack: async function (params = {}) {
     return requestPut(`/releases/${params.releaseId}/rollback`);
   },
+  //
 
 };
 const cluster = {

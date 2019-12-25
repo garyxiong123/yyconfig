@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Modal, Form, Input, Tree, message, Checkbox } from 'antd';
+import { Modal, Form, Input, Tree, message, Checkbox, Row, Col } from 'antd';
+import { project } from '@/services/project';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -21,7 +22,8 @@ class ConfigAdd extends React.Component {
     super(props);
     this.state = {
       loading: false,
-      appEnvClusterNamespaceIds: []
+      // appEnvClusterNamespaceIds: [],
+      checkList: []
     };
   }
   componentDidMount() { }
@@ -32,9 +34,21 @@ class ConfigAdd extends React.Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         console.log('values-->', values)
-        // onCancel();
+        this.onConfigAdd(values);
       }
     })
+  }
+
+  onConfigAdd = async (values) => {
+    const { checkList } = this.state;
+    let res = await project.configAdd({
+      appEnvClusterNamespaceIds:checkList,
+      ...values
+    });
+    if(res && res.code === '1') {
+      message.success('新建成功');
+      this.onSuccess();
+    }
   }
   onSuccess = (res) => {
     const { onSave } = this.props;
@@ -44,24 +58,31 @@ class ConfigAdd extends React.Component {
       onSave();
     }
   }
-  onCheck = (checkedKeys, info) => {
-    // let checkedKeysCopy = checkedKeys;
-    // checkedKeysCopy.pop();
-    // this.setState({
-    //   appEnvClusterNamespaceIds: checkedKeysCopy
-    // })
-    // console.log('ids-->', checkedKeysCopy)
-    console.log('checkedKeys-->', checkedKeys)
 
-    console.log('info-->', info)
-  }
-  onSelectCluster = (vo) => {
-    console.log('onSelectCluster--->', vo)
+  onChange = (e) => {
+    const { checkList } = this.state;
+    let target = e.target, list = checkList;
+    if (e.target.checked) {
+      list.push(e.target.value)
+    } else {
+      let index = list.indexOf(e.target.value);
+      list.splice(index, 1)
+    }
+    this.setState({
+      checkList: list
+    })
+    // this.setState({
+    //   checkList: [
+    //     ...checkList,
+    //     ...checkedValues
+    //   ]
+    // })
   }
   renderForm() {
     const { getFieldDecorator, getFieldValue } = this.props.form;
     const { envList, currentItem } = this.props;
     let item = currentItem.item || {};
+    const { checkList } = this.state;
     return (
       <Form onSubmit={this.onSubmit} {...formItemLayout}>
         <FormItem label="Key">
@@ -94,24 +115,24 @@ class ConfigAdd extends React.Component {
         {
           !item.id &&
           <FormItem label="选择集群">
-            <Tree
-              checkable
-              selectable={false}
-              onCheck={this.onCheck}
-              defaultExpandAll
-            >
-              {
-                envList.map((item, i) => (
-                  <TreeNode title={item.env} key={item.env}>
-                    {
-                      item.clusters && item.clusters.map((vo) => (
-                        <TreeNode title={vo.name} key={vo.id}/>
-                      ))
-                    }
-                  </TreeNode>
-                ))
-              }
-            </Tree>
+            {
+              envList.map((item, i) => (
+                <Fragment key={item.env}>
+                  <div>{item.env}(环境)</div>
+                  <Checkbox.Group style={{ width: '100%', marginLeft: 15 }}>
+                    <Row type="flex">
+                      {
+                        item.clusters && item.clusters.map((vo) => (
+                          <Col span={6} key={vo.id}>
+                            <Checkbox value={vo.id} onChange={(e) => this.onChange(e, item)}>{vo.name}</Checkbox>
+                          </Col>
+                        ))
+                      }
+                    </Row>
+                  </Checkbox.Group>
+                </Fragment>
+              ))
+            }
           </FormItem>
         }
       </Form>
