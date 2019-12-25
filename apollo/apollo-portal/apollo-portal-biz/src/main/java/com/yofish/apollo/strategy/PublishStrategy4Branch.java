@@ -30,7 +30,7 @@ public class PublishStrategy4Branch extends PublishStrategy {
 
 
         Map<String, String> configToPublish = calculateBranchNamespaceConfigsToPublish(release4Branch);
-
+        release4Branch.setConfigurations(gson.toJson(configToPublish));
         if (isConfigChanged(release4Branch, configToPublish)) {
 
             branchRelease((Release4Branch) release4Branch, ReleaseOperation.GRAY_RELEASE);
@@ -55,6 +55,7 @@ public class PublishStrategy4Branch extends PublishStrategy {
         if (grayReleaseRule != null) {
             releaseOperationContext.put(ReleaseOperationContext.RULES, GrayReleaseRuleItemTransformer.batchTransformFromJSON(grayReleaseRule.getRules()));
         }
+        release4Branch.setReleaseKey(release4Branch.getReleaseKey() + "branch");
 
         createReleaseAndUnlock(release4Branch);
 
