@@ -34,7 +34,7 @@ public abstract class PublishStrategy {
     protected NamespaceBranchService namespaceBranchService;
 
 
-    public Release publish(Release release4Main) {
+    public Release publish(Release release) {
         return null;
 
     }
