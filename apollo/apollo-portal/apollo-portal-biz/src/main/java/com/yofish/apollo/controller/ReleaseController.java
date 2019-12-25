@@ -10,6 +10,8 @@ import com.yofish.apollo.model.vo.ReleaseCompareResult;
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.service.PortalConfig;
 import com.yofish.apollo.service.ReleaseService;
+import com.yofish.gary.api.enums.UpmsResultCode;
+import com.yofish.gary.api.enums.UserStatusEnum;
 import com.youyu.common.api.IBaseResultCode;
 import com.youyu.common.api.Result;
 import common.dto.ReleaseDTO;
@@ -20,6 +22,7 @@ import common.utils.RequestPrecondition;
 import framework.apollo.core.enums.Env;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
@@ -105,12 +108,12 @@ public class ReleaseController {
     }
 
     @RequestMapping(path = "/releases/{releaseId}/rollback", method = RequestMethod.PUT)
-    public Result rollback(@PathVariable long releaseId) throws AccessDeniedException {
-        Release release = releaseService.findReleaseById(releaseId).get();
+    public Result rollback(@PathVariable long releaseId)  {
+        Release release = releaseService.findReleaseById(releaseId).orElseGet(() -> {throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG,"releaseId不存在");} );
 
-        if (!permissionValidator.hasReleaseNamespacePermission(release.getAppCode())) {
-            throw new AccessDeniedException("Access is denied");
-        }
+//        if (!permissionValidator.hasReleaseNamespacePermission(release.getAppCode())) {
+//            throw new BizException(UpmsResultCode.UNAUTHORIZED_ACCESS);
+//        }
 
         releaseService.rollback(releaseId);
 
@@ -148,6 +151,7 @@ public class ReleaseController {
         return Result.ok(releaseService.findActiveReleases(namespaceId, pageable));
     }
 
+    @ApiOperation("发布比较：   ADDED, MODIFIED, DELETED")
     @RequestMapping(value = "/releases/compare", method = RequestMethod.GET)
     public Result<ReleaseCompareResult> compareRelease(@RequestParam long baseReleaseId, @RequestParam long toCompareReleaseId) {
 
