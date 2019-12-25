@@ -149,11 +149,9 @@ public class ReleaseController {
     }
 
     @RequestMapping(value = "/envs/{env}/releases/compare", method = RequestMethod.GET)
-    public Result<ReleaseCompareResult> compareRelease(@PathVariable String env,
-                                               @RequestParam long baseReleaseId,
-                                               @RequestParam long toCompareReleaseId) {
+    public Result<ReleaseCompareResult> compareRelease(@RequestParam long baseReleaseId, @RequestParam long toCompareReleaseId) {
 
-        return Result.ok(releaseService.compare(Env.valueOf(env), baseReleaseId, toCompareReleaseId));
+        return Result.ok(releaseService.compare( baseReleaseId, toCompareReleaseId));
     }
 
 

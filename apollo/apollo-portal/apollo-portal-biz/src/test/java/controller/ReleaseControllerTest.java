@@ -15,6 +15,7 @@ import com.yofish.apollo.message.Topics;
 import com.yofish.apollo.model.bo.ReleaseBO;
 import com.yofish.apollo.model.bo.ReleaseHistoryBO;
 import com.yofish.apollo.model.model.NamespaceReleaseModel;
+import com.yofish.apollo.model.vo.ReleaseCompareResult;
 import com.yofish.apollo.repository.*;
 import com.yofish.apollo.service.CommitService;
 import com.yofish.apollo.service.ReleaseHistoryService;
@@ -159,6 +160,18 @@ public class ReleaseControllerTest extends AbstractControllerTest {
 
         Assert.assertNotNull(allReleases.getData());
     }
+
+
+    @Test
+    public void testCompareRelease() throws AccessDeniedException {
+        Pageable page = PageRequest.of(0,2);
+        List<common.dto.ReleaseDTO> allReleases = releaseController.findActiveReleases(namespace.getId(), 0, 2).data;
+
+        Result<ReleaseCompareResult> releaseCompareResultResult = releaseController.compareRelease( allReleases.get(1).getId(), allReleases.get(0).getId());
+
+        Assert.assertNotNull(releaseCompareResultResult);
+    }
+
 
     @Test
 //  @Sql(scripts = "/controller/test-release.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
