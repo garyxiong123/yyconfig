@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Table, Divider, Popconfirm } from 'antd';
+import { Table, Divider, Popconfirm, Button } from 'antd';
 import moment from 'moment';
 import ConfigAdd from '../modal/ConfigAdd';
 
@@ -8,14 +8,16 @@ class TableList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showEdit: false
+      showEdit: false,
+      currentItem: {}
     };
   }
   componentDidMount() { }
 
-  onEdit = () => {
+  onEdit = (record) => {
     this.setState({
-      showEdit: true
+      showEdit: true,
+      currentItem: record || {}
     })
   }
   onCancel=()=>{
@@ -96,11 +98,12 @@ class TableList extends React.Component {
     )
   }
   render() {
-    const { showEdit } = this.state;
+    const { showEdit, currentItem } = this.state;
     return (
       <Fragment>
+        <Button size="small" type="primary" onClick={this.onEdit} style={{margin: '10px 0'}}>+新增配置</Button>
         {this.renderTable()}
-        {showEdit && <ConfigAdd onCancel={this.onCancel}/>}
+        {showEdit && <ConfigAdd onCancel={this.onCancel} currentItem={currentItem}/>}
       </Fragment>
     );
   }

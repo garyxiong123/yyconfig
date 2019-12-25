@@ -33,9 +33,18 @@ const project = {
   nameSpacePublicAdd: async function (params = {}) {
     return requestPost(`/apps/${params.appId}/namespaces/public`, params);
   },
+  configAdd: async function (params = {}) {
+    return requestPost(`/item/createItem`, params);
+  },
+  configUpdate: async function (params = {}) {
+    return requestPost(`/item/updateItem`, params);
+  },
+  
 };
 const cluster = {
-
+  clusterAdd: async function (params = {}) {
+    return requestPost(`/apps/${params.appId}/envs/${params.env}/clusters/${params.clusterName}`);
+  }
 }
 export {
   project,

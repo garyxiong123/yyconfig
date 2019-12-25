@@ -122,13 +122,13 @@ class CreateProject extends React.Component {
             </Select>
           )}
         </FormItem>
-        <FormItem label="项目Id">
+        <FormItem label="项目Code">
           {getFieldDecorator('appCode', {
             initialValue: appDetail.appCode,
             rules: [
-              { required: true, message: "请输入项目Id" }
+              { required: true, message: "请输入项目Code" }
             ]
-          })(<Input placeholder="请输入项目Id" />)}
+          })(<Input placeholder="请输入项目Code" />)}
         </FormItem>
         <FormItem label="项目名称">
           {getFieldDecorator('name', {
