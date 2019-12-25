@@ -5,6 +5,7 @@ import com.yofish.apollo.domain.*;
 import com.yofish.apollo.model.bo.ItemBO;
 import com.yofish.apollo.model.bo.NamespaceVO;
 import com.yofish.apollo.repository.AppEnvClusterNamespace4BranchRepository;
+import com.yofish.apollo.repository.AppEnvClusterNamespace4MainRepository;
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.repository.AppEnvClusterRepository;
 import common.constants.GsonType;
@@ -31,6 +32,8 @@ import java.util.stream.Collectors;
 public class AppEnvClusterNamespaceService {
     @Autowired
     private AppEnvClusterNamespaceRepository appEnvClusterNamespaceRepository;
+    @Autowired
+    private AppEnvClusterNamespace4MainRepository namespace4MainRepository;
     @Autowired
     private AppNamespaceService appNamespaceService;
     @Autowired
@@ -87,15 +90,17 @@ public class AppEnvClusterNamespaceService {
         }
         List<AppEnvClusterNamespace> namespaces = findNamespaces(appEnvCluster);
 
+        List<NamespaceVO> namespaceVOList = new LinkedList<>();
         namespaces.forEach(namespace -> {
-            transformNamespace2BO(namespace);
+            NamespaceVO namespaceVO = transformNamespace2BO(namespace);
+            namespaceVOList.add(namespaceVO);
         });
 
-        return null;
+        return namespaceVOList;
     }
 
     public List<AppEnvClusterNamespace> findNamespaces(AppEnvCluster appEnvCluster) {
-        List<AppEnvClusterNamespace> namespaces = appEnvClusterNamespaceRepository.findByAppEnvClusterOrderByIdAsc(appEnvCluster);
+        List<AppEnvClusterNamespace> namespaces = namespace4MainRepository.findByAppEnvClusterOrderByIdAsc(appEnvCluster);
         if (namespaces == null) {
             return Collections.emptyList();
         }
@@ -117,35 +122,29 @@ public class AppEnvClusterNamespaceService {
     }
 
     private NamespaceVO transformNamespace2BO(AppEnvClusterNamespace appEnvClusterNamespace) {
-        NamespaceVO namespaceBO = new NamespaceVO();
+        NamespaceVO namespaceVO = new NamespaceVO();
 
-        String env = appEnvClusterNamespace.getAppEnvCluster().getEnv();
         NamespaceDTO namespace = transformNamespaceDTO(appEnvClusterNamespace);
 
-        namespaceBO.setBaseInfo(namespace);
-        namespaceBO.setFormat(appEnvClusterNamespace.getAppNamespace().getFormat().getValue());
-        namespaceBO.setComment(appEnvClusterNamespace.getAppNamespace().getComment());
-        namespaceBO.setPublic(appEnvClusterNamespace.getAppNamespace() instanceof AppNamespace4Public);
+        namespaceVO.setBaseInfo(namespace);
+        namespaceVO.setFormat(appEnvClusterNamespace.getAppNamespace().getFormat().getValue());
+        namespaceVO.setComment(appEnvClusterNamespace.getAppNamespace().getComment());
+        namespaceVO.setPublic(appEnvClusterNamespace.getAppNamespace() instanceof AppNamespace4Public);
 
 
-        String appCode = namespace.getAppCode();
-        String clusterName = namespace.getClusterName();
-        String namespaceName = namespace.getNamespaceName();
-
-//        fillAppNamespaceProperties(namespaceBO);
 
         List<ItemBO> itemBOs = new LinkedList<>();
-        namespaceBO.setItems(itemBOs);
+        namespaceVO.setItems(itemBOs);
 
         //latest Release
         ReleaseDTO latestRelease;
-        Map<String, String> releaseItems = new HashMap<>(16);
+        Map<String, String> releaseConfig = new HashMap<>(16);
         Map<String, ItemDTO> deletedItemDTOs = new HashMap<>(16);
-        // TODO: 2019-12-21 这个地方还要测试
 
+        // TODO: 2019-12-21 这个地方还要测试
         latestRelease = releaseService.loadLatestRelease(appEnvClusterNamespace);
         if (latestRelease != null) {
-            releaseItems = gson.fromJson(latestRelease.getConfigurations(), GsonType.CONFIG);
+            releaseConfig = gson.fromJson(latestRelease.getConfigurations(), GsonType.CONFIG);
         }
 
         //not Release config items
@@ -154,7 +153,7 @@ public class AppEnvClusterNamespaceService {
         int modifiedItemCnt = 0;
         for (ItemDTO itemDTO : items) {
 
-            ItemBO itemBO = transformItem2BO(itemDTO, releaseItems);
+            ItemBO itemBO = transformItem2BO(itemDTO, releaseConfig);
 
             if (itemBO.isModified()) {
                 modifiedItemCnt++;
@@ -167,13 +166,13 @@ public class AppEnvClusterNamespaceService {
         itemService.findDeletedItems(appEnvClusterNamespace.getId()).stream()
                 .forEach(item -> deletedItemDTOs.put(item.getKey(), item));
 
-        List<ItemBO> deletedItems = parseDeletedItems(items, releaseItems, deletedItemDTOs);
+        List<ItemBO> deletedItems = parseDeletedItems(items, releaseConfig, deletedItemDTOs);
         itemBOs.addAll(deletedItems);
         modifiedItemCnt += deletedItems.size();
 
-        namespaceBO.setItemModifiedCnt(modifiedItemCnt);
+        namespaceVO.setItemModifiedCnt(modifiedItemCnt);
 
-        return namespaceBO;
+        return namespaceVO;
     }
 
     private List<ItemBO> parseDeletedItems(List<ItemDTO> newItems, Map<String, String> releaseItems, Map<String, ItemDTO> deletedItemDTOs) {

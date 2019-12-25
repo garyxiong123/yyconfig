@@ -7,6 +7,8 @@ import com.yofish.gary.biz.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -18,6 +20,7 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  * @author WangSongJun
  * @date 2019-12-05
  */
+@Order(Ordered.LOWEST_PRECEDENCE-1)
 @Slf4j
 @Component("userDataImport")
 @DependsOn("strategyNumBean")

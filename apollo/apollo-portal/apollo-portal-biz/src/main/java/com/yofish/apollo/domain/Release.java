@@ -71,9 +71,8 @@ public class Release extends BaseEntity {
 
 
     public Release publish() {
-        publishStrategy.publish(this);
 
-        return this;
+        return null;
     }
 
 

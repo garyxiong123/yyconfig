@@ -8,6 +8,7 @@ import com.yofish.apollo.domain.Department;
 import com.yofish.apollo.model.vo.EnvClusterInfo;
 import com.yofish.apollo.repository.AppRepository;
 import com.yofish.apollo.repository.DepartmentRepository;
+import com.yofish.gary.api.enums.UpmsResultCode;
 import com.yofish.gary.api.feign.UserApi;
 import com.yofish.gary.biz.domain.User;
 import com.yofish.gary.biz.service.UserService;
@@ -108,7 +109,7 @@ public class AppService {
 
         //当前用户ID
         Long currentUserId = YyRequestInfoHelper.getCurrentUserId();
-        YyAssert.isTrue(!ObjectUtils.isEmpty(currentUserId), "403", "用户未登录！");
+        YyAssert.isTrue(!ObjectUtils.isEmpty(currentUserId), UpmsResultCode.USER_SESSION_EXPIRED);
         if (userApi.isAdmin(currentUserId).ifNotSuccessThrowException().getData()) {
             //用户是管理员
             Page<App> apps = appRepository.findAll(pageable);

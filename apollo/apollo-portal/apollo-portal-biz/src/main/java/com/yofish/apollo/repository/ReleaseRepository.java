@@ -2,6 +2,8 @@ package com.yofish.apollo.repository;
 
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.Release;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Component;
@@ -33,5 +35,7 @@ public interface ReleaseRepository extends JpaRepository<Release, Long> {
 
 
     Release findFirstByAppEnvClusterNamespace_IdAndAbandonedIsFalseOrderByIdDesc(Long namespaceId );
+
+    List<Release> findByAppEnvClusterNamespace_IdAndAbandonedIsFalseOrderByIdDesc(Long namespaceId, Pageable page );
 
 }

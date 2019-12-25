@@ -10,11 +10,14 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface ReleaseHistoryRepository extends PagingAndSortingRepository<ReleaseHistory, Long> {
 
+    Page<ReleaseHistory> findByNamespaceIdOrderByIdDesc(Long namespaceId, Pageable pageable);
+
     Page<ReleaseHistory> findReleaseHistoriesByRelease(Release release, Pageable pageable);
 
     Page<ReleaseHistory> findReleaseHistorysByReleaseAndOperationOrderByIdDesc(Release release, int operation, Pageable pageable);
 
     Page<ReleaseHistory> findByPreviousReleaseIdAndOperationOrderByIdDesc(long previousReleaseId, int operation, Pageable pageable);
+
 
     @Modifying
     @Query("update ReleaseHistory set isdeleted=1,DataChange_LastModifiedBy = ?4 where appCode=?1 and clusterName=?2 and namespaceName = ?3")

@@ -5,7 +5,9 @@ import com.yofish.apollo.service.AppNamespaceService;
 import com.yofish.apollo.service.ItemService;
 import com.yofish.gary.dao.entity.BaseEntity;
 import lombok.*;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import javax.persistence.*;
 
@@ -44,8 +46,8 @@ public class AppEnvClusterNamespace extends BaseEntity {
         return getBeanByClass(ReleaseRepository.class).findFirstByAppEnvClusterNamespace_IdAndAbandonedIsFalseOrderByIdDesc(this.getId());
     }
 
-    public List<Release> findLatestActiveReleases(PageRequest page) {
-        return null;
+    public List<Release> findLatestActiveReleases(Pageable page) {
+        return getBeanByClass(ReleaseRepository.class).findByAppEnvClusterNamespace_IdAndAbandonedIsFalseOrderByIdDesc(this.getId(), page);
     }
 
     public List<Item> getItems() {

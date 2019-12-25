@@ -8,6 +8,7 @@ import com.yofish.apollo.model.bo.ReleaseBO;
 import com.yofish.apollo.model.vo.ReleaseCompareResult;
 import com.yofish.apollo.repository.Release4MainRepository;
 import com.yofish.apollo.repository.ReleaseRepository;
+import com.youyu.common.exception.BizException;
 import common.dto.ReleaseDTO;
 import common.exception.NotFoundException;
 import common.utils.BeanUtils;
@@ -209,11 +210,8 @@ public class ReleaseService {
 
     public void rollback(long releaseId) {
 
-        Release4Main release4Main = release4MainRepository.findById(releaseId).get();
+        Release4Main release4Main = release4MainRepository.findById(releaseId).orElseGet( () -> {throw new BizException("12","release not found"); } );
 
-        if (release4Main == null) {
-            throw new NotFoundException("release not found");
-        }
         release4Main.rollback();
     }
 

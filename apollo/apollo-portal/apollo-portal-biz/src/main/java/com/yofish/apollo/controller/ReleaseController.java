@@ -102,13 +102,10 @@ public class ReleaseController {
         return releaseDTO;
     }
 
-    @RequestMapping(path = "/envs/{env}/releases/{releaseId}/rollback", method = RequestMethod.PUT)
+    @RequestMapping(path = "/releases/{releaseId}/rollback", method = RequestMethod.PUT)
     public void rollback(@PathVariable long releaseId) throws AccessDeniedException {
         Release release = releaseService.findReleaseById(releaseId).get();
 
-        if (release == null) {
-            throw new NotFoundException("release not found");
-        }
 
         if (!permissionValidator.hasReleaseNamespacePermission(release.getAppCode())) {
             throw new AccessDeniedException("Access is denied");
