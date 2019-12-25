@@ -59,6 +59,10 @@ const project = {
     return requestPut(`/releases/${params.releaseId}/rollback`);
   },
   //
+  nameSpaceListWithApp: async function (params = {}) {
+    return requestPost(`/namespaceList`, params);
+  },
+  
 
 };
 const cluster = {

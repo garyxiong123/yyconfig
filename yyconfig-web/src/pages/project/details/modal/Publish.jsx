@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Modal, Form, Input, message } from 'antd';
+import { Modal, Form, Input, message, Table } from 'antd';
 import moment from 'moment';
 import { project } from '@/services/project';
 
@@ -22,16 +22,26 @@ class Publish extends React.Component {
     super(props);
     this.state = {
       loading: false,
-
+      changeList: []
     };
   }
   componentDidMount() {
+
     let releaseTitle = moment().format('YYYYMMDDHHMMSS');
     this.setState({
       releaseTitle
     })
-  }
+    this.onGetChanges();
 
+  }
+  onGetChanges = () => {
+    const { currentItem } = this.props;
+    let item = currentItem.items || [];
+    let changeList = item.filter(vo => (vo.modified || vo.deleted));
+    this.setState({
+      changeList
+    })
+  }
 
   onSubmit = (e) => {
     const { onCancel } = this.props;
@@ -55,7 +65,46 @@ class Publish extends React.Component {
       onCancel();
       onSave();
     }
-
+  }
+  renderChangesTable() {
+    const { currentItem } = this.props;
+    const { changeList } = this.state;
+    const columns = [
+      {
+        title: 'Key',
+        dataIndex: 'item.key',
+      },
+      {
+        title: '发布的值',
+        dataIndex: 'newValue',
+      },
+      {
+        title: '未发布的值',
+        dataIndex: 'oldValue',
+      },
+      {
+        title: '修改人',
+        dataIndex: 'item.updateAuthor',
+      },
+      {
+        title: '修改时间',
+        dataIndex: 'item.updateTime',
+        render: (text, record)=>(
+          <span>{text? moment(text).format('YYYY-MM-DD'): ''}</span>
+        )
+      },
+    ];
+    return (
+      <Table
+        bordered
+        columns={columns}
+        dataSource={changeList || []}
+        pagination={false}
+        rowKey={record => {
+          return record.item.id;
+        }}
+      />
+    )
   }
   renderForm() {
     const { getFieldDecorator, getFieldValue } = this.props.form;
@@ -63,7 +112,8 @@ class Publish extends React.Component {
     return (
       <Form onSubmit={this.onSubmit} {...formItemLayout}>
         <FormItem label="Changes">
-          <span>配置没有变化</span>
+          {this.renderChangesTable()}
+          {/* <span>配置没有变化</span> */}
         </FormItem>
         <FormItem label="Release Name">
           {getFieldDecorator('releaseTitle', {
@@ -94,7 +144,7 @@ class Publish extends React.Component {
         onCancel={onCancel}
         onOk={this.onSubmit}
         okText="发布"
-        width={800}
+        width={1000}
         confirmLoading={loading}
       >
         {this.renderForm()}

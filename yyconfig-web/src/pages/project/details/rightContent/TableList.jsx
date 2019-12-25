@@ -127,7 +127,7 @@ class TableList extends React.Component {
               <Divider type="vertical" />
               <Popconfirm
                 title="确定删除吗?"
-                onConfirm={() => this.onDelete(record.id)}
+                onConfirm={() => this.onDelete(record.item.id)}
                 okText="确定"
                 cancelText="取消"
               >

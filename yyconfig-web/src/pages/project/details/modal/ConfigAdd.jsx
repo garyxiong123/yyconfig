@@ -27,12 +27,22 @@ class ConfigAdd extends React.Component {
       checkList: []
     };
   }
-  componentDidMount() { }
-
+  componentDidMount() {
+    this.onFetchNameSpaceListWithApp();
+  }
+  onFetchNameSpaceListWithApp = () => {
+    const { dispatch, appDetail } = this.props;
+    dispatch({
+      type: 'project/nameSpaceListWithApp',
+      payload: {
+        appCode: appDetail.appCode,
+        namespace: appDetail.name
+      }
+    })
+  }
   onSubmit = (e) => {
     const { onCancel, currentItem } = this.props;
     let item = currentItem.item || {};
-    console.log('currentItem--->', currentItem)
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
@@ -43,7 +53,6 @@ class ConfigAdd extends React.Component {
           //新增
           this.onConfigAdd(values);
         }
-
       }
     })
   }
@@ -95,7 +104,7 @@ class ConfigAdd extends React.Component {
   }
   renderForm() {
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { envList, currentItem } = this.props;
+    const { envList, currentItem, nameSpaceListWithApp } = this.props;
     let item = currentItem.item || {};
     const { checkList } = this.state;
     return (
@@ -130,7 +139,7 @@ class ConfigAdd extends React.Component {
         {
           !item.id &&
           <FormItem label="选择集群">
-            {
+            {/* {
               envList.map((item, i) => (
                 <Fragment key={item.env}>
                   <div>{item.env}(环境)</div>
@@ -147,7 +156,19 @@ class ConfigAdd extends React.Component {
                   </Checkbox.Group>
                 </Fragment>
               ))
-            }
+            } */}
+            <Checkbox.Group>
+              <Row type="flex">
+                {
+                  nameSpaceListWithApp.map((vo, i) => (
+                    <Col span={24} key={vo.id} style={{marginBottom: 15}}>
+                      <Checkbox value={vo.id} onChange={(e) => this.onChange(e, item)}>{vo.env} - {vo.name}</Checkbox>
+                    </Col>
+
+                  ))
+                }
+              </Row>
+            </Checkbox.Group>
           </FormItem>
         }
       </Form>
@@ -171,5 +192,7 @@ class ConfigAdd extends React.Component {
   }
 }
 export default Form.create()(connect(({ project }) => ({
-  envList: project.envList
+  envList: project.envList,
+  nameSpaceListWithApp: project.nameSpaceListWithApp,
+  appDetail: project.appDetail
 }))(ConfigAdd));

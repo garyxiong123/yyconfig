@@ -10,7 +10,8 @@ const ProjectModel = {
     nameSpaceList: [],
     publicNamespaceList: [],
     releasesActiveInfo: [],
-    releasesCompare: []
+    releasesCompare: [],
+    nameSpaceListWithApp: []
   },
   effects: {
     *appList({ payload }, { call, put }) {
@@ -59,6 +60,13 @@ const ProjectModel = {
       const response = yield call(project.releasesCompare, payload);
       yield put({
         type: 'setReleasesCompare',
+        payload: response,
+      });
+    },
+    *nameSpaceListWithApp({ payload }, { call, put }) {
+      const response = yield call(project.nameSpaceListWithApp, payload);
+      yield put({
+        type: 'setNameSpaceListWithApp',
         payload: response,
       });
     },
@@ -118,6 +126,12 @@ const ProjectModel = {
       return {
         ...state,
         releasesCompare: payload.data || []
+      }
+    },
+    setNameSpaceListWithApp(state, { payload = {} }) {
+      return {
+        ...state,
+        nameSpaceListWithApp: payload.data || []
       }
     },
     clearData(state, { payload = {} }) {
