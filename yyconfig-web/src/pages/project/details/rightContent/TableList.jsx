@@ -1,8 +1,9 @@
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Table, Divider, Popconfirm, Button, Tag } from 'antd';
+import { Table, Divider, Popconfirm, Button, Tag, message } from 'antd';
 import moment from 'moment';
 import ConfigAdd from '../modal/ConfigAdd';
+import { project } from '@/services/project'
 
 class TableList extends React.Component {
   constructor(props) {
@@ -25,6 +26,29 @@ class TableList extends React.Component {
       showEdit: false
     })
   }
+  onDelete = async (itemId) => {
+    let res = await project.configDelete({itemId});
+    if(res && res.code === '1') {
+      message.success('删除成功');
+      this.onFetchNamespaceList();
+    }
+  }
+  onConfigSave = () => {
+    this.onFetchNamespaceList();
+  }
+  onFetchNamespaceList = () => {
+    const { dispatch, appDetail, currentEnv } = this.props;
+    let currentCluster = currentEnv.cluster || {};
+    dispatch({
+      type: 'project/nameSpaceList',
+      payload: {
+        appCode: appDetail.appCode,
+        env: currentEnv.env,
+        clusterName: currentCluster.name
+      }
+    })
+  }
+
   renderPushStatus = (item) => {
     if (!item.deleted && !item.modified) {
       return <Tag color="#999">已发布</Tag>
@@ -103,7 +127,7 @@ class TableList extends React.Component {
               <Divider type="vertical" />
               <Popconfirm
                 title="确定删除吗?"
-                // onConfirm={() => this.onDelete(record.id)}
+                onConfirm={() => this.onDelete(record.id)}
                 okText="确定"
                 cancelText="取消"
               >
@@ -135,13 +159,15 @@ class TableList extends React.Component {
       <Fragment>
         <Button size="small" type="primary" onClick={this.onEdit} style={{ margin: '10px 0' }}>+新增配置</Button>
         {this.renderTable()}
-        {showEdit && <ConfigAdd onCancel={this.onCancel} currentItem={currentItem} />}
+        {showEdit && <ConfigAdd onCancel={this.onCancel} currentItem={currentItem} onSave={this.onConfigSave} />}
       </Fragment>
     );
   }
 }
 
 export default connect(({ project, loading }) => ({
+  appDetail: project.appDetail,
+  currentEnv: project.currentEnv,
   // appDetail: project.appDetail,
   // loading: loading.effects["project/appList"]
 }))(TableList);

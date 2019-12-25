@@ -40,6 +40,9 @@ const project = {
   configUpdate: async function (params = {}) {
     return requestPost(`/item/updateItem`, params);
   },
+  configDelete: async function (params = {}) {
+    return requestPost(`/item/deleteItem`, params);
+  },
   createRelease: async function (params = {}) {
     return requestPost(`/createRelease`, params);
   },

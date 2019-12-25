@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 import { connect } from 'dva';
 import { Modal, Form, Input, Tree, message, Checkbox, Row, Col } from 'antd';
 import { project } from '@/services/project';
+import { isTSExpressionWithTypeArguments } from '@babel/types';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -30,11 +31,19 @@ class ConfigAdd extends React.Component {
 
   onSubmit = (e) => {
     const { onCancel, currentItem } = this.props;
+    let item = currentItem.item || {};
+    console.log('currentItem--->', currentItem)
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        console.log('values-->', values)
-        this.onConfigAdd(values);
+        if (item.id) {
+          //修改
+          this.onConfigUpdate(values)
+        } else {
+          //新增
+          this.onConfigAdd(values);
+        }
+
       }
     })
   }
@@ -42,16 +51,22 @@ class ConfigAdd extends React.Component {
   onConfigAdd = async (values) => {
     const { checkList } = this.state;
     let res = await project.configAdd({
-      appEnvClusterNamespaceIds:checkList,
+      appEnvClusterNamespaceIds: checkList,
       ...values
     });
-    if(res && res.code === '1') {
-      message.success('新建成功');
-      this.onSuccess();
-    }
+    this.onSuccess(res);
+  }
+  onConfigUpdate = async (values) => {
+    const { currentItem } = this.props;
+    let item = currentItem.item || {};
+    let res = await project.configUpdate({
+      itemId: item.id,
+      ...values
+    });
+    this.onSuccess(res);
   }
   onSuccess = (res) => {
-    const { onSave } = this.props;
+    const { onSave, onCancel } = this.props;
     if (res && res.code === '1') {
       message.success('操作成功');
       onCancel();
@@ -92,7 +107,7 @@ class ConfigAdd extends React.Component {
               { required: true, message: '请输入Key' }
             ]
           })(
-            <Input placeholder="请输入Key" />
+            <Input placeholder="请输入Key" disabled={item.id ? true : false} />
           )}
         </FormItem>
         <FormItem label="Value">
@@ -140,9 +155,10 @@ class ConfigAdd extends React.Component {
   }
   render() {
     const { onCancel, currentItem, loading } = this.props;
+    let item = currentItem.item || {};
     return (
       <Modal
-        title={"添加配置"}
+        title={item.id ? "修改配置" : "添加配置"}
         visible={true}
         onCancel={onCancel}
         onOk={this.onSubmit}
