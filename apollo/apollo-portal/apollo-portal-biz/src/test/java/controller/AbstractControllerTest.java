@@ -15,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 
-@Transactional
+//@Transactional
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {AdminServiceTestConfiguration.class, JpaApplication.class})
 //@WebIntegrationTest(randomPort = true)

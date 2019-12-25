@@ -49,8 +49,8 @@ public class ItemController {
 
   @PostMapping(value = "/createItem")
   public Result<Item> createItem(@RequestBody CreateItemReq req) {
-    Item item= itemService.createItem(req);
-    return Result.ok(item);
+    itemService.createItem(req);
+    return Result.ok();
   }
 
 
