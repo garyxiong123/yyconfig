@@ -12,12 +12,14 @@ import com.yofish.apollo.dto.CreateItemReq;
 import com.yofish.apollo.dto.ReleaseDTO;
 import com.yofish.apollo.dto.ReleaseHistoryDTO;
 import com.yofish.apollo.message.Topics;
+import com.yofish.apollo.model.bo.ReleaseBO;
 import com.yofish.apollo.model.bo.ReleaseHistoryBO;
 import com.yofish.apollo.model.model.NamespaceReleaseModel;
 import com.yofish.apollo.repository.*;
 import com.yofish.apollo.service.CommitService;
 import com.yofish.apollo.service.ReleaseHistoryService;
 import com.yofish.apollo.service.ReleaseService;
+import com.youyu.common.api.Result;
 import com.youyu.common.exception.BizException;
 import common.dto.AppDTO;
 import common.dto.ClusterDTO;
@@ -33,6 +35,8 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.test.annotation.Rollback;
@@ -129,7 +133,6 @@ public class ReleaseControllerTest extends AbstractControllerTest {
 
         Release release = namespace.findLatestActiveRelease();
 
-
         releaseController.rollback(release.getId());
     }
 
@@ -141,6 +144,21 @@ public class ReleaseControllerTest extends AbstractControllerTest {
         releaseController.rollback(release4Branch.getId());
     }
 
+    @Test
+    public void testFindAllRelease() throws AccessDeniedException {
+        Pageable page = PageRequest.of(0,5);
+        Result<List<ReleaseBO>> allReleases = releaseController.findAllReleases(namespace.getId(), 0, 5);
+
+        Assert.assertNotNull(allReleases.getData());
+    }
+
+    @Test
+    public void testFindActiveRelease() throws AccessDeniedException {
+        Pageable page = PageRequest.of(0,2);
+        Result<List<common.dto.ReleaseDTO>> allReleases = releaseController.findActiveReleases(namespace.getId(), 0, 2);
+
+        Assert.assertNotNull(allReleases.getData());
+    }
 
     @Test
 //  @Sql(scripts = "/controller/test-release.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)

@@ -6,6 +6,7 @@ import com.yofish.apollo.bo.ItemChangeSets;
 import com.yofish.apollo.domain.*;
 import com.yofish.apollo.model.bo.ReleaseBO;
 import com.yofish.apollo.model.vo.ReleaseCompareResult;
+import com.yofish.apollo.repository.AppEnvClusterNamespace4MainRepository;
 import com.yofish.apollo.repository.Release4MainRepository;
 import com.yofish.apollo.repository.ReleaseRepository;
 import com.youyu.common.exception.BizException;
@@ -13,6 +14,7 @@ import common.dto.ReleaseDTO;
 import common.utils.BeanUtils;
 import framework.apollo.core.enums.Env;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
+import static com.yofish.gary.utils.OrikaCopyUtil.copyProperty4List;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 
 /**
@@ -43,6 +46,8 @@ public class ReleaseService {
     private ReleaseHistoryService releaseHistoryService;
     @Autowired
     private Release4MainRepository release4MainRepository;
+    @Autowired
+    private AppEnvClusterNamespace4MainRepository namespace4MainRepository;
 
 
     public Release findActiveOne(long releaseId) {
@@ -66,29 +71,14 @@ public class ReleaseService {
     }
 
 
-    public List<ReleaseBO> findAllReleases(String namespaceId, Pageable page) {
-//        List<Release> releases = releaseRepository.findByAppIdAndClusterNameAndNamespaceNameOrderByIdDesc(appId,
-//                clusterName,
-//                namespaceName,
-//                page);
-//        if (releases == null) {
-//            return Collections.emptyList();
-//        }
+    public List<ReleaseBO> findAllReleases(Long namespaceId, Pageable page) {
+        List<Release> releases = releaseRepository.findByAppEnvClusterNamespace_IdOrderByIdDesc(namespaceId, page);
+        if (releases == null) {
+            return Collections.emptyList();
+        }
         return null;
     }
 
-    public List<Release> findActiveReleases(String appId, String clusterName, String namespaceName, Pageable page) {
-//        List<Release>
-//                releases =
-//                releaseRepository.findByAppIdAndClusterNameAndNamespaceNameAndIsAbandonedFalseOrderByIdDesc(appId, clusterName,
-//                        namespaceName,
-//                        page);
-//        if (releases == null) {
-//            return Collections.emptyList();
-//        }
-//        return releases;
-        return null;
-    }
 
     public ReleaseDTO loadLatestRelease(AppEnvClusterNamespace namespace) {
         Release release = namespace.findLatestActiveRelease();
@@ -216,7 +206,24 @@ public class ReleaseService {
 
 
 
-    public List<ReleaseDTO> findActiveReleases(String namespaceId, Pageable pageable) {
-        return null;
+    public List<ReleaseDTO> findActiveReleases(Long namespaceId, Pageable pageable) {
+        AppEnvClusterNamespace4Main appEnvClusterNamespace4Main = namespace4MainRepository.findById(namespaceId).orElse(null);
+        Pageable page = PageRequest.of(0,2);
+
+        List<Release> latestActiveReleases = appEnvClusterNamespace4Main.findLatestActiveReleases(page);
+
+        return transform2Dtos(latestActiveReleases);
+    }
+
+    private List<ReleaseDTO> transform2Dtos(List<Release> latestActiveReleases) {
+        if(CollectionUtils.isEmpty(latestActiveReleases)){
+            return null;
+        }
+        List<ReleaseDTO> releaseDTOS =  copyProperty4List(latestActiveReleases, ReleaseDTO.class);
+
+//        latestActiveReleases.stream().forEach(release -> {
+//            ReleaseDTO releaseDTO = ReleaseDTO.builder().releaseKey(release.)
+//        });
+        return releaseDTOS;
     }
 }
