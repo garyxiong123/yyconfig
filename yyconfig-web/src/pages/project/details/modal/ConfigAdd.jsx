@@ -31,12 +31,13 @@ class ConfigAdd extends React.Component {
     this.onFetchNameSpaceListWithApp();
   }
   onFetchNameSpaceListWithApp = () => {
-    const { dispatch, appDetail } = this.props;
+    const { dispatch, appDetail, baseInfo } = this.props;
+    const info = baseInfo || {};
     dispatch({
       type: 'project/nameSpaceListWithApp',
       payload: {
-        appCode: appDetail.appCode,
-        namespace: appDetail.name
+        appCode: info.appCode,
+        namespace: info.namespaceName
       }
     })
   }
@@ -161,7 +162,7 @@ class ConfigAdd extends React.Component {
               <Row type="flex">
                 {
                   nameSpaceListWithApp.map((vo, i) => (
-                    <Col span={24} key={vo.id} style={{marginBottom: 15}}>
+                    <Col span={24} key={vo.id} style={{ marginBottom: 15 }}>
                       <Checkbox value={vo.id} onChange={(e) => this.onChange(e, item)}>{vo.env} - {vo.name}</Checkbox>
                     </Col>
 

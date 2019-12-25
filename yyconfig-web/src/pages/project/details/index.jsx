@@ -138,7 +138,7 @@ class ProjectDetail extends React.Component {
     let department = appDetail.department || {}, appOwner = appDetail.appOwner || {};
     return (
       <Descriptions size="small" column={5}>
-        <Descriptions.Item label="项目Id">{appDetail.appCode}</Descriptions.Item>
+        <Descriptions.Item label="项目Code">{appDetail.appCode}</Descriptions.Item>
         <Descriptions.Item label="项目名">{appDetail.name}</Descriptions.Item>
         <Descriptions.Item label="部门">{department.name}</Descriptions.Item>
         <Descriptions.Item label="负责人">{appOwner.realName}</Descriptions.Item>

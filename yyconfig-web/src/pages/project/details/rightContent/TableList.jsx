@@ -153,11 +153,12 @@ class TableList extends React.Component {
   }
   render() {
     const { showEdit, currentItem } = this.state;
+    const { baseInfo }= this.props;
     return (
       <Fragment>
         <Button size="small" type="primary" onClick={this.onEdit} style={{ margin: '10px 0' }}>+新增配置</Button>
         {this.renderTable()}
-        {showEdit && <ConfigAdd onCancel={this.onCancel} currentItem={currentItem} onSave={this.onConfigSave} />}
+        {showEdit && <ConfigAdd onCancel={this.onCancel} currentItem={currentItem} onSave={this.onConfigSave} baseInfo={baseInfo}/>}
       </Fragment>
     );
   }
