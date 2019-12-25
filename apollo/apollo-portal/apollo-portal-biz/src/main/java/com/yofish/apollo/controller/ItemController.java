@@ -63,11 +63,12 @@ public class ItemController {
 
 
   @PostMapping(value = "deleteItem")
-  public void deleteItem(@RequestBody ItemReq req) {
+  public Result deleteItem(@RequestBody ItemReq req) {
     if (req.getItemId() <= 0) {
       throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "item id invalid");
     }
     itemService.deleteItem(req);
+    return Result.ok();
   }
 
 
