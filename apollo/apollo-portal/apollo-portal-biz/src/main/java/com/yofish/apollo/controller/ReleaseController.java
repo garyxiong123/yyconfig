@@ -148,7 +148,7 @@ public class ReleaseController {
         return Result.ok(releaseService.findActiveReleases(namespaceId, pageable));
     }
 
-    @RequestMapping(value = "/envs/{env}/releases/compare", method = RequestMethod.GET)
+    @RequestMapping(value = "/releases/compare", method = RequestMethod.GET)
     public Result<ReleaseCompareResult> compareRelease(@RequestParam long baseReleaseId, @RequestParam long toCompareReleaseId) {
 
         return Result.ok(releaseService.compare( baseReleaseId, toCompareReleaseId));
