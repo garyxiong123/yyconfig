@@ -61,6 +61,9 @@ class TableList extends React.Component {
     if (!item.deleted && !item.modified) {
       return
     }
+    if (item.deleted) {
+      return <Tag color="#f00">删</Tag>
+    }
     if (item.modified && !item.deleted && item.oldValue) {
       return <Tag color="#1890ff">改</Tag>
     }
@@ -68,11 +71,6 @@ class TableList extends React.Component {
     if (item.modified && !item.deleted && !item.oldValue) {
       return <Tag color="#7bd074">新</Tag>
     }
-
-    if (!item.modified && item.deleted) {
-      return <Tag color="#ff0">删</Tag>
-    }
-
   }
   renderTable() {
     const { tableList } = this.props;

@@ -65,6 +65,9 @@ class Publish extends React.Component {
       onCancel();
       onSave();
     }
+    this.setState({
+      loading: false
+    })
   }
   renderChangesTable() {
     const { currentItem } = this.props;
@@ -89,8 +92,8 @@ class Publish extends React.Component {
       {
         title: '修改时间',
         dataIndex: 'item.updateTime',
-        render: (text, record)=>(
-          <span>{text? moment(text).format('YYYY-MM-DD'): ''}</span>
+        render: (text, record) => (
+          <span>{text ? moment(text).format('YYYY-MM-DD') : ''}</span>
         )
       },
     ];
@@ -108,12 +111,15 @@ class Publish extends React.Component {
   }
   renderForm() {
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { releaseTitle } = this.state;
+    const { releaseTitle, changeList } = this.state;
     return (
       <Form onSubmit={this.onSubmit} {...formItemLayout}>
         <FormItem label="Changes">
-          {this.renderChangesTable()}
-          {/* <span>配置没有变化</span> */}
+          {
+            changeList.length ?
+              this.renderChangesTable() :
+              <span>配置没有变化</span>
+          }
         </FormItem>
         <FormItem label="Release Name">
           {getFieldDecorator('releaseTitle', {
