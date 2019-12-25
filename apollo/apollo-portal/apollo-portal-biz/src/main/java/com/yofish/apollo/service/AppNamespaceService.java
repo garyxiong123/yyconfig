@@ -44,7 +44,6 @@ public class AppNamespaceService {
 
     public List<AppNamespace4Public> findAllPublicAppNamespace() {
         List<AppNamespace4Public> appNamespaces = appNamespace4PublicRepository.findAll();
-
         return appNamespaces;
     }
 

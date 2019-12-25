@@ -1,12 +1,11 @@
 package com.yofish.apollo.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.yofish.gary.dao.entity.BaseEntity;
 import lombok.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.Set;
 
 /**
@@ -20,6 +19,7 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class OpenNamespaceType extends BaseEntity {
 
     @Column(unique = true)
@@ -28,6 +28,7 @@ public class OpenNamespaceType extends BaseEntity {
     private String comment;
 
     @OneToMany(cascade = CascadeType.DETACH)
+    @JoinColumn(name = "namespaceTypeId")
     private Set<AppNamespace> appNamespaces;
 
     public OpenNamespaceType(Long id) {

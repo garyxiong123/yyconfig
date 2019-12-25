@@ -1,5 +1,7 @@
 package com.yofish.apollo.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.yofish.gary.dao.entity.BaseEntity;
 import framework.apollo.core.enums.ConfigFileFormat;
 import lombok.*;
@@ -18,6 +20,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 30)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class AppNamespace extends BaseEntity {
 
     private String name;
