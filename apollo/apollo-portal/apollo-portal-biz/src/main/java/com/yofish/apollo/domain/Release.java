@@ -57,7 +57,7 @@ public class Release extends BaseEntity {
     @Column(nullable = false)
     private boolean abandoned;
 
-    @Column(name = "comment", nullable = false)
+    @Column(name = "comment")
     private String comment;
 
 
