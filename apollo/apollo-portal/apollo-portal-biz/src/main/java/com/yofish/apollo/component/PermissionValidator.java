@@ -1,12 +1,21 @@
 package com.yofish.apollo.component;
 
+import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.domain.AppNamespace4Public;
+import com.yofish.apollo.domain.Department;
 import com.yofish.apollo.repository.AppRepository;
 import com.yofish.apollo.service.PortalConfig;
+import com.yofish.gary.biz.domain.User;
 import com.yofish.gary.biz.repository.UserRepository;
+import com.youyu.common.utils.YyAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.youyu.common.helper.YyRequestInfoHelper.getCurrentUserId;
 
@@ -68,19 +77,70 @@ public class PermissionValidator {
     }
 
     public boolean hasCreateClusterPermission(String appCode) {
-        return isAppAdmin(appCode);
-
+        return isSuperAdmin() || isAppAdmin(getApp(appCode));
     }
 
+/*
+    public boolean departmeng(String appCode) {
+        App app = getApp(appCode);
+        Department department = app.getDepartment();
+
+    }
+*/
+
     public boolean isAppOwner(String appCode) {
-        return isSuperAdmin() || appRepository.findByAppCode(appCode).getAppOwner().equals(getCurrentUserId());
+        App app = getApp(appCode);
+        return isAppOwner(app);
+    }
+
+    public boolean isAppOwner(long appId) {
+        App app = getApp(appId);
+        return isAppAdmin(app);
+    }
+
+    public boolean isAppOwner(App app) {
+        return app.getAppOwner().getId().equals(getCurrentUserId());
     }
 
 
     public boolean isAppAdmin(String appCode) {
-        return isSuperAdmin() || hasAssignRolePermission(appCode);
+        App app = getApp(appCode);
+        return isAppAdmin(app);
     }
 
+    public boolean isAppAdmin(long appId) {
+        App app = getApp(appId);
+        return isAppAdmin(app);
+    }
+
+    public boolean isAppAdmin(App app) {
+        Set<User> appAdmins = app.getAppAdmins();
+        if (ObjectUtils.isEmpty(appAdmins)) {
+            return false;
+        } else {
+            List<Long> adminIdList = app.getAppAdmins().stream().map(user -> user.getId()).collect(Collectors.toList());
+            Long currentUserId = getCurrentUserId();
+            return adminIdList.contains(currentUserId);
+        }
+    }
+
+    private App getApp(long appId) {
+        App app = appRepository.findById(appId).orElse(null);
+        YyAssert.paramCheck(ObjectUtils.isEmpty(app), "appId:" + appId + " 不存在！");
+        return app;
+    }
+
+    private App getApp(String appCode) {
+        App app = appRepository.findByAppCode(appCode);
+        YyAssert.paramCheck(ObjectUtils.isEmpty(app), "appCode:" + appCode + " 不存在！");
+        return app;
+    }
+
+    /**
+     * 当前用户是否是系统超级管理员
+     *
+     * @return
+     */
     public boolean isSuperAdmin() {
         return userRepository.findById(getCurrentUserId()).get().isAdmin();
     }
