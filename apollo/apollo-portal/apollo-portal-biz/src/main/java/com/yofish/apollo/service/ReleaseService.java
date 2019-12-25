@@ -10,7 +10,6 @@ import com.yofish.apollo.repository.Release4MainRepository;
 import com.yofish.apollo.repository.ReleaseRepository;
 import com.youyu.common.exception.BizException;
 import common.dto.ReleaseDTO;
-import common.exception.NotFoundException;
 import common.utils.BeanUtils;
 import framework.apollo.core.enums.Env;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +66,7 @@ public class ReleaseService {
     }
 
 
-    public List<Release> findAllReleases(String appId, String clusterName, String namespaceName, Pageable page) {
+    public List<ReleaseBO> findAllReleases(String namespaceId, Pageable page) {
 //        List<Release> releases = releaseRepository.findByAppIdAndClusterNameAndNamespaceNameOrderByIdDesc(appId,
 //                clusterName,
 //                namespaceName,
@@ -216,4 +215,8 @@ public class ReleaseService {
     }
 
 
+
+    public List<ReleaseDTO> findActiveReleases(String namespaceId, Pageable pageable) {
+        return null;
+    }
 }

@@ -17,7 +17,6 @@ public class NamespaceReleaseModel implements Verifiable {
   private Long AppEnvClusterNamespaceId;
   private String releaseTitle;
   private String releaseComment;
-  private String releasedBy;
   private boolean isEmergencyPublish;
 
   @Override
