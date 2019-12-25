@@ -112,7 +112,7 @@ public class AppNamespaceController {
 
 
     @ApiOperation("查询所有app下环境集群附带id")
-    @GetMapping("/namespaceList")
+    @PostMapping("/namespaceList")
     public Result<List<NamespaceListResp>> namespaceList(@RequestBody NamespaceListReq namespaceListReq) {
         List<AppEnvClusterNamespace> listResps= appEnvClusterNamespaceService.findbyAppAndEnvAndNamespace(namespaceListReq.getAppCode(),namespaceListReq.getNamespace());
        List< NamespaceListResp> respVos=new ArrayList<>();
