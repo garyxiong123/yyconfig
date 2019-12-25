@@ -125,10 +125,8 @@ public class DataImport {
     }
 
     private void createThirdCreateItem(AppEnvClusterNamespace namespace) {
-        String releaseName = "releaseName3";
-        String releaseComment = "releaseComment3";
-        boolean isEmergencyPublish = false;
-        releaseService.publish(namespace,releaseName, releaseComment, null,  isEmergencyPublish);
+        CreateItemReq itemReq = CreateItemReq.builder().appEnvClusterNamespaceId(namespace.getId()).key("userName-toPublish").lineNum(4).value("garyxiong-toPublish").build();
+        itemService.createItem(itemReq);
     }
 
     private void createFirstCreateItem(AppEnvClusterNamespace namespace) {
