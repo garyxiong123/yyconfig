@@ -119,7 +119,7 @@ public class ReleaseService {
         checkLock(namespace, isEmergencyPublish, operator);
 
 
-        Release release = createRelease(namespace, releaseComment, releaseComment, null, isEmergencyPublish
+        Release release = createRelease(namespace, releaseName, releaseComment, null, isEmergencyPublish
         );
         Release publishedRelease = release.publish();
         return publishedRelease;
@@ -158,13 +158,13 @@ public class ReleaseService {
     }
 
 
-    private Release createRelease(AppEnvClusterNamespace namespace, String name, String comment, Map<String, String> configurations, boolean isEmergencyPublish) {
+    private Release createRelease(AppEnvClusterNamespace namespace, String releaseName, String comment, Map<String, String> configurations, boolean isEmergencyPublish) {
         if (namespace instanceof AppEnvClusterNamespace4Branch) {
-            Release4Branch release4Branch = new Release4Branch(namespace, name, comment, configurations, isEmergencyPublish);
+            Release4Branch release4Branch = new Release4Branch(namespace, releaseName, comment, configurations, isEmergencyPublish);
             return release4Branch;
         }
         //TODO Fix error
-        Release4Main release = new Release4Main(namespace, name, comment, configurations, isEmergencyPublish);
+        Release4Main release = new Release4Main(namespace, releaseName, comment, configurations, isEmergencyPublish);
 
 
         return release;
