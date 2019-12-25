@@ -1,7 +1,9 @@
 package com.yofish.apollo.component.txtresolver;
 
 import com.yofish.apollo.bo.ItemChangeSets;
+import com.yofish.apollo.domain.AppEnvClusterNamespace;
 import com.yofish.apollo.domain.Item;
+import framework.apollo.core.ConfigConsts;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -34,10 +36,12 @@ public class FileTextResolver implements ConfigTextResolver {
   private Item createItem(long namespaceId, long itemId, String value) {
     Item item = new Item();
     item.setId(itemId);
-//    item.setNamespaceId(namespaceId);
-//    item.setValue(value);
-//    item.setLineNum(1);
-//    item.setKey(ConfigConsts.CONFIG_FILE_CONTENT_KEY);
+    AppEnvClusterNamespace appEnvClusterNamespace=new AppEnvClusterNamespace();
+    appEnvClusterNamespace.setId(namespaceId);
+    item.setAppEnvClusterNamespace(appEnvClusterNamespace);
+    item.setValue(value);
+    item.setLineNum(1);
+    item.setKey(ConfigConsts.CONFIG_FILE_CONTENT_KEY);
     return item;
   }
 }

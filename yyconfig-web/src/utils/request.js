@@ -39,8 +39,12 @@ const errorHandler = error => {
 /**
  * 配置request请求时的默认参数
  */
-// const SERVER_HOME = '.';
-const SERVER_HOME = 'http://test.lb.gs.youyuwo.com:60008';
+let SERVER_HOME = '.';
+// const SERVER_HOME = 'http://test.lb.gs.youyuwo.com:60008';
+
+if (process.env.NODE_ENV === 'development') {
+  SERVER_HOME = 'http://localhost:8080';
+}
 
 const request = extend({
   errorHandler,
@@ -50,13 +54,13 @@ const request = extend({
   responseType: 'json',
 });
 const ERROR_CODE = {
-  loginOverDue: ['01030008', '01030011']
-}
-request.interceptors.response.use(async (response) => {
+  loginOverDue: ['01030008', '01030011'],
+};
+request.interceptors.response.use(async response => {
   if (response.status !== 200) {
-    const errortext = codeMessage[response.status] || "未知错误";
+    const errortext = codeMessage[response.status] || '未知错误';
     message.error(errortext);
-    return false
+    return false;
   }
   const data = await response.clone().json();
   if (ERROR_CODE.loginOverDue.indexOf(data.code) > -1) {
@@ -71,11 +75,11 @@ request.interceptors.response.use(async (response) => {
     message.error(data.desc);
   }
   return response;
-})
+});
 
 function fetchData(url, params) {
-  let currentUrl = `${SERVER_HOME}${url}`
-  return request(currentUrl, params)
+  let currentUrl = `${SERVER_HOME}${url}`;
+  return request(currentUrl, params);
 }
 const requestGet = (url, params) => fetchData(url, { method: 'GET', params });
 const requestPost = (url, data) => fetchData(url, { method: 'POST', data });

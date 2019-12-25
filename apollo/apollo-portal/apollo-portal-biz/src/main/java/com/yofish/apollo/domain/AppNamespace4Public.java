@@ -1,14 +1,13 @@
 package com.yofish.apollo.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import framework.apollo.core.enums.ConfigFileFormat;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 /**
  * @Author: xiongchengwei
@@ -19,6 +18,7 @@ import javax.persistence.ManyToOne;
 @Data
 @Entity
 @DiscriminatorValue("Namespace4Public")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class AppNamespace4Public extends AppNamespace {
     @Builder
     public AppNamespace4Public(String name, App app, ConfigFileFormat format, String comment, OpenNamespaceType openNamespaceType) {
@@ -28,5 +28,6 @@ public class AppNamespace4Public extends AppNamespace {
 
 
     @ManyToOne(cascade = CascadeType.DETACH)
+    @JoinColumn(name = "namespaceTypeId")
     private OpenNamespaceType openNamespaceType;
 }

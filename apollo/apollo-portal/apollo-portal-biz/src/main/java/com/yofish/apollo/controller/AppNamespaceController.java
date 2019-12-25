@@ -55,7 +55,7 @@ public class AppNamespaceController {
                 .authorizedApp(model.getAuthorizedApp())
                 .format(model.getFormat())
                 .comment(model.getComment())
-                .openNamespaceType(new OpenNamespaceType(model.getOpenNamespaceTypeId()))
+                .openNamespaceType(ObjectUtils.isEmpty(model.getOpenNamespaceTypeId())?null:new OpenNamespaceType(model.getOpenNamespaceTypeId()))
                 .build();
 
         appNamespace4Protect = appNamespaceService.createAppNamespace(appNamespace4Protect);
@@ -71,7 +71,7 @@ public class AppNamespaceController {
                 .name(model.getName())
                 .format(model.getFormat())
                 .comment(model.getComment())
-                .openNamespaceType(new OpenNamespaceType(model.getOpenNamespaceTypeId()))
+                .openNamespaceType(ObjectUtils.isEmpty(model.getOpenNamespaceTypeId())?null:new OpenNamespaceType(model.getOpenNamespaceTypeId()))
                 .build();
 
         appNamespace4Public = appNamespaceService.createAppNamespace(appNamespace4Public);

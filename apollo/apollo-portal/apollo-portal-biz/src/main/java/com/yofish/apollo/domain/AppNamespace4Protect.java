@@ -1,5 +1,7 @@
 package com.yofish.apollo.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import framework.apollo.core.enums.ConfigFileFormat;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +19,7 @@ import java.util.Set;
 @Data
 @Entity
 @DiscriminatorValue("Namespace4Protect")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class AppNamespace4Protect extends AppNamespace {
     @Builder
     public AppNamespace4Protect(String name, App app, ConfigFileFormat format, String comment, Set<App> authorizedApp, OpenNamespaceType openNamespaceType) {

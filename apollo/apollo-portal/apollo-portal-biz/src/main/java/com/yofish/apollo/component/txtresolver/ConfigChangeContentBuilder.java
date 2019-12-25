@@ -17,13 +17,7 @@ import java.util.List;
  * @date 2019-12-11
  */
 public class ConfigChangeContentBuilder {
-    //private static final Gson gson = new GsonBuilder().("yyyy-MM-dd HH:mm:ss").create();
-    private static final JSON JSON=new JSONObject() {
-        @Override
-        public void writeJSONString(Appendable appendable) {
-            super.writeJSONString(appendable);
-        }
-    };
+
     private List<ItemDTO> createItems = new LinkedList<>();
     private List<ItemPair> updateItems = new LinkedList<>();
     private List<ItemDTO> deleteItems = new LinkedList<>();

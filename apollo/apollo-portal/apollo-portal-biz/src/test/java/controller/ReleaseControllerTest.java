@@ -95,7 +95,7 @@ public class ReleaseControllerTest extends AbstractControllerTest {
         itemController.createItem(req);
 
         NamespaceReleaseModel namespaceReleaseModel = NamespaceReleaseModel.builder().releaseTitle("测试发布标题").releaseComment("测试发布").AppEnvClusterNamespaceId(namespace.getId()).build();
-        common.dto.ReleaseDTO release = releaseController.createRelease(namespaceReleaseModel);
+        common.dto.ReleaseDTO release = releaseController.createRelease(namespaceReleaseModel).data;
 
         Iterable<ReleaseHistory> releaseHistoryRepositories = releaseHistoryRepository.findAll();
         Page<ReleaseHistoryDTO> namespaceReleaseHistory = releaseHistoryService.findNamespaceReleaseHistory(namespace.getId(), 0, 10);
@@ -116,7 +116,7 @@ public class ReleaseControllerTest extends AbstractControllerTest {
     @Test
     public void testRelease4Branch() {
         NamespaceReleaseModel releaseModel4Main = NamespaceReleaseModel.builder().releaseTitle("测试发布标题").releaseComment("测试发布").AppEnvClusterNamespaceId(namespace.getId()).build();
-        common.dto.ReleaseDTO release = releaseController.createRelease(releaseModel4Main);
+        common.dto.ReleaseDTO release = releaseController.createRelease(releaseModel4Main).data;
 
         AppEnvClusterNamespace4Branch namespace4Branch = namespace.getBranchNamespace();
         NamespaceReleaseModel releaseModel4Branch = NamespaceReleaseModel.builder().releaseTitle("测试发布标题").releaseComment("分支测试发布").AppEnvClusterNamespaceId(namespace4Branch.getId()).build();
