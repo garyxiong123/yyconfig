@@ -108,7 +108,7 @@ class ProjectDetail extends React.Component {
     } else {
       this.onSetCurrentEnv({
         env: item.env,
-        cluster: item.clusters && item.clusters.length? item.clusters[0] : {}
+        cluster: item.clusters && item.clusters.length ? item.clusters[0] : {}
       })
     }
 
@@ -123,6 +123,14 @@ class ProjectDetail extends React.Component {
     this.setState({
       [type]: false
     })
+  }
+  //添加命名空间成功
+  onNamespaceAddSave = () => {
+    this.onFetchNamespaceList();
+  }
+  //添加集群成功
+  onClusterAddSave=()=>{
+    this.onFetchEnvList();
   }
   //------------------------渲染------------------------------------
   renderBaseInfo() {
@@ -188,10 +196,10 @@ class ProjectDetail extends React.Component {
           <Button block className={styles.marginTop20} type="dashed">命名空间管理</Button>
         </Card>
         {
-          showClusterModal && <ClusterAdd onCancel={() => this.onCancel('showClusterModal')} />
+          showClusterModal && <ClusterAdd onCancel={() => this.onCancel('showClusterModal')} onSave={this.onClusterAddSave}/>
         }
         {
-          showNamespace && <NamespaceAdd onCancel={() => this.onCancel('showNamespace')} />
+          showNamespace && <NamespaceAdd onCancel={() => this.onCancel('showNamespace')} onSave={this.onNamespaceAddSave} />
         }
       </Fragment>
     )
@@ -202,14 +210,23 @@ class ProjectDetail extends React.Component {
     return (
       <PageHeaderWrapper title="项目信息" content={this.renderBaseInfo()} extra={this.renderEdit()}>
         <Row type="flex" gutter={24}>
-          <Col style={{ width: 256 }}>
+          <Col span={4}>
             {this.renderEnv()}
             {this.renderOpe()}
           </Col>
-          <Col style={{flex: 1}}>
+          <Col span={20}>
             <RightContent />
           </Col>
         </Row>
+        {/* <div className={styles.mainBox}>
+          <div className={styles.leftBox}>
+            {this.renderEnv()}
+            {this.renderOpe()}
+          </div>
+          <div className={styles.rightBox}>
+            <RightContent />
+          </div>
+        </div> */}
         {
           showProjectEdit && <CreateProject onCancel={() => this.onCancel('showProjectEdit')} onSave={this.onSave} appId={appId} />
         }

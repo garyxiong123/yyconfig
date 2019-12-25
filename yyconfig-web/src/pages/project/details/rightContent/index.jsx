@@ -22,13 +22,13 @@ class RightContent extends React.Component {
   //------------------------生命周期--------------------------------
   componentDidMount() { }
   //------------------------事件------------------------------------
-  onPublish=(e)=> {
+  onPublish = (e) => {
     e && e.stopPropagation();
     this.setState({
       showPublish: true
     })
   }
-  onCancelModal=(type)=>{
+  onCancelModal = (type) => {
     this.setState({
       [type]: false
     })
@@ -36,7 +36,7 @@ class RightContent extends React.Component {
   //------------------------渲染------------------------------------
   renderRightItemHeader = (item) => {
     let baseInfo = item.baseInfo || {};
-   
+
     return (
       <Row type="flex" justify="space-between">
         <Col>
@@ -87,30 +87,32 @@ class RightContent extends React.Component {
   renderItem(item, i) {
     let baseInfo = item.baseInfo || {};
     return (
-      <Panel
-        key={baseInfo.id}
-        header={this.renderRightItemHeader(item)}
-        // extra={this.rendeRightItemExtra()}
-        style={{ marginBottom: 20, backgroundColor: '#fff' }}
-      >
-        <Tabs>
-          {
-            item.format === 'properties' &&
-            <TabPane tab="表格" key="1">
-              <TableList tableList={item.items} />
+      <Collapse bordered={false} defaultActiveKey={baseInfo.id} key={baseInfo.id}>
+        <Panel
+          key={baseInfo.id}
+          header={this.renderRightItemHeader(item)}
+          // extra={this.rendeRightItemExtra()}
+          style={{ marginBottom: 20, backgroundColor: '#fff' }}
+        >
+          <Tabs>
+            {
+              item.format === 'properties' &&
+              <TabPane tab="表格" key="1">
+                <TableList tableList={item.items} />
+              </TabPane>
+            }
+            <TabPane tab="文本" key="2">
+              <TextContent text={item} />
             </TabPane>
-          }
-          <TabPane tab="文本" key="2">
-            <TextContent text={item} />
-          </TabPane>
-          <TabPane tab="更改历史" key="3">
-            <History />
-          </TabPane>
-          <TabPane tab="实例列表" key="4">
-            <Case />
-          </TabPane>
-        </Tabs>
-      </Panel>
+            <TabPane tab="更改历史" key="3">
+              <History />
+            </TabPane>
+            <TabPane tab="实例列表" key="4">
+              <Case />
+            </TabPane>
+          </Tabs>
+        </Panel>
+      </Collapse>
     )
   }
   renderOpaModal() {
@@ -118,7 +120,7 @@ class RightContent extends React.Component {
     return (
       <Fragment>
         {
-          showPublish && <Publish onCancel={()=>this.onCancelModal('showPublish')}/>
+          showPublish && <Publish onCancel={() => this.onCancelModal('showPublish')} />
         }
       </Fragment>
     )
@@ -133,12 +135,13 @@ class RightContent extends React.Component {
             <Fragment>
               {
                 list.length ?
-                  <Collapse bordered={false}>
+                  <Fragment>
                     {
                       list.map((item, i) => this.renderItem(item, i))
                     }
-                  </Collapse>:
-                  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}/>
+                  </Fragment>
+                  :
+                  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
               }
             </Fragment>
         }

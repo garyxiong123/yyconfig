@@ -64,6 +64,7 @@ class Case extends React.Component {
           size="samll"
           extra={this.renderExtra()}
           headStyle={{ backgroundColor: '#f5f5f5' }}
+          
         >
           {this.renderTable()}
         </Card>

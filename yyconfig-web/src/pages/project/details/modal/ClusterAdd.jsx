@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Modal, Form, Input, Checkbox } from 'antd';
-import { project } from '@/services/project';
+import { Modal, Form, Input, Checkbox, message } from 'antd';
+import { project, cluster } from '@/services/project';
 
 const FormItem = Form.Item;
 const formItemLayout = {
@@ -19,7 +19,7 @@ class ClusterAdd extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-
+      loading: false
     };
   }
   componentDidMount() { }
@@ -29,31 +29,45 @@ class ClusterAdd extends React.Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        // this.setState({
-        //   loading: true
-        // }}
+        this.setState({
+          loading: true
+        })
+        this.onAddCluster(values);
         onCancel();
       }
+    })
+  }
+  //添加集群
+  onAddCluster = async (values) => {
+    const { onSave, appDetail } = this.props;
+    let env = values.env.join(',');
+    let res = await cluster.clusterAdd({ ...values, env: env, appId: appDetail.id });
+    if (res && res.code === '1') {
+      message.success('添加成功');
+      onSave()
+    }
+    this.setState({
+      loading: false
     })
   }
 
   renderForm() {
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { envList } = this.props;
+    const { envList, appDetail } = this.props;
     return (
       <Form onSubmit={this.onSubmit} {...formItemLayout}>
-        <FormItem label="项目Id">
+        <FormItem label="项目Code">
           {getFieldDecorator('appId', {
-            initialValue: 'appId',
+            initialValue: appDetail.appCode,
             rules: [
-              { required: true, message: '请输入项目Id' }
+              { required: true, message: '请输入项目Code' }
             ]
           })(
-            <Input placeholder="请输入项目Id" disabled />
+            <Input placeholder="请输入项目Code" disabled />
           )}
         </FormItem>
         <FormItem label="集群名称">
-          {getFieldDecorator('name', {
+          {getFieldDecorator('clusterName', {
             // initialValue: '',
             rules: [
               { required: true, message: '请输入集群名称' }
@@ -63,7 +77,7 @@ class ClusterAdd extends React.Component {
           )}
         </FormItem>
         <FormItem label="选择环境">
-          {getFieldDecorator('envList', {
+          {getFieldDecorator('env', {
             rules: [
               { required: true, message: "至少选择一个环境" }
             ]
@@ -82,12 +96,14 @@ class ClusterAdd extends React.Component {
   }
   render() {
     const { onCancel } = this.props;
+    const { loading } = this.state;
     return (
       <Modal
         title={"添加集群"}
         visible={true}
         onCancel={onCancel}
         onOk={this.onSubmit}
+        confirmLoading={loading}
       >
         {this.renderForm()}
       </Modal>
@@ -96,5 +112,6 @@ class ClusterAdd extends React.Component {
 }
 
 export default Form.create()(connect(({ project }) => ({
-  envList: project.envList
+  envList: project.envList,
+  appDetail: project.appDetail,
 }))(ClusterAdd));

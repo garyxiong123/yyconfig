@@ -126,26 +126,30 @@ class NamespaceAdd extends React.Component {
   }
   onCreateSave = async (values) => {
     const { appDetail, onCancel } = this.props;
+    const { rightKeys } = this.state;
     let type = values.type;
+    console.log('onCreateSave--->', rightKeys)
     switch (type) {
       case 'public': {
         let res = await project.nameSpacePublicAdd({ ...values, appId: appDetail.id });
         this.onSuccess(res);
       } break;
       case 'protect': {
-
+        let res = await project.nameSpaceProtectAdd({ ...values, appId: appDetail.id, authorizedApp: rightKeys });
+        this.onSuccess(res);
       } break;
       case 'private': {
-
+        let res = await project.nameSpacePrivateAdd({ ...values, appId: appDetail.id });
+        this.onSuccess(res);
       } break;
     }
   }
-  onSuccess=(res)=>{
+  onSuccess = (res) => {
     const { onCancel, onSave } = this.props;
     if (res && res.code === '1') {
       message.success('添加成功');
       onCancel();
-      // onSave()
+      onSave()
     }
     this.setState({
       loading: false
@@ -252,13 +256,13 @@ class NamespaceAdd extends React.Component {
                   <Fragment>
                     {
                       getFieldDecorator('format', {
-                        initialValue: 'properties',
+                        initialValue: 'Properties',
                       })(
                         <Select>
-                          <Option value="properties">properties</Option>
-                          <Option value="xml">xml</Option>
-                          <Option value="json">json</Option>
-                          <Option value="yaml">yaml</Option>
+                          <Option value="Properties">properties</Option>
+                          <Option value="XML">xml</Option>
+                          <Option value="JSON">json</Option>
+                          <Option value="YAML">yaml</Option>
                         </Select>
                       )
                     }

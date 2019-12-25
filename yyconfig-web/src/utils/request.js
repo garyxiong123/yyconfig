@@ -26,7 +26,6 @@ const codeMessage = {
 /**
  * 异常处理程序
  */
-
 const errorHandler = error => {
   const { response = {} } = error;
   const errortext = codeMessage[response.status] || response.statusText;
@@ -40,8 +39,8 @@ const errorHandler = error => {
 /**
  * 配置request请求时的默认参数
  */
-const SERVER_HOME = '.';
-// const SERVER_HOME = 'http://test.lb.gs.youyuwo.com:60008';
+// const SERVER_HOME = '.';
+const SERVER_HOME = 'http://test.lb.gs.youyuwo.com:60008';
 
 const request = extend({
   errorHandler,
