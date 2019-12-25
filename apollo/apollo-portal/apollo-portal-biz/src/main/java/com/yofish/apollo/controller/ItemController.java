@@ -85,7 +85,7 @@ public class ItemController {
    return Result.ok();
   }
   @PostMapping(value = "/diff")
-  public List<ItemDiffs> diff(@RequestBody NamespaceSyncModel model) {
+  public Result<List<ItemDiffs>> diff(@RequestBody NamespaceSyncModel model) {
 
     List<ItemDiffs> itemDiffs = itemService.compare(model.getSyncToNamespaces(), model.getSyncItems());
 
@@ -96,14 +96,14 @@ public class ItemController {
       }
     }
 
-    return itemDiffs;
+    return Result.ok(itemDiffs);
   }
   @PostMapping(value = "syntax-check")
-  public ResponseEntity<Void> syntaxCheckText(@RequestBody NamespaceTextModel model) {
+  public Result syntaxCheckText(@RequestBody NamespaceTextModel model) {
 
     doSyntaxCheck(model);
 
-    return ResponseEntity.ok().build();
+    return Result.ok();
   }
 
   private void doSyntaxCheck(NamespaceTextModel model) {

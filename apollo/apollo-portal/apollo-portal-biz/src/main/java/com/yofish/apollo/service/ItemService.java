@@ -172,13 +172,13 @@ public class ItemService {
     }
     public void updateConfigItemByText(ModifyItemsByTextsReq model) {
         AppEnvClusterNamespace appEnvClusterNamespace=appEnvClusterNamespaceService.findAppEnvClusterNamespace(
-                model.getAppId(),model.getEnv(),model.getNamespaceName(),model.getClusterName(),model.getType()
+                model.getAppEnvClusterNamespaceId()
         );
-        long namespaceId = model.getNamespaceId();
+       // long namespaceId = model.getNamespaceId();
         String configText = model.getConfigText();
         ConfigTextResolver resolver = findResolver(model.getFormat());
         List<Item> items = itemRepository.findAllByAppEnvClusterNamespace(appEnvClusterNamespace);
-        ItemChangeSets changeSets = resolver.resolve(namespaceId, configText, items);
+        ItemChangeSets changeSets = resolver.resolve(appEnvClusterNamespace.getId(), configText, items);
         if (changeSets.isEmpty()) {
             return;
         }
@@ -263,7 +263,7 @@ public class ItemService {
 
     }
     public Item save(Item item){
-        return new Item();
+      return   itemRepository.save(item);
     }
 
     public Item findOne(Long id){

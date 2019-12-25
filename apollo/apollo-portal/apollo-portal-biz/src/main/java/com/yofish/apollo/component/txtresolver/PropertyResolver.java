@@ -1,6 +1,7 @@
 package com.yofish.apollo.component.txtresolver;
 
 import com.yofish.apollo.bo.ItemChangeSets;
+import com.yofish.apollo.domain.AppEnvClusterNamespace;
 import com.yofish.apollo.domain.Item;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
@@ -21,7 +22,7 @@ public class PropertyResolver implements ConfigTextResolver {
     private static final String ITEM_SEPARATOR = "\n";
 
     @Override
-    public ItemChangeSets resolve(long namespaceId, String configText, List<Item> baseItems) {
+    public ItemChangeSets resolve(long appEnvClusterNamespaceId, String configText, List<Item> baseItems) {
 
      Map<Integer, Item> oldLineNumMapItem = BeanUtils.mapByKey("lineNum", baseItems);
      Map<String, Item> oldKeyMapItem = BeanUtils.mapByKey("key", baseItems);
@@ -45,16 +46,16 @@ public class PropertyResolver implements ConfigTextResolver {
       //comment item
       if (isCommentItem(newItem)) {
 
-        handleCommentLine(namespaceId, oldItemByLine, newItem, lineCounter, changeSets);
+        handleCommentLine(appEnvClusterNamespaceId, oldItemByLine, newItem, lineCounter, changeSets);
 
         //blank item
       } else if (isBlankItem(newItem)) {
 
-        handleBlankLine(namespaceId, oldItemByLine, lineCounter, changeSets);
+        handleBlankLine(appEnvClusterNamespaceId, oldItemByLine, lineCounter, changeSets);
 
         //normal item
       } else {
-        handleNormalLine(namespaceId, oldKeyMapItem, newItem, lineCounter, changeSets);
+        handleNormalLine(appEnvClusterNamespaceId, oldKeyMapItem, newItem, lineCounter, changeSets);
       }
 
       lineCounter++;
@@ -102,13 +103,13 @@ public class PropertyResolver implements ConfigTextResolver {
         String oldComment = oldItemByLine == null ? "" : oldItemByLine.getComment();
         //create comment. implement update comment by delete old comment and create new comment
         if (!(isCommentItem(oldItemByLine) && newItem.equals(oldComment))) {
-            changeSets.addCreateItem(buildCommentItem(0l, namespaceId, newItem, lineCounter));
+            changeSets.addCreateItem(buildCommentItem(0L, namespaceId, newItem, lineCounter));
         }
     }
 
     private void handleBlankLine(Long namespaceId, Item oldItem, int lineCounter, ItemChangeSets changeSets) {
         if (!isBlankItem(oldItem)) {
-            changeSets.addCreateItem(buildBlankItem(0l, namespaceId, lineCounter));
+            changeSets.addCreateItem(buildBlankItem(0L, namespaceId, lineCounter));
         }
     }
 
@@ -178,18 +179,19 @@ public class PropertyResolver implements ConfigTextResolver {
         }
     }
 
-    private Item buildCommentItem(Long id, Long namespaceId, String comment, int lineNum) {
-        return buildNormalItem(id, namespaceId, "", "", comment, lineNum);
+    private Item buildCommentItem(Long id, Long appEnvClusterNamespaceId, String comment, int lineNum) {
+        return buildNormalItem(id, appEnvClusterNamespaceId, "", "", comment, lineNum);
     }
 
-    private Item buildBlankItem(Long id, Long namespaceId, int lineNum) {
-        return buildNormalItem(id, namespaceId, "", "", "", lineNum);
+    private Item buildBlankItem(Long id, Long appEnvClusterNamespaceId, int lineNum) {
+        return buildNormalItem(id, appEnvClusterNamespaceId, "", "", "", lineNum);
     }
 
-    private Item buildNormalItem(Long id, Long namespaceId, String key, String value, String comment, int lineNum) {
-//        Item item = new Item(key, value, comment, lineNum);
-//        item.setId(id);
-//        item.setNamespaceId(namespaceId);
-        return null;
+    private Item buildNormalItem(Long id, Long appEnvClusterNamespaceId, String key, String value, String comment, int lineNum) {
+        AppEnvClusterNamespace appEnvClusterNamespace=new AppEnvClusterNamespace();
+        appEnvClusterNamespace.setId(appEnvClusterNamespaceId);
+        Item item = new Item(key, value, comment,appEnvClusterNamespace, lineNum);
+        item.setId(id);
+        return item;
     }
 }
