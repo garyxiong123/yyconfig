@@ -19,6 +19,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -120,17 +122,17 @@ public class DataImport {
     }
 
     private void createItem4Branch(AppEnvClusterNamespace4Branch namespace4Branch) {
-        CreateItemReq itemReq = CreateItemReq.builder().appEnvClusterNamespaceId(namespace4Branch.getId()).key("dbName-branch").lineNum(1).value("payment-branch").build();
+        CreateItemReq itemReq = CreateItemReq.builder().appEnvClusterNamespaceIds(Arrays.asList(namespace4Branch.getId())).key("dbName-branch").lineNum(1).value("payment-branch").build();
         itemService.createItem(itemReq);
     }
 
     private void createThirdCreateItem(AppEnvClusterNamespace namespace) {
-        CreateItemReq itemReq = CreateItemReq.builder().appEnvClusterNamespaceId(namespace.getId()).key("userName-toPublish").lineNum(4).value("garyxiong-toPublish").build();
+        CreateItemReq itemReq = CreateItemReq.builder().appEnvClusterNamespaceIds(Arrays.asList( namespace.getId())).key("userName-toPublish").lineNum(4).value("garyxiong-toPublish").build();
         itemService.createItem(itemReq);
     }
 
     private void createFirstCreateItem(AppEnvClusterNamespace namespace) {
-        CreateItemReq itemReq = CreateItemReq.builder().appEnvClusterNamespaceId(namespace.getId()).key("dbName").lineNum(1).value("payment").build();
+        CreateItemReq itemReq = CreateItemReq.builder().appEnvClusterNamespaceIds(Arrays.asList( namespace.getId())).key("dbName").lineNum(1).value("payment").build();
         itemService.createItem(itemReq);
     }
 
@@ -143,7 +145,7 @@ public class DataImport {
     }
 
     private void createSecondCreateItem(AppEnvClusterNamespace namespace) {
-        CreateItemReq itemReq = CreateItemReq.builder().appEnvClusterNamespaceId(namespace.getId()).key("password").lineNum(2).value("123456").build();
+        CreateItemReq itemReq = CreateItemReq.builder().appEnvClusterNamespaceIds(Arrays.asList( namespace.getId())).key("password").lineNum(2).value("123456").build();
         itemService.createItem(itemReq);
 
     }

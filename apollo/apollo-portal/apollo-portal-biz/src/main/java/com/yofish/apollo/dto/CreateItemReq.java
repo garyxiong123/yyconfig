@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 /**
  * @Author: xiongchengwei
  * @Date: 2019/11/18 下午3:04
@@ -19,6 +21,6 @@ public class CreateItemReq {
     private String key;
     private String value;
     private String comment;
-    private Long appEnvClusterNamespaceId;
+    private List<Long> appEnvClusterNamespaceIds;
     private Integer lineNum;
 }

@@ -48,6 +48,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.nio.file.AccessDeniedException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -112,7 +113,7 @@ public class ReleaseControllerTest extends AbstractControllerTest {
     private CreateItemReq createItemReq() {
         Long namespaceId = namespace.getId();
         CreateItemReq itemReq = DomainCreate.createItemReq();
-        itemReq.setAppEnvClusterNamespaceId(namespaceId);
+        itemReq.setAppEnvClusterNamespaceIds(Arrays.asList(namespaceId));
         itemReq.setComment("加上一个字段");
         return itemReq;
     }
