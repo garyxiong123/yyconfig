@@ -3,6 +3,7 @@ package com.yofish.apollo.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.yofish.apollo.component.AppPreAuthorize;
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.Department;
 import com.yofish.apollo.model.AppModel;
@@ -13,7 +14,6 @@ import com.yofish.apollo.service.ServerConfigService;
 import com.yofish.gary.biz.domain.User;
 import com.youyu.common.api.PageData;
 import com.youyu.common.api.Result;
-import common.condition.PermissionAuth;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
 import common.utils.InputValidator;
@@ -54,7 +54,7 @@ public class AppController {
      */
     @PostMapping
     @ApiOperation("创建项目")
-    @PermissionAuth(PermissionAuth.PermissionType.admin)
+    @AppPreAuthorize(AppPreAuthorize.Authorize.SuperAdmin)
     public Result<App> create(@Valid @RequestBody AppModel appModel) {
 
         App app = transformToApp(appModel);
@@ -79,6 +79,7 @@ public class AppController {
 
     @PutMapping("/{appId:\\d+}")
     @ApiOperation("修改项目信息")
+    @AppPreAuthorize(AppPreAuthorize.Authorize.AppOwner)
     public Result<App> update(@PathVariable Long appId, @Valid @RequestBody AppModel appModel) {
         App app = transformToApp(appModel);
         app.setId(appId);
