@@ -8,7 +8,9 @@ const ProjectModel = {
     envList: [],
     currentEnv: {},
     nameSpaceList: [],
-    publicNamespaceList: []
+    publicNamespaceList: [],
+    releasesActiveInfo: [],
+    releasesCompare: []
   },
   effects: {
     *appList({ payload }, { call, put }) {
@@ -43,6 +45,20 @@ const ProjectModel = {
       const response = yield call(project.publicNamespaceList, payload);
       yield put({
         type: 'setPublicNamespaceList',
+        payload: response,
+      });
+    },
+    *releasesActiveInfo({ payload }, { call, put }) {
+      const response = yield call(project.releasesActive, payload);
+      yield put({
+        type: 'setReleasesActive',
+        payload: response,
+      });
+    },
+    *releasesCompare({ payload }, { call, put }) {
+      const response = yield call(project.releasesCompare, payload);
+      yield put({
+        type: 'setReleasesCompare',
         payload: response,
       });
     },
@@ -90,6 +106,18 @@ const ProjectModel = {
       return {
         ...state,
         publicNamespaceList: payload.data || []
+      }
+    },
+    setReleasesActive(state, { payload = {} }) {
+      return {
+        ...state,
+        releasesActiveInfo: payload.data || []
+      }
+    },
+    setReleasesCompare(state, { payload = {} }) {
+      return {
+        ...state,
+        releasesCompare: payload.data || []
       }
     },
     clearData(state, { payload = {} }) {

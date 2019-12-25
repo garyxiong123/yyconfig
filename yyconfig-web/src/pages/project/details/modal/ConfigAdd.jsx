@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Modal, Form, Input, Tree, message } from 'antd';
+import { Modal, Form, Input, Tree, message, Checkbox } from 'antd';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;

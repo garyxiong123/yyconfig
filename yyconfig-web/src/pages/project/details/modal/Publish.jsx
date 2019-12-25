@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Modal, Form, Input } from 'antd';
+import { Modal, Form, Input, message } from 'antd';
+import moment from 'moment';
+import { project } from '@/services/project';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -19,10 +21,16 @@ class Publish extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: false,
 
     };
   }
-  componentDidMount() { }
+  componentDidMount() {
+    let releaseTitle = moment().format('YYYYMMDDHHMMSS');
+    this.setState({
+      releaseTitle
+    })
+  }
 
 
   onSubmit = (e) => {
@@ -30,24 +38,36 @@ class Publish extends React.Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        // this.setState({
-        //   loading: true
-        // }}
-        onCancel();
+        this.setState({
+          loading: true
+        })
+        this.onPublich(values)
       }
     })
   }
+  onPublich = async (values) => {
+    const { onSave, currentItem, onCancel } = this.props;
+    let baseInfo = currentItem.baseInfo || {};
+    let params = { ...values, emergencyPublish: false, appEnvClusterNamespaceId: baseInfo.id };
+    let res = await project.createRelease(params);
+    if (res && res.code === '1') {
+      message.success('发布成功');
+      onCancel();
+      onSave();
+    }
 
+  }
   renderForm() {
     const { getFieldDecorator, getFieldValue } = this.props.form;
+    const { releaseTitle } = this.state;
     return (
       <Form onSubmit={this.onSubmit} {...formItemLayout}>
         <FormItem label="Changes">
-           <span>配置没有变化</span>
+          <span>配置没有变化</span>
         </FormItem>
         <FormItem label="Release Name">
-          {getFieldDecorator('releaseName', {
-            // initialValue: 'appId',
+          {getFieldDecorator('releaseTitle', {
+            initialValue: `${releaseTitle}-release`,
             rules: [
               { required: true, message: '请输入Release Name' }
             ]
@@ -56,7 +76,7 @@ class Publish extends React.Component {
           )}
         </FormItem>
         <FormItem label="备注">
-          {getFieldDecorator('comment', {
+          {getFieldDecorator('releaseComment', {
           })(
             <TextArea placeholder="请输入备注" rows={4} />
           )}
@@ -66,6 +86,7 @@ class Publish extends React.Component {
   }
   render() {
     const { onCancel } = this.props;
+    const { loading } = this.state;
     return (
       <Modal
         title={"发布"}
@@ -74,6 +95,7 @@ class Publish extends React.Component {
         onOk={this.onSubmit}
         okText="发布"
         width={800}
+        confirmLoading={loading}
       >
         {this.renderForm()}
       </Modal>

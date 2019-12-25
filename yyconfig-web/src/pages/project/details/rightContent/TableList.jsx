@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Table, Divider, Popconfirm, Button } from 'antd';
+import { Table, Divider, Popconfirm, Button, Tag } from 'antd';
 import moment from 'moment';
 import ConfigAdd from '../modal/ConfigAdd';
 
@@ -20,21 +20,53 @@ class TableList extends React.Component {
       currentItem: record || {}
     })
   }
-  onCancel=()=>{
+  onCancel = () => {
     this.setState({
       showEdit: false
     })
+  }
+  renderPushStatus = (item) => {
+    if (!item.deleted && !item.modified) {
+      return <Tag color="#999">已发布</Tag>
+    } else {
+      return <Tag color="#f2aa5d">未发布</Tag>
+    }
+  }
+
+  renderPushDetailsStatus = (item) => {
+    if (!item.deleted && !item.modified) {
+      return
+    }
+    if (item.modified && !item.deleted && item.oldValue) {
+      return <Tag color="#1890ff">改</Tag>
+    }
+
+    if (item.modified && !item.deleted && !item.oldValue) {
+      return <Tag color="#7bd074">新</Tag>
+    }
+
+    if (!item.modified && item.deleted) {
+      return <Tag color="#ff0">删</Tag>
+    }
+
   }
   renderTable() {
     const { tableList } = this.props;
     const columns = [
       {
         title: '发布状态',
-        dataIndex: 'a',
+        dataIndex: 'modified',
+        render: (text, record) => this.renderPushStatus(record)
       },
       {
         title: 'Key',
         dataIndex: 'item.key',
+        render: (text, record) => (
+          <Fragment>
+            <span>{text} </span>
+            {this.renderPushDetailsStatus(record)}
+          </Fragment>
+        )
       },
       {
         title: 'Value',
@@ -101,9 +133,9 @@ class TableList extends React.Component {
     const { showEdit, currentItem } = this.state;
     return (
       <Fragment>
-        <Button size="small" type="primary" onClick={this.onEdit} style={{margin: '10px 0'}}>+新增配置</Button>
+        <Button size="small" type="primary" onClick={this.onEdit} style={{ margin: '10px 0' }}>+新增配置</Button>
         {this.renderTable()}
-        {showEdit && <ConfigAdd onCancel={this.onCancel} currentItem={currentItem}/>}
+        {showEdit && <ConfigAdd onCancel={this.onCancel} currentItem={currentItem} />}
       </Fragment>
     );
   }

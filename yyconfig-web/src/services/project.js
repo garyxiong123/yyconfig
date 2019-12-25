@@ -39,7 +39,23 @@ const project = {
   configUpdate: async function (params = {}) {
     return requestPost(`/item/updateItem`, params);
   },
-  
+  //新建配置
+  createRelease: async function (params = {}) {
+    return requestPost(`/createRelease`, params);
+  },
+  //获取回滚信息
+  releasesActive: async function (params = {}) {
+    return requestGet(`/namespaceId/${params.namespaceId}/releases/active`);
+  },
+  //获取回滚历史对比
+  releasesCompare: async function (params = {}) {
+    return requestGet(`/releases/compare`, params);
+  },
+  //回滚操作
+  rollBack: async function (params = {}) {
+    return requestPut(`/releases/${params.releaseId}/rollback`);
+  },
+
 };
 const cluster = {
   clusterAdd: async function (params = {}) {

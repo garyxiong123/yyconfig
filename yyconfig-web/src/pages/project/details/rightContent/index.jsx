@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Button, Icon, Collapse, Tabs, Table, Spin, Tag, Row, Col, Dropdown, Menu, Empty } from 'antd';
+import { Button, Icon, Collapse, Tabs, Table, Spin, Tag, Row, Col, Dropdown, Menu, Empty, message } from 'antd';
 import { Loading } from '@/pages/components/';
 import styles from '../../index.less';
 import TextContent from './TextContent';
@@ -8,6 +8,7 @@ import TableList from './TableList';
 import History from './History';
 import Case from './Case';
 import Publish from '../modal/Publish';
+import RollBack from '../modal/RollBack';
 const { Panel } = Collapse;
 const { TabPane } = Tabs;
 
@@ -16,16 +17,53 @@ class RightContent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showPublish: false
+      showPublish: false,
+      showRollBack: false,
+      currentItem: {}
     };
   }
   //------------------------生命周期--------------------------------
   componentDidMount() { }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { releasesActiveInfo } = this.props;
+    if (prevProps.releasesActiveInfo !== releasesActiveInfo) {
+      if (releasesActiveInfo.length) {
+        this.onShowRollBackModal();
+      } else {
+        message.info('没有可以回滚的发布历史')
+      }
+    }
+  }
   //------------------------事件------------------------------------
-  onPublish = (e) => {
+  onPublish = (e, item) => {
     e && e.stopPropagation();
     this.setState({
-      showPublish: true
+      showPublish: true,
+      currentItem: item
+    })
+  }
+  onRollBack = (e, item) => {
+    e && e.stopPropagation();
+    this.onFetchRollBackReleasesActive(item);
+    this.setState({
+      // showRollBack: true,
+      currentItem: item
+    })
+  }
+  onShowRollBackModal = () => {
+    this.setState({
+      showRollBack: true
+    })
+  }
+  onFetchRollBackReleasesActive = (item) => {
+    const { dispatch } = this.props;
+    let baseInfo = item.baseInfo || {};
+    dispatch({
+      type: 'project/releasesActiveInfo',
+      payload: {
+        namespaceId: baseInfo.id
+      }
     })
   }
   onCancelModal = (type) => {
@@ -33,10 +71,26 @@ class RightContent extends React.Component {
       [type]: false
     })
   }
+  //发布/回滚成功
+  onSaveSuccess = () => {
+    this.onFetchNamespaceList();
+  }
+
+  onFetchNamespaceList = () => {
+    const { dispatch, appDetail, currentEnv } = this.props;
+    let currentCluster = currentEnv.cluster || {};
+    dispatch({
+      type: 'project/nameSpaceList',
+      payload: {
+        appCode: appDetail.appCode,
+        env: currentEnv.env,
+        clusterName: currentCluster.name
+      }
+    })
+  }
   //------------------------渲染------------------------------------
   renderRightItemHeader = (item) => {
     let baseInfo = item.baseInfo || {};
-
     return (
       <Row type="flex" justify="space-between">
         <Col>
@@ -51,10 +105,10 @@ class RightContent extends React.Component {
         <Col>
           <Row type="flex" gutter={8}>
             <Col>
-              <Button type="primary" size="small" onClick={(e) => this.onPublish(e)}>发布</Button>
+              <Button type="primary" size="small" onClick={(e) => this.onPublish(e, item)}>发布</Button>
             </Col>
             <Col>
-              <Button size="small">回滚</Button>
+              <Button size="small" onClick={(e) => this.onRollBack(e, item)}>回滚</Button>
             </Col>
             <Col>
               <Button size="small">发布历史</Button>
@@ -116,11 +170,14 @@ class RightContent extends React.Component {
     )
   }
   renderOpaModal() {
-    const { showPublish } = this.state;
+    const { showPublish, showRollBack, currentItem } = this.state;
     return (
       <Fragment>
         {
-          showPublish && <Publish onCancel={() => this.onCancelModal('showPublish')} />
+          showPublish && <Publish onCancel={() => this.onCancelModal('showPublish')} onSave={this.onSaveSuccess} currentItem={currentItem} />
+        }
+        {
+          showRollBack && <RollBack onCancel={() => this.onCancelModal('showRollBack')} onSave={this.onSaveSuccess} currentItem={currentItem} />
         }
       </Fragment>
     )
@@ -153,6 +210,9 @@ class RightContent extends React.Component {
 
 export default connect(({ project, loading }) => ({
   list: project.nameSpaceList,
+  appDetail: project.appDetail,
+  currentEnv: project.currentEnv,
+  releasesActiveInfo: project.releasesActiveInfo,
   loading: loading.effects["project/nameSpaceList"]
 }))(RightContent);
 
