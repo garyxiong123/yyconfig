@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import debounce from 'lodash/debounce';
 import styles from './index.less';
+import SearchApp from './search/index';
 export default class HeaderSearch extends Component {
   static defaultProps = {
     defaultActiveFirstOption: false,
@@ -87,7 +88,6 @@ export default class HeaderSearch extends Component {
     const { value } = this.state;
     onPressEnter(value || '');
   };
-
   render() {
     const { className, defaultValue, placeholder, open, ...restProps } = this.props;
     const { searchMode, value } = this.state;
@@ -99,15 +99,15 @@ export default class HeaderSearch extends Component {
     return (
       <span
         className={classNames(className, styles.headerSearch)}
-        // onClick={this.enterSearchMode}
-        // onTransitionEnd={({ propertyName }) => {
-        //   if (propertyName === 'width' && !searchMode) {
-        //     const { onVisibleChange } = this.props;
-        //     onVisibleChange(searchMode);
-        //   }
-        // }}
+      // onClick={this.enterSearchMode}
+      // onTransitionEnd={({ propertyName }) => {
+      //   if (propertyName === 'width' && !searchMode) {
+      //     const { onVisibleChange } = this.props;
+      //     onVisibleChange(searchMode);
+      //   }
+      // }}
       >
-        <Input.Search placeholder={placeholder} style={{border: 'none'}}/>
+        <SearchApp />
         {/* <Icon type="search" key="Icon" />
         <AutoComplete
           key="AutoComplete"

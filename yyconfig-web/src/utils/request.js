@@ -51,7 +51,7 @@ const request = extend({
   responseType: 'json',
 });
 const ERROR_CODE = {
-  loginOverDue: '01030008'
+  loginOverDue: ['01030008', '01030011']
 }
 request.interceptors.response.use(async (response) => {
   if (response.status !== 200) {
@@ -60,7 +60,7 @@ request.interceptors.response.use(async (response) => {
     return false
   }
   const data = await response.clone().json();
-  if (data.code === ERROR_CODE.loginOverDue) {
+  if (ERROR_CODE.loginOverDue.indexOf(data.code) > -1) {
     // debounce(()=>{
     //   message.error("登录信息过期，请重新登录")
     // }, 1000);

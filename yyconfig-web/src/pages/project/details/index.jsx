@@ -29,14 +29,14 @@ class ProjectDetail extends React.Component {
       appId: query.appId,
       appCode: query.appCode
     }, () => {
-        this.onFetchAppItem()
-        this.onFetchEnvList();
-      })
+      this.onFetchAppItem()
+      this.onFetchEnvList();
+    })
   }
   componentDidUpdate(prevProps, prevState) {
     const { envList, dispatch, currentEnv } = this.props;
     if (prevProps.envList !== envList) {
-      let envFirst = envList[0];
+      let envFirst = envList[0] || {};
       this.onEnvClick(envFirst)
     }
     if (prevProps.currentEnv !== currentEnv) {
@@ -108,7 +108,7 @@ class ProjectDetail extends React.Component {
     } else {
       this.onSetCurrentEnv({
         env: item.env,
-        cluster: item.clusters[0]
+        cluster: item.clusters && item.clusters.length? item.clusters[0] : {}
       })
     }
 
@@ -202,11 +202,11 @@ class ProjectDetail extends React.Component {
     return (
       <PageHeaderWrapper title="项目信息" content={this.renderBaseInfo()} extra={this.renderEdit()}>
         <Row type="flex" gutter={24}>
-          <Col style={{width: 256}}>
+          <Col style={{ width: 256 }}>
             {this.renderEnv()}
             {this.renderOpe()}
           </Col>
-          <Col span={16}>
+          <Col style={{flex: 1}}>
             <RightContent />
           </Col>
         </Row>

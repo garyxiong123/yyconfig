@@ -44,7 +44,7 @@ class NamespaceAdd extends React.Component {
     };
   }
   componentDidMount() {
-    const { appList } = this.props;
+    const { appList, openNamespaceTypeList } = this.props;
     if (!appList.rows) {
       this.onFetchApplist();
     } else {
@@ -52,6 +52,9 @@ class NamespaceAdd extends React.Component {
       this.setState({
         page: appList.pageNum
       })
+    }
+    if (!openNamespaceTypeList.length) {
+      this.onFetchOpenNamespaceList();
     }
   }
   componentDidUpdate(prevProps, prevState) {
@@ -67,11 +70,11 @@ class NamespaceAdd extends React.Component {
 
   onSetleftNoSelect = () => {
     const { appList } = this.props;
-    console.log('onSetleftNoSelect-->', appList)
     this.setState({
       leftNoSelect: appList.rows
     })
   }
+  //获取项目列表
   onFetchApplist = () => {
     const { dispatch } = this.props;
     const { searchObj } = this.state;
@@ -80,6 +83,16 @@ class NamespaceAdd extends React.Component {
       payload: searchObj
     })
   }
+  //获取公共命名空间类型列表
+  onFetchOpenNamespaceList = () => {
+    const { dispatch } = this.props;
+    const { searchObj } = this.state;
+    dispatch({
+      type: 'system/openNamespaceType',
+      payload: searchObj
+    })
+  }
+
   onChange = (e) => {
     this.setState({
       currentType: e.target.value
@@ -117,13 +130,7 @@ class NamespaceAdd extends React.Component {
     switch (type) {
       case 'public': {
         let res = await project.nameSpacePublicAdd({ ...values, appId: appDetail.id });
-        if (res && res.code === '1') {
-          message.success('添加成功');
-          onCancel();
-        }
-        this.setState({
-          loading: false
-        })
+        this.onSuccess(res);
       } break;
       case 'protect': {
 
@@ -132,6 +139,17 @@ class NamespaceAdd extends React.Component {
 
       } break;
     }
+  }
+  onSuccess=(res)=>{
+    const { onCancel, onSave } = this.props;
+    if (res && res.code === '1') {
+      message.success('添加成功');
+      onCancel();
+      // onSave()
+    }
+    this.setState({
+      loading: false
+    })
   }
   // 服务加载更多
   onMore = () => {
@@ -166,7 +184,7 @@ class NamespaceAdd extends React.Component {
               { required: true, message: '请选择namespace' }
             ]
           })(
-            <Select>
+            <Select placeholder="请选择namespace">
               {
                 namespaceList.map((item) => (
                   <Option value={item.id} key={item.id}>{item.value}</Option>
@@ -199,15 +217,15 @@ class NamespaceAdd extends React.Component {
   renderServiceItemFooter = () => {
     const { appList } = this.props;
     return (
-      <Button 
-      size="small" 
-      style={{margin: 5}}
-      onClick={() => this.onMore()} disabled={appList.pageNum < appList.totalPage ? false : true}>More</Button>
+      <Button
+        size="small"
+        style={{ margin: 5 }}
+        onClick={() => this.onMore()} disabled={appList.pageNum < appList.totalPage ? false : true}>More</Button>
     )
   }
   renderCreate() {
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { appDetail } = this.props;
+    const { appDetail, openNamespaceTypeList } = this.props;
     let department = appDetail.department || {};
     return (
       <Form onSubmit={this.onCreateSubmit} {...formItemLayout}>
@@ -275,21 +293,28 @@ class NamespaceAdd extends React.Component {
           )}
         </FormItem>
         {
+          (getFieldValue('type') === 'public' || getFieldValue('type') === 'protect') &&
+          <FormItem label="公有命名空间类型">
+            {getFieldDecorator('openNamespaceTypeId', {
+              // initialValue: undefined,
+              rules: [
+                { required: true, message: '请选择公有命名空间类型' }
+              ]
+            })(
+              <Select placeholder="请选择公有命名空间类型">
+                {
+                  openNamespaceTypeList.map((item) => (
+                    <Option value={item.id} key={item.id}>{item.name}</Option>
+                  ))
+                }
+              </Select>
+            )}
+          </FormItem>
+        }
+        {
           getFieldValue('type') === 'protect' &&
           <Fragment>
-            <FormItem label="公有命名空间类型">
-              {getFieldDecorator('commonType', {
-                // initialValue: undefined,
-                rules: [
-                  { required: true, message: '请选择公有命名空间类型' }
-                ]
-              })(
-                <Select>
-                  <Option value={'DB'}>DB</Option>
-                  <Option value={'REDIS'}>REDIS</Option>
-                </Select>
-              )}
-            </FormItem>
+
             <FormItem label=" " colon={false}>
               {this.renderServiceItem()}
             </FormItem>
@@ -336,7 +361,8 @@ class NamespaceAdd extends React.Component {
   }
 }
 
-export default Form.create()(connect(({ project }) => ({
+export default Form.create()(connect(({ project, system }) => ({
   appDetail: project.appDetail,
   appList: project.appList,
+  openNamespaceTypeList: system.openNamespaceType,
 }))(NamespaceAdd));
