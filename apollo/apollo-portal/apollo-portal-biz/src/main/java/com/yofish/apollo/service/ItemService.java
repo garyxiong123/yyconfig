@@ -159,6 +159,7 @@ public class ItemService {
                     .map(item -> ConfigChangeContentBuilder.convertJsonString(item.getChangeSets()).getDeleteItems())
                     .flatMap(Collection::stream)
                     .collect(Collectors.toList());
+            return deletedItems;
         }
         return Collections.emptyList();
     }
