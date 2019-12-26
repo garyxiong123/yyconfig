@@ -3,6 +3,9 @@ const project = {
   getProject: async function (params = {}) {
     return requestGet('/apps/search', params);
   },
+  getProjectAll: async function (params = {}) {
+    return requestGet('/apps', params);
+  },
   projectAdd: async function (params = {}) {
     return requestPost('/apps', params);
   },
@@ -37,9 +40,11 @@ const project = {
   configAdd: async function (params = {}) {
     return requestPost(`/item/createItem`, params);
   },
+  //更新配置
   configUpdate: async function (params = {}) {
     return requestPost(`/item/updateItem`, params);
   },
+  //删除配置
   configDelete: async function (params = {}) {
     return requestPost(`/item/deleteItem`, params);
   },
@@ -62,8 +67,14 @@ const project = {
   nameSpaceListWithApp: async function (params = {}) {
     return requestPost(`/namespaceList`, params);
   },
-  
-
+  //文本编辑
+  modifyItemsByTexts: async function (params = {}) {
+    return requestPost(`/item/modifyItemsByTexts`, params);
+  },
+  //更改历史
+  commitFind: async function (params = {}) {
+    return requestGet(`/commit/find`, params);
+  },
 };
 const cluster = {
   clusterAdd: async function (params = {}) {

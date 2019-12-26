@@ -7,6 +7,7 @@ import styles from '../index.less';
 import RightContent from './rightContent/';
 import ClusterAdd from './modal/ClusterAdd';
 import NamespaceAdd from './modal/NamespaceAdd';
+import router from 'umi/router';
 
 const { SubMenu } = Menu;
 
@@ -23,24 +24,19 @@ class ProjectDetail extends React.Component {
   }
   //------------------------生命周期--------------------------------
   componentDidMount() {
-    const { location } = this.props;
-    let query = location.query ? location.query : {};
-    this.setState({
-      appId: query.appId,
-      appCode: query.appCode
-    }, () => {
-      this.onFetchAppItem()
-      this.onFetchEnvList();
-    })
+    this.onGetBaseInfo()
   }
   componentDidUpdate(prevProps, prevState) {
-    const { envList, dispatch, currentEnv } = this.props;
+    const { envList, dispatch, currentEnv, location } = this.props;
     if (prevProps.envList !== envList) {
       let envFirst = envList[0] || {};
       this.onEnvClick(envFirst)
     }
     if (prevProps.currentEnv !== currentEnv) {
       this.onFetchNamespaceList();
+    }
+    if(prevProps.location.query.appId !== location.query.appId) {
+      this.onGetBaseInfo()
     }
   }
   componentWillUnmount() {
@@ -56,6 +52,17 @@ class ProjectDetail extends React.Component {
   }
 
   //------------------------事件------------------------------------
+  onGetBaseInfo=()=>{
+    const { location } = this.props;
+    let query = location.query ? location.query : {};
+    this.setState({
+      appId: query.appId,
+      appCode: query.appCode
+    }, () => {
+      this.onFetchAppItem()
+      this.onFetchEnvList();
+    })
+  }
   onFetchAppItem = () => {
     const { dispatch } = this.props;
     const { appId } = this.state;
@@ -207,6 +214,7 @@ class ProjectDetail extends React.Component {
 
   render() {
     const { showProjectEdit, appId } = this.state;
+
     return (
       <PageHeaderWrapper title="项目信息" content={this.renderBaseInfo()} extra={this.renderEdit()}>
         <Row type="flex" gutter={24}>

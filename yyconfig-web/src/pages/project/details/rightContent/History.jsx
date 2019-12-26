@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import { connect } from 'dva';
 import { Table } from 'antd';
 import styles from '../../index.less';
 
@@ -9,8 +10,21 @@ class History extends React.Component {
       list: [{}, {}]
     };
   }
-  componentDidMount() { }
+  componentDidMount() {
+    this.onFetchHistoryList();
+  }
 
+  onFetchHistoryList = () => {
+    const { item, dispatch } = this.props;
+    let baseInfo = item.baseInfo || {};
+    dispatch({
+      type: 'project/commitFind',
+      payload: {
+        appEnvClusterNamespaceId: baseInfo.id
+      }
+    })
+
+  }
   renderTable() {
     const columns = [
       {
@@ -61,4 +75,8 @@ class History extends React.Component {
     );
   }
 }
-export default History;
+
+export default connect(({ project, loading }) => ({
+  commitFind: project.commitFind,
+  loading: loading.effects["project/commitFind"]
+}))(History);

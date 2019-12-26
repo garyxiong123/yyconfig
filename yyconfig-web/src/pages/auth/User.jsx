@@ -97,10 +97,10 @@ class User extends React.Component {
         title: '全名',
         dataIndex: 'realName',
       },
-      // {
-      //   title: '部门',
-      //   dataIndex: 'realName',
-      // },
+      {
+        title: '部门',
+        dataIndex: 'department.name',
+      },
       {
         title: '邮箱',
         dataIndex: 'email'

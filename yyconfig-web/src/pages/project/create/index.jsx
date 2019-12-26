@@ -34,7 +34,7 @@ class CreateProject extends React.Component {
     }
     this.onSetAppDetail();
   }
-  
+
   onSetAppDetail = () => {
     const { appId, appDetail } = this.props;
     if (appId) {
@@ -78,20 +78,17 @@ class CreateProject extends React.Component {
   onAddProject = async (values) => {
     const { onCancel, onSave } = this.props;
     let res = await project.projectAdd(values);
-    if (res && res.code == '1') {
-      message.success('添加成功');
-      onCancel();
-      onSave();
-    }
-    this.setState({
-      loading: false
-    })
+    this.onSuccess(res)
   }
   onEditProject = async (values) => {
     const { onCancel, onSave } = this.props;
     let res = await project.projectEdit(values);
+    this.onSuccess(res)
+  }
+  onSuccess = (res) => {
+    const { onCancel, onSave } = this.props;
     if (res && res.code == '1') {
-      message.success('修改成功');
+      message.success('操作成功');
       onCancel();
       onSave();
     }

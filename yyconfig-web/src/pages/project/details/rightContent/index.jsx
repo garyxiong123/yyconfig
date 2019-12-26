@@ -142,6 +142,14 @@ class RightContent extends React.Component {
     let baseInfo = item.baseInfo || {};
     return (
       <Fragment key={baseInfo.id}>
+        {/* <Tabs>
+          <TabPane tab="主版本" key="main">
+            
+          </TabPane>
+          <TabPane tab="灰度版本" key="gary">
+            <p>灰度版本</p>
+          </TabPane>
+        </Tabs> */}
         <Collapse bordered={false} defaultActiveKey={baseInfo.id} key={baseInfo.id}>
           <Panel
             key={baseInfo.id}
@@ -151,16 +159,16 @@ class RightContent extends React.Component {
           >
             <Tabs animated={false}>
               {
-                item.format === 'properties' &&
+                item.format === 'Properties' &&
                 <TabPane tab="表格" key="1">
-                  <TableList tableList={item.items} baseInfo={baseInfo}/>
+                  <TableList tableList={item.items} baseInfo={baseInfo} />
                 </TabPane>
               }
               <TabPane tab="文本" key="2">
-                <TextContent text={item} />
+                <TextContent text={item} onSuccess={this.onSaveSuccess} />
               </TabPane>
               <TabPane tab="更改历史" key="3">
-                <History />
+                <History item={item}/>
               </TabPane>
               <TabPane tab="实例列表" key="4">
                 <Case />
@@ -177,7 +185,7 @@ class RightContent extends React.Component {
     return (
       <Fragment>
         {
-          showPublish && <Publish onCancel={() => this.onCancelModal('showPublish')} onSave={this.onSaveSuccess} currentItem={currentItem} baseInfo={baseInfo}/>
+          showPublish && <Publish onCancel={() => this.onCancelModal('showPublish')} onSave={this.onSaveSuccess} currentItem={currentItem} baseInfo={baseInfo} />
         }
         {
           showRollBack && <RollBack onCancel={() => this.onCancelModal('showRollBack')} onSave={this.onSaveSuccess} currentItem={currentItem} />

@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Table, Divider, Popconfirm, Button, Tag, message } from 'antd';
+import { Table, Divider, Popconfirm, Button, Tag, message, Row, Col } from 'antd';
 import moment from 'moment';
 import ConfigAdd from '../modal/ConfigAdd';
 import { project } from '@/services/project'
@@ -154,12 +154,26 @@ class TableList extends React.Component {
       />
     )
   }
+  renderOpe() {
+    return (
+      <Row type="flex" justify="end" gutter={16} style={{ marginBottom: 15 }}>
+        <Col>
+          <Button size="small" onClick={this.onEdit}>
+            同步配置
+          </Button>
+        </Col>
+        <Col>
+          <Button size="small" type="primary" onClick={this.onEdit}>+新增配置</Button>
+        </Col>
+      </Row>
+    )
+  }
   render() {
     const { showEdit, currentItem } = this.state;
     const { baseInfo } = this.props;
     return (
       <Fragment>
-        <Button size="small" type="primary" onClick={this.onEdit} style={{ margin: '10px 0' }}>+新增配置</Button>
+        {this.renderOpe()}
         {this.renderTable()}
         {showEdit && <ConfigAdd onCancel={this.onCancel} currentItem={currentItem} onSave={this.onConfigSave} baseInfo={baseInfo} />}
       </Fragment>

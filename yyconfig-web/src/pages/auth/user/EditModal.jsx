@@ -1,9 +1,10 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Modal, Form, Input, message, Radio } from 'antd';
+import { Modal, Form, Input, message, Radio, Select } from 'antd';
 import { auth } from '@/services/auth';
 
 
+const { Option } = Select;
 const FormItem = Form.Item;
 const formItemLayout = {
   labelCol: {
@@ -23,8 +24,20 @@ class UserEditModal extends React.Component {
       loading: false
     };
   }
-  componentDidMount() { }
+  componentDidMount() {
+    const { departmentList } = this.props;
+    if (!departmentList.length) {
+      this.onFetchDepartmentList();
+    }
+  }
 
+  onFetchDepartmentList = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'auth/departmentList',
+      payload: {}
+    })
+  }
   onSubmit = (e) => {
     const { currentUser } = this.props;
     e && e.preventDefault();
@@ -68,7 +81,8 @@ class UserEditModal extends React.Component {
 
   renderForm() {
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { currentUser } = this.props;
+    const { currentUser, departmentList } = this.props;
+    let department = currentUser.department || {};
     return (
       <Form {...formItemLayout} onSubmit={this.onSubmit} autoComplete="off">
         <FormItem label="用户名" autoComplete="off">
@@ -77,7 +91,7 @@ class UserEditModal extends React.Component {
             rules: [
               { required: true, message: "用户名为14位以内数字字母下划线的组合", pattern: /^\w{1,14}$/ }
             ]
-          })(<Input placeholder="请输入用户名" autoComplete="new-username"/>)}
+          })(<Input placeholder="请输入用户名" autoComplete="new-password" />)}
         </FormItem>
         <FormItem label="全名">
           {getFieldDecorator('realName', {
@@ -86,6 +100,24 @@ class UserEditModal extends React.Component {
               { required: true, message: "请输入32位以下中文字母标点符号的组合", pattern: /^[a-zA-Z,.?;:，。“”！（）？\u4E00-\u9FA5]{1,32}$/, }
             ]
           })(<Input placeholder="请输入真实姓名" />)}
+        </FormItem>
+        <FormItem label="部门">
+          {getFieldDecorator('departmentId', {
+            initialValue: department.id,
+            rules: [
+              { required: true, message: '请选择部门' }
+            ]
+          })(
+            <Select
+              placeholder="请选择部门"
+            >
+              {
+                departmentList && departmentList.map((item) => (
+                  <Option value={item.id} key={item.id}>{item.name}</Option>
+                ))
+              }
+            </Select>
+          )}
         </FormItem>
         <FormItem label="邮箱">
           {getFieldDecorator('email', {
@@ -160,7 +192,7 @@ class UserEditModal extends React.Component {
     );
   }
 }
-export default Form.create()(connect(({ }) => ({
-
+export default Form.create()(connect(({ auth }) => ({
+  departmentList: auth.departmentList,
 }))(UserEditModal));
 

@@ -4,6 +4,7 @@ const ProjectModel = {
   namespace: 'project',
   state: {
     appList: {},
+    appListAll: [],
     appDetail: {},
     envList: [],
     currentEnv: {},
@@ -11,13 +12,21 @@ const ProjectModel = {
     publicNamespaceList: [],
     releasesActiveInfo: [],
     releasesCompare: [],
-    nameSpaceListWithApp: []
+    nameSpaceListWithApp: [],
+    commitFind: []
   },
   effects: {
     *appList({ payload }, { call, put }) {
       const response = yield call(project.getProject, payload);
       yield put({
         type: 'setProject',
+        payload: response,
+      });
+    },
+    *appListAll({ payload }, { call, put }) {
+      const response = yield call(project.getProjectAll, payload);
+      yield put({
+        type: 'setProjectAll',
         payload: response,
       });
     },
@@ -70,6 +79,13 @@ const ProjectModel = {
         payload: response,
       });
     },
+    *commitFind({ payload }, { call, put }) {
+      const response = yield call(project.commitFind, payload);
+      yield put({
+        type: 'setCommitFind',
+        payload: response,
+      });
+    },
   },
   reducers: {
     setProject(state, { payload = {} }) {
@@ -85,6 +101,12 @@ const ProjectModel = {
           ]
         },
       };
+    },
+    setProjectAll(state, { payload = {} }) {
+      return {
+        ...state,
+        appListAll: payload.data || []
+      }
     },
     setProjectDetail(state, { payload = {} }) {
       return {
@@ -132,6 +154,12 @@ const ProjectModel = {
       return {
         ...state,
         nameSpaceListWithApp: payload.data || []
+      }
+    },
+    setCommitFind(state, { payload = {} }) {
+      return {
+        ...state,
+        commitFind: payload.data || []
       }
     },
     clearData(state, { payload = {} }) {

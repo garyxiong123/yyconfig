@@ -44,34 +44,39 @@ class NamespaceAdd extends React.Component {
     };
   }
   componentDidMount() {
-    const { appList, openNamespaceTypeList } = this.props;
-    if (!appList.rows) {
-      this.onFetchApplist();
+    const { openNamespaceTypeList, appListAll } = this.props;
+    // if (!appList.rows) {
+    //   this.onFetchApplist();
+    // } else {
+    //   this.onSetleftNoSelect();
+    //   this.setState({
+    //     page: appList.pageNum
+    //   })
+    // }
+    if (!appListAll.length) {
+      this.onFetchApplistAll();
     } else {
       this.onSetleftNoSelect();
-      this.setState({
-        page: appList.pageNum
-      })
     }
     if (!openNamespaceTypeList.length) {
       this.onFetchOpenNamespaceList();
     }
   }
   componentDidUpdate(prevProps, prevState) {
-    const { appList } = this.props;
+    const { appListAll } = this.props;
     const { searchObj } = this.state;
-    if (prevProps.appList !== appList) {
+    if (prevProps.appListAll !== appListAll) {
       this.onSetleftNoSelect()
     }
-    if (prevState.searchObj !== searchObj) {
-      this.onFetchApplist()
-    }
+    // if (prevState.searchObj !== searchObj) {
+    //   this.onFetchApplist()
+    // }
   }
 
   onSetleftNoSelect = () => {
-    const { appList } = this.props;
+    const { appListAll } = this.props;
     this.setState({
-      leftNoSelect: appList.rows
+      leftNoSelect: appListAll
     })
   }
   //获取项目列表
@@ -81,6 +86,14 @@ class NamespaceAdd extends React.Component {
     dispatch({
       type: 'project/appList',
       payload: searchObj
+    })
+  }
+  //获取项目列表
+  onFetchApplistAll = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'project/appListAll',
+      payload: {}
     })
   }
   //获取公共命名空间类型列表
@@ -116,7 +129,6 @@ class NamespaceAdd extends React.Component {
     e && e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        console.log('onCreateSubmit-values--->', values)
         this.setState({
           loading: true
         })
@@ -128,7 +140,6 @@ class NamespaceAdd extends React.Component {
     const { appDetail, onCancel } = this.props;
     const { rightKeys } = this.state;
     let type = values.type;
-    console.log('onCreateSave--->', rightKeys)
     switch (type) {
       case 'public': {
         let res = await project.nameSpacePublicAdd({ ...values, appId: appDetail.id });
@@ -203,7 +214,6 @@ class NamespaceAdd extends React.Component {
   }
   renderServiceItem() {
     const { leftNoSelect, leftKeys, rightKeys } = this.state;
-    console.log('leftNoSelect-->', leftNoSelect)
     return (
       <Transfer
         dataSource={leftNoSelect}
@@ -214,19 +224,19 @@ class NamespaceAdd extends React.Component {
         onSelectChange={this.onServiceSelectChange}
         render={item => item.name}
         rowKey={record => record.id}
-        footer={this.renderServiceItemFooter}
+      // footer={this.renderServiceItemFooter}
       />
     )
   }
-  renderServiceItemFooter = () => {
-    const { appList } = this.props;
-    return (
-      <Button
-        size="small"
-        style={{ margin: 5 }}
-        onClick={() => this.onMore()} disabled={appList.pageNum < appList.totalPage ? false : true}>More</Button>
-    )
-  }
+  // renderServiceItemFooter = () => {
+  //   const { appList } = this.props;
+  //   return (
+  //     <Button
+  //       size="small"
+  //       style={{ margin: 5 }}
+  //       onClick={() => this.onMore()} disabled={appList.pageNum < appList.totalPage ? false : true}>More</Button>
+  //   )
+  // }
   renderCreate() {
     const { getFieldDecorator, getFieldValue } = this.props.form;
     const { appDetail, openNamespaceTypeList } = this.props;
@@ -367,6 +377,7 @@ class NamespaceAdd extends React.Component {
 
 export default Form.create()(connect(({ project, system }) => ({
   appDetail: project.appDetail,
-  appList: project.appList,
+  // appList: project.appList,
+  appListAll: project.appListAll,
   openNamespaceTypeList: system.openNamespaceType,
 }))(NamespaceAdd));

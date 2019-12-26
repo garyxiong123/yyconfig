@@ -1,54 +1,76 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Input } from 'antd';
-
+import { Input, Select } from 'antd';
+import router from 'umi/router';
+const { Option } = Select;
 class SearchApp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchObj: {
-        page: 1,
-        size: 10
-      }
+      value: ''
     };
   }
 
   componentDidMount() {
-  }
-  
-  componentDidUpdate(prevProps, prevState) {
-    const { searchObj } = this.state;
-    if (prevState.searchObj !== searchObj) {
-      this.onFetchAppList()
-    }
+    this.onFetchAppListAll();
   }
 
-  onFetchAppList = () => {
+  componentDidUpdate(prevProps, prevState) {
+    const { } = this.props;
+  }
+
+  onFetchAppListAll = () => {
     const { dispatch } = this.props;
-    const { searchObj } = this.state;
     dispatch({
-      type: 'project/appList',
-      payload: searchObj
+      type: 'project/appListAll',
+      payload: {}
     })
   }
 
-  onSearch = (value) => {
-    const { searchObj } = this.state;
-    this.setState({
-      searchObj: {
-        ...searchObj,
-        query: value
+  onSearch = (value, option) => {
+    let item = option.props.label;
+    // this.setState({
+    //   value
+    // })
+    router.replace({
+      pathname: `/project/details/${item.id}`,
+      query: {
+        appId: item.id,
+        appCode: item.appCode
       }
     })
+    // const { searchObj } = this.state;
+    // this.setState({
+    //   searchObj: {
+    //     ...searchObj,
+    //     query: value
+    //   }
+    // })
   }
   render() {
+    const { appListAll } = this.props;
+    const { value } = this.state;
     return (
-      <Input.Search placeholder="搜索项目" onSearch={this.onSearch} />
+      <Select
+        placeholder="搜索项目"
+        showSearch
+        style={{ width: 300 }}
+        optionFilterProp="children"
+        showArrow={false}
+        onChange={this.onSearch}
+        value={undefined}
+      >
+        {
+          appListAll.map((item) => (
+            <Option value={item.name} key={item.id} label={item}>{item.appCode}/{item.name}</Option>
+          ))
+        }
+      </Select>
     )
   }
 
 }
 
-export default connect(({ }) => ({
-
+export default connect(({ project }) => ({
+  appListAll: project.appListAll,
 }))(SearchApp);

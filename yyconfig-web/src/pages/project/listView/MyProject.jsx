@@ -93,7 +93,7 @@ class MyProject extends React.Component {
                 {
                   list.rows && list.rows.map((item, i) => (
                     <Col lg={6} md={8} sm={24} key={i}>
-                      <Card className={styles.listCard} onClick={() => { this.onRouteTo('/project/details', { appId: item.id, appCode: item.appCode }) }}>
+                      <Card className={styles.listCard} onClick={() => { this.onRouteTo(`/project/details/${item.id}`, { appId: item.id, appCode: item.appCode }) }}>
                         <h2>{item.appCode}</h2>
                         <p>{item.name}</p>
                       </Card>
