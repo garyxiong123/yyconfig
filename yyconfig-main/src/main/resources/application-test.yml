@@ -8,3 +8,5 @@ spring:
     properties:
       hibernate:
         format_sql: false
+    hibernate:
+      ddl-auto: update
