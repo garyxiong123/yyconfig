@@ -78,6 +78,14 @@ public class ConfigChangeContentBuilder {
             this.newItem = newItem;
         }
 
+        public void setOldItem(ItemDTO oldItem) {
+            this.oldItem = oldItem;
+        }
+
+        public void setNewItem(ItemDTO newItem) {
+            this.newItem = newItem;
+        }
+
         public ItemDTO getOldItem() {
             return oldItem;
         }
