@@ -35,7 +35,7 @@ public interface AppEnvClusterNamespaceRepository extends JpaRepository<AppEnvCl
             "                   inner join app_env_cluster aec on aecn.app_env_cluster_id = aec.id\n"+
             "                   inner join app_namespace an on aecn.app_namespace_id=an.id\n"+
             "                   inner join app on an.app_id=app.id\n"+
-            "            where app.app_code='payment'  and an.name='application' and aecn.type='main'")
+            "            where app.app_code=?1  and an.name=?2 and aecn.type='main'")
     List<AppEnvClusterNamespace> findbyAppAndEnvAndNamespace(String app, String namespace);
 
 }
