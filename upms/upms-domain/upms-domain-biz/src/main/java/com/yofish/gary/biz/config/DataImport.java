@@ -87,6 +87,7 @@ public class DataImport {
                     .username(adminUsername)
                     .password(adminPassword)
                     .realName(adminRealName)
+                    .departmentId(department.getId())
                     .roleIds(Arrays.asList(Long.valueOf(adminRole.getId())))
                     .build();
             this.userService.add(initAdmin);
