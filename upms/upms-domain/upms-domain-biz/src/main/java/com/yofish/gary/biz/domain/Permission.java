@@ -15,6 +15,8 @@
  */
 package com.yofish.gary.biz.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.yofish.gary.api.dto.req.PermissionAddReqDTO;
 import com.yofish.gary.api.dto.req.PermissionEditReqDTO;
 import lombok.*;
@@ -39,6 +41,7 @@ import java.util.Set;
 @Table(name = "permission")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 30)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Permission {
 
     @Id

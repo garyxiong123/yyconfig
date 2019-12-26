@@ -15,6 +15,8 @@
  */
 package com.yofish.gary.biz.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.yofish.gary.api.ShiroSimpleHashStrategy;
 import com.yofish.gary.api.dto.req.UserAddReqDTO;
 import com.yofish.gary.api.dto.req.UserEditReqDTO;
@@ -60,6 +62,7 @@ import static org.apache.commons.lang3.StringUtils.isNoneBlank;
 @Entity
 @Table(name = "user")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @DiscriminatorColumn(name = "DISCRIMINATOR", discriminatorType = DiscriminatorType.STRING, length = 30)
 public class User extends BaseEntity {
 
