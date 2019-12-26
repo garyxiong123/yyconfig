@@ -13,25 +13,25 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.yofish.gary.biz.subject;
+package com.yofish.gary.subject;
 
 
-import com.yofish.gary.biz.subject.dto.OpsUserDto;
+import com.yofish.gary.subject.dto.YyUserDto;
 
 /**
  * @author pqq
  * @version v1.0
  * @date 2019年8月6日 10:00:00
- * @work ops本地线程主体
+ * @work Yy本地线程主体
  */
-public class OpsThreadLocalSubject {
+public class YyThreadLocalSubject {
 
     /**
      * ops用户本地线程对象
      */
-    private static final ThreadLocal<OpsUserDto> OPS_USER_THREAD_LOCAL = new ThreadLocal<OpsUserDto>() {
+    private static final ThreadLocal<YyUserDto> OPS_USER_THREAD_LOCAL = new ThreadLocal<YyUserDto>() {
         @Override
-        protected OpsUserDto initialValue() {
+        protected YyUserDto initialValue() {
             return null;
         }
     };
@@ -41,18 +41,18 @@ public class OpsThreadLocalSubject {
      *
      * @return
      */
-    public static OpsUserDto getOpsUser() {
-        OpsUserDto opsUserDto = OPS_USER_THREAD_LOCAL.get();
-        return opsUserDto;
+    public static YyUserDto getOpsUser() {
+        YyUserDto yyUserDto = OPS_USER_THREAD_LOCAL.get();
+        return yyUserDto;
     }
 
     /**
      * 设置ops用户信息
      *
-     * @param opsUserDto
+     * @param yyUserDto
      */
-    public static void setOpsUser(OpsUserDto opsUserDto) {
-        OPS_USER_THREAD_LOCAL.set(opsUserDto);
+    public static void setOpsUser(YyUserDto yyUserDto) {
+        OPS_USER_THREAD_LOCAL.set(yyUserDto);
     }
 
     /**

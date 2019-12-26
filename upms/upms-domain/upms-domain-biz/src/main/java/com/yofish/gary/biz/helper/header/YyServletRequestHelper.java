@@ -29,15 +29,15 @@ import static org.springframework.util.StringUtils.hasText;
  * @date 2019年7月25日 10:00:00
  * @work ops header helper
  */
-public class OpsServletRequestHelper extends HttpServletRequestWrapper {
+public class YyServletRequestHelper extends HttpServletRequestWrapper {
 
     private Map<String, String> opsHeader = new HashMap<>();
 
-    public OpsServletRequestHelper(HttpServletRequest request) {
+    public YyServletRequestHelper(HttpServletRequest request) {
         super(request);
     }
 
-    public OpsServletRequestHelper(HttpServletRequest request, Map<String, String> opsHeader) {
+    public YyServletRequestHelper(HttpServletRequest request, Map<String, String> opsHeader) {
         this(request);
         this.opsHeader = opsHeader;
     }

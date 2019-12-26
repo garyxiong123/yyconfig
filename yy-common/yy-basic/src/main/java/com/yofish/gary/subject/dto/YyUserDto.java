@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.yofish.gary.biz.subject.dto;
+package com.yofish.gary.subject.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -30,8 +30,8 @@ import java.io.Serializable;
  */
 @Setter
 @Getter
-@ApiModel("ops用户dto")
-public class OpsUserDto implements Serializable {
+@ApiModel("Yy用户dto")
+public class YyUserDto implements Serializable {
 
     private static final long serialVersionUID = -1759504604745241452L;
 
