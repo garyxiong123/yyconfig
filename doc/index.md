@@ -35,7 +35,7 @@
 
 # 安装
 
-#### [本地集群安装](./install_local_cluster.md)
+#### [本地集群安装](./install.md)
 #### [本地单机安装](./GetStarted.md)
 
 # 运维手册

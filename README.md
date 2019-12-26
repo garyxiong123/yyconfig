@@ -1,4 +1,4 @@
-[English](./index_en.md) | [官网](https://atayun.net)  | [社区](xxxxx) · [论坛](xxxxx) | [设计文档](doc/design.md) | [使用文档](./user_guide.md) | [安装文档](install.md) | [版本更新](./releases.md) | [愿景](./releases.md) | [本地启动](./releases.md)
+[English](./index_en.md) | [官网](https://atayun.net)  | [社区](xxxxx) · [论坛](xxxxx) | [设计文档](doc/design.md) | [使用文档](doc/user_guide.md) | [安装文档](doc/install.md) | [本地启动](doc/releases.md) | [版本更新](doc/releases.md) | [开发计划](doc/plain.md) 
 
 # Yyconfig - A Object Oriented configuration management system
 
@@ -17,8 +17,6 @@ https://yyconfig-test.yofish.com/
 
 #本地启动步骤:
 
-https://yyconfig-test.yofish.com/
-账号/密码:apollo/apollo
 
 
 
