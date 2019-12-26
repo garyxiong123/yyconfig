@@ -1,6 +1,6 @@
-package com.yofish.apollo.repository;
+package com.yofish.gary.biz.repository;
 
-import com.yofish.apollo.domain.Department;
+import com.yofish.gary.biz.domain.Department;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Component;

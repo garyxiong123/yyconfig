@@ -1,6 +1,5 @@
-package com.yofish.apollo.model;
+package com.yofish.gary.api.dto.req;
 
-import common.utils.InputValidator;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -15,8 +14,8 @@ public class DepartmentModel {
 
     @NotBlank(message = "code cannot be blank")
     @Pattern(
-            regexp = InputValidator.CLUSTER_NAMESPACE_VALIDATOR,
-            message = "Invalid code format: " + InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE
+            regexp = "[0-9a-zA-Z_.-]+",
+            message = "Invalid code format: 只允许输入数字，字母和符号 - _ ."
     )
     private String code;
 

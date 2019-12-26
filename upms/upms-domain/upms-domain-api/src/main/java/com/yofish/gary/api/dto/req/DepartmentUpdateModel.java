@@ -1,4 +1,4 @@
-package com.yofish.apollo.model;
+package com.yofish.gary.api.dto.req;
 
 import lombok.Data;
 

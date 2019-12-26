@@ -9,7 +9,9 @@ import com.yofish.apollo.service.AppService;
 import com.yofish.apollo.service.ItemService;
 import com.yofish.apollo.service.NamespaceBranchService;
 import com.yofish.apollo.service.ReleaseService;
+import com.yofish.gary.biz.domain.Department;
 import com.yofish.gary.biz.domain.User;
+import com.yofish.gary.biz.repository.DepartmentRepository;
 import com.yofish.gary.biz.repository.UserRepository;
 import common.dto.NamespaceDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +21,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

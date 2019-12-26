@@ -1,9 +1,9 @@
-package com.yofish.apollo.controller;
+package com.yofish.gary.biz.controller;
 
-import com.yofish.apollo.domain.Department;
-import com.yofish.apollo.model.DepartmentModel;
-import com.yofish.apollo.model.DepartmentUpdateModel;
-import com.yofish.apollo.repository.DepartmentRepository;
+import com.yofish.gary.biz.domain.Department;
+import com.yofish.gary.api.dto.req.DepartmentModel;
+import com.yofish.gary.api.dto.req.DepartmentUpdateModel;
+import com.yofish.gary.biz.repository.DepartmentRepository;
 import com.youyu.common.api.Result;
 import com.youyu.common.utils.YyAssert;
 import io.swagger.annotations.Api;
@@ -15,10 +15,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import javax.validation.Valid;
 import java.util.List;
 

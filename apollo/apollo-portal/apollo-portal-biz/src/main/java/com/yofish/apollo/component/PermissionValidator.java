@@ -3,7 +3,6 @@ package com.yofish.apollo.component;
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.domain.AppNamespace4Public;
-import com.yofish.apollo.domain.Department;
 import com.yofish.apollo.repository.AppRepository;
 import com.yofish.apollo.service.PortalConfig;
 import com.yofish.gary.biz.domain.User;
