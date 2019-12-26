@@ -1,7 +1,7 @@
-package com.yofish.apollo.service;
+package com.yofish.gary.biz.service;
 
-import com.yofish.apollo.domain.Department;
-import com.yofish.apollo.repository.DepartmentRepository;
+import com.yofish.gary.biz.domain.Department;
+import com.yofish.gary.biz.repository.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
