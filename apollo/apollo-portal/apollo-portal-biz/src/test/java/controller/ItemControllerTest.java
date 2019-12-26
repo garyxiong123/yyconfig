@@ -51,9 +51,9 @@ public class ItemControllerTest extends AbstractControllerTest{
     @Test
     public void updateItem() {
         UpdateItemReq req=new UpdateItemReq();
-        req.setItemId(20L);
+        req.setItemId(67L);
         req.setKey("key");
-        req.setValue("value");
+        req.setValue("value1");
         req.setComment("变化");
         req.setLineNum(12);
         itemController.updateItem(req);
@@ -109,7 +109,7 @@ public class ItemControllerTest extends AbstractControllerTest{
 
     private ModifyItemsByTextsReq createModifyItemsByTextsReq(){
         ModifyItemsByTextsReq req=new ModifyItemsByTextsReq();
-        req.setAppEnvClusterNamespaceId(10L);
+        req.setAppEnvClusterNamespaceId(44L);
         req.setConfigText(propertityFromat());
         req.setFormat(ConfigFileFormat.Properties);
        /* req.setConfigText(jsonFromat());
@@ -152,7 +152,7 @@ public class ItemControllerTest extends AbstractControllerTest{
                 "caiyi.company.accounts = tiyuquzou,liaodaotiyu\n" +
                 "finance.company.accounts = youyujizhang,youyudaike";
 
-        String b="dbName = payment\\nuserName-toPublish = garyxiong-toPublish\\n12 = 2333312\\npassword = 123456544555";
+        String b="12 = 5r2361\ngg = gag33455";
         return b;
     }
 

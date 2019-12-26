@@ -195,7 +195,7 @@ public class ItemService {
             return;
         }
         updateSet(appEnvClusterNamespace, changeSets);
-        commitService.saveCommit(appEnvClusterNamespace,toJSONString(changeSets));
+        //commitService.saveCommit(appEnvClusterNamespace,toJSONString(changeSets));
 
     }
 
@@ -243,8 +243,7 @@ public class ItemService {
 
         }
         if (configChangeContentBuilder.hasContent()) {
-            Commit commit = Commit.builder().appEnvClusterNamespace(namespace).changeSets(toJSONString(changeSet)).build();
-            commitRepository.save(commit);
+            commitService.saveCommit(namespace,configChangeContentBuilder.build());
         }
 
     }

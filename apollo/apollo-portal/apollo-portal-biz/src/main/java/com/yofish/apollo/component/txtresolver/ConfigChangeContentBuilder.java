@@ -77,6 +77,14 @@ public class ConfigChangeContentBuilder {
             this.oldItem = oldItem;
             this.newItem = newItem;
         }
+
+        public ItemDTO getOldItem() {
+            return oldItem;
+        }
+
+        public ItemDTO getNewItem() {
+            return newItem;
+        }
     }
 
     ItemDTO cloneItem(Item item) {
