@@ -114,7 +114,7 @@ public class AppService {
     public PageData<App> findAll(Pageable pageable) {
 
         //当前用户ID
-        Long currentUserId = YyRequestInfoHelper.getCurrentUserId();
+      /*  Long currentUserId = YyRequestInfoHelper.getCurrentUserId();
         YyAssert.isTrue(!ObjectUtils.isEmpty(currentUserId), UpmsResultCode.USER_SESSION_EXPIRED);
         if (userApi.isAdmin(currentUserId).ifNotSuccessThrowException().getData()) {
             //用户是管理员
@@ -137,7 +137,8 @@ public class AppService {
 
         };
 
-        Page<App> apps = appRepository.findAll(querySpeci, pageable);
+        Page<App> apps = appRepository.findAll(querySpeci, pageable);*/
+        Page<App> apps = appRepository.findAll(pageable);
 
         return PageDataAdapter.toPageData(apps);
     }
