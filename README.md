@@ -25,7 +25,7 @@ https://yyconfig-test.yofish.com/
 # Support
 <table>
   <thead>
-    <th>YyApollo配置中心技术支持<br />QQ号：502238410, 或者邮件联系 502238410@qq.com</th>
+    <th>YyConfig配置中心技术支持<br />QQ号：502238410, 或者邮件联系 502238410@qq.com</th>
   </thead>
   <tbody>
   </tbody>

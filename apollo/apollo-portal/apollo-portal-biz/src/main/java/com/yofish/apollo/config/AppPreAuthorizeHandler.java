@@ -2,6 +2,7 @@ package com.yofish.apollo.config;
 
 import com.yofish.apollo.component.AppPreAuthorize;
 import com.yofish.apollo.component.PermissionValidator;
+import com.yofish.gary.api.enums.UpmsResultCode;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
 import com.youyu.common.helper.YyRequestInfoHelper;
@@ -47,7 +48,7 @@ public class AppPreAuthorizeHandler {
 
         //当前用户ID
         Long currentUserId = YyRequestInfoHelper.getCurrentUserId();
-        YyAssert.isTrue(!ObjectUtils.isEmpty(currentUserId), "403", "用户未登录！");
+        YyAssert.isTrue(!ObjectUtils.isEmpty(currentUserId), UpmsResultCode.USER_SESSION_EXPIRED);
 
         //超级管理员直接放行
         if (permissionValidator.isSuperAdmin()) {
