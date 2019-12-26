@@ -36,20 +36,22 @@ public class AppPreAuthorizeHandler {
     private PermissionValidator permissionValidator;
 
 
+    /**
+     * 按照权限级别逐层判断放行
+     *
+     * @param joinPoint
+     */
     @Before("@annotation(com.yofish.apollo.component.AppPreAuthorize)")
     public void validate(JoinPoint joinPoint) {
-        //TODO 上线待删除
-        if (true) {
-            log.info("====================   测试阶段没有用户登录，暂不做验证！！       ====================");
-            return;
-        }
+        log.info("进行项目相关操作的权限验证...");
 
         //当前用户ID
         Long currentUserId = YyRequestInfoHelper.getCurrentUserId();
         YyAssert.isTrue(!ObjectUtils.isEmpty(currentUserId), "403", "用户未登录！");
-        log.info("portal 数据权限验证 userId:[{}]", currentUserId);
+
+        //超级管理员直接放行
         if (permissionValidator.isSuperAdmin()) {
-            log.info("用户是管理员！");
+            log.info("用户是管理员，直接放行！");
             return;
         }
 
@@ -58,44 +60,49 @@ public class AppPreAuthorizeHandler {
         String methodName = joinPoint.getSignature().getName();
         Class<?>[] parameterTypes = ((MethodSignature) joinPoint.getSignature()).getMethod().getParameterTypes();
 
-        AppPreAuthorize.Authorize authorizeType = this.getAuthorizeType(targetClass, methodName, parameterTypes);
-        log.info("authorizeType:[{}]", authorizeType);
+        AppPreAuthorize.Authorize requireAuthorizeType = this.getAuthorizeType(targetClass, methodName, parameterTypes);
+        log.info("目标接口的权限验证类型:[{}]", requireAuthorizeType);
 
-        if (authorizeType.equals(AppPreAuthorize.Authorize.SuperAdmin)) {
-            log.info("要求超级管理员权限！");
+        if (requireAuthorizeType.equals(AppPreAuthorize.Authorize.SuperAdmin)) {
+            log.info("要求超级管理员权限，当前用户没有超级管理员权限！");
             throw new BizException("403", "当前用户没有超级管理员权限。");
         }
 
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
-        log.info("进行权限验证：[{}]", request.getRequestURL());
+        log.info("进行项目权限验证：[{}]", request.getRequestURL());
 
-        //项目的ID标识
-        long appId = ((Map<String, Long>) request.getAttribute(View.PATH_VARIABLES)).get("appId");
+        //项目的ID或Code标识
+        Long appId = ((Map<String, Long>) request.getAttribute(View.PATH_VARIABLES)).get("appId");
         String appCode = ((Map<String, String>) request.getAttribute(View.PATH_VARIABLES)).get("appCode");
-
         YyAssert.paramCheck(ObjectUtils.isEmpty(appId) && ObjectUtils.isEmpty(appCode), "pathVariables 没有 appId 或 appCode！");
 
-        //进行权限验证
-        if (authorizeType.equals(AppPreAuthorize.Authorize.AppAdmin)) {
-            log.info("项目负责人权限验证...");
-            boolean authorize = ObjectUtils.isEmpty(appId) ? permissionValidator.isAppOwner(appCode):permissionValidator.isAppOwner(appId);
-            YyAssert.isTrue(authorize, "当前用户没有项目[" + (ObjectUtils.isEmpty(appId) ?appCode : appId) + "]的[" + authorizeType + "]权限。");
-
-        } else if (authorizeType.equals(AppPreAuthorize.Authorize.AppAdmin)) {
-            log.info("参与人权限验证...");
-            boolean authorize = ObjectUtils.isEmpty(appId) ? permissionValidator.isAppAdmin(appCode):permissionValidator.isAppAdmin(appId);
-
-            YyAssert.isTrue(authorize, "当前用户没有项目[" + (ObjectUtils.isEmpty(appId) ?appCode : appId) + "]的[" + authorizeType + "]权限。");
-        } else {
-            log.info("同项目部门普通用户权限验证...");
-            // TODO: 2019-12-26 部门验证
-//            boolean authorize = ObjectUtils.isEmpty(appId) ? permissionValidator.isAppAdmin(appCode):permissionValidator.isAppAdmin(appId);
-
-//            YyAssert.isTrue(authorize, "当前用户没有项目[" + appId + "]的[" + authorizeType + "]权限。");
-//            YyAssert.isTrue(userPermission, "当前用户没有项目[" + appId + "]的[" + authorizeType + "]权限。");
+        //项目拥有者放行
+        boolean isAppOwner = ObjectUtils.isEmpty(appId) ? permissionValidator.isAppOwner(appCode) : permissionValidator.isAppOwner(appId);
+        if (isAppOwner) {
+            log.info("项目拥有者放行.");
+            return;
+        } else if (AppPreAuthorize.Authorize.AppOwner.equals(requireAuthorizeType)) {
+            throw new BizException("403", "当前用户没有项目[" + (ObjectUtils.isEmpty(appId) ? appCode : appId) + "]的[" + requireAuthorizeType + "]权限。");
         }
-        log.info("@PermissionAuth 权限验证验证通过！");
+
+        //项目参与人放行
+        boolean isAppAdmin = ObjectUtils.isEmpty(appId) ? permissionValidator.isAppAdmin(appCode) : permissionValidator.isAppAdmin(appId);
+        if (isAppAdmin) {
+            log.info("项目参与人放行.");
+            return;
+        } else if (AppPreAuthorize.Authorize.AppAdmin.equals(requireAuthorizeType)) {
+            throw new BizException("403", "当前用户没有项目[" + (ObjectUtils.isEmpty(appId) ? appCode : appId) + "]的[" + requireAuthorizeType + "]权限。");
+        }
+
+        //同项目部门普通用户放行
+        boolean isSameDepartment = ObjectUtils.isEmpty(appId) ? permissionValidator.isSameDepartment(appCode) : permissionValidator.isSameDepartment(appId);
+        if (isSameDepartment) {
+            log.info("同项目部门普通用户放行.");
+            return;
+        } else {
+            throw new BizException("403", "当前用户没有项目[" + (ObjectUtils.isEmpty(appId) ? appCode : appId) + "]的[" + requireAuthorizeType + "]权限。");
+        }
     }
 
 
