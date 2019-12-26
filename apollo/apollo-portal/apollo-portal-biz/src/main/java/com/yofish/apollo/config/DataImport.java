@@ -23,6 +23,7 @@ import org.springframework.util.ObjectUtils;
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author WangSongJun
@@ -57,11 +58,14 @@ public class DataImport {
 
     @Autowired
     private NamespaceBranchService namespaceBranchService;
+    @Autowired
+    private OpenNamespaceTypeRepository openNamespaceTypeRepository;
 
     private final String activeEvns = "dev,test,pre,prod";
     private final String defaultAppName = "中台支付";
     private final String defaultAppCode = "payment";
     private final String defaultNamespaceName = "application";
+    private final List<String> openNamespaceTypeList = Arrays.asList("MySql", "Redis", "Other");
     private AppEnvClusterNamespace namespace;
 
     @PostConstruct
@@ -75,6 +79,18 @@ public class DataImport {
             this.serverConfigRepository.save(envConfig);
         }
         log.info("可支持的环境列表:{}", envConfig.getValue());
+    }
+
+    @PostConstruct
+    public void initDefaultOpenNamespaceType() {
+        log.info("初始化公开命名空间类型...");
+
+        long count = openNamespaceTypeRepository.count();
+        if (count < 1) {
+            List<OpenNamespaceType> openNamespaceTypes = openNamespaceTypeList.stream().map(name -> OpenNamespaceType.builder().name(name).build()).collect(Collectors.toList());
+            openNamespaceTypeRepository.saveAll(openNamespaceTypes);
+        }
+        log.info("初始化公开命名空间类型完成.");
     }
 
     @PostConstruct
@@ -100,15 +116,13 @@ public class DataImport {
         createRelease4Branch(namespace4Branch);
 
 
-
-
     }
 
     private void createRelease4Branch(AppEnvClusterNamespace4Branch namespace4Branch) {
         String releaseName = "releaseName-Branch";
         String releaseComment = "releaseComment-Branch";
         boolean isEmergencyPublish = false;
-        releaseService.publish(namespace4Branch,releaseName, releaseComment, null,  isEmergencyPublish);
+        releaseService.publish(namespace4Branch, releaseName, releaseComment, null, isEmergencyPublish);
     }
 
     private void createItem4Branch(AppEnvClusterNamespace4Branch namespace4Branch) {
@@ -117,12 +131,12 @@ public class DataImport {
     }
 
     private void createThirdCreateItem(AppEnvClusterNamespace namespace) {
-        CreateItemReq itemReq = CreateItemReq.builder().appEnvClusterNamespaceIds(Arrays.asList( namespace.getId())).key("userName-toPublish").lineNum(4).value("garyxiong-toPublish").build();
+        CreateItemReq itemReq = CreateItemReq.builder().appEnvClusterNamespaceIds(Arrays.asList(namespace.getId())).key("userName-toPublish").lineNum(4).value("garyxiong-toPublish").build();
         itemService.createItem(itemReq);
     }
 
     private void createFirstCreateItem(AppEnvClusterNamespace namespace) {
-        CreateItemReq itemReq = CreateItemReq.builder().appEnvClusterNamespaceIds(Arrays.asList( namespace.getId())).key("dbName").lineNum(1).value("payment").build();
+        CreateItemReq itemReq = CreateItemReq.builder().appEnvClusterNamespaceIds(Arrays.asList(namespace.getId())).key("dbName").lineNum(1).value("payment").build();
         itemService.createItem(itemReq);
     }
 
@@ -131,11 +145,11 @@ public class DataImport {
         String releaseName = "releaseName2";
         String releaseComment = "releaseComment2";
         boolean isEmergencyPublish = false;
-        releaseService.publish(namespace,releaseName, releaseComment, null,  isEmergencyPublish);
+        releaseService.publish(namespace, releaseName, releaseComment, null, isEmergencyPublish);
     }
 
     private void createSecondCreateItem(AppEnvClusterNamespace namespace) {
-        CreateItemReq itemReq = CreateItemReq.builder().appEnvClusterNamespaceIds(Arrays.asList( namespace.getId())).key("password").lineNum(2).value("123456").build();
+        CreateItemReq itemReq = CreateItemReq.builder().appEnvClusterNamespaceIds(Arrays.asList(namespace.getId())).key("password").lineNum(2).value("123456").build();
         itemService.createItem(itemReq);
 
     }
@@ -144,7 +158,7 @@ public class DataImport {
         String releaseName = "releaseName1";
         String releaseComment = "releaseComment1";
         boolean isEmergencyPublish = false;
-        releaseService.publish(namespace,releaseName, releaseComment, null,  isEmergencyPublish);
+        releaseService.publish(namespace, releaseName, releaseComment, null, isEmergencyPublish);
 
     }
 
