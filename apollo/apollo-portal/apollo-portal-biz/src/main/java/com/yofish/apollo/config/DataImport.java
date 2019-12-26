@@ -59,8 +59,6 @@ public class DataImport {
     private NamespaceBranchService namespaceBranchService;
 
     private final String activeEvns = "dev,test,pre,prod";
-    private final String defaultDepartment = "默认部门";
-    private final String defaultDepartmentCode = "DefaultDepartment";
     private final String defaultAppName = "中台支付";
     private final String defaultAppCode = "payment";
     private final String defaultNamespaceName = "application";
@@ -81,18 +79,9 @@ public class DataImport {
 
     @PostConstruct
     private void createDefaultData() {
-        log.info("初始化部门信息...");
-        Department department = this.departmentRepository.findByName(defaultDepartment);
-        if (!ObjectUtils.isEmpty(department)) {
-            return;
-        }
-        department = Department.builder().code(defaultDepartmentCode).name(defaultDepartment).comment("系统初始化默认部门").build();
-        this.departmentRepository.save(department);
+        log.info("初始化默认项目...");
 
-        log.info("初始化部门信息完成:{}", department.getName());
-
-
-        App app = createDefaultApp(department);
+        App app = createDefaultApp();
         AppEnvClusterNamespace4Branch namespace4Branch = createDefaultNamespace4Branch(app);
 
 
@@ -170,9 +159,9 @@ public class DataImport {
     }
 
 
-    private App createDefaultApp(Department department) {
-
-        App app = App.builder().name(defaultAppName).appCode(defaultAppCode).department(department).build();
+    private App createDefaultApp() {
+        List<Department> departmentList = departmentRepository.findAll();
+        App app = App.builder().name(defaultAppName).appCode(defaultAppCode).department(departmentList.get(0)).build();
         List<User> users = userRepository.findAll();
         app.setAppOwner(users.get(0));
 
