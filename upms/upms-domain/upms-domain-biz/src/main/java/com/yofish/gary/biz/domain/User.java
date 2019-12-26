@@ -115,7 +115,7 @@ public class User extends BaseEntity {
 
     private HashMap extInfo;
 
-    @OneToMany(cascade = CascadeType.DETACH)
+    @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "department_id")
     private Department department;
 
