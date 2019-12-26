@@ -115,6 +115,9 @@ public class User extends BaseEntity {
 
     private HashMap extInfo;
 
+    @OneToMany(cascade = CascadeType.DETACH)
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
@@ -143,6 +146,7 @@ public class User extends BaseEntity {
         this.email = userAddReqDTO.getEmail();
         this.status = defaultIfBlank(userAddReqDTO.getStatus(), VALID.getCode());
         this.remark = userAddReqDTO.getRemark();
+        this.department = ObjectUtils.isEmpty(userAddReqDTO.getDepartmentId())?null:new Department(userAddReqDTO.getDepartmentId());
     }
 
     public User(UserEditReqDTO userEditReqDTO, String hashAlgorithmName) {
@@ -157,10 +161,11 @@ public class User extends BaseEntity {
         if (isNoneBlank(userEditReqDTO.getPassword())) {
             this.password = getBeanInstance(ShiroSimpleHashStrategy.class, hashAlgorithmName).signature(userEditReqDTO.getPassword());
         }
+        this.department = ObjectUtils.isEmpty(userEditReqDTO.getDepartmentId())?null:new Department(userEditReqDTO.getDepartmentId());
     }
 
     @Builder
-    public User(Long id, String username, String password, String realName, Integer sex, String phone, String email, String remark, String status, HashMap extInfo, Set<Role> roles) {
+    public User(Long id, String username, String password, String realName, Integer sex, String phone, String email, String remark, String status, HashMap extInfo, Department department, Set<Role> roles) {
         super(id);
         this.username = username;
         this.password = password;
@@ -171,6 +176,7 @@ public class User extends BaseEntity {
         this.remark = remark;
         this.status = status;
         this.extInfo = extInfo;
+        this.department = department;
         this.roles = roles;
     }
 

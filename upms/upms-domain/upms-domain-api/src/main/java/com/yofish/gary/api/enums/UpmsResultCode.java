@@ -39,8 +39,9 @@ public enum UpmsResultCode implements IBaseResultCode {
     USER_UNAUTHORIZED("0010", "用户未授权"),
     USER_SESSION_EXPIRED("0011", "用户会话已过期"),
     SESSION_USER_ID_IS_NULL("0012", "会话对应用户id为空"),
-    USER_NOT_EXIST("0013","用户不存在"),
-    EMAIL_ALREADY_EXIST("0014", "用户邮箱已经存在");
+    USER_NOT_EXIST("0013", "用户不存在"),
+    EMAIL_ALREADY_EXIST("0014", "用户邮箱已经存在"),
+    DEPARTMENT_NOT_EXIST("0015", "部门不存在");
 
     /**
      * 错误码前缀

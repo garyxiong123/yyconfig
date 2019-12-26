@@ -72,6 +72,9 @@ public class UserEditReqDTO implements Serializable {
     @ApiModelProperty("状态(0:有效 1:冻结)")
     private String status;
 
+    @ApiModelProperty("部门ID")
+    private Long departmentId;
+
     @ApiModelProperty("角色id列表")
     private List<Long> roleIds;
 }

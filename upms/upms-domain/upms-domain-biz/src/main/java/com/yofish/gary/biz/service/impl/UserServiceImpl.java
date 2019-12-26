@@ -23,9 +23,11 @@ import com.yofish.gary.api.dto.rsp.UserMenuPermissionRspDTO;
 import com.yofish.gary.api.dto.rsp.UserQueryRspDTO;
 import com.yofish.gary.api.login.UpmsLoginLogoutRealm;
 import com.yofish.gary.api.properties.ShiroProperties;
+import com.yofish.gary.biz.domain.Department;
 import com.yofish.gary.biz.domain.Permission;
 import com.yofish.gary.biz.domain.User;
 import com.yofish.gary.biz.helper.PageDataHelper;
+import com.yofish.gary.biz.repository.DepartmentRepository;
 import com.yofish.gary.biz.repository.UserRepository;
 import com.yofish.gary.biz.service.UserService;
 import com.yofish.gary.tuple.Tuple2;
@@ -38,6 +40,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
@@ -65,6 +68,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private DepartmentRepository departmentRepository;
 
     @Autowired(required = false)
     private ShiroProperties shiroProperties;
@@ -126,6 +132,10 @@ public class UserServiceImpl implements UserService {
         User existUser = userRepository.findById(userEditReqDTO.getId()).get();
         if (!eq(existUser.getEmail(), userEditReqDTO.getEmail())) {
             checkUserEmail(userEditReqDTO.getEmail());
+        }
+        if (!ObjectUtils.isEmpty(userEditReqDTO.getDepartmentId())) {
+            checkDepartment(userEditReqDTO.getDepartmentId());
+            existUser.setDepartment(new Department(userEditReqDTO.getDepartmentId()));
         }
         String password = getBeanInstance(ShiroSimpleHashStrategy.class, shiroProperties.getHashAlgorithmName()).signature(userEditReqDTO.getPassword());
         existUser.setRealName(userEditReqDTO.getRealName());
@@ -269,6 +279,10 @@ public class UserServiceImpl implements UserService {
     private void checkUserAdd(UserAddReqDTO userAddReqDTO) {
         User user = userRepository.findUserByUsernameAndEmail(userAddReqDTO.getUsername(), userAddReqDTO.getEmail());
         exception2MatchingExpression(nonNull(user), USERNAME_OR_EMAIL_ALREADY_EXIST);
+
+        if (!ObjectUtils.isEmpty(userAddReqDTO.getDepartmentId())) {
+            checkDepartment(userAddReqDTO.getDepartmentId());
+        }
     }
 
     /**
@@ -279,6 +293,11 @@ public class UserServiceImpl implements UserService {
     private void checkUser(User user) {
         exception2MatchingExpression(isNull(user), USERNAME_OR_PASSWORD_ERROR);
         user.checkStatus();
+    }
+
+    private void checkDepartment(long departmentId) {
+        Department department = departmentRepository.findById(departmentId).orElse(null);
+        exception2MatchingExpression(isNull(department), DEPARTMENT_NOT_EXIST);
     }
 
     /**

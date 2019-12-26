@@ -17,7 +17,10 @@ package com.yofish.gary.api.dto.req;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -76,10 +79,13 @@ public class UserAddReqDTO implements Serializable {
     @ApiModelProperty("状态(0:有效 1:冻结)")
     private String status;
 
+    @ApiModelProperty("部门ID")
+    private Long departmentId;
+
     @ApiModelProperty("角色id列表")
     private List<Long> roleIds;
 
-    public UserAddReqDTO(){
+    public UserAddReqDTO() {
 
     }
 
