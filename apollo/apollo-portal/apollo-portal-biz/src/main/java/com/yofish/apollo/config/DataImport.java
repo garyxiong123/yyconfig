@@ -68,36 +68,28 @@ public class DataImport {
     private final List<String> openNamespaceTypeList = Arrays.asList("MySql", "Redis", "Other");
     private AppEnvClusterNamespace namespace;
 
+    /**
+     * 数据的原子性规则
+     */
     @PostConstruct
-    public void activeDefaultEnvs() {
+    public void activeDefaultEnvsAndInitData() {
         log.info("初始化系统配置...");
 
         log.info("配置可支持的环境列表");
         ServerConfig envConfig = this.serverConfigRepository.findByKey(ServerConfigKey.ApolloPortalEnvs.getKey());
-        if (ObjectUtils.isEmpty(envConfig)) {
-            envConfig = new ServerConfig(ServerConfigKey.ApolloPortalEnvs.getKey(), activeEvns, "可支持的环境列表");
-            this.serverConfigRepository.save(envConfig);
+        if (!ObjectUtils.isEmpty(envConfig)) {
+            return;
         }
+        envConfig = new ServerConfig(ServerConfigKey.ApolloPortalEnvs.getKey(), activeEvns, "可支持的环境列表");
+        this.serverConfigRepository.save(envConfig);
         log.info("可支持的环境列表:{}", envConfig.getValue());
-    }
 
-    @PostConstruct
-    public void initDefaultOpenNamespaceType() {
-        log.info("初始化公开命名空间类型...");
 
-        long count = openNamespaceTypeRepository.count();
-        if (count < 1) {
-            List<OpenNamespaceType> openNamespaceTypes = openNamespaceTypeList.stream().map(name -> OpenNamespaceType.builder().name(name).build()).collect(Collectors.toList());
-            openNamespaceTypeRepository.saveAll(openNamespaceTypes);
-        }
-        log.info("初始化公开命名空间类型完成.");
-    }
-
-    @PostConstruct
-    private void createDefaultData() {
         log.info("初始化默认项目...");
 
         App app = createDefaultApp();
+
+
         AppEnvClusterNamespace4Branch namespace4Branch = createDefaultNamespace4Branch(app);
 
 
@@ -115,7 +107,18 @@ public class DataImport {
 
         createRelease4Branch(namespace4Branch);
 
+    }
 
+    @PostConstruct
+    public void initDefaultOpenNamespaceType() {
+        log.info("初始化公开命名空间类型...");
+
+        long count = openNamespaceTypeRepository.count();
+        if (count < 1) {
+            List<OpenNamespaceType> openNamespaceTypes = openNamespaceTypeList.stream().map(name -> OpenNamespaceType.builder().name(name).build()).collect(Collectors.toList());
+            openNamespaceTypeRepository.saveAll(openNamespaceTypes);
+        }
+        log.info("初始化公开命名空间类型完成.");
     }
 
     private void createRelease4Branch(AppEnvClusterNamespace4Branch namespace4Branch) {
@@ -174,12 +177,13 @@ public class DataImport {
 
 
     private App createDefaultApp() {
+
         List<Department> departmentList = departmentRepository.findAll();
         App app = App.builder().name(defaultAppName).appCode(defaultAppCode).department(departmentList.get(0)).build();
         List<User> users = userRepository.findAll();
         app.setAppOwner(users.get(0));
-
         app.setAppAdmins(Sets.newHashSet(users));
+
         appService.createApp(app);
         return app;
     }
