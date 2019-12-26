@@ -31,7 +31,7 @@ public class AppEnvClusterNamespaceTest extends AbstractControllerTest{
 
     @Test
     public void findNamespaces(){
-        Result<List<NamespaceVO>> nameSpace= appNamespaceController.findNamespaces("payment","dev","default");
+        Result<List<NamespaceVO>> nameSpace= appNamespaceController.findNamespaces("middleground1","test","default");
         System.out.println(1);
     }
 }
