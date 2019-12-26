@@ -5,12 +5,12 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yofish.apollo.component.AppPreAuthorize;
 import com.yofish.apollo.domain.App;
-import com.yofish.gary.biz.domain.Department;
 import com.yofish.apollo.model.AppModel;
 import com.yofish.apollo.model.bo.NamespaceVO;
 import com.yofish.apollo.model.vo.EnvClusterInfo;
 import com.yofish.apollo.service.AppService;
 import com.yofish.apollo.service.ServerConfigService;
+import com.yofish.gary.biz.domain.Department;
 import com.yofish.gary.biz.domain.User;
 import com.youyu.common.api.PageData;
 import com.youyu.common.api.Result;
@@ -76,6 +76,20 @@ public class AppController {
         }
     }
 
+    @GetMapping
+    @ApiOperation("查询所有的项目")
+    public Result<List<App>> getAllApp() {
+        List<App> all = appService.findAll();
+        return Result.ok(all);
+    }
+
+    @GetMapping("/{appId:\\d+}")
+    @ApiOperation("查询项目信息")
+    public Result<App> getApp(@PathVariable Long appId) {
+        App app = appService.getApp(appId);
+        return Result.ok(app);
+    }
+
 
     @PutMapping("/{appId:\\d+}")
     @ApiOperation("修改项目信息")
@@ -86,16 +100,6 @@ public class AppController {
 
         App updatedApp = appService.updateApp(app);
         return Result.ok(updatedApp);
-    }
-
-    @GetMapping("/{appId:\\d+}")
-    @ApiOperation("查询项目信息")
-    public Result<App> getApp(@PathVariable Long appId) {
-        App app = appService.getApp(appId);
-        if (app == null) {
-            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "项目不存在！");
-        }
-        return Result.ok(app);
     }
 
     @GetMapping("/code/{appCode:[0-9a-zA-Z_.-]+}")
