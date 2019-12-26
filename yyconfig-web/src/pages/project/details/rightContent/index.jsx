@@ -141,7 +141,7 @@ class RightContent extends React.Component {
   renderItem(item, i) {
     let baseInfo = item.baseInfo || {};
     return (
-      <Fragment>
+      <Fragment key={baseInfo.id}>
         <Collapse bordered={false} defaultActiveKey={baseInfo.id} key={baseInfo.id}>
           <Panel
             key={baseInfo.id}
@@ -149,7 +149,7 @@ class RightContent extends React.Component {
             // extra={this.rendeRightItemExtra()}
             style={{ marginBottom: 20, backgroundColor: '#fff' }}
           >
-            <Tabs>
+            <Tabs animated={false}>
               {
                 item.format === 'properties' &&
                 <TabPane tab="表格" key="1">
@@ -174,7 +174,6 @@ class RightContent extends React.Component {
   }
   renderOpaModal(baseInfo) {
     const { showPublish, showRollBack, currentItem } = this.state;
-    console.log('baseInfo--->', baseInfo)
     return (
       <Fragment>
         {

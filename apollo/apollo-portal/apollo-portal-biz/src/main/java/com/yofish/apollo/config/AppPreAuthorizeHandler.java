@@ -31,7 +31,7 @@ import java.util.Map;
 @Slf4j
 @Aspect
 @Component
-public class AppPreAuthorizeCheck {
+public class AppPreAuthorizeHandler {
     @Autowired
     private PermissionValidator permissionValidator;
 
@@ -89,6 +89,7 @@ public class AppPreAuthorizeCheck {
             YyAssert.isTrue(authorize, "当前用户没有项目[" + (ObjectUtils.isEmpty(appId) ?appCode : appId) + "]的[" + authorizeType + "]权限。");
         } else {
             log.info("同项目部门普通用户权限验证...");
+            // TODO: 2019-12-26 部门验证
 //            boolean authorize = ObjectUtils.isEmpty(appId) ? permissionValidator.isAppAdmin(appCode):permissionValidator.isAppAdmin(appId);
 
 //            YyAssert.isTrue(authorize, "当前用户没有项目[" + appId + "]的[" + authorizeType + "]权限。");

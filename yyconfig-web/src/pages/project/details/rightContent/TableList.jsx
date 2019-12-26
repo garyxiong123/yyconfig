@@ -27,8 +27,8 @@ class TableList extends React.Component {
     })
   }
   onDelete = async (itemId) => {
-    let res = await project.configDelete({itemId});
-    if(res && res.code === '1') {
+    let res = await project.configDelete({ itemId });
+    if (res && res.code === '1') {
       message.success('删除成功');
       this.onFetchNamespaceList();
     }
@@ -111,27 +111,30 @@ class TableList extends React.Component {
       },
       {
         title: '操作',
-        dataIndex: 'opera',
+        dataIndex: 'deleted',
         render: (text, record) => (
           <div>
-            <span>
-              <a
-                onClick={() => {
-                  this.onEdit(record);
-                }}
-              >
-                修改
+            {
+              !text &&
+              <span>
+                <a
+                  onClick={() => {
+                    this.onEdit(record);
+                  }}
+                >
+                  修改
               </a>
-              <Divider type="vertical" />
-              <Popconfirm
-                title="确定删除吗?"
-                onConfirm={() => this.onDelete(record.item.id)}
-                okText="确定"
-                cancelText="取消"
-              >
-                <a>删除</a>
-              </Popconfirm>
-            </span>
+                <Divider type="vertical" />
+                <Popconfirm
+                  title="确定删除吗?"
+                  onConfirm={() => this.onDelete(record.item.id)}
+                  okText="确定"
+                  cancelText="取消"
+                >
+                  <a>删除</a>
+                </Popconfirm>
+              </span>
+            }
           </div>
         ),
       },
@@ -153,12 +156,12 @@ class TableList extends React.Component {
   }
   render() {
     const { showEdit, currentItem } = this.state;
-    const { baseInfo }= this.props;
+    const { baseInfo } = this.props;
     return (
       <Fragment>
         <Button size="small" type="primary" onClick={this.onEdit} style={{ margin: '10px 0' }}>+新增配置</Button>
         {this.renderTable()}
-        {showEdit && <ConfigAdd onCancel={this.onCancel} currentItem={currentItem} onSave={this.onConfigSave} baseInfo={baseInfo}/>}
+        {showEdit && <ConfigAdd onCancel={this.onCancel} currentItem={currentItem} onSave={this.onConfigSave} baseInfo={baseInfo} />}
       </Fragment>
     );
   }
