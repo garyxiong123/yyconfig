@@ -14,7 +14,6 @@ import javax.persistence.ManyToOne;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Setter
 @Getter
 @Entity
@@ -27,4 +26,15 @@ public class AppEnvCluster extends BaseEntity {
     @ManyToOne(cascade = CascadeType.DETACH)
     private App app;
 
+    public AppEnvCluster(Long id) {
+        super(id);
+    }
+
+    @Builder
+    public AppEnvCluster(Long id, String name, String env, App app) {
+        super(id);
+        this.name = name;
+        this.env = env;
+        this.app = app;
+    }
 }

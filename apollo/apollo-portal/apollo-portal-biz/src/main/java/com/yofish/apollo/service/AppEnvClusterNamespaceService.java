@@ -2,20 +2,19 @@ package com.yofish.apollo.service;
 
 import com.google.gson.Gson;
 import com.yofish.apollo.domain.*;
-import com.yofish.apollo.dto.ItemDto;
-import com.yofish.apollo.dto.NamespaceListResp;
+import com.yofish.apollo.enums.NamespaceType;
 import com.yofish.apollo.model.bo.ItemBO;
 import com.yofish.apollo.model.bo.NamespaceVO;
 import com.yofish.apollo.repository.AppEnvClusterNamespace4BranchRepository;
 import com.yofish.apollo.repository.AppEnvClusterNamespace4MainRepository;
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.repository.AppEnvClusterRepository;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
 import common.constants.GsonType;
 import common.dto.ItemDTO;
 import common.dto.NamespaceDTO;
 import common.dto.ReleaseDTO;
-import com.youyu.common.enums.BaseResultCode;
-import com.youyu.common.exception.BizException;
 import common.utils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,6 +65,15 @@ public class AppEnvClusterNamespaceService {
             appEnvClusterNamespaceRepository.save(ns);
         }
 
+    }
+
+    public AppEnvClusterNamespace save(AppEnvClusterNamespace appEnvClusterNamespace) {
+        if (this.isNamespaceUnique(appEnvClusterNamespace.getAppEnvCluster(), appEnvClusterNamespace.getAppNamespace())) {
+            this.appEnvClusterNamespaceRepository.save(appEnvClusterNamespace);
+            return appEnvClusterNamespace;
+        } else {
+            return null;
+        }
     }
 
     public void createNamespaceForAppNamespaceInAllCluster(AppNamespace appNamespace) {
@@ -131,7 +139,7 @@ public class AppEnvClusterNamespaceService {
         namespaceVO.setBaseInfo(namespace);
         namespaceVO.setFormat(appEnvClusterNamespace.getAppNamespace().getFormat().name());
         namespaceVO.setComment(appEnvClusterNamespace.getAppNamespace().getComment());
-        namespaceVO.setPublic(appEnvClusterNamespace.getAppNamespace() instanceof AppNamespace4Public);
+        namespaceVO.setNamespaceType(NamespaceType.getNamespaceTypeByInstance(appEnvClusterNamespace.getAppNamespace()));
 
 
 

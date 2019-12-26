@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -93,6 +94,16 @@ public class AppNamespaceController {
         appNamespaceService.updateAppNamespace(appNamespace4Protect);
 
         return Result.ok(appNamespace4Protect);
+    }
+
+    @ApiOperation("创建关联公开命名空间")
+    @PostMapping("/apps/{appId:\\d+}/namespaces/{namespaceId:\\d+}/associate/{appEnvClusterIds:[0-9,]+}")
+    public Result createRelationNamespace(@PathVariable long appId, @PathVariable long namespaceId, @PathVariable String appEnvClusterIds) {
+        Arrays.stream(appEnvClusterIds.split(",")).forEach(appEnvClusterId->{
+            AppEnvClusterNamespace appEnvClusterNamespace = AppEnvClusterNamespace.builder().appEnvCluster(new AppEnvCluster(Long.valueOf(appEnvClusterId))).appNamespace(new AppNamespace4Public(namespaceId)).build();
+            this.appEnvClusterNamespaceService.save(appEnvClusterNamespace);
+        });
+        return Result.ok();
     }
 
     @ApiOperation("项目环境集群下的所有命名空间配置信息")
