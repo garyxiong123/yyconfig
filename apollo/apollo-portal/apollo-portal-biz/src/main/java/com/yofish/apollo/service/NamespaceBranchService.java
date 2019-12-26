@@ -240,10 +240,10 @@ public class NamespaceBranchService {
         boolean isPublic;
         if (appNamespace == null) {
             //dirty data
-            format = ConfigFileFormat.Properties.getValue();
+            format = ConfigFileFormat.Properties.name();
             isPublic = true; // set to true, because public namespace allowed to delete by user
         } else {
-            format = appNamespace.getFormat().getValue();
+            format = appNamespace.getFormat().name();
             isPublic = appNamespace instanceof AppNamespace4Public;
             namespace.setParentAppCode(appNamespace.getApp().getAppCode());
             namespace.setComment(appNamespace.getComment());

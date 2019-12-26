@@ -128,7 +128,7 @@ public class AppEnvClusterNamespaceService {
         NamespaceDTO namespace = transformNamespaceDTO(appEnvClusterNamespace);
 
         namespaceVO.setBaseInfo(namespace);
-        namespaceVO.setFormat(appEnvClusterNamespace.getAppNamespace().getFormat().getValue());
+        namespaceVO.setFormat(appEnvClusterNamespace.getAppNamespace().getFormat().name());
         namespaceVO.setComment(appEnvClusterNamespace.getAppNamespace().getComment());
         namespaceVO.setPublic(appEnvClusterNamespace.getAppNamespace() instanceof AppNamespace4Public);
 
