@@ -15,6 +15,8 @@
  */
 package com.yofish.gary.biz.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.yofish.gary.api.dto.req.RoleAddReqDTO;
 import com.yofish.gary.api.dto.req.RoleEditReqDTO;
 import lombok.*;
@@ -35,6 +37,7 @@ import java.util.Set;
 @Setter
 @Getter
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Role {
 
     @Id

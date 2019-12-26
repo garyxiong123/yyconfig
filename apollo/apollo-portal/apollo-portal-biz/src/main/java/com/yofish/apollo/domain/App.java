@@ -1,6 +1,7 @@
 package com.yofish.apollo.domain;
 
 import com.yofish.apollo.repository.AppRepository;
+import com.yofish.gary.biz.domain.Department;
 import com.yofish.gary.biz.domain.User;
 import com.yofish.gary.dao.entity.BaseEntity;
 import lombok.*;

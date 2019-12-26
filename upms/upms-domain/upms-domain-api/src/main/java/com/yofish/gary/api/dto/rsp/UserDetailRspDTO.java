@@ -58,4 +58,7 @@ public class UserDetailRspDTO implements Serializable {
 
     @ApiModelProperty("状态(0:有效 1:冻结)")
     private String status;
+
+    @ApiModelProperty("部门")
+    private DepartmentRspDto department;
 }

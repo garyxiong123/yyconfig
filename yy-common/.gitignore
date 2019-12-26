@@ -1,0 +1,45 @@
+*.class
+.DS_Store
+application.pid
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# Eclipse
+.classpath
+.project
+target
+.settings
+
+# Idea
+.idea/*
+.idea/workspace.xml
+*.iml
+
+# git
+*.orig
+.travis.yml
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+
+# dependencies
+/node_modules
+/npm-debug.log*
+/yarn-error.log
+/yarn.lock
+/package-lock.json
+
+# misc
+.DS_Store
+
+# umi
+.umi
+.umi-production

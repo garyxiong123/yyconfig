@@ -1,8 +1,8 @@
 package com.yofish.apollo.service;
 
 import com.yofish.apollo.domain.App;
-import com.yofish.apollo.domain.Department;
-import com.yofish.apollo.repository.DepartmentRepository;
+import com.yofish.gary.biz.domain.Department;
+import com.yofish.gary.biz.repository.DepartmentRepository;
 import com.yofish.gary.biz.domain.User;
 import com.yofish.gary.biz.repository.UserRepository;
 import com.youyu.common.api.PageData;

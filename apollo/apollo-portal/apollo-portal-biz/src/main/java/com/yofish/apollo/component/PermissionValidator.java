@@ -3,9 +3,9 @@ package com.yofish.apollo.component;
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.domain.AppNamespace4Public;
-import com.yofish.apollo.domain.Department;
 import com.yofish.apollo.repository.AppRepository;
 import com.yofish.apollo.service.PortalConfig;
+import com.yofish.gary.biz.domain.Department;
 import com.yofish.gary.biz.domain.User;
 import com.yofish.gary.biz.repository.UserRepository;
 import com.youyu.common.utils.YyAssert;
@@ -80,13 +80,22 @@ public class PermissionValidator {
         return isSuperAdmin() || isAppAdmin(getApp(appCode));
     }
 
-/*
-    public boolean departmeng(String appCode) {
-        App app = getApp(appCode);
-        Department department = app.getDepartment();
-
+    public boolean isSameDepartment(long appId) {
+        App app = getApp(appId);
+        return isSameDepartment(app);
     }
-*/
+
+    public boolean isSameDepartment(String appCode) {
+        App app = getApp(appCode);
+        return isSameDepartment(app);
+    }
+
+    public boolean isSameDepartment(App app) {
+        Department appDepartment = app.getDepartment();
+        User user = userRepository.findById(getCurrentUserId()).get();
+        boolean isSameDepartment = appDepartment.getId().equals(user.getDepartment().getId());
+        return isSameDepartment;
+    }
 
     public boolean isAppOwner(String appCode) {
         App app = getApp(appCode);

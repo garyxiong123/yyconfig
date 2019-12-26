@@ -17,10 +17,10 @@ package com.yofish.gary.component.filter;
 
 import com.yofish.gary.api.properties.ShiroProperties;
 import com.yofish.gary.biz.domain.User;
-import com.yofish.gary.biz.helper.header.OpsServletRequestHelper;
+import com.yofish.gary.biz.helper.header.YyServletRequestHelper;
 import com.yofish.gary.biz.service.PermissionService;
 import com.yofish.gary.biz.service.UserService;
-import com.yofish.gary.biz.subject.dto.OpsUserDto;
+import com.yofish.gary.subject.dto.YyUserDto;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.PathMatchingFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +34,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.yofish.gary.biz.subject.OpsThreadLocalSubject.removeOpsUser;
-import static com.yofish.gary.biz.subject.OpsThreadLocalSubject.setOpsUser;
+import static com.yofish.gary.subject.YyThreadLocalSubject.removeOpsUser;
+import static com.yofish.gary.subject.YyThreadLocalSubject.setOpsUser;
 import static com.yofish.gary.utils.OrikaCopyUtil.copyProperty;
 import static com.yofish.gary.utils.StringUtil.eq;
 import static com.youyu.common.constant.RequestHeaderConst.REAL_NAME_HEADER;
@@ -80,10 +80,10 @@ public class ShiroUrlPathMatchingFilter extends PathMatchingFilter {
         }
 
         Map<String, String> opsHeaderMap = getOpsHeaderMap(user);
-        OpsServletRequestHelper opsServletRequestHelper = new OpsServletRequestHelper((HttpServletRequest) request, opsHeaderMap);
+        YyServletRequestHelper yyServletRequestHelper = new YyServletRequestHelper((HttpServletRequest) request, opsHeaderMap);
         try {
-            setOpsUser(copyProperty(user, OpsUserDto.class));
-            super.doFilterInternal(opsServletRequestHelper, response, chain);
+            setOpsUser(copyProperty(user, YyUserDto.class));
+            super.doFilterInternal(yyServletRequestHelper, response, chain);
         } finally {
             removeOpsUser();
         }

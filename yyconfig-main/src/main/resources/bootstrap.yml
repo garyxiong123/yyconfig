@@ -20,3 +20,5 @@ logging:
           descriptor:
             sql:
               BasicBinder: trace
+shiro:
+  concurrentSessionStrategyNumber: 1

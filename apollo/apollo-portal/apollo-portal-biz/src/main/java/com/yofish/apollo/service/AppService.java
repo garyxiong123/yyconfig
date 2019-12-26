@@ -4,13 +4,13 @@ package com.yofish.apollo.service;
 import com.google.common.collect.Lists;
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppNamespace;
-import com.yofish.apollo.domain.Department;
 import com.yofish.apollo.model.vo.EnvClusterInfo;
 import com.yofish.apollo.repository.AppRepository;
-import com.yofish.apollo.repository.DepartmentRepository;
 import com.yofish.gary.api.enums.UpmsResultCode;
 import com.yofish.gary.api.feign.UserApi;
+import com.yofish.gary.biz.domain.Department;
 import com.yofish.gary.biz.domain.User;
+import com.yofish.gary.biz.repository.DepartmentRepository;
 import com.yofish.gary.biz.service.UserService;
 import com.youyu.common.api.PageData;
 import com.youyu.common.enums.BaseResultCode;
@@ -105,10 +105,16 @@ public class AppService {
         }
     }
 
+    public List<App> findAll() {
+        // TODO: 2019-12-26 要加用户的权限验证
+        List<App> all = this.appRepository.findAll();
+        return all;
+    }
+
     public PageData<App> findAll(Pageable pageable) {
 
         //当前用户ID
-        Long currentUserId = YyRequestInfoHelper.getCurrentUserId();
+      /*  Long currentUserId = YyRequestInfoHelper.getCurrentUserId();
         YyAssert.isTrue(!ObjectUtils.isEmpty(currentUserId), UpmsResultCode.USER_SESSION_EXPIRED);
         if (userApi.isAdmin(currentUserId).ifNotSuccessThrowException().getData()) {
             //用户是管理员
@@ -131,7 +137,8 @@ public class AppService {
 
         };
 
-        Page<App> apps = appRepository.findAll(querySpeci, pageable);
+        Page<App> apps = appRepository.findAll(querySpeci, pageable);*/
+        Page<App> apps = appRepository.findAll(pageable);
 
         return PageDataAdapter.toPageData(apps);
     }
@@ -182,6 +189,7 @@ public class AppService {
         node.setClusters(clusterService.findClusters(env, appId));
         return node;
     }
+
     public EnvClusterInfo createEnvNavNode(String env, String appCode) {
         EnvClusterInfo node = new EnvClusterInfo(env);
         node.setClusters(clusterService.findClusters(env, appCode));

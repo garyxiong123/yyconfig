@@ -17,11 +17,6 @@
 ## [模块依赖]
 ![logo](./img/apollo-module-dependency.png)
 
-## [发布状态机]
-![logo](./img/Bazooka_Deploy_Status.png)
-
-## [发布活动图]
-![logo](./img/Bazooka_Deploy_Activity.png)
 
 
 

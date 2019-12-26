@@ -5,7 +5,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.yofish.apollo.domain.Item;
+import com.yofish.apollo.dto.ItemPair;
 import common.dto.ItemDTO;
+import lombok.Data;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.StringUtils;
 
@@ -16,6 +18,7 @@ import java.util.List;
  * @author rache
  * @date 2019-12-11
  */
+@Data
 public class ConfigChangeContentBuilder {
 
     private List<ItemDTO> createItems = new LinkedList<>();
@@ -68,16 +71,7 @@ public class ConfigChangeContentBuilder {
 
     }
 
-    static class ItemPair {
 
-        ItemDTO oldItem;
-        ItemDTO newItem;
-
-        public ItemPair(ItemDTO oldItem, ItemDTO newItem) {
-            this.oldItem = oldItem;
-            this.newItem = newItem;
-        }
-    }
 
     ItemDTO cloneItem(Item item) {
        /* Item target = new Item();
@@ -92,18 +86,9 @@ public class ConfigChangeContentBuilder {
     }
 
     public static ConfigChangeContentBuilder convertJsonString(String content) {
-        return JSON.parseObject(content, ConfigChangeContentBuilder.class);
+        ConfigChangeContentBuilder json= JSON.parseObject(content, ConfigChangeContentBuilder.class);
+        return json;
     }
 
-    public List<ItemDTO> getCreateItems() {
-        return createItems;
-    }
 
-    public List<ItemPair> getUpdateItems() {
-        return updateItems;
-    }
-
-    public List<ItemDTO> getDeleteItems() {
-        return deleteItems;
-    }
 }
