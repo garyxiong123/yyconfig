@@ -16,6 +16,7 @@ import common.dto.ItemDTO;
 import common.dto.NamespaceDTO;
 import common.dto.ReleaseDTO;
 import common.utils.BeanUtils;
+import framework.apollo.core.enums.ConfigFileFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -139,9 +140,11 @@ public class AppEnvClusterNamespaceService {
         namespaceVO.setBaseInfo(namespace);
         namespaceVO.setFormat(appEnvClusterNamespace.getAppNamespace().getFormat().name());
         namespaceVO.setComment(appEnvClusterNamespace.getAppNamespace().getComment());
+//        namespaceVO.setPublic(appEnvClusterNamespace.getAppNamespace() instanceof AppNamespace4Public);
         namespaceVO.setNamespaceType(NamespaceType.getNamespaceTypeByInstance(appEnvClusterNamespace.getAppNamespace()));
 
-
+        // 处理关联公共命名空间类型的情况
+        fillAppNamespaceProperties(namespaceVO);
 
         List<ItemBO> itemBOs = new LinkedList<>();
         namespaceVO.setItems(itemBOs);
@@ -183,6 +186,38 @@ public class AppEnvClusterNamespaceService {
         namespaceVO.setItemModifiedCnt(modifiedItemCnt);
 
         return namespaceVO;
+    }
+
+    /**
+     * 这里处理了关联公共命名空间类型的情况
+     *
+     * @param namespace
+     */
+    private void fillAppNamespaceProperties(NamespaceVO namespace) {
+
+        NamespaceDTO namespaceDTO = namespace.getBaseInfo();
+        //先从当前appId下面找,包含私有的和公共的
+        AppNamespace appNamespace = appNamespaceService.findByAppCodeAndName(namespaceDTO.getAppCode(), namespaceDTO.getNamespaceName());
+        namespace.setNamespaceType(NamespaceType.getNamespaceTypeByInstance(appNamespace));
+
+        //再从公共的app namespace里面找,这里找到就是关联了公共命名空间
+        if (appNamespace == null) {
+            appNamespace = appNamespaceService.findPublicAppNamespace(namespaceDTO.getNamespaceName());
+
+            namespace.setNamespaceType(NamespaceType.Associate);
+        }
+
+
+        if (appNamespace == null) {
+            //dirty data
+            namespace.setFormat(ConfigFileFormat.Properties.name());
+            // set to true, because public namespace allowed to delete by user
+            namespace.setNamespaceType(NamespaceType.Public);
+        } else {
+            namespace.setFormat(appNamespace.getFormat().name());
+            namespace.setParentAppCode(appNamespace.getApp().getAppCode());
+            namespace.setComment(appNamespace.getComment());
+        }
     }
 
     private List<ItemBO> parseDeletedItems(List<ItemDTO> newItems, Map<String, String> releaseItems, Map<String, ItemDTO> deletedItemDTOs) {
@@ -240,7 +275,8 @@ public class AppEnvClusterNamespaceService {
     public AppEnvClusterNamespace findAppEnvClusterNamespace(Long id) {
         return appEnvClusterNamespaceRepository.findAppEnvClusterNamespaceById(id);
     }
-    public List<AppEnvClusterNamespace> findbyAppAndEnvAndNamespace(String app, String namespace){
-        return appEnvClusterNamespaceRepository.findbyAppAndEnvAndNamespace(app,namespace);
+
+    public List<AppEnvClusterNamespace> findbyAppAndEnvAndNamespace(String app, String namespace) {
+        return appEnvClusterNamespaceRepository.findbyAppAndEnvAndNamespace(app, namespace);
     }
 }
