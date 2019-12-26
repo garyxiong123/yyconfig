@@ -81,7 +81,7 @@ public class ItemService {
                    throw new BizException("500","item already exists");
                } else {
                    Item item = new Item(createItemReq.getKey(),createItemReq.getValue(),createItemReq.getComment(),appEnvClusterNamespace, createItemReq.getLineNum());
-                   itemRepository.save(item);
+                   save(item);
                    Item entity = new Item();
                    BeanUtils.copyEntityProperties(item, entity);
                    builder.createItem(entity);
@@ -274,8 +274,16 @@ public class ItemService {
         return 1;
 
     }
-    public Item save(Item item){
-      return   itemRepository.save(item);
+    public Item save(Item entity){
+        if (entity.getLineNum()==null ||entity.getLineNum() == 0) {
+            Item lastItem = findLastOne(entity.getAppEnvClusterNamespace());
+            int lineNum = lastItem == null ? 1 : lastItem.getLineNum() + 1;
+            entity.setLineNum(lineNum);
+        }
+
+        Item item = itemRepository.save(entity);
+
+        return   itemRepository.save(item);
     }
 
     public Item findOne(Long id){
@@ -296,6 +304,10 @@ public class ItemService {
         return findOne(appEnvClusterNamespace,key);
     }
 
+    public Item findLastOne(AppEnvClusterNamespace appEnvClusterNamespace) {
+
+        return itemRepository.findFirstByAppEnvClusterNamespaceOrderByLineNumDesc(appEnvClusterNamespace);
+    }
 
     private void createCommit(String appId, String clusterName, String namespaceName, String configChangeContent,
                               String operator) {

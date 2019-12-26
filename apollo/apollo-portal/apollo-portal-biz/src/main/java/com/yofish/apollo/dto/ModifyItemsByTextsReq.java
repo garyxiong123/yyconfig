@@ -10,13 +10,7 @@ import lombok.Data;
 @Data
 public class ModifyItemsByTextsReq {
     private Long appEnvClusterNamespaceId;
-   // private String appId;
-   // private String env;
-   // private String clusterName;
-  //  private String namespaceName;
-    private long namespaceId;
     private ConfigFileFormat format;
     private String configText;
-    private String type;
 
 }

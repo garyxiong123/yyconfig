@@ -40,11 +40,10 @@ public class ItemControllerTest extends AbstractControllerTest{
     @Test
     public void createItem() {
        CreateItemReq req=new CreateItemReq();
-       req.setAppEnvClusterNamespaceIds(new ArrayList<>(Arrays.asList(1L,3L)));
-       req.setKey("mmm.aa");
+       req.setAppEnvClusterNamespaceIds(new ArrayList<>(Arrays.asList(18L)));
+       req.setKey("mmm.aa1");
        req.setValue("jdbc:mysql://192.168.1.95:3306/ops-upms?useUnicode=true&amp;characterEncoding=UTF-8");
        req.setComment("数据库连接地址2");
-       req.setLineNum(3);
        itemController.createItem(req);
     }
 
@@ -52,7 +51,7 @@ public class ItemControllerTest extends AbstractControllerTest{
     @Test
     public void updateItem() {
         UpdateItemReq req=new UpdateItemReq();
-        req.setItemId(9L);
+        req.setItemId(20L);
         req.setKey("key");
         req.setValue("value");
         req.setComment("变化");
@@ -110,11 +109,11 @@ public class ItemControllerTest extends AbstractControllerTest{
 
     private ModifyItemsByTextsReq createModifyItemsByTextsReq(){
         ModifyItemsByTextsReq req=new ModifyItemsByTextsReq();
-        req.setAppEnvClusterNamespaceId(2L);
-       // req.setConfigText(propertityFromat());
-       // req.setFormat(ConfigFileFormat.Properties);
-        req.setConfigText(jsonFromat());
-        req.setFormat(ConfigFileFormat.JSON);
+        req.setAppEnvClusterNamespaceId(10L);
+        req.setConfigText(propertityFromat());
+        req.setFormat(ConfigFileFormat.Properties);
+       /* req.setConfigText(jsonFromat());
+        req.setFormat(ConfigFileFormat.JSON);*/
         return req;
     }
 
@@ -152,7 +151,9 @@ public class ItemControllerTest extends AbstractControllerTest{
                 "redis.timeout = 10000\n" +
                 "caiyi.company.accounts = tiyuquzou,liaodaotiyu\n" +
                 "finance.company.accounts = youyujizhang,youyudaike";
-        return s;
+
+        String b="dbName = payment\\nuserName-toPublish = garyxiong-toPublish\\n12 = 2333312\\npassword = 123456544555";
+        return b;
     }
 
 }
