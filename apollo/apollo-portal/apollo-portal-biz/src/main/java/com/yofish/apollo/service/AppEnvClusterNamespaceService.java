@@ -2,6 +2,7 @@ package com.yofish.apollo.service;
 
 import com.google.gson.Gson;
 import com.yofish.apollo.domain.*;
+import com.yofish.apollo.dto.ItemDto;
 import com.yofish.apollo.dto.NamespaceListResp;
 import com.yofish.apollo.model.bo.ItemBO;
 import com.yofish.apollo.model.bo.NamespaceVO;
@@ -217,7 +218,11 @@ public class AppEnvClusterNamespaceService {
     }
 
     private ItemDTO transformItemDTO(Item item) {
-        return new ItemDTO(item.getId(), item.getAppEnvClusterNamespace().getId(), item.getKey(), item.getValue(), item.getComment(), item.getLineNum());
+        ItemDTO itemDTO=new ItemDTO();
+        BeanUtils.copyEntityProperties(item,itemDTO);
+        itemDTO.setId(item.getId());
+        itemDTO.setNamespaceId(item.getAppEnvClusterNamespace().getId());
+        return itemDTO;
     }
 
     public AppEnvClusterNamespace findAppEnvClusterNamespace(String appCode, String env, String namespace, String cluster, String type) {
