@@ -68,7 +68,7 @@ class UserEditModal extends React.Component {
   }
   onEdit = async (values) => {
     const { onCancel, onSave, currentUser } = this.props;
-    let res = await auth.userEdit({ ...values, userId: currentUser.id });
+    let res = await auth.userEdit({ ...values, id: currentUser.id });
     if (res && res.code == '1') {
       message.success('修改成功');
       onCancel();

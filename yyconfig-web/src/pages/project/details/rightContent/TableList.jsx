@@ -158,7 +158,7 @@ class TableList extends React.Component {
     return (
       <Row type="flex" justify="end" gutter={16} style={{ marginBottom: 15 }}>
         <Col>
-          <Button size="small" onClick={this.onEdit}>
+          <Button size="small">
             同步配置
           </Button>
         </Col>

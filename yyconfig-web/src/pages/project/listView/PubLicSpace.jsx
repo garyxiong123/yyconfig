@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Card, Tabs } from 'antd';
+import { Card, Tabs, Row, Col, Empty } from 'antd';
+import styles from '../index.less';
+import Loading from '@/components/PageLoading/';
+import router from 'umi/router';
 
 const { TabPane } = Tabs;
 
@@ -8,10 +11,10 @@ class PublicSpace extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      key: '1'
+      key: '0'
     };
   }
-  componentDidMount() { 
+  componentDidMount() {
     this.onFetchList();
   }
 
@@ -23,25 +26,69 @@ class PublicSpace extends React.Component {
   onFetchList = () => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'project/publicNamespaceList'
+      type: 'system/openNamespaceType',
+      payload: {}
     })
   }
-
+  onRouteTo=(vo)=>{
+    let app = vo.app || {};
+    router.push({
+      pathname: `/project/details/${app.id}`,
+      query: {
+        appId: app.id,
+        appCode: app.appCode
+      }
+    })
+  }
+  renderItem(item) {
+    let appNamespaces = item.appNamespaces || [];
+    return (
+      <Row>
+        {
+          appNamespaces.length ?
+            <Fragment>
+              {
+                appNamespaces.map((vo, index) => (
+                  <Col lg={6} md={8} sm={24} key={vo.id}>
+                    <Card className={styles.listCard} onClick={()=>{this.onRouteTo(vo)}}>
+                      <h2>{vo.name}</h2>
+                      <p>{vo.comment}</p>
+                    </Card>
+                  </Col>
+                ))
+              }
+            </Fragment> :
+            <Fragment>
+              <Empty />
+            </Fragment>
+        }
+      </Row>
+    )
+  }
   render() {
     const { key } = this.state;
+    const { list, loading } = this.props;
     return (
-      <Tabs activeKey={key} onChange={this.onTabChange} type="card">
-        <TabPane tab="选项1" key="1">
-          选项1
-      </TabPane>
-        <TabPane tab="选项2" key="2">
-          选项2
-      </TabPane>
-      </Tabs>
+      <Fragment>
+        {
+          loading ?
+            <Loading /> :
+            <Tabs activeKey={key} onChange={this.onTabChange} type="card">
+              {
+                list.map((item, i) => (
+                  <TabPane tab={item.name} key={i}>
+                    {this.renderItem(item)}
+                  </TabPane>
+                ))
+              }
+            </Tabs>
+        }
+      </Fragment>
+
     );
   }
 }
-export default connect(({ project, loading }) => ({
-  list: project.publicNamespaceList,
-  loading: loading.effects["project/publicNamespaceList"]
+export default connect(({ project, system, loading }) => ({
+  list: system.openNamespaceType,
+  loading: loading.effects["system/openNamespaceType"]
 }))(PublicSpace);

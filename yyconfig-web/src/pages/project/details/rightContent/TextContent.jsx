@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 require('codemirror/lib/codemirror.css');
 require('codemirror/theme/base16-light.css');
+require('codemirror/theme/eclipse.css');
 require('codemirror/mode/xml/xml');
 require('codemirror/mode/javascript/javascript');
 require('codemirror/mode/properties/properties');
@@ -79,7 +80,7 @@ class TextContent extends React.Component {
     this.setState({
       oldValue: value
     })
-    this.onEditOption({ readOnly: false, theme: '' })
+    this.onEditOption({ readOnly: false, theme: 'eclipse' })
   }
   onEditOption = (data) => {
     const { options } = this.state;

@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Table } from 'antd';
+import { Table, Card, Row, Col } from 'antd';
+import moment from 'moment';
 import styles from '../../index.less';
 
 class History extends React.Component {
@@ -25,11 +26,23 @@ class History extends React.Component {
     })
 
   }
-  renderTable() {
+  renderTableType(item) {
+    let list = item.changeSets ? JSON.parse(item.changeSets) : {};
+    let createItems = list.createItems || [], deleteItems = list.deleteItems || [], updateItems = list.updateItems.newItem || [];
+    return (
+      <Fragment>
+        {createItems.length ? this.renderTable(createItems, '新增') : ''}
+      </Fragment>
+    )
+  }
+  renderTable(data, type) {
     const columns = [
       {
         title: 'Type',
         dataIndex: 'type',
+        render: () => (
+          <span>{type}</span>
+        )
       },
       {
         title: 'Key',
@@ -41,7 +54,7 @@ class History extends React.Component {
       },
       {
         title: 'New Value',
-        dataIndex: 'newValue',
+        dataIndex: 'value',
       },
       {
         title: 'Comment',
@@ -51,24 +64,28 @@ class History extends React.Component {
     return (
       <Table
         columns={columns}
-        dataSource={[{}]}
-        title={() => "2019-12-18 14:28:15"}
+        dataSource={data}
         bordered
         pagination={false}
         rowKey={record => {
-          return record.id;
+          return record.key;
         }}
       />
     )
   }
   render() {
+    const { commitFind } = this.props;
     return (
       <Fragment>
         {
-          [{}, {}].map(() => (
-            <div className={styles.marginBottom25}>
-              {this.renderTable()}
-            </div>
+          commitFind.map((item, i) => (
+            <Card key={i} className={styles.marginBottom25} title={item.updateAuthor} extra={
+              item.updateTime ? moment(item.updateTime).format('YYYY-MM-DD HH:mm:ss') : ''
+            } hoverable={false}>
+              {
+                this.renderTableType(item)
+              }
+            </Card>
           ))
         }
       </Fragment>

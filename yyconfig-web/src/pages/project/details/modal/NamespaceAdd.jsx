@@ -102,7 +102,7 @@ class NamespaceAdd extends React.Component {
     const { searchObj } = this.state;
     dispatch({
       type: 'system/openNamespaceType',
-      payload: searchObj
+      payload: {}
     })
   }
 
