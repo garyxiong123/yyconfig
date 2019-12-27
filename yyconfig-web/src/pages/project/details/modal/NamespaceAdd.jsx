@@ -61,6 +61,7 @@ class NamespaceAdd extends React.Component {
     if (!openNamespaceTypeList.length) {
       this.onFetchOpenNamespaceList();
     }
+    this.onFetchPublicNamespaceList();
   }
   componentDidUpdate(prevProps, prevState) {
     const { appListAll } = this.props;
@@ -79,6 +80,7 @@ class NamespaceAdd extends React.Component {
       leftNoSelect: appListAll
     })
   }
+
   //获取项目列表
   onFetchApplist = () => {
     const { dispatch } = this.props;
@@ -88,7 +90,7 @@ class NamespaceAdd extends React.Component {
       payload: searchObj
     })
   }
-  //获取项目列表
+  //获取全部项目列表
   onFetchApplistAll = () => {
     const { dispatch } = this.props;
     dispatch({
@@ -99,9 +101,16 @@ class NamespaceAdd extends React.Component {
   //获取公共命名空间类型列表
   onFetchOpenNamespaceList = () => {
     const { dispatch } = this.props;
-    const { searchObj } = this.state;
     dispatch({
       type: 'system/openNamespaceType',
+      payload: {}
+    })
+  }
+  //获取公共命名空间列表
+  onFetchPublicNamespaceList = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'project/publicNamespaceList',
       payload: {}
     })
   }
@@ -121,9 +130,21 @@ class NamespaceAdd extends React.Component {
     e && e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        console.log('onCreateSubmit-values--->', values)
+        this.setState({
+          loading: true
+        })
+        this.onRelationSave(values)
       }
     });
+  }
+  onRelationSave = async (values) => {
+    const { appDetail, onCancel, currentEnv } = this.props;
+    let res = await project.publickNameSpaceRelation({
+      ...values,
+      appId: appDetail.id,
+      appEnvClusterIds: currentEnv.cluster.id
+    })
+    this.onSuccess(res)
   }
   onCreateSubmit = (e) => {
     e && e.preventDefault();
@@ -158,7 +179,7 @@ class NamespaceAdd extends React.Component {
   onSuccess = (res) => {
     const { onCancel, onSave } = this.props;
     if (res && res.code === '1') {
-      message.success('添加成功');
+      message.success('操作成功');
       onCancel();
       onSave()
     }
@@ -178,31 +199,23 @@ class NamespaceAdd extends React.Component {
   }
   renderRelation() {
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { appDetail } = this.props;
-    const { namespaceList } = this.state;
+    const { appDetail, publicNamespaceList } = this.props;
     return (
       <Form onSubmit={this.onRelationSubmit} {...formItemLayout}>
-        <FormItem label="项目Id">
-          {getFieldDecorator('appId', {
-            initialValue: appDetail.appCode,
-            rules: [
-              { required: true, message: '请输入项目Id' }
-            ]
-          })(
-            <Input placeholder="请输入项目Id" disabled />
-          )}
+        <FormItem label="项目Code">
+          <Input placeholder="请输入项目Code" disabled value={appDetail.appCode} />
         </FormItem>
         <FormItem label="namespace">
-          {getFieldDecorator('namespace', {
+          {getFieldDecorator('namespacesId', {
             // initialValue: undefined,
             rules: [
               { required: true, message: '请选择namespace' }
             ]
           })(
-            <Select placeholder="请选择namespace">
+            <Select placeholder="请选择namespace" showSearch optionFilterProp="children">
               {
-                namespaceList.map((item) => (
-                  <Option value={item.id} key={item.id}>{item.value}</Option>
+                publicNamespaceList.map((item) => (
+                  this.renderNameSpaceOption(item)
                 ))
               }
             </Select>
@@ -211,6 +224,12 @@ class NamespaceAdd extends React.Component {
 
       </Form>
     )
+  }
+  renderNameSpaceOption(item) {
+    const { appDetail } = this.props;
+    if (appDetail.id !== item.app.id) {
+      return <Option value={item.id} key={item.id}>{item.name}</Option>
+    }
   }
   renderServiceItem() {
     const { leftNoSelect, leftKeys, rightKeys } = this.state;
@@ -377,7 +396,9 @@ class NamespaceAdd extends React.Component {
 
 export default Form.create()(connect(({ project, system }) => ({
   appDetail: project.appDetail,
+  publicNamespaceList: project.publicNamespaceList,
   // appList: project.appList,
   appListAll: project.appListAll,
+  currentEnv: project.currentEnv,
   openNamespaceTypeList: system.openNamespaceType,
 }))(NamespaceAdd));

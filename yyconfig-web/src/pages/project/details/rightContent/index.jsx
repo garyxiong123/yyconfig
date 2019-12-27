@@ -9,6 +9,7 @@ import History from './History';
 import Case from './Case';
 import Publish from '../modal/Publish';
 import RollBack from '../modal/RollBack';
+import { nameSpaceTypes } from '@/pages/contants/';
 const { Panel } = Collapse;
 const { TabPane } = Tabs;
 
@@ -97,7 +98,7 @@ class RightContent extends React.Component {
           <Row type="flex" gutter={8}>
             <Col>{baseInfo.namespaceName}</Col>
             <Col>
-              <Tag color="#2db7f5">{item.public ? '公共' : '私有'}</Tag>
+              <Tag color="#2db7f5">{nameSpaceTypes[item.namespaceType]}</Tag>
               <Tag color="#87d068">{item.format}</Tag>
             </Col>
           </Row>
@@ -168,7 +169,7 @@ class RightContent extends React.Component {
                 <TextContent text={item} onSuccess={this.onSaveSuccess} />
               </TabPane>
               <TabPane tab="更改历史" key="3">
-                <History item={item}/>
+                <History item={item} />
               </TabPane>
               <TabPane tab="实例列表" key="4">
                 <Case />

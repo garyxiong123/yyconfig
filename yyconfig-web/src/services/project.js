@@ -24,6 +24,10 @@ const project = {
   nameSpaceList: async function (params = {}) {
     return requestGet(`/apps/${params.appCode}/envs/${params.env}/clusters/${params.clusterName}/namespaces`);
   },
+  //关联公共命名空间
+  publickNameSpaceRelation: async function (params = {}) {
+    return requestPost(`/apps/${params.appId}/namespaces/${params.namespacesId}/associate/${params.appEnvClusterIds}`, params);
+  },
   //创建项目私有命名空间
   nameSpacePrivateAdd: async function (params = {}) {
     return requestPost(`/apps/${params.appId}/namespaces/private`, params);
