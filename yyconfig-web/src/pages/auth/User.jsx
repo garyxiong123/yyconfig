@@ -107,18 +107,24 @@ class User extends React.Component {
       },
       {
         title: '角色',
-        dataIndex: 'userRoles',
-        className: styles.textOver,
+        dataIndex: 'roles',
+        // className: styles.textOver,
         width: 200,
-        // render: (text, record) => (
-        //   <Fragment>
-        //     {
-        //       text.map((item, i) => (
-        //         <span key={i}>{item.roleName}{i < text.length - 1 ? '，' : ""}</span>
-        //       ))
-        //     }
-        //   </Fragment>
-        // )
+        render: (text, record) => (
+          <Fragment>
+            {
+              text.length ?
+                <Fragment>
+                  {
+                    text.map((item, i) => (
+                      <span key={i}>{item.roleName}{i < text.length - 1 ? '，' : ""}</span>
+                    ))
+                  }
+                </Fragment> :
+                <span>普通用户</span>
+            }
+          </Fragment>
+        )
       },
       {
         title: '修改人',

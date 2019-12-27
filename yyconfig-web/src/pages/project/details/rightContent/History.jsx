@@ -116,7 +116,7 @@ class History extends React.Component {
     let list = item.changeSets ? JSON.parse(item.changeSets) : {};
     let createItems = list.createItems || [], deleteItems = list.deleteItems || [], updateItems = list.updateItems || [];
     return (
-      <Fragment>
+      <Fragment key={i}>
         {
           createItems.length ?
             <Card key={i} className={styles.marginBottom25} title={item.updateAuthor} extra={

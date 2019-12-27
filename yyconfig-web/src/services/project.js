@@ -79,6 +79,18 @@ const project = {
   commitFind: async function (params = {}) {
     return requestGet(`/commit/find`, params);
   },
+  //查询关联的公共命名空间
+  associatedPublicNamespace: async function (params = {}) {
+    return requestGet(`/envs/${params.env}/apps/${params.appCode}/clusters/${params.clusterName}/namespaces/${params.namespaceName}/associated-public-namespace`);
+  },
+  //查询项目的命名空间
+  appProtectNamespace: async function (params = {}) {
+    return requestGet(`/apps/${params.appId}/namespaces/${params.namespace}`);
+  },
+  //项目受保护命名空间授权
+  authorizeProtectApp: async function (params = {}) {
+    return requestPost(`/apps/${params.appId}/namespaces/${params.namespace}/authorize`, params.apps);
+  },
 };
 const cluster = {
   clusterAdd: async function (params = {}) {

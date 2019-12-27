@@ -30,7 +30,7 @@ class PublicSpace extends React.Component {
       payload: {}
     })
   }
-  onRouteTo=(vo)=>{
+  onRouteTo = (vo) => {
     let app = vo.app || {};
     router.push({
       pathname: `/project/details/${app.id}`,
@@ -43,14 +43,14 @@ class PublicSpace extends React.Component {
   renderItem(item) {
     let appNamespaces = item.appNamespaces || [];
     return (
-      <Row>
+      <Row gutter={48}>
         {
           appNamespaces.length ?
             <Fragment>
               {
                 appNamespaces.map((vo, index) => (
                   <Col lg={6} md={8} sm={24} key={vo.id}>
-                    <Card className={styles.listCard} onClick={()=>{this.onRouteTo(vo)}}>
+                    <Card className={styles.listCard} onClick={() => { this.onRouteTo(vo) }}>
                       <h2>{vo.name}</h2>
                       <p>{vo.comment}</p>
                     </Card>
@@ -70,7 +70,7 @@ class PublicSpace extends React.Component {
     const { list, loading } = this.props;
     return (
       <Fragment>
-        {
+        {/* {
           loading ?
             <Loading /> :
             <Tabs activeKey={key} onChange={this.onTabChange} type="card">
@@ -82,6 +82,13 @@ class PublicSpace extends React.Component {
                 ))
               }
             </Tabs>
+        } */}
+        {
+          list.map((item, i) => (
+            <Card title={item.name} key={i} bordered={false}>
+              {this.renderItem(item)}
+            </Card>
+          ))
         }
       </Fragment>
 
