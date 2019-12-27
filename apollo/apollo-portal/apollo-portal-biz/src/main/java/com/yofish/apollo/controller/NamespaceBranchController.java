@@ -2,6 +2,7 @@ package com.yofish.apollo.controller;
 
 import com.yofish.apollo.component.PermissionValidator;
 import com.yofish.apollo.domain.Release;
+import com.yofish.apollo.domain.ReleaseMessage;
 import com.yofish.apollo.listener.ConfigPublishEvent;
 import com.yofish.apollo.model.bo.NamespaceVO;
 import com.yofish.apollo.model.model.NamespaceReleaseModel;
@@ -68,6 +69,9 @@ public class NamespaceBranchController {
         }
 
         namespaceBranchService.deleteBranch(appId, Env.valueOf(env), clusterName, namespaceName, branchName);
+        // TODO release Message
+//        ReleaseMessage releaseMessage = new ReleaseMessage(namespace);
+//        messageRepository.save(releaseMessage);
 
     }
 
@@ -108,7 +112,7 @@ public class NamespaceBranchController {
     }
 
 
-    @PreAuthorize(value = "@permissionValidator.hasOperateNamespacePermission(#appId, #namespaceName, #env)")
+//    @PreAuthorize(value = "@permissionValidator.hasOperateNamespacePermission(#appId, #namespaceName, #env)")
     @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}/rules", method = RequestMethod.PUT)
     public void updateBranchRules(@PathVariable String appId, @PathVariable String env,
                                   @PathVariable String clusterName, @PathVariable String namespaceName,

@@ -56,8 +56,8 @@ public class ConfigFileController implements ReleaseMessageListener {
     private NamespaceUtil namespaceUtil;
     @Autowired
     private WatchKeysUtil watchKeysUtil;
-    @Autowired
-    private GrayReleaseRulesHolder grayReleaseRulesHolder;
+//    @Autowired
+//    private GrayReleaseRulesHolder grayReleaseRulesHolder;
     @Autowired
     private HttpServletResponse response;
     @Autowired
@@ -225,9 +225,8 @@ public class ConfigFileController implements ReleaseMessageListener {
         return loadConfigFromConfigController(configReqDto);
     }*/
 
-    private boolean hasGrayRule4CurrentClient(ConfigReqDto configReqDto) {
-        return grayReleaseRulesHolder.hasGrayReleaseRule(configReqDto.getAppId(), configReqDto.getClientIp(), configReqDto.getNamespace());
-    }
+//
+
 /*
     private String loadConfigFromConfigController(ConfigReqDto configReqDto) throws IOException {
         ApolloConfig apolloConfig = queryConfigController.queryConfig4Client(configReqDto.getAppId(), configReqDto.getClusterName(), configReqDto.getNamespace(), configReqDto.getDataCenter(), "-1", configReqDto.getClientIp(), null, request, response);

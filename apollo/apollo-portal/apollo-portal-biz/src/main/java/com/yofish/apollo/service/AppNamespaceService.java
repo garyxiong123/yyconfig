@@ -16,6 +16,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -48,14 +49,12 @@ public class AppNamespaceService {
     }
 
 
+    public AppNamespace4Public findAppPublicNamespace(long namespaceId) {
+        Optional<AppNamespace4Public> appNamespace4PublicOptional = this.appNamespace4PublicRepository.findById(namespaceId);
+        return appNamespace4PublicOptional.orElse(null);
+    }
     public AppNamespace findPublicAppNamespace(String namespaceName) {
-        List<AppNamespace4Public> appNamespaces = appNamespace4PublicRepository.findByName(namespaceName);
-
-        if (CollectionUtils.isEmpty(appNamespaces)) {
-            return null;
-        }
-
-        return appNamespaces.get(0);
+        return appNamespace4PublicRepository.findByName(namespaceName);
     }
 
     private List<AppNamespace4Private> findAllPrivateAppNamespaces(String namespaceName) {

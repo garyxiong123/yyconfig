@@ -12,5 +12,5 @@ import java.util.List;
  */
 @Repository
 public interface AppNamespace4PublicRepository extends JpaRepository<AppNamespace4Public, Long> {
-    List<AppNamespace4Public> findByName(String name);
+    AppNamespace4Public findByName(String name);
 }

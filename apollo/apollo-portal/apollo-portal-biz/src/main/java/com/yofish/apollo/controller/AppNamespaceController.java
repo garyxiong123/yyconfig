@@ -10,6 +10,7 @@ import com.yofish.apollo.service.AppNamespaceService;
 import com.youyu.common.api.Result;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
+import com.youyu.common.utils.YyAssert;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +60,7 @@ public class AppNamespaceController {
                 .authorizedApp(model.getAuthorizedApp())
                 .format(model.getFormat())
                 .comment(model.getComment())
-                .openNamespaceType(ObjectUtils.isEmpty(model.getOpenNamespaceTypeId())?null:new OpenNamespaceType(model.getOpenNamespaceTypeId()))
+                .openNamespaceType(ObjectUtils.isEmpty(model.getOpenNamespaceTypeId()) ? null : new OpenNamespaceType(model.getOpenNamespaceTypeId()))
                 .build();
 
         appNamespace4Protect = appNamespaceService.createAppNamespace(appNamespace4Protect);
@@ -75,12 +76,19 @@ public class AppNamespaceController {
                 .name(model.getName())
                 .format(model.getFormat())
                 .comment(model.getComment())
-                .openNamespaceType(ObjectUtils.isEmpty(model.getOpenNamespaceTypeId())?null:new OpenNamespaceType(model.getOpenNamespaceTypeId()))
+                .openNamespaceType(ObjectUtils.isEmpty(model.getOpenNamespaceTypeId()) ? null : new OpenNamespaceType(model.getOpenNamespaceTypeId()))
                 .build();
 
         appNamespace4Public = appNamespaceService.createAppNamespace(appNamespace4Public);
 
         return Result.ok(appNamespace4Public);
+    }
+
+    @ApiOperation("查询项目的命名空间")
+    @GetMapping("/apps/{appId:\\d+}/namespaces/{namespace:[0-9a-zA-Z_.-]+}")
+    public Result<AppNamespace> getAppNamespaceInfo(@PathVariable long appId, @PathVariable String namespace) {
+        AppNamespace byAppIdAndName = appNamespaceService.findByAppIdAndName(appId, namespace);
+        return Result.ok(byAppIdAndName);
     }
 
     @ApiOperation("项目受保护命名空间授权")
@@ -98,9 +106,13 @@ public class AppNamespaceController {
 
     @ApiOperation("创建关联公开命名空间")
     @PostMapping("/apps/{appId:\\d+}/namespaces/{namespaceId:\\d+}/associate/{appEnvClusterIds:[0-9,]+}")
-    public Result createRelationNamespace(@PathVariable long appId, @PathVariable long namespaceId, @PathVariable String appEnvClusterIds) {
-        Arrays.stream(appEnvClusterIds.split(",")).forEach(appEnvClusterId->{
-            AppEnvClusterNamespace appEnvClusterNamespace = AppEnvClusterNamespace.builder().appEnvCluster(new AppEnvCluster(Long.valueOf(appEnvClusterId))).appNamespace(new AppNamespace4Public(namespaceId)).build();
+    public Result createRelationNamespace(@PathVariable Long appId, @PathVariable Long namespaceId, @PathVariable String appEnvClusterIds) {
+        AppNamespace4Public appPublicNamespace = this.appNamespaceService.findAppPublicNamespace(namespaceId);
+        YyAssert.paramCheck(ObjectUtils.isEmpty(appPublicNamespace), "关联的公共命名空间不存在！");
+        YyAssert.paramCheck(appId.equals(appPublicNamespace.getApp().getId()), "不能关联自己的公共命名空间！");
+
+        Arrays.stream(appEnvClusterIds.split(",")).forEach(appEnvClusterId -> {
+            AppEnvClusterNamespace4Main appEnvClusterNamespace = new AppEnvClusterNamespace4Main(new AppEnvCluster(Long.valueOf(appEnvClusterId)), new AppNamespace4Public(namespaceId));
             this.appEnvClusterNamespaceService.save(appEnvClusterNamespace);
         });
         return Result.ok();
@@ -110,10 +122,21 @@ public class AppNamespaceController {
     @GetMapping("/apps/{appCode}/envs/{env}/clusters/{clusterName}/namespaces")
     public Result<List<NamespaceVO>> findNamespaces(@PathVariable String appCode, @PathVariable String env,
                                                     @PathVariable String clusterName) {
-        // TODO: 2019-12-19 待实现
         List<NamespaceVO> namespaceVOs = this.appEnvClusterNamespaceService.findNamespaceVOs(appCode, env, clusterName);
         return Result.ok(namespaceVOs);
     }
+
+    @ApiOperation("查询关联的公共命名空间")
+    @GetMapping("/envs/{env}/apps/{appCode}/clusters/{clusterName}/namespaces/{namespaceName}/associated-public-namespace")
+    public Result<NamespaceVO> findPublicNamespaceForAssociatedNamespace(@PathVariable String env,
+                                                                         @PathVariable String appCode,
+                                                                         @PathVariable String namespaceName,
+                                                                         @PathVariable String clusterName) {
+        NamespaceVO publicNamespaceVoForAssociatedNamespace = appEnvClusterNamespaceService.findPublicNamespaceVoForAssociatedNamespace(env, clusterName, namespaceName);
+
+        return Result.ok(publicNamespaceVoForAssociatedNamespace);
+    }
+
 
     @ApiOperation("查询所有的公共命名空间")
     @GetMapping("/app/namespaces/public")
@@ -125,12 +148,12 @@ public class AppNamespaceController {
     @ApiOperation("查询所有app下环境集群附带id")
     @PostMapping("/namespaceList")
     public Result<List<NamespaceListResp>> namespaceList(@RequestBody NamespaceListReq namespaceListReq) {
-        List<AppEnvClusterNamespace> listResps= appEnvClusterNamespaceService.findbyAppAndEnvAndNamespace(namespaceListReq.getAppCode(),namespaceListReq.getNamespace());
-       List< NamespaceListResp> respVos=new ArrayList<>();
-        if(listResps!=null&&listResps.size()>0){
+        List<AppEnvClusterNamespace> listResps = appEnvClusterNamespaceService.findbyAppAndEnvAndNamespace(namespaceListReq.getAppCode(), namespaceListReq.getNamespace());
+        List<NamespaceListResp> respVos = new ArrayList<>();
+        if (listResps != null && listResps.size() > 0) {
 
-            for (AppEnvClusterNamespace item:listResps){
-                NamespaceListResp respvo=new NamespaceListResp();
+            for (AppEnvClusterNamespace item : listResps) {
+                NamespaceListResp respvo = new NamespaceListResp();
                 respvo.setEnv(item.getAppEnvCluster().getEnv());
                 respvo.setName(item.getAppEnvCluster().getName());
                 respvo.setId(item.getId());
@@ -224,7 +247,7 @@ public class AppNamespaceController {
 //  }
 //
 //  @RequestMapping(value = "/apps/{appId}/appnamespaces/{namespaceName:.+}", method = RequestMethod.GET)
-//  public AppNamespaceDTO findAppNamespace(@PathVariable String appId, @PathVariable String namespaceName) {
+//  public AppNamespaceDTO findAppPublicNamespace(@PathVariable String appId, @PathVariable String namespaceName) {
 //    AppNamespace appNamespace = appNamespaceService.findByAppIdAndName(appId, namespaceName);
 //
 //    if (appNamespace == null) {

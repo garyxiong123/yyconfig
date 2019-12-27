@@ -16,6 +16,7 @@ import common.dto.ItemDTO;
 import common.dto.NamespaceDTO;
 import common.dto.ReleaseDTO;
 import common.utils.BeanUtils;
+import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.enums.ConfigFileFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,6 +51,13 @@ public class AppEnvClusterNamespaceService {
     private AppEnvClusterNamespace4BranchRepository branchRepository;
     private Gson gson = new Gson();
 
+    public AppEnvClusterNamespace findOne(Long namespaceId) {
+        return appEnvClusterNamespaceRepository.findById(namespaceId).orElse(null);
+    }
+
+    public AppEnvClusterNamespace findOne(String appCode, String env, String clusterName, String namespaceName, AppEnvClusterNamespace.Type type) {
+        return appEnvClusterNamespaceRepository.findAppEnvClusterNamespace(appCode, env, namespaceName, clusterName, type.getValue());
+    }
 
     public boolean isNamespaceUnique(AppEnvCluster appEnvCluster, AppNamespace appNamespace) {
         Objects.requireNonNull(appEnvCluster, "appEnvCluster must not be null");
@@ -91,6 +99,64 @@ public class AppEnvClusterNamespaceService {
     }
 
 
+
+    public NamespaceVO findPublicNamespaceVoForAssociatedNamespace(String env, String clusterName, String namespaceName) {
+        AppEnvClusterNamespace publicNamespaceForAssociatedNamespace = findPublicNamespaceForAssociatedNamespace(env, clusterName, namespaceName);
+        NamespaceVO namespaceVO = transformNamespace2VO(publicNamespaceForAssociatedNamespace);
+        return namespaceVO;
+    }
+    public AppEnvClusterNamespace findPublicNamespaceForAssociatedNamespace(String env, String clusterName, String namespaceName) {
+        AppNamespace appNamespace = appNamespaceService.findPublicAppNamespace(namespaceName);
+        if (appNamespace == null) {
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "namespace not exist");
+        }
+
+        String appCode = appNamespace.getApp().getAppCode();
+
+        AppEnvClusterNamespace namespace = findOne(appCode, env, clusterName, namespaceName, AppEnvClusterNamespace.Type.Main);
+
+        //default cluster's namespace
+        if (Objects.equals(clusterName, ConfigConsts.CLUSTER_NAME_DEFAULT)) {
+            return namespace;
+        }
+
+        //custom cluster's namespace not exist.
+        //return default cluster's namespace
+        if (namespace == null) {
+            return findOne(appCode, env, ConfigConsts.CLUSTER_NAME_DEFAULT, namespaceName, AppEnvClusterNamespace.Type.Main);
+        }
+
+        //custom cluster's namespace exist and has published.
+        //return custom cluster's namespace
+        Release latestActiveRelease = namespace.findLatestActiveRelease();
+        if (latestActiveRelease != null) {
+            return namespace;
+        }
+
+        AppEnvClusterNamespace defaultNamespace = findOne(appCode, env, ConfigConsts.CLUSTER_NAME_DEFAULT, namespaceName, AppEnvClusterNamespace.Type.Main);
+
+        //custom cluster's namespace exist but never published.
+        //and default cluster's namespace not exist.
+        //return custom cluster's namespace
+        if (defaultNamespace == null) {
+            return namespace;
+        }
+
+        //custom cluster's namespace exist but never published.
+        //and default cluster's namespace exist and has published.
+        //return default cluster's namespace
+        Release defaultNamespaceLatestActiveRelease = defaultNamespace.findLatestActiveRelease();
+        if (defaultNamespaceLatestActiveRelease != null) {
+            return defaultNamespace;
+        }
+
+        //custom cluster's namespace exist but never published.
+        //and default cluster's namespace exist but never published.
+        //return custom cluster's namespace
+        return namespace;
+    }
+
+
     /**
      * load cluster all namespace info with items
      */
@@ -103,7 +169,7 @@ public class AppEnvClusterNamespaceService {
 
         List<NamespaceVO> namespaceVOList = new LinkedList<>();
         namespaces.forEach(namespace -> {
-            NamespaceVO namespaceVO = transformNamespace2BO(namespace);
+            NamespaceVO namespaceVO = transformNamespace2VO(namespace);
             namespaceVOList.add(namespaceVO);
         });
 
@@ -132,7 +198,7 @@ public class AppEnvClusterNamespaceService {
         return dto;
     }
 
-    private NamespaceVO transformNamespace2BO(AppEnvClusterNamespace appEnvClusterNamespace) {
+    private NamespaceVO transformNamespace2VO(AppEnvClusterNamespace appEnvClusterNamespace) {
         NamespaceVO namespaceVO = new NamespaceVO();
 
         NamespaceDTO namespace = transformNamespaceDTO(appEnvClusterNamespace);
@@ -140,7 +206,6 @@ public class AppEnvClusterNamespaceService {
         namespaceVO.setBaseInfo(namespace);
         namespaceVO.setFormat(appEnvClusterNamespace.getAppNamespace().getFormat().name());
         namespaceVO.setComment(appEnvClusterNamespace.getAppNamespace().getComment());
-//        namespaceVO.setPublic(appEnvClusterNamespace.getAppNamespace() instanceof AppNamespace4Public);
         namespaceVO.setNamespaceType(NamespaceType.getNamespaceTypeByInstance(appEnvClusterNamespace.getAppNamespace()));
 
         // 处理关联公共命名空间类型的情况
@@ -261,8 +326,8 @@ public class AppEnvClusterNamespaceService {
     }
 
     private ItemDTO transformItemDTO(Item item) {
-        ItemDTO itemDTO=new ItemDTO();
-        BeanUtils.copyEntityProperties(item,itemDTO);
+        ItemDTO itemDTO = new ItemDTO();
+        BeanUtils.copyEntityProperties(item, itemDTO);
         itemDTO.setId(item.getId());
         itemDTO.setNamespaceId(item.getAppEnvClusterNamespace().getId());
         return itemDTO;
