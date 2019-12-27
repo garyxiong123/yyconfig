@@ -23,6 +23,7 @@ import framework.apollo.tracer.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -78,7 +79,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
                 ("NotificationControllerV2", true));
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET, produces= MediaType.APPLICATION_JSON_UTF8_VALUE)
     public DeferredResult<ResponseEntity<List<ApolloConfigNotification>>> pollNotification4Client(
             @RequestParam(value = "appId") String appId,
             @RequestParam(value = "cluster") String cluster,
@@ -291,7 +292,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
                                                                                                    Map<String, Long> clientSideNotifications,
                                                                                                    Multimap<String, String> watchedKeysMap,
                                                                                                    Set<String> watchedKeys) {
-9        List<ReleaseMessage> latestReleaseMessages = releaseMessageService.findLatestReleaseMessagesGroupByMessages(watchedKeys);
+        List<ReleaseMessage> latestReleaseMessages = releaseMessageService.findLatestReleaseMessagesGroupByMessages(watchedKeys);
         if (CollectionUtils.isEmpty(latestReleaseMessages)) {
             return null;
         }
