@@ -78,5 +78,5 @@ public class UserQueryRspDTO implements Serializable {
     private DepartmentRspDto department;
 
     @ApiModelProperty("用户角色列表")
-    private List<UserRoleRspDTO> userRoles = new ArrayList<>();
+    private List<UserRoleRspDTO> roles;
 }

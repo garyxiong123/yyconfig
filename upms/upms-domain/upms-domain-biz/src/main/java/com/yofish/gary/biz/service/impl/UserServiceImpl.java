@@ -137,14 +137,16 @@ public class UserServiceImpl implements UserService {
             checkDepartment(userEditReqDTO.getDepartmentId());
             existUser.setDepartment(new Department(userEditReqDTO.getDepartmentId()));
         }
-        String password = getBeanInstance(ShiroSimpleHashStrategy.class, shiroProperties.getHashAlgorithmName()).signature(userEditReqDTO.getPassword());
+        if (org.springframework.util.StringUtils.hasText(userEditReqDTO.getPassword())) {
+            String password = getBeanInstance(ShiroSimpleHashStrategy.class, shiroProperties.getHashAlgorithmName()).signature(userEditReqDTO.getPassword());
+            existUser.setPassword(password);
+        }
         existUser.setRealName(userEditReqDTO.getRealName());
         existUser.setSex(userEditReqDTO.getSex());
         existUser.setPhone(userEditReqDTO.getPhone());
         existUser.setEmail(userEditReqDTO.getEmail());
         existUser.setStatus(defaultIfBlank(userEditReqDTO.getStatus(), VALID.getCode()));
         existUser.setRemark(userEditReqDTO.getRemark());
-        existUser.setPassword(password);
 
         userRepository.save(existUser);
         updateUserRoles(existUser, userEditReqDTO.getRoleIds());

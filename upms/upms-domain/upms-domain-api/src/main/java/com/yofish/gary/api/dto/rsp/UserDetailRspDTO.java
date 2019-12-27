@@ -21,6 +21,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author pqq
@@ -61,4 +62,7 @@ public class UserDetailRspDTO implements Serializable {
 
     @ApiModelProperty("部门")
     private DepartmentRspDto department;
+
+    @ApiModelProperty("用户角色列表")
+    private List<UserRoleRspDTO> roles;
 }
