@@ -13,7 +13,7 @@ const ProjectModel = {
     releasesActiveInfo: [],
     releasesCompare: [],
     nameSpaceListWithApp: [],
-    commitFind: []
+    commitFind: {},
   },
   effects: {
     *appList({ payload }, { call, put }) {
@@ -83,7 +83,10 @@ const ProjectModel = {
       const response = yield call(project.commitFind, payload);
       yield put({
         type: 'setCommitFind',
-        payload: response,
+        payload: {
+          appEnvClusterNamespaceId: payload.appEnvClusterNamespaceId,
+          data: response.data || []
+        },
       });
     },
   },
@@ -159,7 +162,10 @@ const ProjectModel = {
     setCommitFind(state, { payload = {} }) {
       return {
         ...state,
-        commitFind: payload.data || []
+        commitFind: {
+          ...state.commitFind,
+          [payload.appEnvClusterNamespaceId]: payload.data
+        }
       }
     },
     clearData(state, { payload = {} }) {

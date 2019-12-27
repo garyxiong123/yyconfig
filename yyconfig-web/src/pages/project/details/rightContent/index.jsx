@@ -105,6 +105,12 @@ class RightContent extends React.Component {
         </Col>
         <Col>
           <Row type="flex" gutter={8}>
+            {
+              item.namespaceType === 'Protect' &&
+              <Col>
+                <Button size="small">命名空间管理</Button>
+              </Col>
+            }
             <Col>
               <Button type="primary" size="small" onClick={(e) => this.onPublish(e, item)}>发布</Button>
             </Col>
