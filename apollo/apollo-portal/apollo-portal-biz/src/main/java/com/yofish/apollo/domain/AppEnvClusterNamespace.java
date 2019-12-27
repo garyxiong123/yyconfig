@@ -55,4 +55,12 @@ public class AppEnvClusterNamespace extends BaseEntity {
         return items;
     }
 
+    @Getter
+    @AllArgsConstructor
+    public enum Type{
+        Main("main"),
+        Branch("branch");
+
+        private String value;
+    }
 }
