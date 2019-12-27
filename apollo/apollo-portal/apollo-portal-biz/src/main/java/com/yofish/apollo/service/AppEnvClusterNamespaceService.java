@@ -191,7 +191,7 @@ public class AppEnvClusterNamespaceService {
                 namespace.getUpdateAuthor(),
                 namespace.getUpdateTime(),
                 namespace.getId(),
-                namespace.getAppNamespace().getApp().getAppCode(),
+                namespace.getAppEnvCluster().getApp().getAppCode(),
                 namespace.getAppEnvCluster().getName(),
                 namespace.getAppNamespace().getName()
         );
@@ -204,9 +204,6 @@ public class AppEnvClusterNamespaceService {
         NamespaceDTO namespace = transformNamespaceDTO(appEnvClusterNamespace);
 
         namespaceVO.setBaseInfo(namespace);
-        namespaceVO.setFormat(appEnvClusterNamespace.getAppNamespace().getFormat().name());
-        namespaceVO.setComment(appEnvClusterNamespace.getAppNamespace().getComment());
-        namespaceVO.setNamespaceType(NamespaceType.getNamespaceTypeByInstance(appEnvClusterNamespace.getAppNamespace()));
 
         // 处理关联公共命名空间类型的情况
         fillAppNamespaceProperties(namespaceVO);

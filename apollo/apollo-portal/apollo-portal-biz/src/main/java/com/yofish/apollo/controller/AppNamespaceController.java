@@ -84,6 +84,13 @@ public class AppNamespaceController {
         return Result.ok(appNamespace4Public);
     }
 
+    @ApiOperation("查询项目的命名空间")
+    @GetMapping("/apps/{appId:\\d+}/namespaces/{namespace:[0-9a-zA-Z_.-]+}")
+    public Result<AppNamespace> getAppNamespaceInfo(@PathVariable long appId, @PathVariable String namespace) {
+        AppNamespace byAppIdAndName = appNamespaceService.findByAppIdAndName(appId, namespace);
+        return Result.ok(byAppIdAndName);
+    }
+
     @ApiOperation("项目受保护命名空间授权")
     @PostMapping("/apps/{appId:\\d+}/namespaces/{namespace:[0-9a-zA-Z_.-]+}/authorize")
     public Result<AppNamespace4Protect> authorizedApp(@PathVariable long appId, @PathVariable String namespace, @RequestBody Set<App> apps) {

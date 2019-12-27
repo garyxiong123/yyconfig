@@ -14,6 +14,8 @@ const ProjectModel = {
     releasesCompare: [],
     nameSpaceListWithApp: [],
     commitFind: {},
+    associatedPublicNamespace: {},
+    appProtectNamespace: {}
   },
   effects: {
     *appList({ payload }, { call, put }) {
@@ -87,6 +89,20 @@ const ProjectModel = {
           appEnvClusterNamespaceId: payload.appEnvClusterNamespaceId,
           data: response.data || []
         },
+      });
+    },
+    *associatedPublicNamespace({ payload }, { call, put }) {
+      const response = yield call(project.associatedPublicNamespace, payload);
+      yield put({
+        type: 'setAssociatedPublicNamespace',
+        payload: response
+      });
+    },
+    *appProtectNamespace({ payload }, { call, put }) {
+      const response = yield call(project.appProtectNamespace, payload);
+      yield put({
+        type: 'setAppProtectNamespace',
+        payload: response
       });
     },
   },
@@ -166,6 +182,18 @@ const ProjectModel = {
           ...state.commitFind,
           [payload.appEnvClusterNamespaceId]: payload.data
         }
+      }
+    },
+    setAssociatedPublicNamespace(state, { payload = {} }) {
+      return {
+        ...state,
+        associatedPublicNamespace: payload.data || {}
+      }
+    },
+    setAppProtectNamespace(state, { payload = {} }) {
+      return {
+        ...state,
+        appProtectNamespace: payload.data || {}
       }
     },
     clearData(state, { payload = {} }) {

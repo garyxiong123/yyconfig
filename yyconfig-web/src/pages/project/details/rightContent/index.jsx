@@ -9,6 +9,7 @@ import History from './History';
 import Case from './Case';
 import Publish from '../modal/Publish';
 import RollBack from '../modal/RollBack';
+import ProtectEdit from '../modal/ProtectEdit';
 import { nameSpaceTypes } from '@/pages/contants/';
 const { Panel } = Collapse;
 const { TabPane } = Tabs;
@@ -20,7 +21,8 @@ class RightContent extends React.Component {
     this.state = {
       showPublish: false,
       showRollBack: false,
-      currentItem: {}
+      currentItem: {},
+      showProtectEdit: false
     };
   }
   //------------------------生命周期--------------------------------
@@ -49,6 +51,13 @@ class RightContent extends React.Component {
     this.onFetchRollBackReleasesActive(item);
     this.setState({
       // showRollBack: true,
+      currentItem: item
+    })
+  }
+  onProtectEdit=(e, item)=>{
+    e && e.stopPropagation();
+    this.setState({
+      showProtectEdit: true,
       currentItem: item
     })
   }
@@ -108,7 +117,7 @@ class RightContent extends React.Component {
             {
               item.namespaceType === 'Protect' &&
               <Col>
-                <Button size="small">命名空间管理</Button>
+                <Button size="small" onClick={(e)=>this.onProtectEdit(e, item)}>命名空间管理</Button>
               </Col>
             }
             <Col>
@@ -143,6 +152,23 @@ class RightContent extends React.Component {
           </Row>
         </Col>
       </Row>
+    )
+  }
+  renderOpaModal() {
+    const { showPublish, showRollBack, currentItem, showProtectEdit } = this.state;
+    let baseInfo = currentItem.baseInfo || {};
+    return (
+      <Fragment>
+        {
+          showPublish && <Publish onCancel={() => this.onCancelModal('showPublish')} onSave={this.onSaveSuccess} currentItem={currentItem} />
+        }
+        {
+          showRollBack && <RollBack onCancel={() => this.onCancelModal('showRollBack')} onSave={this.onSaveSuccess} currentItem={currentItem} />
+        }
+        {
+          showProtectEdit && <ProtectEdit onCancel={() => this.onCancelModal('showProtectEdit')} onSave={this.onSaveSuccess} currentItem={currentItem}/>
+        }
+      </Fragment>
     )
   }
   renderItem(item, i) {
@@ -183,23 +209,11 @@ class RightContent extends React.Component {
             </Tabs>
           </Panel>
         </Collapse>
-        {this.renderOpaModal(baseInfo)}
+        
       </Fragment>
     )
   }
-  renderOpaModal(baseInfo) {
-    const { showPublish, showRollBack, currentItem } = this.state;
-    return (
-      <Fragment>
-        {
-          showPublish && <Publish onCancel={() => this.onCancelModal('showPublish')} onSave={this.onSaveSuccess} currentItem={currentItem} baseInfo={baseInfo} />
-        }
-        {
-          showRollBack && <RollBack onCancel={() => this.onCancelModal('showRollBack')} onSave={this.onSaveSuccess} currentItem={currentItem} />
-        }
-      </Fragment>
-    )
-  }
+
   render() {
     const { list, loading } = this.props;
     return (
@@ -220,7 +234,7 @@ class RightContent extends React.Component {
               }
             </Fragment>
         }
-
+        {this.renderOpaModal()}
       </div>
     );
   }
