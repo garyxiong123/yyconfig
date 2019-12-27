@@ -46,6 +46,7 @@ public class DataImport {
     private String adminUsername = "apollo";
     private String adminPassword = "apollo";
     private String adminRealName = "管理员用户";
+    private String adminEmail = "apollo@yofish.com";
 
     /**
      * 初始化部门、角色、用户数据
@@ -87,6 +88,7 @@ public class DataImport {
                     .username(adminUsername)
                     .password(adminPassword)
                     .realName(adminRealName)
+                    .email(adminEmail)
                     .departmentId(department.getId())
                     .roleIds(Arrays.asList(Long.valueOf(adminRole.getId())))
                     .build();
