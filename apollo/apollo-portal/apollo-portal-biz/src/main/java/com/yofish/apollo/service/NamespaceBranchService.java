@@ -226,33 +226,6 @@ public class NamespaceBranchService {
 //    }
 
 
-    private void fillAppNamespaceProperties(NamespaceVO namespace) {
-
-        NamespaceDTO namespaceDTO = namespace.getBaseInfo();
-        //先从当前appId下面找,包含私有的和公共的
-        AppNamespace appNamespace = appNamespaceService.findByAppIdAndName(namespaceDTO.getId(), namespaceDTO.getNamespaceName());
-        //再从公共的app namespace里面找
-        if (appNamespace == null) {
-            appNamespace = appNamespaceService.findPublicAppNamespace(namespaceDTO.getNamespaceName());
-        }
-
-        String format;
-        boolean isPublic;
-        if (appNamespace == null) {
-            //dirty data
-            format = ConfigFileFormat.Properties.name();
-            isPublic = true; // set to true, because public namespace allowed to delete by user
-        } else {
-            format = appNamespace.getFormat().name();
-            isPublic = appNamespace instanceof AppNamespace4Public;
-            namespace.setParentAppCode(appNamespace.getApp().getAppCode());
-            namespace.setComment(appNamespace.getComment());
-        }
-        namespace.setFormat(format);
-        namespace.setPublic(isPublic);
-    }
-
-
 
     @Transactional
     public void updateBranchGrayRules(String appId, String clusterName, String namespaceName,
