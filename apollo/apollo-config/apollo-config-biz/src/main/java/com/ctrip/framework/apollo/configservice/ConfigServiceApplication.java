@@ -20,14 +20,14 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableAutoConfiguration
 @Configuration
 @EnableTransactionManagement
-@ComponentScan(basePackageClasses = {ApolloCommonConfig.class, ApolloBizConfig.class, ConfigServiceApplication.class})
+@ComponentScan(basePackageClasses = {ConfigServiceAutoConfiguration.class,ApolloCommonConfig.class, ApolloBizConfig.class, ConfigServiceApplication.class})
 public class ConfigServiceApplication {
 
-    public static void main(String[] args) {
-        ConfigurableApplicationContext context =
-                new SpringApplicationBuilder(ConfigServiceApplication.class).run(args);
-        context.addApplicationListener(new ApplicationPidFileWriter());
-//        context.addApplicationListener(new EmbeddedServerPortFileWriter());
-    }
+//    public static void main(String[] args) {
+//        ConfigurableApplicationContext context =
+//                new SpringApplicationBuilder(ConfigServiceApplication.class).run(args);
+//        context.addApplicationListener(new ApplicationPidFileWriter());
+////        context.addApplicationListener(new EmbeddedServerPortFileWriter());
+//    }
 
 }

@@ -1,5 +1,6 @@
 package com.yofish.apollo.domain;
 
+import com.yofish.apollo.util.ReleaseMessageKeyGenerator;
 import com.yofish.gary.dao.entity.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,5 +20,8 @@ public class ReleaseMessage extends BaseEntity {
     @Column(name = "Message", nullable = false)
     private String message;
 
+    public ReleaseMessage(AppEnvClusterNamespace namespace) {
+        this.message = ReleaseMessageKeyGenerator.generate(namespace);
+    }
 }
 

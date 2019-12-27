@@ -10,6 +10,7 @@ import com.yofish.apollo.model.bo.ReleaseBO;
 import com.yofish.apollo.model.vo.ReleaseCompareResult;
 import com.yofish.apollo.repository.AppEnvClusterNamespace4MainRepository;
 import com.yofish.apollo.repository.Release4MainRepository;
+import com.yofish.apollo.repository.ReleaseMessageRepository;
 import com.yofish.apollo.repository.ReleaseRepository;
 import com.youyu.common.exception.BizException;
 import common.constants.GsonType;
@@ -41,8 +42,6 @@ public class ReleaseService {
     private ReleaseRepository releaseRepository;
     @Autowired
     private ItemService itemService;
-    //    @Autowired
-//    private NamespaceLockService namespaceLockService;
     @Autowired
     private AppNamespaceService namespaceService;
     @Autowired
@@ -51,6 +50,8 @@ public class ReleaseService {
     private Release4MainRepository release4MainRepository;
     @Autowired
     private AppEnvClusterNamespace4MainRepository namespace4MainRepository;
+    @Autowired
+    private ReleaseMessageRepository messageRepository;
 
 
     public Release findActiveOne(long releaseId) {
@@ -250,6 +251,8 @@ public class ReleaseService {
         });
 
         release4Main.rollback();
+        ReleaseMessage releaseMessage = new ReleaseMessage(release4Main.getAppEnvClusterNamespace());
+        messageRepository.save(releaseMessage);
     }
 
 
@@ -272,5 +275,10 @@ public class ReleaseService {
 //            ReleaseDTO releaseDTO = ReleaseDTO.builder().releaseKey(release.)
 //        });
         return releaseDTOS;
+    }
+
+    public Release findLatestActiveRelease(String appCode, String clusterName, String namespaceName) {
+        return null;
+//        return releaseRepository.findFirstByAppIdAndClusterNameAndNamespaceNameAndIsAbandonedFalseOrderByIdDesc(appCode, clusterName, namespaceName);
     }
 }

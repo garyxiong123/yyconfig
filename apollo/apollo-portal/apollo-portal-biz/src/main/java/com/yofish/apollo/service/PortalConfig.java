@@ -166,7 +166,7 @@ public class PortalConfig extends RefreshableConfig {
 
     @Override
     public int releaseMessageScanIntervalInMilli() {
-        return 0;
+        return 10000;
     }
 
     @Override

@@ -1,36 +1,36 @@
 package com.yofish.apollo.controller;
 
+import com.yofish.apollo.component.AppPreAuthorize;
 import com.yofish.apollo.component.PermissionValidator;
 import com.yofish.apollo.domain.AppEnvClusterNamespace;
+import com.yofish.apollo.domain.AppEnvClusterNamespace4Branch;
 import com.yofish.apollo.domain.Release;
+import com.yofish.apollo.domain.ReleaseMessage;
 import com.yofish.apollo.listener.ConfigPublishEvent;
+import com.yofish.apollo.message.Topics;
 import com.yofish.apollo.model.bo.ReleaseBO;
 import com.yofish.apollo.model.model.NamespaceReleaseModel;
 import com.yofish.apollo.model.vo.ReleaseCompareResult;
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
+import com.yofish.apollo.repository.ReleaseMessageRepository;
 import com.yofish.apollo.service.PortalConfig;
 import com.yofish.apollo.service.ReleaseService;
+import com.yofish.apollo.util.ReleaseMessageKeyGenerator;
 import com.yofish.gary.api.enums.UpmsResultCode;
-import com.yofish.gary.api.enums.UserStatusEnum;
-import com.youyu.common.api.IBaseResultCode;
 import com.youyu.common.api.Result;
-import common.dto.ReleaseDTO;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
-import common.exception.NotFoundException;
+import com.youyu.common.utils.YyAssert;
+import common.dto.ReleaseDTO;
 import common.utils.RequestPrecondition;
 import framework.apollo.core.enums.Env;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,17 +49,19 @@ public class ReleaseController {
     private PermissionValidator permissionValidator;
     @Autowired
     private AppEnvClusterNamespaceRepository appEnvClusterNamespaceRepository;
+    @Autowired
+    private ReleaseMessageRepository messageRepository;
 
     @RequestMapping(value = "/createRelease", method = RequestMethod.POST)
     public Result<ReleaseDTO> createRelease(@RequestBody NamespaceReleaseModel namespaceReleaseModel) {
 
         checkModel(Objects.nonNull(namespaceReleaseModel));
-        AppEnvClusterNamespace appEnvClusterNamespace = appEnvClusterNamespaceRepository.findById(namespaceReleaseModel.getAppEnvClusterNamespaceId()).orElseGet(() -> {throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG,"项目id不存在");} );
-        if (namespaceReleaseModel.isEmergencyPublish() && !portalConfig.isEmergencyPublishAllowed(Env.valueOf(appEnvClusterNamespace.getAppEnvCluster().getEnv()))) {
+        AppEnvClusterNamespace namespace = appEnvClusterNamespaceRepository.findById(namespaceReleaseModel.getAppEnvClusterNamespaceId()).orElseGet(() -> {throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG,"项目id不存在");} );
+        if (namespaceReleaseModel.isEmergencyPublish() && !portalConfig.isEmergencyPublishAllowed(Env.valueOf(namespace.getAppEnvCluster().getEnv()))) {
             throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("Env: %s is not supported emergency publish now", null));
         }
 
-        Release publish = releaseService.publish(appEnvClusterNamespace, namespaceReleaseModel.getReleaseTitle(), namespaceReleaseModel.getReleaseComment(), null, namespaceReleaseModel.isEmergencyPublish());
+        Release publish = releaseService.publish(namespace, namespaceReleaseModel.getReleaseTitle(), namespaceReleaseModel.getReleaseComment(), null, namespaceReleaseModel.isEmergencyPublish());
         ReleaseDTO createdRelease = transformRelease2Dto(publish);
         ConfigPublishEvent event = ConfigPublishEvent.instance();
 //        event.withAppId(appId)
@@ -70,6 +72,9 @@ public class ReleaseController {
 //                .setEnv(Env.valueOf(env));
 
         publisher.publishEvent(event);
+
+        ReleaseMessage releaseMessage = new ReleaseMessage(namespace);
+        messageRepository.save(releaseMessage);
 
         return Result.ok(createdRelease);
     }
@@ -107,25 +112,14 @@ public class ReleaseController {
         return Result.ok(releaseDTO);
     }
 
+    @AppPreAuthorize(AppPreAuthorize.Authorize.AppOwner)
     @RequestMapping(path = "/releases/{releaseId}/rollback", method = RequestMethod.PUT)
     public Result rollback(@PathVariable long releaseId)  {
         Release release = releaseService.findReleaseById(releaseId).orElseGet(() -> {throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG,"releaseId不存在");} );
 
-//        if (!permissionValidator.hasReleaseNamespacePermission(release.getAppCode())) {
-//            throw new BizException(UpmsResultCode.UNAUTHORIZED_ACCESS);
-//        }
-
         releaseService.rollback(releaseId);
 
-        ConfigPublishEvent event = ConfigPublishEvent.instance();
-//        event.withAppId(release.getAppId())
-//                .withCluster(release.getClusterName())
-//                .withNamespace(release.getNamespaceName())
-//                .withPreviousReleaseId(releaseId)
-//                .setRollbackEvent(true)
-//                .setEnv(Env.valueOf(env));
 
-        publisher.publishEvent(event);
         return Result.ok();
     }
 

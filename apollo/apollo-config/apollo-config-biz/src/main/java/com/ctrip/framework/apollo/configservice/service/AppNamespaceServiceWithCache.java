@@ -47,8 +47,8 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
 
   private int scanInterval;
   private TimeUnit scanIntervalTimeUnit;
-  private int rebuildInterval;
-  private TimeUnit rebuildIntervalTimeUnit;
+  private int rebuildInterval =3;
+  private TimeUnit rebuildIntervalTimeUnit = TimeUnit.SECONDS;
   private ScheduledExecutorService scheduledExecutorService;
   private long maxIdScanned;
 
@@ -118,6 +118,9 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
   public void afterPropertiesSet() throws Exception {
     populateDataBaseInterval();
     scanNewAppNamespaces(); //block the startup process until load finished
+    scanIntervalTimeUnit = TimeUnit.SECONDS;
+    scanInterval = 3;
+
     scheduledExecutorService.scheduleAtFixedRate(() -> {
       Transaction transaction = Tracer.newTransaction("Apollo.AppNamespaceServiceWithCache",
           "rebuildCache");

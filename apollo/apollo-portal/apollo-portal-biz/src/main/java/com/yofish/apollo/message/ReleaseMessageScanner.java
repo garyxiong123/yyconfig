@@ -27,7 +27,7 @@ public class ReleaseMessageScanner implements InitializingBean, ReleaseMessagePu
   private PortalConfig bizConfig;
   @Autowired
   private ReleaseMessageRepository releaseMessageRepository;
-  private int databaseScanInterval;
+  private int databaseScanInterval = 3;
   private List<ReleaseMessageListener> listeners;
   private ScheduledExecutorService executorService;
   private long maxIdScanned;
