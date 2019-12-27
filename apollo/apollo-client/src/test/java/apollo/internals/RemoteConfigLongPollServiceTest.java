@@ -422,7 +422,7 @@ public class RemoteConfigLongPollServiceTest {
 
     String longPollRefreshUrl =
         remoteConfigLongPollService
-            .assembleLongPollRefreshUrl(someUri, someAppId, someCluster, null, notificationsMap);
+            .assembleLongPollRefreshUrl(someUri, someAppId, someCluster, null, null,notificationsMap);
 
     assertTrue(longPollRefreshUrl.contains(someServerUrl + "/notifications/v2?"));
     assertTrue(longPollRefreshUrl.contains("appId=" + someAppId));
@@ -446,7 +446,7 @@ public class RemoteConfigLongPollServiceTest {
 
     String longPollRefreshUrl =
         remoteConfigLongPollService
-            .assembleLongPollRefreshUrl(someUri, someAppId, someCluster, null, notificationsMap);
+            .assembleLongPollRefreshUrl(someUri, someAppId, someCluster, null, null,notificationsMap);
 
     assertTrue(longPollRefreshUrl.contains(someServerUrl + "/notifications/v2?"));
     assertTrue(longPollRefreshUrl.contains("appId=" + someAppId));

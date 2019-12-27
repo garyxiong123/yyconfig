@@ -12,8 +12,8 @@ public class ConfigReqDto4Json extends ConfigReqDto {
 
     private static final Gson gson = new Gson();
 
-    public ConfigReqDto4Json(ConfigFileController.ConfigFileOutputFormat configFileOutputFormat, String appId, String clusterName, String namespace, String dataCenter, String clientIp) {
-        super(configFileOutputFormat, appId, clusterName, namespace, dataCenter, clientIp);
+    public ConfigReqDto4Json(ConfigFileController.ConfigFileOutputFormat configFileOutputFormat, String appId, String clusterName,String env, String namespace, String dataCenter, String clientIp) {
+        super(configFileOutputFormat, appId, clusterName, env, namespace, dataCenter, clientIp);
     }
 
     public ConfigReqDto4Json() {

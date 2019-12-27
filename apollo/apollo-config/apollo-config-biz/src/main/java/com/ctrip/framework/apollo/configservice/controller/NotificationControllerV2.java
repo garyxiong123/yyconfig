@@ -81,7 +81,8 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
     @RequestMapping(method = RequestMethod.GET)
     public DeferredResult<ResponseEntity<List<ApolloConfigNotification>>> pollNotification4Client(
             @RequestParam(value = "appId") String appId,
-            @RequestParam(value = "appEnvCluster") String cluster,
+            @RequestParam(value = "cluster") String cluster,
+            @RequestParam(value = "env") String env,
             @RequestParam(value = "notifications") String notificationsAsString,
             @RequestParam(value = "dataCenter", required = false) String dataCenter,
             @RequestParam(value = "ip", required = false) String clientIp) {
@@ -94,7 +95,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
 
         Map<String, Long> watchedNamespaceIdMap = buildWatchedNamespaceIdMapAndFillNormalizedNamespaceName2OriginalNamespaceNameMap(notificationsAsString, clientNotificationMap, deferredResultWrapper, namespaces4ClientInterested);
 
-        Multimap<String, String> clientWatchedKeysMap = watchKeysUtil.assembleAllWatchKeys(appId, cluster, namespaces4ClientInterested, dataCenter);
+        Multimap<String, String> clientWatchedKeysMap = watchKeysUtil.assembleAllWatchKeys(appId, cluster, env, namespaces4ClientInterested, dataCenter);
         Set<String> clientWatchedKeys = Sets.newHashSet(clientWatchedKeysMap.values());
 
         /**
@@ -125,7 +126,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
         deferredResultWrapper.setResult(newServerNotifications);
     }
 
-    private void doAsyncCallbackMethodAndWactchedKeyRegistry(@RequestParam(value = "appId") String appId, @RequestParam(value = "appEnvCluster") String cluster, @RequestParam(value = "dataCenter", required = false) String dataCenter, DeferredResultWrapper deferredResultWrapper, Set<String> namespaces, Set<String> clientWatchedKeys) {
+    private void doAsyncCallbackMethodAndWactchedKeyRegistry(@RequestParam(value = "appId") String appId, @RequestParam(value = "cluster") String cluster, @RequestParam(value = "dataCenter", required = false) String dataCenter, DeferredResultWrapper deferredResultWrapper, Set<String> namespaces, Set<String> clientWatchedKeys) {
         deferredResultWrapper.onTimeout(() -> logWatchedKeys(clientWatchedKeys, "Apollo.LongPoll.TimeOutKeys"));
 
         deferredResultWrapper.onCompletion(() -> {
@@ -146,9 +147,9 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
         String content = message.getMessage();
         handleMessageLog(message, channel, content);
 
-        if (isNotValidTopicOrNotInCache(message, channel)) {
-            return;
-        }
+//        if (isNotValidTopicOrNotInCache(message, channel)) {
+//            return;
+//        }
 
         ApolloConfigNotification configNotification = buildConfigNotification(message);
 
@@ -290,7 +291,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
                                                                                                    Map<String, Long> clientSideNotifications,
                                                                                                    Multimap<String, String> watchedKeysMap,
                                                                                                    Set<String> watchedKeys) {
-        List<ReleaseMessage> latestReleaseMessages = releaseMessageService.findLatestReleaseMessagesGroupByMessages(watchedKeys);
+9        List<ReleaseMessage> latestReleaseMessages = releaseMessageService.findLatestReleaseMessagesGroupByMessages(watchedKeys);
         if (CollectionUtils.isEmpty(latestReleaseMessages)) {
             return null;
         }

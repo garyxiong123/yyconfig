@@ -12,8 +12,8 @@ import java.util.Properties;
  */
 public class ConfigReqDto4Properties extends ConfigReqDto {
 
-    public ConfigReqDto4Properties(ConfigFileController.ConfigFileOutputFormat configFileOutputFormat, String appId, String clusterName, String namespace, String dataCenter, String clientIp) {
-        super(configFileOutputFormat, appId, clusterName, namespace, dataCenter, clientIp);
+    public ConfigReqDto4Properties(ConfigFileController.ConfigFileOutputFormat configFileOutputFormat, String appId, String clusterName, String env,String namespace, String dataCenter, String clientIp) {
+        super(configFileOutputFormat, appId, clusterName, env,namespace, dataCenter, clientIp);
     }
 
     public ConfigReqDto4Properties() {
