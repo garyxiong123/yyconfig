@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.yofish.gary.api.dto.req.RoleAddReqDTO;
 import com.yofish.gary.api.dto.req.RoleEditReqDTO;
+import com.yofish.gary.dao.entity.BaseEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -38,11 +39,8 @@ import java.util.Set;
 @Getter
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Role {
+public class Role extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
     /**
      * 角色名
      */

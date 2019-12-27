@@ -26,6 +26,9 @@ public class AppNamespace4Public extends AppNamespace {
         this.openNamespaceType = openNamespaceType;
     }
 
+    public AppNamespace4Public(Long id) {
+        super(id);
+    }
 
     @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "namespaceTypeId")

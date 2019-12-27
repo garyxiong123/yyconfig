@@ -2,6 +2,7 @@ package com.yofish.apollo.config;
 
 import com.yofish.apollo.component.AppPreAuthorize;
 import com.yofish.apollo.component.PermissionValidator;
+import com.yofish.gary.api.enums.UpmsResultCode;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
 import com.youyu.common.helper.YyRequestInfoHelper;
@@ -21,6 +22,8 @@ import org.springframework.web.servlet.View;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Map;
+
+import static org.springframework.util.ObjectUtils.isEmpty;
 
 /**
  * 项目相关操作的权限验证
@@ -47,7 +50,7 @@ public class AppPreAuthorizeHandler {
 
         //当前用户ID
         Long currentUserId = YyRequestInfoHelper.getCurrentUserId();
-        YyAssert.isTrue(!ObjectUtils.isEmpty(currentUserId), "403", "用户未登录！");
+        YyAssert.assertTrue(isEmpty(currentUserId), UpmsResultCode.USER_SESSION_EXPIRED);
 
         //超级管理员直接放行
         if (permissionValidator.isSuperAdmin()) {
@@ -75,33 +78,33 @@ public class AppPreAuthorizeHandler {
         //项目的ID或Code标识
         Long appId = ((Map<String, Long>) request.getAttribute(View.PATH_VARIABLES)).get("appId");
         String appCode = ((Map<String, String>) request.getAttribute(View.PATH_VARIABLES)).get("appCode");
-        YyAssert.paramCheck(ObjectUtils.isEmpty(appId) && ObjectUtils.isEmpty(appCode), "pathVariables 没有 appId 或 appCode！");
+        YyAssert.paramCheck(isEmpty(appId) && isEmpty(appCode), "pathVariables 没有 appId 或 appCode！");
 
         //项目拥有者放行
-        boolean isAppOwner = ObjectUtils.isEmpty(appId) ? permissionValidator.isAppOwner(appCode) : permissionValidator.isAppOwner(appId);
+        boolean isAppOwner = isEmpty(appId) ? permissionValidator.isAppOwner(appCode) : permissionValidator.isAppOwner(appId);
         if (isAppOwner) {
             log.info("项目拥有者放行.");
             return;
         } else if (AppPreAuthorize.Authorize.AppOwner.equals(requireAuthorizeType)) {
-            throw new BizException("403", "当前用户没有项目[" + (ObjectUtils.isEmpty(appId) ? appCode : appId) + "]的[" + requireAuthorizeType + "]权限。");
+            throw new BizException("403", "当前用户没有项目[" + (isEmpty(appId) ? appCode : appId) + "]的[" + requireAuthorizeType + "]权限。");
         }
 
         //项目参与人放行
-        boolean isAppAdmin = ObjectUtils.isEmpty(appId) ? permissionValidator.isAppAdmin(appCode) : permissionValidator.isAppAdmin(appId);
+        boolean isAppAdmin = isEmpty(appId) ? permissionValidator.isAppAdmin(appCode) : permissionValidator.isAppAdmin(appId);
         if (isAppAdmin) {
             log.info("项目参与人放行.");
             return;
         } else if (AppPreAuthorize.Authorize.AppAdmin.equals(requireAuthorizeType)) {
-            throw new BizException("403", "当前用户没有项目[" + (ObjectUtils.isEmpty(appId) ? appCode : appId) + "]的[" + requireAuthorizeType + "]权限。");
+            throw new BizException("403", "当前用户没有项目[" + (isEmpty(appId) ? appCode : appId) + "]的[" + requireAuthorizeType + "]权限。");
         }
 
         //同项目部门普通用户放行
-        boolean isSameDepartment = ObjectUtils.isEmpty(appId) ? permissionValidator.isSameDepartment(appCode) : permissionValidator.isSameDepartment(appId);
+        boolean isSameDepartment = isEmpty(appId) ? permissionValidator.isSameDepartment(appCode) : permissionValidator.isSameDepartment(appId);
         if (isSameDepartment) {
             log.info("同项目部门普通用户放行.");
             return;
         } else {
-            throw new BizException("403", "当前用户没有项目[" + (ObjectUtils.isEmpty(appId) ? appCode : appId) + "]的[" + requireAuthorizeType + "]权限。");
+            throw new BizException("403", "当前用户没有项目[" + (isEmpty(appId) ? appCode : appId) + "]的[" + requireAuthorizeType + "]权限。");
         }
     }
 
