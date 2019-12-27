@@ -36,7 +36,7 @@ public class UserRoleRspDTO implements Serializable {
     private static final long serialVersionUID = 2138073695303050933L;
 
     @ApiModelProperty("角色id")
-    private Long roleId;
+    private Long id;
 
     @ApiModelProperty("角色名称")
     private String roleName;
