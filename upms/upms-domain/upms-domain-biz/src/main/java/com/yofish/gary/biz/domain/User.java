@@ -17,6 +17,7 @@ package com.yofish.gary.biz.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.google.common.collect.Sets;
 import com.yofish.gary.api.ShiroSimpleHashStrategy;
 import com.yofish.gary.api.dto.req.UserAddReqDTO;
 import com.yofish.gary.api.dto.req.UserEditReqDTO;
@@ -30,6 +31,7 @@ import org.springframework.util.ObjectUtils;
 import javax.persistence.*;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static com.yofish.gary.api.enums.UpmsResultCode.USER_STATUS_INVALID;
@@ -42,6 +44,7 @@ import static com.yofish.gary.utils.BizExceptionUtil.exception2MatchingExpressio
 import static com.yofish.gary.utils.StringUtil.eq;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isNoneBlank;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * @author pqq
@@ -122,7 +125,7 @@ public class User extends BaseEntity {
     @JoinColumn(name = "department_id")
     private Department department;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE})
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles = new HashSet<>();
 
@@ -150,6 +153,8 @@ public class User extends BaseEntity {
         this.status = defaultIfBlank(userAddReqDTO.getStatus(), VALID.getCode());
         this.remark = userAddReqDTO.getRemark();
         this.department = ObjectUtils.isEmpty(userAddReqDTO.getDepartmentId())?null:new Department(userAddReqDTO.getDepartmentId());
+        List<Long> roleIds = userAddReqDTO.getRoleIds();
+        setUserRoles(roleIds);
     }
 
     public User(UserEditReqDTO userEditReqDTO, String hashAlgorithmName) {
@@ -165,6 +170,15 @@ public class User extends BaseEntity {
             this.password = getBeanInstance(ShiroSimpleHashStrategy.class, hashAlgorithmName).signature(userEditReqDTO.getPassword());
         }
         this.department = ObjectUtils.isEmpty(userEditReqDTO.getDepartmentId())?null:new Department(userEditReqDTO.getDepartmentId());
+        List<Long> roleIds = userEditReqDTO.getRoleIds();
+        setUserRoles(roleIds);
+    }
+
+    private void setUserRoles(List<Long> roleIds) {
+        if(!isEmpty(roleIds)){
+            List<Role> roles = getBeanInstance(RoleRepository.class).findAllById(roleIds);
+            this.setRoles(Sets.newHashSet(roles));
+        }
     }
 
     @Builder
