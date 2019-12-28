@@ -19,27 +19,27 @@ public abstract class AbstractConfigService implements ConfigService {
   private GrayReleaseRulesHolder grayReleaseRulesHolder;
 
   @Override
-  public Release loadConfig4SingleClient(String clientAppId, String clientIp, String configAppId, String configClusterName,
+  public Release loadConfig4SingleClient(String clientAppId, String clientIp, String configAppId, String configClusterName, String env,
                                          String configNamespace, String dataCenter, ApolloNotificationMessages clientMessages) {
     // load from specified cluster fist
     if (!isDefaultCluster(configClusterName)) {
-      Release clusterRelease = tryToLoadViaSpecifiedCluster(clientAppId, clientIp, configAppId, configClusterName, configNamespace, clientMessages);
+      Release clusterRelease = tryToLoadViaSpecifiedCluster(clientAppId, clientIp, configAppId, configClusterName,  env,configNamespace, clientMessages);
       if (!isNull(clusterRelease)) {return clusterRelease;}
     }
 
     if (isDataCenterValid(configClusterName, dataCenter)) {
-      Release dataCenterRelease = tryToLoadViaDataCenter(clientAppId, clientIp, configAppId, configNamespace, dataCenter, clientMessages);
+      Release dataCenterRelease = tryToLoadViaDataCenter(clientAppId, clientIp, configAppId,env, configNamespace, dataCenter, clientMessages);
       if (!isNull(dataCenterRelease)) {
         return dataCenterRelease;
       }
     }
 
     // fallback to default release
-    return loadReleaseViaDefaultCluster(clientAppId, clientIp, configAppId, configNamespace, clientMessages, ConfigConsts.CLUSTER_NAME_DEFAULT);
+    return loadReleaseViaDefaultCluster(clientAppId, clientIp, configAppId, env, configNamespace, clientMessages, ConfigConsts.CLUSTER_NAME_DEFAULT);
   }
 
-  private Release loadReleaseViaDefaultCluster(String clientAppId, String clientIp, String configAppId, String configNamespace, ApolloNotificationMessages clientMessages, String clusterNameDefault) {
-    return findRelease(clientAppId, clientIp, configAppId, clusterNameDefault, configNamespace,
+  private Release loadReleaseViaDefaultCluster(String clientAppId, String clientIp, String configAppId, String env,  String configNamespace, ApolloNotificationMessages clientMessages, String clusterNameDefault) {
+    return findRelease(clientAppId, clientIp, configAppId, env, clusterNameDefault, configNamespace,
             clientMessages);
   }
 
@@ -47,12 +47,12 @@ public abstract class AbstractConfigService implements ConfigService {
     return !isNullOrEmpty(dataCenter) && !Objects.equals(dataCenter, configClusterName);
   }
 
-  private Release tryToLoadViaDataCenter(String clientAppId, String clientIp, String configAppId, String configNamespace, String dataCenter, ApolloNotificationMessages clientMessages) {
-    return findRelease(clientAppId, clientIp, configAppId, dataCenter, configNamespace, clientMessages);
+  private Release tryToLoadViaDataCenter(String clientAppId, String clientIp, String configAppId, String configNamespace, String env,String dataCenter, ApolloNotificationMessages clientMessages) {
+    return findRelease(clientAppId, clientIp, configAppId, dataCenter, configNamespace, env, clientMessages);
   }
 
-  private Release tryToLoadViaSpecifiedCluster(String clientAppId, String clientIp, String configAppId, String configClusterName, String configNamespace, ApolloNotificationMessages clientMessages) {
-    return findRelease(clientAppId, clientIp, configAppId, configClusterName, configNamespace, clientMessages);
+  private Release tryToLoadViaSpecifiedCluster(String clientAppId, String clientIp, String configAppId, String configClusterName, String env, String configNamespace, ApolloNotificationMessages clientMessages) {
+    return findRelease(clientAppId, clientIp, configAppId, configClusterName,  env,configNamespace, clientMessages);
   }
 
   private boolean isDefaultCluster(String configClusterName) {
@@ -70,7 +70,7 @@ public abstract class AbstractConfigService implements ConfigService {
    * @param clientMessages the messages received in client side
    * @return the release
    */
-  private Release findRelease(String clientAppId, String clientIp, String configAppId, String configClusterName,
+  private Release findRelease(String clientAppId, String clientIp, String configAppId, String env, String configClusterName,
       String configNamespace, ApolloNotificationMessages clientMessages) {
     Long grayReleaseId = grayReleaseRulesHolder.findReleaseIdFromGrayReleaseRule(clientAppId, clientIp, configAppId,
         configClusterName, configNamespace);
@@ -82,7 +82,7 @@ public abstract class AbstractConfigService implements ConfigService {
     }
 
     if (release == null) {
-      release = findLatestActiveRelease(configAppId, configClusterName, configNamespace, clientMessages);
+      release = findLatestActiveRelease(configAppId, configClusterName, env, configNamespace, clientMessages);
     }
 
     return release;
@@ -96,6 +96,6 @@ public abstract class AbstractConfigService implements ConfigService {
   /**
    * Find active release by app id, cluster name and appNamespace name
    */
-  protected abstract Release findLatestActiveRelease(String configAppId, String configClusterName,
+  protected abstract Release findLatestActiveRelease(String configAppId, String configClusterName, String env,
       String configNamespaceName, ApolloNotificationMessages clientMessages);
 }

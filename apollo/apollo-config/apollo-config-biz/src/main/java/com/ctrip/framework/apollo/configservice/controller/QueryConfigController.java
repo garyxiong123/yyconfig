@@ -36,7 +36,7 @@ import static framework.apollo.core.ConfigConsts.NO_APPID_PLACEHOLDER;
 @RestController
 @RequestMapping("/configs")
 public class QueryConfigController {
-    /*private static final Splitter X_FORWARDED_FOR_SPLITTER = Splitter.on(",").omitEmptyStrings()
+    private static final Splitter X_FORWARDED_FOR_SPLITTER = Splitter.on(",").omitEmptyStrings()
             .trimResults();
     @Autowired
     private ConfigService configService;
@@ -52,8 +52,8 @@ public class QueryConfigController {
     private static final Type configurationTypeReference = new TypeToken<Map<String, String>>() {
     }.getType();
 
-    @RequestMapping(value = "/{appId}/{clusterName}/{namespace:.+}", method = RequestMethod.GET)
-    public ApolloConfig queryConfig4Client(@PathVariable String appId, @PathVariable String clusterName,
+    @RequestMapping(value = "/{appId}/{clusterName}/{env}/{namespace:.+}", method = RequestMethod.GET)
+    public ApolloConfig queryConfig4Client(@PathVariable String appId, @PathVariable String clusterName, @PathVariable String env,
                                            @PathVariable String namespace,
                                            @RequestParam(value = "dataCenter", required = false) String dataCenter,
                                            @RequestParam(value = "releaseKey", defaultValue = "-1") String clientSideReleaseKey,
@@ -74,7 +74,7 @@ public class QueryConfigController {
 
         String appClusterNameLoaded = clusterName;
         if (!NO_APPID_PLACEHOLDER.equalsIgnoreCase(appId)) {
-            Release currentRelease4ThisClient = configService.loadConfig4SingleClient(appId, clientIp, appId, clusterName, namespace, dataCenter, clientMessages);
+            Release currentRelease4ThisClient = configService.loadConfig4SingleClient(appId, clientIp, appId, clusterName, env, namespace, dataCenter, clientMessages);
 
             if (currentRelease4ThisClient != null) {
                 releases.add(currentRelease4ThisClient);
@@ -85,7 +85,7 @@ public class QueryConfigController {
 
         //if appNamespace does not belong to this appId, should check if there is a public configuration
         if (!namespaceBelongsToAppId(appId, namespace)) {
-            Release publicRelease = this.findPublicConfig(appId, clientIp, clusterName, namespace,
+            Release publicRelease = this.findPublicConfig(appId, clientIp, clusterName, env, namespace,
                     dataCenter, clientMessages);
             if (!Objects.isNull(publicRelease)) {
                 releases.add(publicRelease);
@@ -145,12 +145,7 @@ public class QueryConfigController {
         return appNamespace != null;
     }
 
-    *//**
-     * @param clientAppId the application which uses public config
-     * @param namespace   the appNamespace
-     * @param dataCenter  the datacenter
-     *//*
-    private Release findPublicConfig(String clientAppId, String clientIp, String clusterName,
+    private Release findPublicConfig(String clientAppId, String clientIp, String clusterName,String env,
                                      String namespace, String dataCenter, ApolloNotificationMessages clientMessages) {
         AppNamespace appNamespace = appNamespaceService.findPublicNamespaceByName(namespace);
 
@@ -161,14 +156,10 @@ public class QueryConfigController {
 
         String publicConfigAppId = String.valueOf(appNamespace.getApp().getId());
 
-        return configService.loadConfig4SingleClient(clientAppId, clientIp, publicConfigAppId, clusterName, namespace, dataCenter,
-                clientMessages);
+        return configService.loadConfig4SingleClient(clientAppId, clientIp, publicConfigAppId, clusterName, env,namespace, dataCenter, clientMessages);
     }
 
-    *//**
-     * Merge configurations of releases.
-     * Release in lower index override those in higher index
-     *//*
+
     Map<String, String> mergeReleaseConfigurations(List<Release> releases) {
         Map<String, String> result = Maps.newHashMap();
         for (Release release : Lists.reverse(releases)) {
@@ -217,5 +208,5 @@ public class QueryConfigController {
         }
 
         return notificationMessages;
-    }*/
+    }
 }

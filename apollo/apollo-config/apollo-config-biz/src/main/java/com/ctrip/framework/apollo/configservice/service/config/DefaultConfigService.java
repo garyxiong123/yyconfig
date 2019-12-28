@@ -22,10 +22,9 @@ public class DefaultConfigService extends AbstractConfigService {
   }
 
   @Override
-  protected Release findLatestActiveRelease(String configAppId, String configClusterName, String configNamespace,
+  protected Release findLatestActiveRelease(String configAppId, String configClusterName, String env, String configNamespace,
                                             ApolloNotificationMessages clientMessages) {
-    return releaseService.findLatestActiveRelease(configAppId, configClusterName,
-        configNamespace);
+    return releaseService.findLatestActiveRelease(configAppId, configClusterName,env, configNamespace);
   }
 
   @Override

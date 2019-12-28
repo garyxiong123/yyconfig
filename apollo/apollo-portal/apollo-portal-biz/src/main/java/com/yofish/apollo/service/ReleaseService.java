@@ -8,10 +8,7 @@ import com.yofish.apollo.enums.ChangeType;
 import com.yofish.apollo.model.bo.KVEntity;
 import com.yofish.apollo.model.bo.ReleaseBO;
 import com.yofish.apollo.model.vo.ReleaseCompareResult;
-import com.yofish.apollo.repository.AppEnvClusterNamespace4MainRepository;
-import com.yofish.apollo.repository.Release4MainRepository;
-import com.yofish.apollo.repository.ReleaseMessageRepository;
-import com.yofish.apollo.repository.ReleaseRepository;
+import com.yofish.apollo.repository.*;
 import com.youyu.common.exception.BizException;
 import common.constants.GsonType;
 import common.dto.ReleaseDTO;
@@ -50,6 +47,8 @@ public class ReleaseService {
     private Release4MainRepository release4MainRepository;
     @Autowired
     private AppEnvClusterNamespace4MainRepository namespace4MainRepository;
+    @Autowired
+    private AppEnvClusterNamespaceRepository namespaceRepository;
     @Autowired
     private ReleaseMessageRepository messageRepository;
 
@@ -277,8 +276,8 @@ public class ReleaseService {
         return releaseDTOS;
     }
 
-    public Release findLatestActiveRelease(String appCode, String clusterName, String namespaceName) {
-        return null;
-//        return releaseRepository.findFirstByAppIdAndClusterNameAndNamespaceNameAndIsAbandonedFalseOrderByIdDesc(appCode, clusterName, namespaceName);
+    public Release findLatestActiveRelease(String appCode, String clusterName, String env, String namespaceName) {
+        AppEnvClusterNamespace namespace = namespaceRepository.findAppEnvClusterNamespace(appCode, env,namespaceName, clusterName,"main");
+        return namespace.findLatestActiveRelease();
     }
 }

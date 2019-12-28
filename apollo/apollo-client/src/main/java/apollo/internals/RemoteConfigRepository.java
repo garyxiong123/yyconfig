@@ -197,7 +197,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
                     }
                 }
 
-                url = assembleQueryConfigUrl(configService.getHomepageUrl(), appId, cluster, m_namespace,
+                url = assembleQueryConfigUrl(configService.getHomepageUrl(), appId, System.getenv("ENV").toLowerCase(),  cluster, m_namespace,
                         dataCenter, m_remoteMessages.get(), m_configCache.get());
 
                 logger.debug("Loading config from {}", url);
@@ -232,12 +232,12 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
         throw new ApolloConfigException(message, exception);
     }
 
-    String assembleQueryConfigUrl(String uri, String appId, String cluster, String namespace,
+    String assembleQueryConfigUrl(String uri, String appId, String cluster, String env, String namespace,
                                   String dataCenter, ApolloNotificationMessages remoteMessages, ApolloConfig previousConfig) {
 
-        String path = "configs/%s/%s/%s";
+        String path = "configs/%s/%s/%s/%s";
         List<String> pathParams =
-                Lists.newArrayList(pathEscaper.escape(appId), pathEscaper.escape(cluster),
+                Lists.newArrayList(pathEscaper.escape(appId), pathEscaper.escape(cluster),pathEscaper.escape(env),
                         pathEscaper.escape(namespace));
         Map<String, String> queryParams = Maps.newHashMap();
 

@@ -57,7 +57,7 @@ public class ShiroProperties {
      * 注:按逗号(,)切分,支持多个
      */
     @NotNull
-    private String noneUrlKeys = "/,/*.js,/*.css,/user/login,/user/logout,/swagger-ui.html,/webjars/**,/v2/**,/swagger-resources/**,/deploy/jenkins/**,/actuator/**";
+    private String noneUrlKeys = "/notifications/**,/*.js,/*.css,/user/login,/user/logout,/swagger-ui.html,/webjars/**,/v2/**,/swagger-resources/**,/deploy/jenkins/**,/actuator/**";
 
     /**
      * 需要认证key
