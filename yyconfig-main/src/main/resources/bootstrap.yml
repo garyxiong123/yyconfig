@@ -8,10 +8,12 @@ spring:
     properties:
       hibernate:
         enable_lazy_load_no_trans: true
-        format_sql: true
+#        format_sql: true
     hibernate:
       ddl-auto: update
-
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
 logging:
   level:
     org:

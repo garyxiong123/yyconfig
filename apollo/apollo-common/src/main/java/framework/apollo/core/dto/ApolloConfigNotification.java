@@ -2,11 +2,13 @@ package framework.apollo.core.dto;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 @Data
-public class ApolloConfigNotification {
+public class ApolloConfigNotification implements Serializable {
   private String namespaceName;
   private long notificationId;
   private volatile ApolloNotificationMessages messages;

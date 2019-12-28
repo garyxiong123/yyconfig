@@ -73,6 +73,7 @@ public class NotificationController implements ReleaseMessageListener {
   public DeferredResult<ResponseEntity<ApolloConfigNotification>> pollNotification(
       @RequestParam(value = "appId") String appId,
       @RequestParam(value = "appEnvCluster") String cluster,
+      @RequestParam(value = "env") String env,
       @RequestParam(value = "appNamespace", defaultValue = ConfigConsts.NAMESPACE_APPLICATION) String namespace,
       @RequestParam(value = "dataCenter", required = false) String dataCenter,
       @RequestParam(value = "notificationId", defaultValue = "-1") long notificationId,
@@ -80,7 +81,7 @@ public class NotificationController implements ReleaseMessageListener {
     //strip out .properties suffix
     namespace = namespaceUtil.filterNamespaceName(namespace);
 
-    Set<String> watchedKeys = watchKeysUtil.assembleAllWatchKeys(appId, cluster, namespace, dataCenter);
+    Set<String> watchedKeys = watchKeysUtil.assembleAllWatchKeys(appId, cluster, env,namespace, dataCenter);
 
     DeferredResult<ResponseEntity<ApolloConfigNotification>> deferredResult =
         new DeferredResult<>(TIMEOUT, NOT_MODIFIED_RESPONSE);

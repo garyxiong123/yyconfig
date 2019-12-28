@@ -76,8 +76,7 @@ public class RemoteConfigLongPollService {
         Multimaps.synchronizedSetMultimap(HashMultimap.<String, RemoteConfigRepository>create());
     m_notifications = Maps.newConcurrentMap();
     m_remoteNotificationMessages = Maps.newConcurrentMap();
-    m_responseType = new TypeToken<List<ApolloConfigNotification>>() {
-    }.getType();
+    m_responseType = new TypeToken<List<ApolloConfigNotification>>() {}.getType();
     gson = new Gson();
     m_configUtil = ApolloInjector.getInstance(ConfigUtil.class);
     m_httpUtil = ApolloInjector.getInstance(HttpUtil.class);
@@ -102,6 +101,8 @@ public class RemoteConfigLongPollService {
     try {
       final String appId = m_configUtil.getAppId();
       final String cluster = m_configUtil.getCluster();
+      System.getProperty("ENV");
+      final String env = System.getenv("ENV").toLowerCase();
       final String dataCenter = m_configUtil.getDataCenter();
       final long longPollingInitialDelayInMills = m_configUtil.getLongPollingInitialDelayInMills();
       m_longPollingService.submit(new Runnable() {
@@ -115,7 +116,7 @@ public class RemoteConfigLongPollService {
               //ignore
             }
           }
-          doLongPollingRefresh(appId, cluster, dataCenter);
+          doLongPollingRefresh(appId, cluster,env, dataCenter);
         }
       });
     } catch (Throwable ex) {
@@ -131,7 +132,7 @@ public class RemoteConfigLongPollService {
     this.m_longPollingStopped.compareAndSet(false, true);
   }
 
-  private void doLongPollingRefresh(String appId, String cluster, String dataCenter) {
+  private void doLongPollingRefresh(String appId, String cluster, String env, String dataCenter) {
     final Random random = new Random();
     ServiceDTO lastServiceDto = null;
     while (!m_longPollingStopped.get() && !Thread.currentThread().isInterrupted()) {
@@ -150,9 +151,7 @@ public class RemoteConfigLongPollService {
           lastServiceDto = configServices.get(random.nextInt(configServices.size()));
         }
 
-        url =
-            assembleLongPollRefreshUrl(lastServiceDto.getHomepageUrl(), appId, cluster, dataCenter,
-                m_notifications);
+        url = assembleLongPollRefreshUrl(lastServiceDto.getHomepageUrl(), appId, cluster,env, dataCenter, m_notifications);
 
         logger.debug("Long polling from {}", url);
         HttpRequest request = new HttpRequest(url);
@@ -160,8 +159,7 @@ public class RemoteConfigLongPollService {
 
         transaction.addData("Url", url);
 
-        final HttpResponse<List<ApolloConfigNotification>> response =
-            m_httpUtil.doGet(request, m_responseType);
+        final HttpResponse<List<ApolloConfigNotification>> response = m_httpUtil.doGet(request, m_responseType);
 
         logger.debug("Long polling response: {}, url: {}", response.getStatusCode(), url);
         if (response.getStatusCode() == 200 && response.getBody() != null) {
@@ -265,13 +263,13 @@ public class RemoteConfigLongPollService {
     return STRING_JOINER.join(m_longPollNamespaces.keySet());
   }
 
-  String assembleLongPollRefreshUrl(String uri, String appId, String cluster, String dataCenter,
+  String assembleLongPollRefreshUrl(String uri, String appId, String cluster, String env,String dataCenter,
                                     Map<String, Long> notificationsMap) {
     Map<String, String> queryParams = Maps.newHashMap();
     queryParams.put("appId", queryParamEscaper.escape(appId));
     queryParams.put("cluster", queryParamEscaper.escape(cluster));
-    queryParams
-        .put("notifications", queryParamEscaper.escape(assembleNotifications(notificationsMap)));
+    queryParams.put("env", queryParamEscaper.escape(env));
+    queryParams.put("notifications", queryParamEscaper.escape(assembleNotifications(notificationsMap)));
 
     if (!Strings.isNullOrEmpty(dataCenter)) {
       queryParams.put("dataCenter", queryParamEscaper.escape(dataCenter));

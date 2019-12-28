@@ -126,7 +126,7 @@ public class ConfigServiceWithCache extends AbstractConfigService {
   @Override
   protected Release findLatestActiveRelease(String appId, String clusterName, String namespaceName,
                                             ApolloNotificationMessages clientMessages) {
-    String key = ReleaseMessageKeyGenerator.generate(appId, clusterName, namespaceName);
+    String key = ReleaseMessageKeyGenerator.generate(appId, clusterName, System.getenv("ENV").toLowerCase(), namespaceName);
 
     Tracer.logEvent(TRACER_EVENT_CACHE_GET, key);
 

@@ -11,8 +11,8 @@ public class ReleaseMessageKeyGenerator {
 
     private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR);
 
-    public static String generate(String appId, String cluster, String namespace) {
-        return STRING_JOINER.join(appId, cluster, namespace);
+    public static String generate(String appId, String cluster,String env, String namespace) {
+        return STRING_JOINER.join(appId, cluster,env, namespace);
     }
 
     public static String generate(AppEnvClusterNamespace namespace) {
@@ -23,6 +23,6 @@ public class ReleaseMessageKeyGenerator {
             messageCluster = namespace.getAppEnvCluster().getName();
         }
 
-        return generate(namespace.getAppNamespace().getApp().getAppCode(), messageCluster, namespace.getAppNamespace().getName());
+        return generate(namespace.getAppNamespace().getApp().getAppCode(), messageCluster,  namespace.getAppEnvCluster().getEnv(),namespace.getAppNamespace().getName());
     }
 }

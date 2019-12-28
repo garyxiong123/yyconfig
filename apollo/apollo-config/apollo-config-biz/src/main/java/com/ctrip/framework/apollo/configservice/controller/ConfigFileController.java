@@ -206,7 +206,7 @@ public class ConfigFileController implements ReleaseMessageListener {
         localCache.put(cacheKey, queryConfigRs);
         log.debug("adding cache for key: {}", cacheKey);
 
-        Set<String> watchedKeys = watchKeysUtil.assembleAllWatchKeys(configReqDto.getAppId(), configReqDto.getClusterName(), configReqDto.getNamespace(), configReqDto.getDataCenter());
+        Set<String> watchedKeys = watchKeysUtil.assembleAllWatchKeys(configReqDto.getAppId(), configReqDto.getClusterName(), configReqDto.getAppId(),configReqDto.getNamespace(), configReqDto.getDataCenter());
 
         for (String watchedKey : watchedKeys) {
             watchedKeys2CacheKey.put(watchedKey, cacheKey);

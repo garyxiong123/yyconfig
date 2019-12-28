@@ -32,6 +32,7 @@ public  class ConfigReqDto {
     private String namespace;
     private String dataCenter;
     private String clientIp;
+    private String env;
 
     public String assembleCacheKey() {
 
