@@ -95,7 +95,10 @@ const ProjectModel = {
       const response = yield call(project.associatedPublicNamespace, payload);
       yield put({
         type: 'setAssociatedPublicNamespace',
-        payload: response
+        payload: {
+          appEnvClusterNamespaceId: payload.appEnvClusterNamespaceId,
+          data: response.data || {}
+        },
       });
     },
     *appProtectNamespace({ payload }, { call, put }) {
@@ -180,14 +183,17 @@ const ProjectModel = {
         ...state,
         commitFind: {
           ...state.commitFind,
-          [payload.appEnvClusterNamespaceId]: payload.data
+          [payload.appEnvClusterNamespaceId]: payload.data || []
         }
       }
     },
     setAssociatedPublicNamespace(state, { payload = {} }) {
       return {
         ...state,
-        associatedPublicNamespace: payload.data || {}
+        associatedPublicNamespace: {
+          ...state.commitFind,
+          [payload.appEnvClusterNamespaceId]: payload.data || {}
+        }
       }
     },
     setAppProtectNamespace(state, { payload = {} }) {

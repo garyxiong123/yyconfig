@@ -42,3 +42,6 @@
 .mainBox .rightBox {
   flex: 1;
 }
+.hidden {
+  display: none;
+}

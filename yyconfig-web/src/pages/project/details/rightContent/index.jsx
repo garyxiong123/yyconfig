@@ -194,7 +194,7 @@ class RightContent extends React.Component {
               {
                 item.format === 'Properties' &&
                 <TabPane tab="表格" key="1">
-                  <TableList tableList={item.items} baseInfo={baseInfo} />
+                  <TableList tableList={item.items} item={item} />
                 </TabPane>
               }
               <TabPane tab="文本" key="2">

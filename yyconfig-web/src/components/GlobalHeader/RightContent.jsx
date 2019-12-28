@@ -46,7 +46,7 @@ const GlobalHeaderRight = props => {
       >
         <a
           target="_blank"
-          href="https://pro.ant.design/docs/getting-started"
+          href="https://github.com/garyxiong123/yyconfig"
           rel="noopener noreferrer"
           className={styles.action}
         >
