@@ -8,10 +8,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.web.servlet.DispatcherServlet;
-import org.springframework.web.servlet.FlashMapManager;
-
-import static org.springframework.web.servlet.DispatcherServlet.FLASH_MAP_MANAGER_BEAN_NAME;
 
 /**
  * Created on 2018/2/5.
@@ -30,10 +26,8 @@ public class MainApplication {
 
 
     public static void main(String[] args) {
-        ConfigurableApplicationContext run = SpringApplication.run(MainApplication.class, args);
-        FlashMapManager flashMapManager = (FlashMapManager) run.getBean(FLASH_MAP_MANAGER_BEAN_NAME, FlashMapManager.class);
-        flashMapManager = null;
 
+        ConfigurableApplicationContext run = SpringApplication.run(MainApplication.class, args);
         System.out.println(run);
 
     }
