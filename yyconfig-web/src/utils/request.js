@@ -39,12 +39,12 @@ const errorHandler = error => {
 /**
  * 配置request请求时的默认参数
  */
-// let SERVER_HOME = '.';
-const SERVER_HOME = 'http://test.lb.gs.youyuwo.com:60008';
+let SERVER_HOME = '.';
+// const SERVER_HOME = 'http://test.lb.gs.youyuwo.com:60008';
 
-// if (process.env.NODE_ENV === 'development') {
-//   SERVER_HOME = 'http://localhost:8080';
-// }
+if (process.env.NODE_ENV === 'development') {
+  SERVER_HOME = 'http://localhost:8080';
+}
 
 const request = extend({
   errorHandler,
