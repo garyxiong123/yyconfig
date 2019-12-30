@@ -23,5 +23,5 @@ public interface ConfigService extends ReleaseMessageListener {
    * @return the Release
    */
   Release loadConfig4SingleClient(String clientAppId, String clientIp, String configAppId, String
-          configClusterName, String configNamespace, String dataCenter, ApolloNotificationMessages clientMessages);
+          configClusterName, String env, String configNamespace, String dataCenter, ApolloNotificationMessages clientMessages);
 }

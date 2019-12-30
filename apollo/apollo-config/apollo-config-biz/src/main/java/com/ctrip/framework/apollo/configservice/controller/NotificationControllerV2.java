@@ -335,11 +335,11 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
                 }
                 List<String> keys = STRING_SPLITTER.splitToList(releaseMessage);
                 //message should be appId+appEnvCluster+appNamespace
-                if (keys.size() != 3) {
+                if (keys.size() != 4) {
                     logger.error("message format invalid - {}", releaseMessage);
                     return null;
                 }
-                return keys.get(2);
+                return keys.get(3);
             };
 
     private void logWatchedKeys(Set<String> watchedKeys, String eventName) {

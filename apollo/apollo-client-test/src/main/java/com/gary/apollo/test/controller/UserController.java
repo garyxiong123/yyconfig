@@ -50,8 +50,8 @@ public class UserController implements ApplicationContextAware {
     @ApolloConfig("application")
     private Config config;
 
-    @ApolloConfig("testJson.json")
-    private Config testJsonConfig;
+//    @ApolloConfig("testJson.json")
+//    private Config testJsonConfig;
 
 
 
@@ -90,7 +90,7 @@ public class UserController implements ApplicationContextAware {
 
         System.out.println(config);
 
-        System.out.println(testJsonConfig);
+//        System.out.println(testJsonConfig);
 
 ////        userService.selectAll()
 //        Transaction t = Cat.getProducer().newTransaction("Exec", "CaiYiMessage");

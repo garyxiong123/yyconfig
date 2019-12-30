@@ -18,6 +18,7 @@ package com.yofish.gary.component.config;
 import com.yofish.gary.component.filter.ShiroUrlPathMatchingFilter;
 import com.yofish.gary.api.properties.ShiroProperties;
 import com.yofish.gary.component.realm.ShiroAuthRealm;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.eis.MemorySessionDAO;
@@ -92,6 +93,7 @@ public class ShiroConfiguration {
         defaultWebSessionManager.setSessionDAO(sessionDAO());
         defaultWebSessionManager.setGlobalSessionTimeout(86400000L);
         defaultWebSessionManager.getSessionIdCookie().setMaxAge(-1);
+
         return defaultWebSessionManager;
     }
 
@@ -102,6 +104,7 @@ public class ShiroConfiguration {
         defaultWebSecurityManager.setRealm(shiroAuthRealm());
         defaultWebSecurityManager.setSessionManager(sessionManager());
         defaultWebSecurityManager.setRememberMeManager(null);
+        SecurityUtils.setSecurityManager(defaultWebSecurityManager);
         return defaultWebSecurityManager;
     }
 

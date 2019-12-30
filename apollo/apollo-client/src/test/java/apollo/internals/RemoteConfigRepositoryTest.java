@@ -217,7 +217,7 @@ public class RemoteConfigRepositoryTest {
     when(someApolloConfig.getReleaseKey()).thenReturn(someReleaseKey);
 
     String queryConfigUrl = remoteConfigRepository
-        .assembleQueryConfigUrl(someUri, someAppId, someCluster, someNamespace, null, notificationMessages,
+        .assembleQueryConfigUrl(someUri, someAppId, someCluster, someNamespace, null, null,notificationMessages,
             someApolloConfig);
 
     remoteConfigLongPollService.stopLongPollingRefresh();

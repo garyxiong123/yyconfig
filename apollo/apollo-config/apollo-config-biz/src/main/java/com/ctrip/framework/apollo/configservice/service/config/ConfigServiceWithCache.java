@@ -65,7 +65,7 @@ public class ConfigServiceWithCache extends AbstractConfigService {
           @Override
           public ConfigCacheEntry load(String key) throws Exception {
             List<String> namespaceInfo = STRING_SPLITTER.splitToList(key);
-            if (namespaceInfo.size() != 3) {
+            if (namespaceInfo.size() != 4) {
               Tracer.logError(
                   new IllegalArgumentException(String.format("Invalid cache load key %s", key)));
               return nullConfigCacheEntry;
@@ -75,7 +75,7 @@ public class ConfigServiceWithCache extends AbstractConfigService {
             try {
               ReleaseMessage latestReleaseMessage = releaseMessageService.findLatestReleaseMessageForMessages(Lists.newArrayList(key));
               Release latestRelease = releaseService.findLatestActiveRelease(namespaceInfo.get(0), namespaceInfo.get(1),
-                  namespaceInfo.get(2));
+                  namespaceInfo.get(2), namespaceInfo.get(3));
 
               transaction.setStatus(Transaction.SUCCESS);
 
@@ -124,9 +124,9 @@ public class ConfigServiceWithCache extends AbstractConfigService {
   }
 
   @Override
-  protected Release findLatestActiveRelease(String appId, String clusterName, String namespaceName,
+  protected Release findLatestActiveRelease(String appId, String clusterName, String env, String namespaceName,
                                             ApolloNotificationMessages clientMessages) {
-    String key = ReleaseMessageKeyGenerator.generate(appId, clusterName, System.getenv("ENV").toLowerCase(), namespaceName);
+    String key = ReleaseMessageKeyGenerator.generate(appId, clusterName, env, namespaceName);
 
     Tracer.logEvent(TRACER_EVENT_CACHE_GET, key);
 
