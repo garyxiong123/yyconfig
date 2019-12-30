@@ -31,6 +31,9 @@ https://yyconfig-test.yofish.com/
   </tbody>
 </table>
 
+yyconfig配置中心交流群
+二维码
+群号:910528732
 
 # License
 The project is licensed under the [Apache 2 license](https://github.com/ctripcorp/apollo/blob/master/LICENSE).

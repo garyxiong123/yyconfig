@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:mysql://10.0.40.14:53306/apollo_mini?useUnicode=true&characterEncoding=UTF-8
+    username: apollo_mini
+    password: apollo_mini
+    driver-class-name: com.mysql.jdbc.Driver
+  jpa:
+    properties:
+      hibernate:
+        format_sql: false
+    hibernate:
+      ddl-auto: update
