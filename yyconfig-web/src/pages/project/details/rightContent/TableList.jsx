@@ -86,7 +86,7 @@ class TableList extends React.Component {
   onCopy = () => {
     const { item } = this.props;
     let baseInfo = item.baseInfo || {};
-    let text = document.getElementById(baseInfo.id);
+    let text = document.getElementById('copy'+baseInfo.id);
     try {
       text.select();
       document.execCommand('copy')
@@ -145,6 +145,7 @@ class TableList extends React.Component {
       {
         title: 'Value',
         dataIndex: 'item.value',
+        width: '20%',
         render: (text, record) => (
           <div onDoubleClick={() => this.onDoubleClick(text)}>
             <span title={text}>{text}</span>
@@ -154,6 +155,7 @@ class TableList extends React.Component {
       {
         title: '备注',
         dataIndex: 'item.comment',
+        width: 100
       },
       {
         title: '最后修改人',
@@ -260,7 +262,7 @@ class TableList extends React.Component {
         {this.renderOpe(item)}
         {item.namespaceType === 'Associate' ? this.renderAssociateList() : this.renderTable(tableList)}
         {showEdit && <ConfigAdd onCancel={this.onCancel} currentItem={currentItem} onSave={this.onConfigSave} baseInfo={item.baseInfo} />}
-        <Input value={copyValue} id={baseInfo.id} className={styles.copyInput}/>
+        <Input value={copyValue} id={'copy'+baseInfo.id} className={styles.copyInput}/>
       </Fragment>
     );
   }
