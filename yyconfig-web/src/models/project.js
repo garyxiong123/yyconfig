@@ -191,7 +191,7 @@ const ProjectModel = {
       return {
         ...state,
         associatedPublicNamespace: {
-          ...state.commitFind,
+          ...state.associatedPublicNamespace,
           [payload.appEnvClusterNamespaceId]: payload.data || {}
         }
       }

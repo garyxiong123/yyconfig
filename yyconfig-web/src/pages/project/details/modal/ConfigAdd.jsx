@@ -42,12 +42,12 @@ class ConfigAdd extends React.Component {
     })
   }
   onSubmit = (e) => {
-    const { onCancel, currentItem } = this.props;
+    const { onCancel, currentItem, opeType } = this.props;
     let item = currentItem.item || {};
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        if (item.id) {
+        if (item.id && !opeType) {
           //修改
           this.onConfigUpdate(values)
         } else {
@@ -105,7 +105,7 @@ class ConfigAdd extends React.Component {
   }
   renderForm() {
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { envList, currentItem, nameSpaceListWithApp } = this.props;
+    const { envList, currentItem, nameSpaceListWithApp, opeType } = this.props;
     let item = currentItem.item || {};
     const { checkList } = this.state;
     return (
@@ -138,8 +138,8 @@ class ConfigAdd extends React.Component {
           )}
         </FormItem>
         {
-          !item.id &&
-          <FormItem label="选择集群">
+          (!item.id || opeType === 'reCover') &&
+          < FormItem label="选择集群">
             {/* {
               envList.map((item, i) => (
                 <Fragment key={item.env}>
@@ -176,11 +176,11 @@ class ConfigAdd extends React.Component {
     )
   }
   render() {
-    const { onCancel, currentItem, loading } = this.props;
+    const { onCancel, currentItem, loading, opeType } = this.props;
     let item = currentItem.item || {};
     return (
       <Modal
-        title={item.id ? "修改配置" : "添加配置"}
+        title={opeType === 'reCover' ? '覆盖配置' : item.id ? "修改配置" : "添加配置"}
         visible={true}
         onCancel={onCancel}
         onOk={this.onSubmit}
