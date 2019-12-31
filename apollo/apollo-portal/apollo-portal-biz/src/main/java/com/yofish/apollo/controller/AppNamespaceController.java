@@ -1,6 +1,7 @@
 package com.yofish.apollo.controller;
 
 import com.yofish.apollo.domain.*;
+import com.yofish.apollo.dto.NamespaceEnvTree;
 import com.yofish.apollo.dto.NamespaceListReq;
 import com.yofish.apollo.dto.NamespaceListResp;
 import com.yofish.apollo.model.bo.NamespaceVO;
@@ -19,10 +20,8 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -147,7 +146,7 @@ public class AppNamespaceController {
 
     @ApiOperation("查询所有app下环境集群附带id")
     @PostMapping("/namespaceList")
-    public Result<List<NamespaceListResp>> namespaceList(@RequestBody NamespaceListReq namespaceListReq) {
+    public Result<Map<String,List<NamespaceListResp>>> namespaceList(@RequestBody NamespaceListReq namespaceListReq) {
         List<AppEnvClusterNamespace> listResps = appEnvClusterNamespaceService.findbyAppAndEnvAndNamespace(namespaceListReq.getAppCode(), namespaceListReq.getNamespace());
         List<NamespaceListResp> respVos = new ArrayList<>();
         if (listResps != null && listResps.size() > 0) {
@@ -160,8 +159,16 @@ public class AppNamespaceController {
                 respVos.add(respvo);
             }
         }
-        return Result.ok(respVos);
+        Map<String,List<NamespaceListResp>> trees=tansTotree(respVos);
+        return Result.ok(trees);
 
+    }
+
+    private Map<String,List<NamespaceListResp>> tansTotree(List<NamespaceListResp> listResps){
+
+        Map<String,List<NamespaceListResp>> nameTrees= new HashMap<>(4);
+        nameTrees=  listResps.stream().sorted(Comparator.comparing(NamespaceListResp::getEnv)).collect(Collectors.groupingBy(m -> m.getEnv()));
+        return nameTrees;
     }
 //
 //  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces", method = RequestMethod.GET)

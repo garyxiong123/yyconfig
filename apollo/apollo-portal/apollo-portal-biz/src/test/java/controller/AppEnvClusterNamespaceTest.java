@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author rache
@@ -25,7 +26,7 @@ public class AppEnvClusterNamespaceTest extends AbstractControllerTest{
         NamespaceListReq req=new NamespaceListReq();
         req.setAppCode("payment");
         req.setNamespace("application");
-        Result<List<NamespaceListResp>> listResult= appNamespaceController.namespaceList(req);
+        Result<Map<String,List<NamespaceListResp>>> listResult= appNamespaceController.namespaceList(req);
         System.out.println(1);
     }
 
