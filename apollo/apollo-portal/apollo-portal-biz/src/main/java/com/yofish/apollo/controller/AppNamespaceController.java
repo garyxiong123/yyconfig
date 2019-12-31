@@ -146,7 +146,7 @@ public class AppNamespaceController {
 
     @ApiOperation("查询所有app下环境集群附带id")
     @PostMapping("/namespaceList")
-    public Result<Map<String,List<NamespaceListResp>>> namespaceList(@RequestBody NamespaceListReq namespaceListReq) {
+    public Result<List<NamespaceEnvTree>> namespaceList(@RequestBody NamespaceListReq namespaceListReq) {
         List<AppEnvClusterNamespace> listResps = appEnvClusterNamespaceService.findbyAppAndEnvAndNamespace(namespaceListReq.getAppCode(), namespaceListReq.getNamespace());
         List<NamespaceListResp> respVos = new ArrayList<>();
         if (listResps != null && listResps.size() > 0) {
@@ -159,16 +159,22 @@ public class AppNamespaceController {
                 respVos.add(respvo);
             }
         }
-        Map<String,List<NamespaceListResp>> trees=tansTotree(respVos);
+        List<NamespaceEnvTree> trees=tansTotree(respVos);
         return Result.ok(trees);
 
     }
 
-    private Map<String,List<NamespaceListResp>> tansTotree(List<NamespaceListResp> listResps){
-
+    private List<NamespaceEnvTree> tansTotree(List<NamespaceListResp> listResps){
+        List<NamespaceEnvTree> namespaceEnvTreeList=new ArrayList<>();
         Map<String,List<NamespaceListResp>> nameTrees= new HashMap<>(4);
         nameTrees=  listResps.stream().sorted(Comparator.comparing(NamespaceListResp::getEnv)).collect(Collectors.groupingBy(m -> m.getEnv()));
-        return nameTrees;
+        for(String itemKey:nameTrees.keySet()){
+            NamespaceEnvTree namespaceEnvTree=new NamespaceEnvTree();
+            namespaceEnvTree.setEnv(itemKey);
+            namespaceEnvTree.setNamespaceListResps(nameTrees.get(itemKey));
+            namespaceEnvTreeList.add(namespaceEnvTree);
+        }
+        return namespaceEnvTreeList;
     }
 //
 //  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces", method = RequestMethod.GET)

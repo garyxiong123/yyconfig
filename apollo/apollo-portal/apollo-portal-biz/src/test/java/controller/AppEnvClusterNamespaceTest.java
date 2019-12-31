@@ -2,6 +2,7 @@ package controller;
 
 import com.yofish.apollo.controller.AppNamespaceController;
 import com.yofish.apollo.domain.AppEnvClusterNamespace;
+import com.yofish.apollo.dto.NamespaceEnvTree;
 import com.yofish.apollo.dto.NamespaceListReq;
 import com.yofish.apollo.dto.NamespaceListResp;
 import com.yofish.apollo.model.bo.NamespaceVO;
@@ -26,7 +27,7 @@ public class AppEnvClusterNamespaceTest extends AbstractControllerTest{
         NamespaceListReq req=new NamespaceListReq();
         req.setAppCode("payment");
         req.setNamespace("application");
-        Result<Map<String,List<NamespaceListResp>>> listResult= appNamespaceController.namespaceList(req);
+        Result<List<NamespaceEnvTree>> listResult= appNamespaceController.namespaceList(req);
         System.out.println(1);
     }
 
