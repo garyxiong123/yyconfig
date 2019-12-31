@@ -28,7 +28,18 @@ class ConfigAdd extends React.Component {
     };
   }
   componentDidMount() {
+    const { baseInfo } = this.props;
     this.onFetchNameSpaceListWithApp();
+    this.onSelect([baseInfo.id.toString()])
+  }
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'project/clearData',
+      payload: {
+        nameSpaceListWithApp: []
+      }
+    })
   }
   onFetchNameSpaceListWithApp = () => {
     const { dispatch, appDetail, baseInfo } = this.props;
@@ -59,9 +70,9 @@ class ConfigAdd extends React.Component {
   }
 
   onConfigAdd = async (values) => {
-    const { checkList } = this.state;
+    let appEnvClusterNamespaceIds = this.onGetAppEnvClusterNamespaceIds();
     let res = await project.configAdd({
-      appEnvClusterNamespaceIds: checkList,
+      appEnvClusterNamespaceIds,
       ...values
     });
     this.onSuccess(res);
@@ -83,31 +94,40 @@ class ConfigAdd extends React.Component {
       onSave();
     }
   }
-
-  onChange = (e) => {
+  onGetAppEnvClusterNamespaceIds = () => {
     const { checkList } = this.state;
-    let target = e.target, list = checkList;
-    if (e.target.checked) {
-      list.push(e.target.value)
-    } else {
-      let index = list.indexOf(e.target.value);
-      list.splice(index, 1)
-    }
-    this.setState({
-      checkList: list
+    let list = checkList, ids = [];
+    list.map((vo) => {
+      if (vo.indexOf('-') > -1) {
+        return
+      }
+      ids.push(vo)
     })
-    // this.setState({
-    //   checkList: [
-    //     ...checkList,
-    //     ...checkedValues
-    //   ]
-    // })
+    return ids
   }
+  // onChange = (e) => {
+  //   const { checkList } = this.state;
+  //   let target = e.target, list = checkList;
+  //   if (e.target.checked) {
+  //     list.push(e.target.value)
+  //   } else {
+  //     let index = list.indexOf(e.target.value);
+  //     list.splice(index, 1)
+  //   }
+  //   this.setState({
+  //     checkList: list
+  //   })
+  // }
+  onSelect = (keys, e) => {
+    this.setState({
+      checkList: keys
+    })
+  }
+
   renderForm() {
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { envList, currentItem, nameSpaceListWithApp, opeType } = this.props;
+    const { envList, currentItem, nameSpaceListWithApp, opeType, baseInfo } = this.props;
     let item = currentItem.item || {};
-    const { checkList } = this.state;
     return (
       <Form onSubmit={this.onSubmit} {...formItemLayout}>
         <FormItem label="Key">
@@ -139,15 +159,43 @@ class ConfigAdd extends React.Component {
         </FormItem>
         {
           (!item.id || opeType === 'reCover') &&
-          < FormItem label="选择集群">
-            {/* {
-              envList.map((item, i) => (
+          <FormItem label="选择集群">
+            {
+              nameSpaceListWithApp.length ?
+                <Tree
+                  checkable
+                  defaultExpandAll
+                  onCheck={this.onSelect}
+                  defaultCheckedKeys={[baseInfo.id.toString()]}
+                >
+                  <TreeNode title="全选" key={'0-'}>
+                    {
+                      nameSpaceListWithApp.map((item, i) => (
+                        <TreeNode title={item.env} key={`${item.env}-`}>
+                          {
+                            item.namespaceListResps.map((vo) => (
+                              <TreeNode title={vo.name} key={vo.id.toString()} />
+                            ))
+                          }
+                        </TreeNode>
+                      ))
+                    }
+                  </TreeNode>
+                </Tree> : null
+            }
+          </FormItem>
+        }
+        {/* {
+          (!item.id || opeType === 'reCover') &&
+          <FormItem label="选择集群">
+            {
+              nameSpaceListWithApp.map((item, i) => (
                 <Fragment key={item.env}>
-                  <div>{item.env}(环境)</div>
+                  <Checkbox>{item.env}</Checkbox>
                   <Checkbox.Group style={{ width: '100%', marginLeft: 15 }}>
                     <Row type="flex">
                       {
-                        item.clusters && item.clusters.map((vo) => (
+                        item.namespaceListResps && item.namespaceListResps.map((vo) => (
                           <Col span={6} key={vo.id}>
                             <Checkbox value={vo.id} onChange={(e) => this.onChange(e, item)}>{vo.name}</Checkbox>
                           </Col>
@@ -157,21 +205,9 @@ class ConfigAdd extends React.Component {
                   </Checkbox.Group>
                 </Fragment>
               ))
-            } */}
-            <Checkbox.Group>
-              <Row type="flex">
-                {
-                  nameSpaceListWithApp.map((vo, i) => (
-                    <Col span={24} key={vo.id} style={{ marginBottom: 15 }}>
-                      <Checkbox value={vo.id} onChange={(e) => this.onChange(e, item)}>{vo.env} - {vo.name}</Checkbox>
-                    </Col>
-
-                  ))
-                }
-              </Row>
-            </Checkbox.Group>
+            }
           </FormItem>
-        }
+        } */}
       </Form>
     )
   }
@@ -195,5 +231,6 @@ class ConfigAdd extends React.Component {
 export default Form.create()(connect(({ project }) => ({
   envList: project.envList,
   nameSpaceListWithApp: project.nameSpaceListWithApp,
-  appDetail: project.appDetail
+  appDetail: project.appDetail,
+  currentEnv: project.currentEnv
 }))(ConfigAdd));

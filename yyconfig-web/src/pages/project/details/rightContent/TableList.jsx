@@ -3,6 +3,7 @@ import { connect } from 'dva';
 import { Table, Divider, Popconfirm, Button, Tag, message, Row, Col, Card, Input } from 'antd';
 import moment from 'moment';
 import ConfigAdd from '../modal/ConfigAdd';
+import SyncConfig from '../modal/SyncConfig';
 import { project } from '@/services/project';
 import styles from '../../index.less';
 
@@ -14,7 +15,8 @@ class TableList extends React.Component {
       currentItem: {},
       copyValue: '',
       opeType: '',
-      recoverKeys: []
+      recoverKeys: [],
+      showSyncConfig: false
     };
   }
   componentDidMount() {
@@ -65,9 +67,9 @@ class TableList extends React.Component {
       opeType: type || ''
     })
   }
-  onCancel = () => {
+  onCancel = (type) => {
     this.setState({
-      showEdit: false
+      [type]: false
     })
   }
   onDelete = async (itemId) => {
@@ -189,8 +191,10 @@ class TableList extends React.Component {
         render: (text, record) => (
           <Fragment>
             {
-              type && type === 'Associate' && recoverKeys.indexOf(record.key) < 0 ?
-                <a onClick={() => { this.onEdit(record, 'reCover') }}>覆盖</a> :
+              type && type === 'Associate' ?
+                recoverKeys.indexOf(record.item.key) < 0 ?
+                  <a onClick={() => { this.onEdit(record, 'reCover') }}>覆盖</a> :
+                  null :
                 <Fragment>
                   {
                     !text &&
@@ -267,14 +271,15 @@ class TableList extends React.Component {
     )
   }
   render() {
-    const { showEdit, currentItem, copyValue, opeType } = this.state;
+    const { showEdit, currentItem, copyValue, opeType, showSyncConfig } = this.state;
     const { item, tableList } = this.props;
     let baseInfo = item.baseInfo || {};
     return (
       <Fragment>
         {this.renderOpe(item)}
         {item.namespaceType === 'Associate' ? this.renderAssociateList() : this.renderTable(tableList)}
-        {showEdit && <ConfigAdd onCancel={this.onCancel} currentItem={currentItem} onSave={this.onConfigSave} baseInfo={item.baseInfo} opeType={opeType} />}
+        {showEdit && <ConfigAdd onCancel={()=>this.onCancel('showEdit')} currentItem={currentItem} onSave={this.onConfigSave} baseInfo={item.baseInfo} opeType={opeType} />}
+        {showSyncConfig && <SyncConfig onCancel={()=>this.onCancel('showSyncConfig')} currentItem={currentItem}/>}
         <Input value={copyValue} id={'copy' + baseInfo.id} className={styles.copyInput} />
       </Fragment>
     );
