@@ -2,8 +2,8 @@ package com.yofish.apollo.service;
 
 import com.yofish.apollo.domain.App;
 import com.yofish.gary.biz.domain.Department;
-import com.yofish.gary.biz.repository.DepartmentRepository;
 import com.yofish.gary.biz.domain.User;
+import com.yofish.gary.biz.repository.DepartmentRepository;
 import com.yofish.gary.biz.repository.UserRepository;
 import com.youyu.common.api.PageData;
 import org.junit.Assert;
@@ -47,7 +47,7 @@ public class AppServiceTest {
 
     @Test
     public void findAll() {
-        PageData<App> all = this.appService.findAll(PageRequest.of(0, 5));
+
 
     }
 

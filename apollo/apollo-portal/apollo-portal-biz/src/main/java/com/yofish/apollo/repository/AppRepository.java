@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * Created on 2018/2/5.
  *
@@ -35,5 +37,14 @@ public interface AppRepository extends JpaRepository<App, Long>, JpaSpecificatio
      * @return
      */
     Page<App> findByAppCodeContainingOrNameContaining(String appId, String name, Pageable pageable);
+
+    /**
+     * findAllByAppCodeContainingOrNameContaining
+     *
+     * @param appId
+     * @param name
+     * @return
+     */
+    List<App> findAllByAppCodeContainingOrNameContaining(String appId, String name);
 
 }
