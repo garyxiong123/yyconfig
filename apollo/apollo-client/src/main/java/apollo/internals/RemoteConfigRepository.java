@@ -187,7 +187,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
             for (ServiceDTO configService : randomConfigServices) {
                 if (onErrorSleepTime > 0) {
                     logger.warn(
-                            "Load config failed, will retry in {} {}. appId: {}, appEnvCluster: {}, namespaces: {}",
+                            "Load config failed, will retry in {} {}. appCode: {}, appEnvCluster: {}, namespaces: {}",
                             onErrorSleepTime, m_configUtil.getOnErrorRetryIntervalTimeUnit(), appId, cluster, m_namespace);
 
                     try {
@@ -227,7 +227,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
 
         }
         String message = String.format(
-                "Load Apollo Config failed - appId: %s, appEnvCluster: %s, appNamespace: %s, url: %s",
+                "Load Apollo Config failed - appCode: %s, appEnvCluster: %s, appNamespace: %s, url: %s",
                 appId, cluster, m_namespace, url);
         throw new ApolloConfigException(message, exception);
     }

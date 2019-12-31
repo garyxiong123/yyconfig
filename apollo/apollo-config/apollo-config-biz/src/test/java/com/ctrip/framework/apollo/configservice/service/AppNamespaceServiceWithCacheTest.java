@@ -183,12 +183,12 @@
 //    // Update name
 //    String somePrivateNamespaceNew = "somePrivateNamespaceNew";
 //    AppNamespace somePrivateAppNamespaceNew = assembleAppNamespace(somePrivateAppNamespace.getId
-//        (), somePrivateAppNamespace.getAppId(), somePrivateNamespaceNew, somePrivateAppNamespace
+//        (), somePrivateAppNamespace.getAppCode(), somePrivateNamespaceNew, somePrivateAppNamespace
 //        .isPublic());
 //    somePrivateAppNamespaceNew.setDataChangeLastModifiedTime(newDateWithDelta
 //        (somePrivateAppNamespace.getDataChangeLastModifiedTime(), 1));
 //
-//    // Update appId
+//    // Update appCode
 //    String someAppIdNew = "someAppIdNew";
 //    AppNamespace yetAnotherPrivateAppNamespaceNew = assembleAppNamespace
 //        (yetAnotherPrivateAppNamespace.getId(), someAppIdNew, yetAnotherPrivateAppNamespace
@@ -198,7 +198,7 @@
 //
 //    // Update isPublic
 //    AppNamespace somePublicAppNamespaceNew = assembleAppNamespace(somePublicAppNamespace
-//            .getId(), somePublicAppNamespace.getAppId(), somePublicAppNamespace.getName(),
+//            .getId(), somePublicAppNamespace.getAppCode(), somePublicAppNamespace.getName(),
 //        !somePublicAppNamespace.isPublic());
 //    somePublicAppNamespaceNew.setDataChangeLastModifiedTime(newDateWithDelta
 //        (somePublicAppNamespace.getDataChangeLastModifiedTime(), 1));
@@ -248,10 +248,10 @@
 //    return calendar.getTime();
 //  }
 //
-//  private AppNamespace assembleAppNamespace(long id, String appId, String name, boolean isPublic) {
+//  private AppNamespace assembleAppNamespace(long id, String appCode, String name, boolean isPublic) {
 //    AppNamespace appNamespace = new AppNamespace();
 //    appNamespace.setId(id);
-//    appNamespace.setAppId(appId);
+//    appNamespace.setAppCode(appCode);
 //    appNamespace.setName(name);
 //    appNamespace.setPublic(isPublic);
 //    appNamespace.setDataChangeLastModifiedTime(new Date());

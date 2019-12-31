@@ -47,7 +47,7 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
 
   private int databaseScanInterval;
   private ScheduledExecutorService executorService;
-  //store configAppId+configCluster+configNamespace -> GrayReleaseRuleCache map
+  //store configAppCode+configCluster+namespaceName -> GrayReleaseRuleCache map
   private Multimap<String, GrayReleaseRuleCache> grayReleaseRuleCache;
   //store clientAppId+clientNamespace+ip -> ruleId map
   private Multimap<String, Long> reversedGrayReleaseRuleCache;
@@ -82,16 +82,16 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
       return;
     }
     List<String> keys = STRING_SPLITTER.splitToList(releaseMessage);
-    //message should be appId+cluster+appNamespace
+    //message should be appCode+cluster+appNamespace
     if (keys.size() != 3) {
       logger.error("message format invalid - {}", releaseMessage);
       return;
     }
-    String appId = keys.get(0);
+    String appCode = keys.get(0);
     String cluster = keys.get(1);
     String namespace = keys.get(2);
 
-    List<GrayReleaseRule> rules = grayReleaseRuleRepository.findByAppIdAndClusterNameAndNamespaceName(appId, cluster, namespace);
+    List<GrayReleaseRule> rules = grayReleaseRuleRepository.findByAppIdAndClusterNameAndNamespaceName(appCode, cluster, namespace);
 
     mergeGrayReleaseRules(rules);
 */

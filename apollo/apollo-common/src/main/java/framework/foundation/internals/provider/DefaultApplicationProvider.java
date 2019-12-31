@@ -99,6 +99,6 @@ public class DefaultApplicationProvider implements ApplicationProvider {
 
   @Override
   public String toString() {
-    return "appId [" + getAppId() + "] properties: " + m_appProperties + " (DefaultApplicationProvider)";
+    return "appCode [" + getAppId() + "] properties: " + m_appProperties + " (DefaultApplicationProvider)";
   }
 }

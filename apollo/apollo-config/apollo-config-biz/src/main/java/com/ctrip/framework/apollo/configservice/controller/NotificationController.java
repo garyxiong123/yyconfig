@@ -61,7 +61,7 @@ public class NotificationController implements ReleaseMessageListener {
   /**
    * For single appNamespace notification, reserved for older version of apollo clients
    *
-   * @param appId          the appId
+   * @param appId          the appCode
    * @param cluster        the appEnvCluster
    * @param namespace      the appNamespace name
    * @param dataCenter     the datacenter
@@ -71,7 +71,7 @@ public class NotificationController implements ReleaseMessageListener {
    */
   @RequestMapping(method = RequestMethod.GET)
   public DeferredResult<ResponseEntity<ApolloConfigNotification>> pollNotification(
-      @RequestParam(value = "appId") String appId,
+      @RequestParam(value = "appCode") String appId,
       @RequestParam(value = "appEnvCluster") String cluster,
       @RequestParam(value = "env") String env,
       @RequestParam(value = "appNamespace", defaultValue = ConfigConsts.NAMESPACE_APPLICATION) String namespace,
@@ -118,7 +118,7 @@ public class NotificationController implements ReleaseMessageListener {
       });
 
       logWatchedKeys(watchedKeys, "Apollo.LongPoll.RegisteredKeys");
-      logger.debug("Listening {} from appId: {}, appEnvCluster: {}, appNamespace: {}, datacenter: {}",
+      logger.debug("Listening {} from appCode: {}, appEnvCluster: {}, appNamespace: {}, datacenter: {}",
           watchedKeys, appId, cluster, namespace, dataCenter);
     }
 
@@ -135,7 +135,7 @@ public class NotificationController implements ReleaseMessageListener {
       return;
     }
     List<String> keys = STRING_SPLITTER.splitToList(content);
-    //message should be appId+appEnvCluster+appNamespace
+    //message should be appCode+appEnvCluster+appNamespace
     if (keys.size() != 3) {
       logger.error("message format invalid - {}", content);
       return;

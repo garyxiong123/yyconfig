@@ -14,13 +14,13 @@
 //
 //  @Test
 //  public void testCreate() {
-//    String appId = "someAppId";
+//    String appCode = "someAppId";
 //    String appName = "someAppName";
 //    String ownerName = "someOwnerName";
 //    String ownerEmail = "someOwnerName@ctrip.com";
 //
 //    App app = new App();
-//    app.setAppId(appId);
+//    app.setAppId(appCode);
 //    app.setName(appName);
 ////    app.setOwnerName(ownerName);
 ////    app.setOwnerEmail(ownerEmail);
@@ -34,13 +34,13 @@
 //
 //  @Test
 //  public void testRemove() {
-//    String appId = "someAppId";
+//    String appCode = "someAppId";
 //    String appName = "someAppName";
 //    String ownerName = "someOwnerName";
 //    String ownerEmail = "someOwnerName@ctrip.com";
 //
 //    App app = new App();
-//    app.setAppId(appId);
+//    app.setAppId(appCode);
 //    app.setName(appName);
 ////    app.setOwnerName(ownerName);
 ////    app.setOwnerEmail(ownerEmail);

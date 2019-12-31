@@ -131,7 +131,7 @@ public class GrayReleaseRulesHolderTest {
       namespaceName, List<GrayReleaseRuleItemDTO> ruleItems, long releaseId, int branchStatus) {
     GrayReleaseRule rule = new GrayReleaseRule();
     rule.setId(idCounter.incrementAndGet());
-//    rule.setAppId(appId);
+//    rule.setAppId(appCode);
 //    rule.setClusterName(clusterName);
 //    rule.setNamespaceName(namespaceName);
 //    rule.setBranchName("someBranch");

@@ -18,9 +18,9 @@
 //
 //  @Test(expected = ServiceException.class)
 //  public void testCreateDuplicateCluster() {
-//    String appId = "someAppId";
+//    String appCode = "someAppId";
 //    App app = new App();
-//    app.setAppId(appId);
+//    app.setAppId(appCode);
 //    app.setName("someAppName");
 //    String owner = "someOwnerName";
 //    app.setOwnerName(owner);
@@ -31,6 +31,6 @@
 //
 //    adminService.createNewApp(app);
 //
-//    clusterService.createDefaultCluster(appId, owner);
+//    clusterService.createDefaultCluster(appCode, owner);
 //  }
 //}

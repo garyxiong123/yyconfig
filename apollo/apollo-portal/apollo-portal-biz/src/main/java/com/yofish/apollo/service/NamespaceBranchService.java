@@ -101,7 +101,7 @@ public class NamespaceBranchService {
 
         ItemChangeSets changeSets = calculateBranchChangeSet(appId, env, clusterName, namespaceName, branchName);
 
-//        ReleaseDTO mergedResult = releaseService.updateAndPublish(appId, env, clusterName, namespaceName, title, comment, branchName, isEmergencyPublish, deleteBranch, changeSets);
+//        ReleaseDTO mergedResult = releaseService.updateAndPublish(appCode, env, clusterName, namespaceName, title, comment, branchName, isEmergencyPublish, deleteBranch, changeSets);
 //
 //
 //        return mergedResult;
@@ -109,7 +109,7 @@ public class NamespaceBranchService {
     }
 
     private ItemChangeSets calculateBranchChangeSet(String appId, Env env, String clusterName, String namespaceName, String branchName) {
-//        NamespaceBO parentNamespace = appNamespaceService.loadNamespaceBO(appId, env, clusterName, namespaceName);
+//        NamespaceBO parentNamespace = appNamespaceService.loadNamespaceBO(appCode, env, clusterName, namespaceName);
 //
 //        if (parentNamespace == null) {
 //            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "base namespace not existed");
@@ -119,9 +119,9 @@ public class NamespaceBranchService {
 //            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "Merge operation failed. Because master has modified items");
 //        }
 //
-//        List<ItemDTO> masterItems = itemService.findItems(appId, env, clusterName, namespaceName);
+//        List<ItemDTO> masterItems = itemService.findItems(appCode, env, clusterName, namespaceName);
 //
-//        List<ItemDTO> branchItems = itemService.findItems(appId, env, branchName, namespaceName);
+//        List<ItemDTO> branchItems = itemService.findItems(appCode, env, branchName, namespaceName);
 //
 //        ItemChangeSets changeSets = itemsComparator.compareIgnoreBlankAndCommentItem(parentNamespace.getBaseInfo().getId(),
 //                masterItems, branchItems);
@@ -145,7 +145,7 @@ public class NamespaceBranchService {
 //        Env env = null;
 //        namespaceVO.setBaseInfo(null);
 //
-//        String appId = branchNamespace.getAppId();
+//        String appCode = branchNamespace.getAppId();
 //        String clusterName = branchNamespace.getClusterName();
 //        String namespaceName = branchNamespace.getNamespaceName();
 //
@@ -164,7 +164,7 @@ public class NamespaceBranchService {
 //
 //
 //        //not Release config items
-//        List<ItemDTO> items = itemService.findItems(appId, env, clusterName, namespaceName);
+//        List<ItemDTO> items = itemService.findItems(appCode, env, clusterName, namespaceName);
 //        int modifiedItemCnt = 0;
 //        for (ItemDTO itemDTO : items) {
 //
@@ -230,7 +230,7 @@ public class NamespaceBranchService {
     @Transactional
     public void updateBranchGrayRules(String appId, String clusterName, String namespaceName,
                                       String branchName, GrayReleaseRule newRules) {
-//        doUpdateBranchGrayRules(appId, clusterName, namespaceName, branchName, newRules, true, ReleaseOperation.APPLY_GRAY_RULES);
+//        doUpdateBranchGrayRules(appCode, clusterName, namespaceName, branchName, newRules, true, ReleaseOperation.APPLY_GRAY_RULES);
         return;
     }
 

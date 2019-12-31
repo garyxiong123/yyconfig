@@ -161,7 +161,7 @@ public class AppEnvClusterNamespaceService {
      * load cluster all namespace info with items
      */
     public List<NamespaceVO> findNamespaceVOs(String appCode, String env, String clusterName) {
-        AppEnvCluster appEnvCluster = appEnvClusterRepository.findClusterByAppAppCodeAndEnvAndName(appCode, env, clusterName);
+        AppEnvCluster appEnvCluster = appEnvClusterRepository.findByApp_AppCodeAndEnvAndName(appCode, env, clusterName);
         if (ObjectUtils.isEmpty(appEnvCluster)) {
             throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "namespaces not exist");
         }

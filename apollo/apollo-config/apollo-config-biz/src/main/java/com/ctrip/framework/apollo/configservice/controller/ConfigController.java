@@ -2,7 +2,7 @@ package com.ctrip.framework.apollo.configservice.controller;
 
 import com.ctrip.framework.apollo.configservice.service.AppNamespaceServiceWithCache;
 import com.ctrip.framework.apollo.configservice.service.config.ConfigService;
-import com.ctrip.framework.apollo.configservice.util.InstanceConfigAuditUtil;
+import com.ctrip.framework.apollo.configservice.util.InstanceConfigHeartBeatUtil;
 import com.ctrip.framework.apollo.configservice.util.NamespaceUtil;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.domain.Release;
+import common.NamespaceBo;
 import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.dto.ApolloConfig;
 import framework.apollo.core.dto.ApolloNotificationMessages;
@@ -35,9 +36,8 @@ import static framework.apollo.core.ConfigConsts.NO_APPID_PLACEHOLDER;
  */
 @RestController
 @RequestMapping("/configs")
-public class QueryConfigController {
-    private static final Splitter X_FORWARDED_FOR_SPLITTER = Splitter.on(",").omitEmptyStrings()
-            .trimResults();
+public class ConfigController {
+    private static final Splitter X_FORWARDED_FOR_SPLITTER = Splitter.on(",").omitEmptyStrings().trimResults();
     @Autowired
     private ConfigService configService;
     @Autowired
@@ -45,14 +45,13 @@ public class QueryConfigController {
     @Autowired
     private NamespaceUtil namespaceUtil;
     @Autowired
-    private InstanceConfigAuditUtil instanceConfigAuditUtil;
+    private InstanceConfigHeartBeatUtil instanceConfigAuditUtil;
     @Autowired
     private Gson gson;
 
-    private static final Type configurationTypeReference = new TypeToken<Map<String, String>>() {
-    }.getType();
+    private static final Type configurationTypeReference = new TypeToken<Map<String, String>>() {}.getType();
 
-    @RequestMapping(value = "/{appId}/{clusterName}/{env}/{namespace:.+}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{appId}/{env}/{clusterName}/{namespace:.+}", method = RequestMethod.GET)
     public ApolloConfig queryConfig4Client(@PathVariable String appId, @PathVariable String clusterName, @PathVariable String env,
                                            @PathVariable String namespace,
                                            @RequestParam(value = "dataCenter", required = false) String dataCenter,
@@ -83,10 +82,9 @@ public class QueryConfigController {
             }
         }
 
-        //if appNamespace does not belong to this appId, should check if there is a public configuration
+        //if appNamespace does not belong to this appCode, should check if there is a public configuration
         if (!namespaceBelongsToAppId(appId, namespace)) {
-            Release publicRelease = this.findPublicConfig(appId, clientIp, clusterName, env, namespace,
-                    dataCenter, clientMessages);
+            Release publicRelease = this.findPublicConfig(appId, clientIp, clusterName, env, namespace, dataCenter, clientMessages);
             if (!Objects.isNull(publicRelease)) {
                 releases.add(publicRelease);
             }
@@ -95,26 +93,24 @@ public class QueryConfigController {
         if (releases.isEmpty()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND,
                     String.format(
-                            "Could not load configurations with appId: %s, clusterName: %s, appNamespace: %s",
+                            "Could not load configurations with appCode: %s, clusterName: %s, appNamespace: %s",
                             appId, clusterName, originalNamespace));
             return null;
         }
+        NamespaceBo namespaceBo = NamespaceBo.builder().appCode(appId).env(env).clusterName(clusterName).namespaceName(namespace).build();
 
-        auditReleases(appId, clusterName, dataCenter, clientIp, releases);
+        heartBeatReleases(namespaceBo, clientIp, releases);
 
-        String mergedReleaseKey = releases.stream().map(Release::getReleaseKey)
-                .collect(Collectors.joining(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR));
+        String mergedReleaseKey = releases.stream().map(Release::getReleaseKey).collect(Collectors.joining(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR));
 
         if (mergedReleaseKey.equals(clientSideReleaseKey)) {
             // Client side configuration is the same with server side, return 304
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-            Tracer.logEvent("Apollo.Config.NotModified",
-                    assembleKey(appId, appClusterNameLoaded, originalNamespace, dataCenter));
+            Tracer.logEvent("Apollo.Config.NotModified", assembleKey(appId, appClusterNameLoaded, originalNamespace, dataCenter));
             return null;
         }
 
-        ApolloConfig apolloConfig = new ApolloConfig(appId, appClusterNameLoaded, originalNamespace,
-                mergedReleaseKey);
+        ApolloConfig apolloConfig = new ApolloConfig(appId, appClusterNameLoaded, originalNamespace, mergedReleaseKey);
         apolloConfig.setConfigurations(mergeReleaseConfigurations(releases));
 
         return apolloConfig;
@@ -135,7 +131,7 @@ public class QueryConfigController {
             return true;
         }
 
-        //if no appId is present, then no other appNamespace belongs to it
+        //if no appCode is present, then no other appNamespace belongs to it
         if (NO_APPID_PLACEHOLDER.equalsIgnoreCase(appId)) {
             return false;
         }
@@ -149,7 +145,7 @@ public class QueryConfigController {
                                      String namespace, String dataCenter, ApolloNotificationMessages clientMessages) {
         AppNamespace appNamespace = appNamespaceService.findPublicNamespaceByName(namespace);
 
-        //check whether the appNamespace's appId equals to current one
+        //check whether the appNamespace's appCode equals to current one
         if (Objects.isNull(appNamespace) || Objects.equals(clientAppId, appNamespace.getApp().getId())) {
             return null;
         }
@@ -176,16 +172,14 @@ public class QueryConfigController {
         return keyParts.stream().collect(Collectors.joining(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR));
     }
 
-    private void auditReleases(String appId, String cluster, String dataCenter, String clientIp,
-                               List<Release> releases) {
+    private void heartBeatReleases(NamespaceBo namespaceBo, String clientIp,
+                                   List<Release> releases) {
         if (isNullOrEmpty(clientIp)) {
-            //no need to audit instance config when there is no ip
+            //no need to offerHeartBeat instance config when there is no ip
             return;
         }
         for (Release release : releases) {
-            instanceConfigAuditUtil.audit(appId, cluster, dataCenter, clientIp, release.getAppEnvClusterNamespace().getAppEnvCluster().getApp().getAppCode(),
-                    release.getAppEnvClusterNamespace().getAppEnvCluster().getName(),
-                    release.getAppEnvClusterNamespace().getAppNamespace().getName(), release.getReleaseKey());
+            instanceConfigAuditUtil.offerHeartBeat(namespaceBo, clientIp, release.getReleaseKey());
         }
     }
 

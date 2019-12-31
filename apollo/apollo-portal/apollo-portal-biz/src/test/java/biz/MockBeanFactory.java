@@ -11,7 +11,7 @@ public class MockBeanFactory {
     public static AppEnvClusterNamespace mockNamespace(String appId, String clusterName, String namespaceName) {
         AppEnvClusterNamespace instance = new AppEnvClusterNamespace();
 
-//    instance.setAppId(appId);
+//    instance.setAppId(appCode);
 //    instance.setClusterName(clusterName);
 //    instance.setNamespaceName(namespaceName);
 
@@ -21,7 +21,7 @@ public class MockBeanFactory {
     public static AppNamespace mockAppNamespace(String appId, String name, boolean isPublic) {
         AppNamespace instance = new AppNamespace();
 
-//    instance.setAppId(appId);
+//    instance.setAppId(appCode);
 //    instance.setName(name);
 //    instance.setPublic(isPublic);
 
@@ -44,7 +44,7 @@ public class MockBeanFactory {
 
         instance.setId(releaseId);
 //    instance.setReleaseKey(releaseKey);
-//    instance.setAppId(appId);
+//    instance.setAppId(appCode);
 //    instance.setClusterName(clusterName);
 //    instance.setNamespaceName(groupName);
 //    instance.setConfigurations(configurations);

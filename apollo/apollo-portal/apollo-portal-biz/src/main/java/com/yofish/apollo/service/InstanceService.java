@@ -2,30 +2,24 @@ package com.yofish.apollo.service;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 import com.google.common.collect.*;
 import com.yofish.apollo.domain.*;
 import com.yofish.apollo.dto.InstanceConfigDTO;
 import com.yofish.apollo.dto.InstanceDTO;
 import com.yofish.apollo.dto.ReleaseDTO;
+import com.yofish.apollo.repository.AppEnvClusterRepository;
 import com.yofish.apollo.repository.InstanceConfigRepository;
 import com.yofish.apollo.repository.InstanceRepository;
 import com.youyu.common.exception.BizException;
-
 import common.dto.PageDTO;
 import common.utils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -46,6 +40,22 @@ public class InstanceService {
     private InstanceConfigRepository instanceConfigRepository;
     @Autowired
     private AppEnvClusterNamespaceService appEnvClusterNamespaceService;
+    @Autowired
+    private AppEnvClusterRepository clusterRepository;
+
+    public Instance findInstance(String appCode, String env, String clusterName, String dataCenter, String ip) {
+        AppEnvCluster appEnvCluster = clusterRepository.findByApp_AppCodeAndEnvAndName(appCode, env, clusterName);
+        return instanceRepository.findByAppEnvClusterAndDataCenterAndIp(appEnvCluster, dataCenter, ip);
+    }
+
+    @Transactional
+    public Instance createInstance(Instance instance) {
+        instance.setId(0L); //protection
+
+        return instanceRepository.save(instance);
+    }
+
+
 
     public PageDTO<InstanceDTO> getByRelease(long releaseId, Pageable pageable) {
         Release release = releaseService.findOne(releaseId);
@@ -53,8 +63,7 @@ public class InstanceService {
         if (release == null) {
             throw new BizException(String.format("release not found for %s", releaseId));
         }
-        Page<InstanceConfig> instanceConfigsPage = instanceConfigRepository.findByReleaseKeyAndUpdateTimeAfter
-                (release.getReleaseKey(),getValidInstanceConfigDate(), pageable);
+        Page<InstanceConfig> instanceConfigsPage = instanceConfigRepository.findByReleaseKeyAndUpdateTimeAfter(release.getReleaseKey(), getValidInstanceConfigDate(), pageable);
 
         List<InstanceDTO> instanceDTOs = Collections.emptyList();
 
@@ -82,8 +91,7 @@ public class InstanceService {
                     //to save some space
                     instanceConfigDTO.setRelease(null);
                     instanceConfigDTO.setReleaseDeliveryTime(instanceConfig.getReleaseDeliveryTime());
-                    instanceConfigDTO.setDataChangeLastModifiedTime(instanceConfig
-                            .getUpdateTime());
+                    instanceConfigDTO.setDataChangeLastModifiedTime(instanceConfig.getUpdateTime());
                     return instanceConfigDTO;
                 }).collect(Collectors.toList());
                 instanceDTO.setConfigs(configDTOs);
@@ -94,7 +102,12 @@ public class InstanceService {
     }
 
 
-    public List<InstanceDTO> getByReleasesNotIn(Long appEnvClusterNamspace,Set<Long> releaseIdSet) {
+    public InstanceConfig findInstanceConfig(long instanceId, String appCode, String env, String namespaceName) {
+
+        return instanceConfigRepository.findByInstanceIdAndAppCodeAndNamespaceNameAndEnv(instanceId, appCode, namespaceName, env);
+    }
+
+    public List<InstanceDTO> getByReleasesNotIn(Long appEnvClusterNamspace, Set<Long> releaseIdSet) {
 
         List<Release> releases = releaseService.findByReleaseIds(releaseIdSet);
 
@@ -151,32 +164,6 @@ public class InstanceService {
         return instanceDTOs;
     }
 
-    /*public PageDTO<InstanceDTO> getInstancesByNamespace(Long appEnvClusterNamespaceId, String instanceAppId,
-            Pageable pageable) {
-        Page<Instance> instances;
-
-        //todo 为什么要区分
-       *//* if (Strings.isNullOrEmpty(instanceAppId)) {
-            instances = findInstancesByNamespace(appId, clusterName,
-                    namespaceName, pageable);
-        } else {
-            instances = instanceService.findInstancesByNamespaceAndInstanceAppId(instanceAppId, appId,
-                    clusterName, namespaceName, pageable);
-        }*//*
-       instances=findInstancesByNamespace(appEnvClusterNamespaceId,pageable);
-
-        List<Instance> instanceDTOs = BeanUtils.batchTransform(InstanceDTO.class, instances.getContent());
-        return new PageDTO<>(instanceDTOs, pageable, instances.getTotalElements());
-    }*/
-
-   /* @GetMapping("/by-namespace/count")
-    public long getInstancesCountByNamespace(@RequestParam("appId") String appId,
-                                             @RequestParam("clusterName") String clusterName,
-                                             @RequestParam("namespaceName") String namespaceName) {
-        Page<Instance> instances = instanceService.findInstancesByNamespace(appId, clusterName,
-                namespaceName, PageRequest.of(0, 1));
-        return instances.getTotalElements();
-    }*/
 
     public Page<InstanceConfig> findActiveInstanceConfigsByReleaseKey(String releaseKey, Pageable
             pageable) {
@@ -185,6 +172,7 @@ public class InstanceService {
                         getValidInstanceConfigDate(), pageable);
         return instanceConfigs;
     }
+
     public List<Instance> findInstancesByIds(Set<Long> instanceIds) {
         Iterable<Instance> instances = instanceRepository.findAllById(instanceIds);
         if (instances == null) {
@@ -192,14 +180,14 @@ public class InstanceService {
         }
         return Lists.newArrayList(instances);
     }
+
     public List<InstanceConfig> findInstanceConfigsByNamespaceWithReleaseKeysNotIn(Long appEnvClusterNamespaceId
-                                                                                  , Set<String> releaseKeysNotIn) {
-        AppEnvClusterNamespace appEnvClusterNamespace=appEnvClusterNamespaceService.findAppEnvClusterNamespace(
-                appEnvClusterNamespaceId
-        );
-        List<Instance> instances=instanceRepository.findAllByAppEnvClusterNamespace(appEnvClusterNamespace);
+            , Set<String> releaseKeysNotIn) {
+        AppEnvClusterNamespace appEnvClusterNamespace = appEnvClusterNamespaceService.findAppEnvClusterNamespace(appEnvClusterNamespaceId);
+
+        List<Instance> instances = instanceRepository.findAllByAppEnvCluster(appEnvClusterNamespace.getAppEnvCluster());
         List<InstanceConfig> instanceConfigs = instanceConfigRepository.
-                findAllByInstanceAndUpdateTimeAfterAndReleaseKeyNotIn(instances,getValidInstanceConfigDate(), releaseKeysNotIn);
+                findAllByInstanceAndUpdateTimeAfterAndReleaseKeyNotIn(instances, getValidInstanceConfigDate(), releaseKeysNotIn);
 
         if (CollectionUtils.isEmpty(instanceConfigs)) {
             return Collections.emptyList();
@@ -211,8 +199,32 @@ public class InstanceService {
 
     private LocalDateTime getValidInstanceConfigDate() {
 
-        LocalDateTime dateTime=LocalDateTime.now().minusDays(-1).minusHours(-1);
-      return dateTime;
+        LocalDateTime dateTime = LocalDateTime.now().minusDays(-1).minusHours(-1);
+        return dateTime;
     }
+
+    @Transactional
+    public InstanceConfig createInstanceConfig(InstanceConfig instanceConfig) {
+        instanceConfig.setId(0L); //protection
+
+        return instanceConfigRepository.save(instanceConfig);
+    }
+
+    @Transactional
+    public InstanceConfig updateInstanceConfig(InstanceConfig instanceConfig) {
+        InstanceConfig existedInstanceConfig = instanceConfigRepository.findById(instanceConfig.getId()).get();
+        Preconditions.checkArgument(existedInstanceConfig != null, String.format("Instance config %d doesn't exist", instanceConfig.getId()));
+
+        existedInstanceConfig.setCluster(instanceConfig.getCluster());
+        existedInstanceConfig.setReleaseKey(instanceConfig.getReleaseKey());
+        existedInstanceConfig.setReleaseDeliveryTime(instanceConfig.getReleaseDeliveryTime());
+
+        return instanceConfigRepository.save(existedInstanceConfig);
+    }
+
+//    @Transactional
+//    public int batchDeleteInstanceConfig(String configAppCode, String configClusterName, String configNamespaceName){
+//        return instanceConfigRepository.batchDelete(configAppCode, configClusterName, configNamespaceName);
+//    }
 
 }

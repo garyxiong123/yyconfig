@@ -64,7 +64,7 @@
 //    periodicSendMessage(executorService, key, stop);
 //
 //    ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-//        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+//        "{baseurl}/notifications/v2?appCode={appCode}&cluster={clusterName}&notifications={notifications}",
 //        HttpMethod.GET, null, typeReference,
 //        getHostUrl(), someAppId, someCluster,
 //        transformApolloConfigNotificationsToString(defaultNamespace, ConfigConsts.NOTIFICATION_ID_PLACEHOLDER));
@@ -92,7 +92,7 @@
 //        stop);
 //
 //    ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-//        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+//        "{baseurl}/notifications/v2?appCode={appCode}&cluster={clusterName}&notifications={notifications}",
 //        HttpMethod.GET, null, typeReference,
 //        getHostUrl(), someAppId, someCluster,
 //        transformApolloConfigNotificationsToString(defaultNamespace + ".properties",
@@ -120,7 +120,7 @@
 //    periodicSendMessage(executorService, key, stop);
 //
 //    ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-//        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+//        "{baseurl}/notifications/v2?appCode={appCode}&cluster={clusterName}&notifications={notifications}",
 //        HttpMethod.GET, null, typeReference,
 //        getHostUrl(), someAppId, someCluster,
 //        transformApolloConfigNotificationsToString(defaultNamespace + ".properties",
@@ -152,7 +152,7 @@
 //    String somePublicNamespaceWithIncorrectCase = somePublicNamespace.toUpperCase();
 //
 //    ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-//        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+//        "{baseurl}/notifications/v2?appCode={appCode}&cluster={clusterName}&notifications={notifications}",
 //        HttpMethod.GET, null, typeReference,
 //        getHostUrl(), someAppId, someCluster,
 //        transformApolloConfigNotificationsToString(defaultNamespace + ".properties",
@@ -185,7 +185,7 @@
 //    periodicSendMessage(executorService, key, stop);
 //
 //    ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-//        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+//        "{baseurl}/notifications/v2?appCode={appCode}&cluster={clusterName}&notifications={notifications}",
 //        HttpMethod.GET, null, typeReference,
 //        getHostUrl(), someAppId, someCluster,
 //        transformApolloConfigNotificationsToString(appNamespace, ConfigConsts.NOTIFICATION_ID_PLACEHOLDER));
@@ -212,7 +212,7 @@
 //      throws Exception {
 //    long someOutDatedNotificationId = 1;
 //    ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-//        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+//        "{baseurl}/notifications/v2?appCode={appCode}&cluster={clusterName}&notifications={notifications}",
 //        HttpMethod.GET, null, typeReference,
 //        getHostUrl(), someAppId, someCluster,
 //        transformApolloConfigNotificationsToString(defaultNamespace, someOutDatedNotificationId));
@@ -243,7 +243,7 @@
 //    periodicSendMessage(executorService, key, stop);
 //
 //    ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-//        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+//        "{baseurl}/notifications/v2?appCode={appCode}&cluster={clusterName}&notifications={notifications}",
 //        HttpMethod.GET, null, typeReference,
 //        getHostUrl(), someAppId, someCluster,
 //        transformApolloConfigNotificationsToString(somePublicNamespace, ConfigConsts.NOTIFICATION_ID_PLACEHOLDER));
@@ -274,7 +274,7 @@
 //    periodicSendMessage(executorService, key, stop);
 //
 //    ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-//        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}&dataCenter={dataCenter}",
+//        "{baseurl}/notifications/v2?appCode={appCode}&cluster={clusterName}&notifications={notifications}&dataCenter={dataCenter}",
 //        HttpMethod.GET, null, typeReference,
 //        getHostUrl(), someAppId, someCluster,
 //        transformApolloConfigNotificationsToString(somePublicNamespace, ConfigConsts.NOTIFICATION_ID_PLACEHOLDER),
@@ -307,7 +307,7 @@
 //    periodicSendMessage(executorService, key, stop);
 //
 //    ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-//        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}&dataCenter={dataCenter}",
+//        "{baseurl}/notifications/v2?appCode={appCode}&cluster={clusterName}&notifications={notifications}&dataCenter={dataCenter}",
 //        HttpMethod.GET, null, typeReference,
 //        getHostUrl(), someAppId, someCluster,
 //        transformApolloConfigNotificationsToString(defaultNamespace, ConfigConsts.NOTIFICATION_ID_PLACEHOLDER,
@@ -340,7 +340,7 @@
 //    periodicSendMessage(executorService, key, stop);
 //
 //    ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-//        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}&dataCenter={dataCenter}",
+//        "{baseurl}/notifications/v2?appCode={appCode}&cluster={clusterName}&notifications={notifications}&dataCenter={dataCenter}",
 //        HttpMethod.GET, null, typeReference,
 //        getHostUrl(), someAppId, someCluster,
 //        transformApolloConfigNotificationsToString(somePublicNamespace + ".properties",
@@ -369,7 +369,7 @@
 //    long someOutDatedNotificationId = 1;
 //
 //    ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-//        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+//        "{baseurl}/notifications/v2?appCode={appCode}&cluster={clusterName}&notifications={notifications}",
 //        HttpMethod.GET, null, typeReference,
 //        getHostUrl(), someAppId, someCluster,
 //        transformApolloConfigNotificationsToString(somePublicNamespace,
@@ -403,7 +403,7 @@
 //
 //    //the same appNamespace with difference character case, and difference notification id
 //    ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-//        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+//        "{baseurl}/notifications/v2?appCode={appCode}&cluster={clusterName}&notifications={notifications}",
 //        HttpMethod.GET, null, typeReference,
 //        getHostUrl(), someAppId, someCluster,
 //        transformApolloConfigNotificationsToString(somePublicNamespace, newNotificationId,
@@ -436,7 +436,7 @@
 //
 //    //the same appNamespace with difference character case, and difference notification id
 //    ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-//        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+//        "{baseurl}/notifications/v2?appCode={appCode}&cluster={clusterName}&notifications={notifications}",
 //        HttpMethod.GET, null, typeReference,
 //        getHostUrl(), someAppId, someCluster,
 //        transformApolloConfigNotificationsToString(somePublicNameWithIncorrectCase, someOutDatedNotificationId,
@@ -469,7 +469,7 @@
 //
 //    //the same appNamespace with difference character case, and difference notification id
 //    ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-//        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+//        "{baseurl}/notifications/v2?appCode={appCode}&cluster={clusterName}&notifications={notifications}",
 //        HttpMethod.GET, null, typeReference,
 //        getHostUrl(), someAppId, someCluster,
 //        transformApolloConfigNotificationsToString(somePublicNameWithIncorrectCase, newNotificationId,
@@ -502,7 +502,7 @@
 //
 //    //the same appNamespace with difference character case, and difference notification id
 //    ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-//        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+//        "{baseurl}/notifications/v2?appCode={appCode}&cluster={clusterName}&notifications={notifications}",
 //        HttpMethod.GET, null, typeReference,
 //        getHostUrl(), someAppId, someCluster,
 //        transformApolloConfigNotificationsToString(somePublicNamespace, someOutDatedNotificationId,
@@ -534,7 +534,7 @@
 //    long newPublicNamespaceNotification = 20;
 //
 //    ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-//        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+//        "{baseurl}/notifications/v2?appCode={appCode}&cluster={clusterName}&notifications={notifications}",
 //        HttpMethod.GET, null, typeReference,
 //        getHostUrl(), someAppId, someCluster,
 //        transformApolloConfigNotificationsToString(somePublicNamespace,
@@ -588,7 +588,7 @@
 //    String somePublicNamespaceWithIncorrectCase = somePublicNamespace.toUpperCase();
 //
 //    ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-//        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+//        "{baseurl}/notifications/v2?appCode={appCode}&cluster={clusterName}&notifications={notifications}",
 //        HttpMethod.GET, null, typeReference,
 //        getHostUrl(), someAppId, someCluster,
 //        transformApolloConfigNotificationsToString(somePublicNamespaceWithIncorrectCase,
@@ -628,8 +628,8 @@
 //    );
 //  }
 //
-//  private String assembleKey(String appId, String cluster, String appNamespace) {
-//    return Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).join(appId, cluster, appNamespace);
+//  private String assembleKey(String appCode, String cluster, String appNamespace) {
+//    return Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).join(appCode, cluster, appNamespace);
 //  }
 //
 //  private String transformApolloConfigNotificationsToString(

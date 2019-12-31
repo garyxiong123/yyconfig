@@ -24,9 +24,9 @@ public class FavoriteController {
 
 //  @RequestMapping(value = "/favorites", method = RequestMethod.GET)
 //  public List<Favorite> findFavorites(@RequestParam(value = "userId", required = false) String userId,
-//                                      @RequestParam(value = "appId", required = false) String appId,
+//                                      @RequestParam(value = "appCode", required = false) String appCode,
 //                                      Pageable page) {
-//    return favoriteService.search(userId, appId, page);
+//    return favoriteService.search(userId, appCode, page);
 //  }
 //
 //

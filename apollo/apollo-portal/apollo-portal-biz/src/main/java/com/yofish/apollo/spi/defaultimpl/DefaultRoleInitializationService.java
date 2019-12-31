@@ -71,17 +71,17 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
 
 /*
 
-    private void createAppMasterRole(String appId, String operator) {
+    private void createAppMasterRole(String appCode, String operator) {
         Set<PermissionAuth> appPermissions =
                 Stream.of(PermissionType.CREATE_CLUSTER, PermissionType.CREATE_NAMESPACE, PermissionType.ASSIGN_ROLE)
-                        .map(permissionType -> createPermission(appId, permissionType, operator)).collect(Collectors.toSet());
+                        .map(permissionType -> createPermission(appCode, permissionType, operator)).collect(Collectors.toSet());
         Set<PermissionAuth> createdAppPermissions = rolePermissionService.createPermissions(appPermissions);
         Set<Long>
                 appPermissionIds =
                 createdAppPermissions.stream().map(BaseEntity::getId).collect(Collectors.toSet());
 
         //create app master role
-        Role appMasterRole = createRole(RoleUtils.buildAppMasterRoleName(appId), operator);
+        Role appMasterRole = createRole(RoleUtils.buildAppMasterRoleName(appCode), operator);
 
         rolePermissionService.createRoleWithPermissions(appMasterRole, appPermissionIds);
     }

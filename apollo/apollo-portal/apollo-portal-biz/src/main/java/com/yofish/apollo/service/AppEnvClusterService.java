@@ -70,18 +70,18 @@ public class AppEnvClusterService {
     }
 
 
-    //    public void deleteCluster(Env env, String appId, String clusterName) {
-////    clusterAPI.delete(env, appId, clusterName, userInfoHolder.getUser().getUserId());
+    //    public void deleteCluster(Env env, String appCode, String clusterName) {
+////    clusterAPI.delete(env, appCode, clusterName, userInfoHolder.getUser().getUserId());
 //        ClusterEntity clusterEntity = new ClusterEntity();
 //        clusterEntity.setEnv(env.name());
-//        clusterEntity.setAppId(appId);
+//        clusterEntity.setAppId(appCode);
 //        clusterRepository.delete(clusterEntity);
 //        return;
 //    }
 //
-//    public ClusterEntity loadCluster(String appId, Env env, String clusterName) {
-////    return clusterAPI.loadCluster(appId, env, clusterName);
-//        return clusterRepository.findByAppIdAndNameAndEnv(appId, clusterName, env.name());
+//    public ClusterEntity loadCluster(String appCode, Env env, String clusterName) {
+////    return clusterAPI.loadCluster(appCode, env, clusterName);
+//        return clusterRepository.findByAppIdAndNameAndEnv(appCode, clusterName, env.name());
 //    }
 //
 //
@@ -91,21 +91,21 @@ public class AppEnvClusterService {
         return ObjectUtils.isEmpty((appEnvClusterRepository.findClusterByAppIdAndEnvAndName(appId, env, clusterName)));
     }
 //
-//    public ClusterEntity findOne(String appId, String name, String env) {
+//    public ClusterEntity findOne(String appCode, String name, String env) {
 //        //TODO fix env
-//        return clusterRepository.findByAppIdAndNameAndEnv(appId, name, env);
+//        return clusterRepository.findByAppIdAndNameAndEnv(appCode, name, env);
 //    }
 //
 //    public ClusterEntity findOne(long clusterId) {
 //        return clusterRepository.findById(clusterId).get();
 //    }
 //
-//    public List<ClusterEntity> findParentClusters(String appId) {
-//        if (Strings.isNullOrEmpty(appId)) {
+//    public List<ClusterEntity> findParentClusters(String appCode) {
+//        if (Strings.isNullOrEmpty(appCode)) {
 //            return Collections.emptyList();
 //        }
 //
-//        List<ClusterEntity> clusterEntities = clusterRepository.findByAppIdAndParentClusterId(appId, 0L);
+//        List<ClusterEntity> clusterEntities = clusterRepository.findByAppIdAndParentClusterId(appCode, 0L);
 //        if (clusterEntities == null) {
 //            return Collections.emptyList();
 //        }
@@ -189,9 +189,9 @@ public class AppEnvClusterService {
 
     }
 
-//    public List<ClusterEntity> findChildClusters(String appId, String parentClusterName, String env) {
+//    public List<ClusterEntity> findChildClusters(String appCode, String parentClusterName, String env) {
 //        //TODO fix
-//        ClusterEntity parentClusterEntity = findOne(appId, parentClusterName, env);
+//        ClusterEntity parentClusterEntity = findOne(appCode, parentClusterName, env);
 //        if (parentClusterEntity == null) {
 //            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "parent appEnvCluster not exist");
 //        }
@@ -199,8 +199,8 @@ public class AppEnvClusterService {
 //        return clusterRepository.findByParentClusterId(parentClusterEntity.getId());
 //    }
 //
-//    public List<ClusterEntity> findClusters(String appId) {
-//        List<ClusterEntity> clusterEntities = clusterRepository.findByAppId(appId);
+//    public List<ClusterEntity> findClusters(String appCode) {
+//        List<ClusterEntity> clusterEntities = clusterRepository.findByAppId(appCode);
 //
 //        if (clusterEntities == null) {
 //            return Collections.emptyList();

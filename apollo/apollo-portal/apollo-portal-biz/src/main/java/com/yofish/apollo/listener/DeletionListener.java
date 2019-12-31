@@ -30,16 +30,16 @@
 //  @EventListener
 //  public void onAppDeletionEvent(AppDeletionEvent event) {
 //    AppDTO appDTO = BeanUtils.transfrom(AppDTO.class, event.getApp());
-//    String appId = appDTO.getAppId();
+//    String appCode = appDTO.getAppId();
 //    String operator = appDTO.getDataChangeLastModifiedBy();
 //
 //    List<Env> envs = portalSettings.getActiveEnvs();
 //    for (Env env : envs) {
 //      try {
-//        appAPI.deleteApp(env, appId, operator);
+//        appAPI.deleteApp(env, appCode, operator);
 //      } catch (Throwable e) {
-//        logger.error("Delete app failed. Env = {}, AppId = {}", env, appId, e);
-//        Tracer.logError(String.format("Delete app failed. Env = %s, AppId = %s", env, appId), e);
+//        logger.error("Delete app failed. Env = {}, AppId = {}", env, appCode, e);
+//        Tracer.logError(String.format("Delete app failed. Env = %s, AppId = %s", env, appCode), e);
 //      }
 //    }
 //  }
@@ -48,17 +48,17 @@
 //  public void onAppNamespaceDeletionEvent(AppNamespaceDeletionEvent event) {
 //    AppNamespaceDTO appNamespace = BeanUtils.transfrom(AppNamespaceDTO.class, event.getAppNamespace());
 //    List<Env> envs = portalSettings.getActiveEnvs();
-//    String appId = appNamespace.getAppId();
+//    String appCode = appNamespace.getAppId();
 //    String namespaceName = appNamespace.getName();
 //    String operator = appNamespace.getDataChangeLastModifiedBy();
 //
 //    for (Env env : envs) {
 //      try {
-//        namespaceAPI.deleteAppNamespace(env, appId, namespaceName, operator);
+//        namespaceAPI.deleteAppNamespace(env, appCode, namespaceName, operator);
 //      } catch (Throwable e) {
-//        logger.error("Delete appNamespace failed. appId = {}, appNamespace = {}, env = {}", appId, namespaceName, env, e);
+//        logger.error("Delete appNamespace failed. appCode = {}, appNamespace = {}, env = {}", appCode, namespaceName, env, e);
 //        Tracer.logError(String
-//            .format("Delete appNamespace failed. appId = %s, appNamespace = %s, env = %s", appId, namespaceName, env), e);
+//            .format("Delete appNamespace failed. appCode = %s, appNamespace = %s, env = %s", appCode, namespaceName, env), e);
 //      }
 //    }
 //  }

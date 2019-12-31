@@ -27,9 +27,9 @@ countQuery = "select count(1)" +
         "where ins.app_namespace_id =?1\n" +
         "  and infg.release_key =?2")
 Page<Instance> findbyNamespace(Long appEnvClusterNamespaceId,String releaseKey);*/
-Page<InstanceConfig> findByReleaseKeyAndUpdateTimeAfter(String releaseKey, LocalDateTime
-        validDate, Pageable pageable);
+    Page<InstanceConfig> findByReleaseKeyAndUpdateTimeAfter(String releaseKey, LocalDateTime validDate, Pageable pageable);
 
-    List<InstanceConfig> findAllByInstanceAndUpdateTimeAfterAndReleaseKeyNotIn(Iterable<Instance> instance, LocalDateTime dateTime
-            ,Set<String> releaseKey);
+    List<InstanceConfig> findAllByInstanceAndUpdateTimeAfterAndReleaseKeyNotIn(Iterable<Instance> instance, LocalDateTime dateTime,Set<String> releaseKey);
+
+    InstanceConfig findByInstanceIdAndAppCodeAndNamespaceNameAndEnv(long instanceId, String appCode, String namespaceName, String env);
 }

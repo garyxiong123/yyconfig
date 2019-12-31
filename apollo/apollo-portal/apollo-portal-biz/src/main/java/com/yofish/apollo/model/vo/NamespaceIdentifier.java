@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class NamespaceIdentifier {
   private Long appEnvClusterId;
- /* private String appId;
+ /* private String appCode;
   private String env;
   private String clusterName;
   private String namespaceName;

@@ -73,7 +73,7 @@ public class ApolloConfig {
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder("ApolloConfig{");
-    sb.append("appId='").append(appId).append('\'');
+    sb.append("appCode='").append(appId).append('\'');
     sb.append(", appEnvCluster='").append(cluster).append('\'');
     sb.append(", namespaceName='").append(namespaceName).append('\'');
     sb.append(", configurations=").append(configurations);

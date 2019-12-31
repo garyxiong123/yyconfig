@@ -227,12 +227,12 @@ public class AppService {
     return appRepository.findByOwnerName(ownerName, page);
   }
 
-  public App load(String appId) {
-    return appRepository.findByAppId(appId);
+  public App load(String appCode) {
+    return appRepository.findByAppId(appCode);
   }
 
-  public AppDTO load(Env env, String appId) {
-    return appAPI.loadApp(env, appId);
+  public AppDTO load(Env env, String appCode) {
+    return appAPI.loadApp(env, appCode);
   }
 
   public void createAppInRemote(Env env, App app) {
@@ -246,11 +246,11 @@ public class AppService {
 
   @Transactional
   public App updateAppInLocal(App app) {
-    String appId = app.getAppId();
+    String appCode = app.getAppId();
 
-    App managedApp = appRepository.findByAppId(appId);
+    App managedApp = appRepository.findByAppId(appCode);
     if (managedApp == null) {
-      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("App not exists. AppId = %s", appId));
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("App not exists. AppId = %s", appCode));
     }
 
     managedApp.setName(app.getName());
@@ -272,10 +272,10 @@ public class AppService {
   }
 
   @Transactional
-  public App deleteAppInLocal(String appId) {
-    App managedApp = appRepository.findByAppId(appId);
+  public App deleteAppInLocal(String appCode) {
+    App managedApp = appRepository.findByAppId(appCode);
     if (managedApp == null) {
-      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("App not exists. AppId = %s", appId));
+      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("App not exists. AppId = %s", appCode));
     }
     String operator = userInfoHolder.getUser().getUserId();
 
@@ -283,16 +283,16 @@ public class AppService {
     managedApp.setDataChangeLastModifiedBy(operator);
 
     //删除portal数据库中的app
-    appRepository.deleteApp(appId, operator);
+    appRepository.deleteApp(appCode, operator);
 
     //删除portal数据库中的appNamespace
-    appNamespaceService.batchDeleteByAppId(appId, operator);
+    appNamespaceService.batchDeleteByAppId(appCode, operator);
 
     //删除portal数据库中的收藏表
-    favoriteService.batchDeleteByAppId(appId, operator);
+    favoriteService.batchDeleteByAppId(appCode, operator);
 
     //删除portal数据库中Permission、Role相关数据
-    rolePermissionService.deleteRolePermissionsByAppId(appId, operator);
+    rolePermissionService.deleteRolePermissionsByAppId(appCode, operator);
 
     return managedApp;
   }*/

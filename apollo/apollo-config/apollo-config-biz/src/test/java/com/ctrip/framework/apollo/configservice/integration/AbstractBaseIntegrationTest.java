@@ -80,7 +80,7 @@
 //    release.setDataChangeLastModifiedBy(owner);
 //    release.setName(name);
 //    release.setComment(comment);
-//    release.setAppId(appNamespace.getAppId());
+//    release.setAppCode(appNamespace.getAppCode());
 //    release.setClusterName(appNamespace.getClusterName());
 //    release.setNamespaceName(appNamespace.getNamespaceName());
 //    release.setConfigurations(gson.toJson(configurations));

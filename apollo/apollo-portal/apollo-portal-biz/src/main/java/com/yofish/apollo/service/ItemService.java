@@ -110,7 +110,7 @@ public class ItemService {
         //protect. only value,comment,lastModifiedBy can be modified
         toUpdateItem.setComment(updateItemReq.getComment());
         toUpdateItem.setValue(updateItemReq.getValue());
-        itemService.updateItem(appId, Env.fromString(env), clusterName, namespaceName, toUpdateItem);
+        itemService.updateItem(appCode, Env.fromString(env), clusterName, namespaceName, toUpdateItem);
         itemRepository.save(item);*/
        if(updateItemReq.getItemId()!=null&&updateItemReq.getItemId()>0){
            updateItemById(updateItemReq.getItemId(),updateItemReq.getValue(),updateItemReq.getComment());

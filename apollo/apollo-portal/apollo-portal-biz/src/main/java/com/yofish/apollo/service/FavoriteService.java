@@ -27,7 +27,7 @@ public class FavoriteService {
     @Autowired
     private AppRepository appRepository;
 
-//    public List<Favorite> search(String userId, String appId, Pageable page) {
+//    public List<Favorite> search(String userId, String appCode, Pageable page) {
 //        return null;
 //    }
 
