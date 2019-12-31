@@ -1,38 +1,32 @@
 package com.yofish.apollo.service;
 
 
-import com.google.common.collect.Lists;
+import com.yofish.apollo.component.PermissionValidator;
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.model.vo.EnvClusterInfo;
 import com.yofish.apollo.repository.AppRepository;
-import com.yofish.gary.api.enums.UpmsResultCode;
-import com.yofish.gary.api.feign.UserApi;
 import com.yofish.gary.biz.domain.Department;
 import com.yofish.gary.biz.domain.User;
 import com.yofish.gary.biz.repository.DepartmentRepository;
+import com.yofish.gary.biz.repository.UserRepository;
 import com.yofish.gary.biz.service.UserService;
 import com.youyu.common.api.PageData;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
-import com.youyu.common.helper.YyRequestInfoHelper;
-import com.youyu.common.utils.YyAssert;
 import common.utils.PageDataAdapter;
 import framework.apollo.core.ConfigConsts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.SetJoin;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class AppService {
@@ -52,7 +46,9 @@ public class AppService {
     @Autowired
     private AppEnvClusterService clusterService;
     @Autowired
-    private UserApi userApi;
+    private UserRepository userRepository;
+    @Autowired
+    private PermissionValidator permissionValidator;
 
 
     @Transactional(rollbackFor = Exception.class)
@@ -105,48 +101,66 @@ public class AppService {
         }
     }
 
-    public List<App> findAll() {
-        // TODO: 2019-12-26 要加用户的权限验证
-        List<App> all = this.appRepository.findAll();
-        return all;
+    private List<App> filterWithAuthorize(List<App> all) {
+        if (ObjectUtils.isEmpty(all)) {
+            return Collections.emptyList();
+        } else {
+            return all.stream()
+                    .filter(app -> permissionValidator.isAppOwner(app) || permissionValidator.isAppAdmin(app) || permissionValidator.isSameDepartment(app))
+                    .collect(Collectors.toList());
+        }
     }
 
-    public PageData<App> findAll(Pageable pageable) {
+    /**
+     * 根据当前登陆用户权限过滤
+     *
+     * @return
+     */
+    public List<App> findAllWithAuthorize() {
+        List<App> all = this.appRepository.findAll();
+        if (permissionValidator.isSuperAdmin()) {
+            return all;
+        } else {
+            List<App> withAuthorize = filterWithAuthorize(all);
+            return withAuthorize;
+        }
+    }
 
-        //当前用户ID
-      /*  Long currentUserId = YyRequestInfoHelper.getCurrentUserId();
-        YyAssert.isTrue(!ObjectUtils.isEmpty(currentUserId), UpmsResultCode.USER_SESSION_EXPIRED);
-        if (userApi.isAdmin(currentUserId).ifNotSuccessThrowException().getData()) {
+    /**
+     * 根据当前登陆用户权限过滤（分页）
+     *
+     * @param pageable
+     * @return
+     */
+    public PageData<App> findAllWithAuthorize(Pageable pageable) {
+        if (permissionValidator.isSuperAdmin()) {
             //用户是管理员
             Page<App> apps = appRepository.findAll(pageable);
             return PageDataAdapter.toPageData(apps);
+        } else {
+            List<App> allWithAuthorize = findAllWithAuthorize();
+            List<App> appsByPage = allWithAuthorize.subList(Long.valueOf(pageable.getOffset()).intValue(), allWithAuthorize.size()>pageable.getPageSize()?pageable.getPageSize():allWithAuthorize.size());
+            return PageDataAdapter.toPageData(pageable, appsByPage, allWithAuthorize.size());
         }
-
-        // jpa分页查询
-        Specification<App> querySpeci = (Specification<App>) (root, criteriaQuery, criteriaBuilder) -> {
-            List<Predicate> predicates = Lists.newArrayList();
-
-            Join<App, User> ownerJoin = root.join("appOwner", JoinType.LEFT);
-            Predicate predicate1 = criteriaBuilder.equal(ownerJoin.get("id").as(Long.class), currentUserId);
-
-            SetJoin<App, User> userSetJoin = root.join(root.getModel().getSet("appAdmins", User.class), JoinType.LEFT);
-            Predicate predicate2 = criteriaBuilder.equal(userSetJoin.get("id").as(Long.class), currentUserId);
-
-            predicates.add(criteriaBuilder.or(predicate1, predicate2));
-            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
-
-        };
-
-        Page<App> apps = appRepository.findAll(querySpeci, pageable);*/
-        Page<App> apps = appRepository.findAll(pageable);
-
-        return PageDataAdapter.toPageData(apps);
     }
 
+    /**
+     * 根据当前登陆用户权限过滤（分页+条件查询）
+     *
+     * @param query
+     * @param pageable
+     * @return
+     */
     public PageData<App> searchByAppCodeOrAppName(String query, Pageable pageable) {
-        Page<App> apps = appRepository.findByAppCodeContainingOrNameContaining(query, query, pageable);
-
-        return PageDataAdapter.toPageData(apps);
+        if (permissionValidator.isSuperAdmin()) {
+            //用户是管理员
+            Page<App> apps = appRepository.findByAppCodeContainingOrNameContaining(query, query, pageable);
+            return PageDataAdapter.toPageData(apps);
+        } else {
+            List<App> allWithAuthorize = appRepository.findAllByAppCodeContainingOrNameContaining(query, query);
+            List<App> appsByPage = allWithAuthorize.subList(Long.valueOf(pageable.getOffset()).intValue(), pageable.getPageSize());
+            return PageDataAdapter.toPageData(pageable, appsByPage, allWithAuthorize.size());
+        }
     }
 
     /**

@@ -81,7 +81,7 @@ const project = {
   },
   //查询关联的公共命名空间
   associatedPublicNamespace: async function (params = {}) {
-    return requestGet(`/envs/${params.env}/apps/${params.appCode}/clusters/${params.clusterName}/namespaces/${params.namespaceName}/associated-public-namespace`);
+    return requestGet(`/envs/${params.env}/apps/${params.appCode}/clusters/${params.clusterName}/namespaces/${params.namespaceName}/associated-public-namespace`, params);
   },
   //查询项目的命名空间
   appProtectNamespace: async function (params = {}) {

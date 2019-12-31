@@ -8,9 +8,8 @@ const nameSpaceTypes = {
   "Protect": '受保护',
   "Private": '私有',
   "Associate": '关联'
-
 }
 export {
   rollBackStatus,
-  nameSpaceTypes
+  nameSpaceTypes,
 }

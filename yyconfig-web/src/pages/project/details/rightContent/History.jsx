@@ -1,8 +1,10 @@
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Table, Card, Row, Col, Empty } from 'antd';
+import { Table, Card, Row, Col, Empty, Input } from 'antd';
 import moment from 'moment';
 import styles from '../../index.less';
+
+const { TextArea } = Input;
 
 class History extends React.Component {
   constructor(props) {
@@ -112,7 +114,14 @@ class History extends React.Component {
       />
     )
   }
-  renderItem(item, i) {
+  renderText(item) {
+    let value = item[0] ? item[0].value : '';
+    return (
+      <TextArea rows={6} value={item[0].value} readOnly />
+    )
+  }
+
+  renderItem(item, i, currentItem) {
     let list = item.changeSets ? JSON.parse(item.changeSets) : {};
     let createItems = list.createItems || [], deleteItems = list.deleteItems || [], updateItems = list.updateItems || [];
     return (
@@ -123,7 +132,9 @@ class History extends React.Component {
               item.updateTime ? moment(item.updateTime).format('YYYY-MM-DD HH:mm:ss') : ''
             } hoverable={false} size="small" bordered={false}>
               {
-                this.renderTable(createItems, '新增')
+                currentItem.format === 'Properties' ?
+                  this.renderTable(createItems, '新增') :
+                  this.renderText(createItems)
               }
             </Card> : null
         }
@@ -159,7 +170,7 @@ class History extends React.Component {
           baseInfo.id && commitFind[baseInfo.id] && commitFind[baseInfo.id].length ?
             <Fragment>
               {
-                commitFind[baseInfo.id].map((item, i) => this.renderItem(item, i))
+                commitFind[baseInfo.id].map((vo, i) => this.renderItem(vo, i, item))
               }
             </Fragment> :
             <Empty />

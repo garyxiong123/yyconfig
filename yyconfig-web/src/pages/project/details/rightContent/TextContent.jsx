@@ -1,17 +1,28 @@
 import React, { Fragment } from 'react';
+
 import { Controlled as CodeMirror } from 'react-codemirror2';
-require('codemirror/lib/codemirror.css');
+
 require('codemirror/theme/base16-light.css');
 require('codemirror/theme/eclipse.css');
 require('codemirror/mode/xml/xml');
 require('codemirror/mode/javascript/javascript');
 require('codemirror/mode/properties/properties');
 require('codemirror/mode/yaml/yaml');
+
+require('codemirror/lib/codemirror.css');
+require('codemirror/addon/lint/lint.css');
+import 'codemirror/addon/lint/lint.js';
+
+import 'codemirror/addon/lint/json-lint.js';
+import 'codemirror/addon/lint/yaml-lint.js';
+
+
+
 import styles from '../../index.less';
 import { Button, message, Row, Col } from 'antd';
 import { project } from '@/services/project';
 const mode = {
-  "JSON": 'javascript',
+  "JSON": 'application/json',
   "Properties": 'properties',
   "XML": 'xml',
   "YAML": 'yaml'
@@ -26,7 +37,9 @@ class TextContent extends React.Component {
         lineNumbers: true,
         mode: 'javascript',
         readOnly: true,
-        theme: 'base16-light'
+        theme: 'base16-light',
+        gutters: ['CodeMirror-lint-markers'],
+        lint: true
       }
     };
   }
@@ -44,7 +57,9 @@ class TextContent extends React.Component {
     list.map((vo, i) => {
       let item = vo.item || {};
       if (text.format === 'Properties') {
-        value += this.onGetProperties(item, i, list.length);
+        if (!vo.deleted) {
+          value += this.onGetProperties(item, i, list.length);
+        }
       } else {
         value += this.onGetOther(item);
       }

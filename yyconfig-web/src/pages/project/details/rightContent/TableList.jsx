@@ -3,6 +3,7 @@ import { connect } from 'dva';
 import { Table, Divider, Popconfirm, Button, Tag, message, Row, Col, Card, Input } from 'antd';
 import moment from 'moment';
 import ConfigAdd from '../modal/ConfigAdd';
+import SyncConfig from '../modal/SyncConfig';
 import { project } from '@/services/project';
 import styles from '../../index.less';
 
@@ -12,13 +13,17 @@ class TableList extends React.Component {
     this.state = {
       showEdit: false,
       currentItem: {},
-      copyValue: ''
+      copyValue: '',
+      opeType: '',
+      recoverKeys: [],
+      showSyncConfig: false
     };
   }
   componentDidMount() {
     const { item } = this.props;
     if (item.namespaceType === 'Associate') {
       this.onFetchAssociatedPublicNamespace();
+      this.onGetRecoverKeys()
     }
   }
   componentDidUpdate(prevProps, prevState) {
@@ -28,6 +33,19 @@ class TableList extends React.Component {
     }
   }
 
+  onGetRecoverKeys = () => {
+    const { item } = this.props;
+    let list = item.items || [], keys = [];
+    list.map((item) => {
+      let vo = item.item || {};
+      if (vo.key) {
+        keys.push(vo.key)
+      }
+    })
+    this.setState({
+      recoverKeys: keys
+    })
+  }
   onFetchAssociatedPublicNamespace = () => {
     const { currentEnv, item, dispatch } = this.props;
     let baseInfo = item.baseInfo || {};
@@ -37,23 +55,21 @@ class TableList extends React.Component {
         env: currentEnv.env,
         appCode: baseInfo.appCode,
         namespaceName: baseInfo.namespaceName,
-        clusterName: baseInfo.clusterName
+        clusterName: baseInfo.clusterName,
+        appEnvClusterNamespaceId: baseInfo.id
       }
     })
   }
-  //关联数据覆盖配置
-  onRecover = (record) => {
-
-  }
-  onEdit = (record) => {
+  onEdit = (record, type) => {
     this.setState({
       showEdit: true,
-      currentItem: record || {}
+      currentItem: record || {},
+      opeType: type || ''
     })
   }
-  onCancel = () => {
+  onCancel = (type) => {
     this.setState({
-      showEdit: false
+      [type]: false
     })
   }
   onDelete = async (itemId) => {
@@ -86,7 +102,7 @@ class TableList extends React.Component {
   onCopy = () => {
     const { item } = this.props;
     let baseInfo = item.baseInfo || {};
-    let text = document.getElementById('copy'+baseInfo.id);
+    let text = document.getElementById('copy' + baseInfo.id);
     try {
       text.select();
       document.execCommand('copy')
@@ -124,6 +140,7 @@ class TableList extends React.Component {
   }
   renderTable(tableList, type) {
     // const { tableList } = this.props;
+    const { recoverKeys } = this.state;
     const columns = [
       {
         title: '发布状态',
@@ -175,7 +192,9 @@ class TableList extends React.Component {
           <Fragment>
             {
               type && type === 'Associate' ?
-                <a onClick={() => { this.onRecover(record) }}>覆盖</a> :
+                recoverKeys.indexOf(record.item.key) < 0 ?
+                  <a onClick={() => { this.onEdit(record, 'reCover') }}>覆盖</a> :
+                  null :
                 <Fragment>
                   {
                     !text &&
@@ -199,7 +218,6 @@ class TableList extends React.Component {
         ),
       },
     ];
-
     return (
       <Table
         columns={columns}
@@ -233,7 +251,6 @@ class TableList extends React.Component {
   }
   renderAssociateList() {
     const { item, tableList, associatedPublicNamespace } = this.props;
-    console.log('associatedPublicNamespace-->', associatedPublicNamespace)
     let baseInfo = item.baseInfo || {};
     let listItem = associatedPublicNamespace[baseInfo.id] || {};
     return (
@@ -254,15 +271,16 @@ class TableList extends React.Component {
     )
   }
   render() {
-    const { showEdit, currentItem, copyValue } = this.state;
+    const { showEdit, currentItem, copyValue, opeType, showSyncConfig } = this.state;
     const { item, tableList } = this.props;
     let baseInfo = item.baseInfo || {};
     return (
       <Fragment>
         {this.renderOpe(item)}
         {item.namespaceType === 'Associate' ? this.renderAssociateList() : this.renderTable(tableList)}
-        {showEdit && <ConfigAdd onCancel={this.onCancel} currentItem={currentItem} onSave={this.onConfigSave} baseInfo={item.baseInfo} />}
-        <Input value={copyValue} id={'copy'+baseInfo.id} className={styles.copyInput}/>
+        {showEdit && <ConfigAdd onCancel={()=>this.onCancel('showEdit')} currentItem={currentItem} onSave={this.onConfigSave} baseInfo={item.baseInfo} opeType={opeType} />}
+        {showSyncConfig && <SyncConfig onCancel={()=>this.onCancel('showSyncConfig')} currentItem={currentItem}/>}
+        <Input value={copyValue} id={'copy' + baseInfo.id} className={styles.copyInput} />
       </Fragment>
     );
   }
