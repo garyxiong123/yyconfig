@@ -15,6 +15,9 @@
  */
 package com.yofish.gary.component.config;
 
+import com.yofish.gary.component.filter.NoneLoginFilter;
+import com.yofish.gary.component.filter.NoneRegistryFilter;
+import com.yofish.gary.component.filter.PermFailFilter;
 import com.yofish.gary.component.filter.ShiroUrlPathMatchingFilter;
 import com.yofish.gary.api.properties.ShiroProperties;
 import com.yofish.gary.component.realm.ShiroAuthRealm;
@@ -52,6 +55,8 @@ import static org.springframework.util.StringUtils.split;
 @Configuration
 public class ShiroConfiguration {
 
+
+
     @Autowired
     private ShiroProperties shiroProperties;
 
@@ -65,6 +70,14 @@ public class ShiroConfiguration {
 
         shiroFilterFactoryBean.setFilters(getFilterMap());
         shiroFilterFactoryBean.setFilterChainDefinitionMap(getFilterChainDefinitionMap());
+
+        //接口未授权
+        shiroFilterFactoryBean.getFilters().put("perms", new PermFailFilter());
+        //接口未登录
+        shiroFilterFactoryBean.getFilters().put("authc", new NoneLoginFilter());
+        //接口未注册
+        shiroFilterFactoryBean.getFilters().put("noneRegistry", new NoneRegistryFilter());
+        //所有接口都必须进行接口注册检查
         return shiroFilterFactoryBean;
     }
 
@@ -156,10 +169,13 @@ public class ShiroConfiguration {
             filterChainDefinitionMap.put(noneUrlKey, "anon");
         }
 
-        String[] authcUrlKeyArray = split(shiroProperties.getAuthcUrlKeys(), ",");
-        if (isEmpty(authcUrlKeyArray)) {return filterChainDefinitionMap;}
-        for (String authcUrlKey : authcUrlKeyArray) {
-            filterChainDefinitionMap.put(authcUrlKey, "user,url");
+        if(shiroProperties.isEmpty4AuthcUrlKeys()){
+            return filterChainDefinitionMap;
+        }
+
+
+        for (String authcUrlKey : shiroProperties.getAuthcUrlKeyArray()) {
+            filterChainDefinitionMap.put(authcUrlKey, "authc");
         }
         return filterChainDefinitionMap;
     }

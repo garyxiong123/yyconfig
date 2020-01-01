@@ -209,7 +209,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void needLogin() {
-        exception(ACCESS_EXCEPTION_NEED_LOGIN);
+        exception(USER_SESSION_EXPIRED);
     }
 
     @Override

@@ -3,9 +3,7 @@ package com.yofish.apollo.domain;
 import com.yofish.gary.dao.entity.BaseEntity;
 import lombok.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 /**
  * @Author: xiongchengwei
@@ -17,10 +15,13 @@ import javax.persistence.ManyToOne;
 @Setter
 @Getter
 @Entity
+@Table( uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "env", "app_id"})})
 public class AppEnvCluster extends BaseEntity {
 
+    @Column(name = "name")
     private String name;
 
+    @Column(name = "env")
     private String env;
 
     @ManyToOne(cascade = CascadeType.DETACH)

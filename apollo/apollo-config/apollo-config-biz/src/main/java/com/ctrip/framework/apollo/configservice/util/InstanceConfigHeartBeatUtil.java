@@ -1,6 +1,6 @@
 package com.ctrip.framework.apollo.configservice.util;
 
-import com.ctrip.framework.apollo.configservice.InstanceConfigAuditModel;
+import com.ctrip.framework.apollo.configservice.InstanceConfigRefreshModel;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Queues;
@@ -27,15 +27,19 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * 实例配置心跳类
+ */
 @Service
 public class InstanceConfigHeartBeatUtil implements InitializingBean {
     private static final int INSTANCE_CONFIG_AUDIT_MAX_SIZE = 10000;
     private static final int INSTANCE_CACHE_MAX_SIZE = 50000;
     private static final int INSTANCE_CONFIG_CACHE_MAX_SIZE = 50000;
-    private static final long OFFER_TIME_LAST_MODIFIED_TIME_THRESHOLD_IN_MILLI = TimeUnit.MINUTES.toMillis(10);//10 minutes
+    /** 10 minutes **/
+    private static final long OFFER_TIME_LAST_MODIFIED_TIME_THRESHOLD_IN_MILLI = TimeUnit.MINUTES.toMillis(10);
     private final ExecutorService auditExecutorService;
     private final AtomicBoolean auditStopped;
-    private BlockingQueue<InstanceConfigAuditModel> audits = Queues.newLinkedBlockingQueue(INSTANCE_CONFIG_AUDIT_MAX_SIZE);
+    private BlockingQueue<InstanceConfigRefreshModel> audits = Queues.newLinkedBlockingQueue(INSTANCE_CONFIG_AUDIT_MAX_SIZE);
     private Cache<String, Long> instanceCache;
     private Cache<String, String> instanceConfigReleaseKeyCache;
 
@@ -54,7 +58,7 @@ public class InstanceConfigHeartBeatUtil implements InitializingBean {
     }
 
     public boolean offerHeartBeat(NamespaceBo namespaceBo, String ip, String releaseKey) {
-        return this.audits.offer(new InstanceConfigAuditModel(namespaceBo, ip, releaseKey));
+        return this.audits.offer(new InstanceConfigRefreshModel(namespaceBo, ip, releaseKey));
     }
 
     /**
@@ -64,26 +68,38 @@ public class InstanceConfigHeartBeatUtil implements InitializingBean {
      *
      * @param auditModel
      */
-    void doHeartBeat(InstanceConfigAuditModel auditModel) {
+    void doHeartBeat(InstanceConfigRefreshModel auditModel) {
 
         Long instanceId = refreshInstance(auditModel);
 
         refreshInstanceConfig(auditModel, instanceId);
     }
 
-    public Long refreshInstance(InstanceConfigAuditModel auditModel) {
-        return createOrUpdateCacheInstanceId(auditModel);
+    public Long refreshInstance(InstanceConfigRefreshModel auditModel) {
+
+        String instanceKey = auditModel.assembleInstanceKey();
+
+        Long instanceId = loadFromMemory(instanceKey);
+        if (instanceId != null) return instanceId;
+
+        instanceId = loadFromDb(auditModel);
+        if (instanceId != null) return instanceId;
+
+        Instance instance = initInstanceInDB(auditModel);
+
+        instanceCache.put(instanceKey, instanceId);
+
+        return instanceId;
     }
 
-    private void refreshInstanceConfig(InstanceConfigAuditModel auditModel, Long instanceId) {
+    private void refreshInstanceConfig(InstanceConfigRefreshModel auditModel, Long instanceId) {
         if (isNewRelease(auditModel, instanceId)) {
             createOrUpdateInstanceConfig(auditModel, instanceId);
         }
     }
 
 
-
-    private boolean isNewRelease(InstanceConfigAuditModel auditModel, Long instanceId) {
+    private boolean isNewRelease(InstanceConfigRefreshModel auditModel, Long instanceId) {
         String instanceConfigCacheKey = loadConfigKeyInCacheIfReleaseKeyIsNew(auditModel, instanceId);
         if (instanceConfigCacheKey == null) return false;
 
@@ -91,9 +107,9 @@ public class InstanceConfigHeartBeatUtil implements InitializingBean {
         return true;
     }
 
-    private void createOrUpdateInstanceConfig(InstanceConfigAuditModel auditModel, Long instanceId) {
+    private void createOrUpdateInstanceConfig(InstanceConfigRefreshModel auditModel, Long instanceId) {
         //if release key is not the same or cannot find in cache, then do offerHeartBeat
-        NamespaceBo namespaceBo =  auditModel.getNamespaceBo();
+        NamespaceBo namespaceBo = auditModel.getNamespaceBo();
         InstanceConfig instanceConfig = instanceService.findInstanceConfig(instanceId, namespaceBo.getAppCode(), namespaceBo.getEnv(), namespaceBo.getNamespaceName());
 
         if (instanceConfig != null) {
@@ -120,7 +136,7 @@ public class InstanceConfigHeartBeatUtil implements InitializingBean {
         }
     }
 
-    private boolean ifReleaseKeyIsSameAndRecentBuild(InstanceConfigAuditModel auditModel, InstanceConfig instanceConfig) {
+    private boolean ifReleaseKeyIsSameAndRecentBuild(InstanceConfigRefreshModel auditModel, InstanceConfig instanceConfig) {
         return Objects.equals(instanceConfig.getReleaseKey(), auditModel.getReleaseKey()) && offerTimeAndLastModifiedTimeCloseEnough(auditModel.getOfferTime(), instanceConfig.getUpdateTime());
     }
 
@@ -131,7 +147,7 @@ public class InstanceConfigHeartBeatUtil implements InitializingBean {
      * @param instanceId
      * @return
      */
-    private String loadConfigKeyInCacheIfReleaseKeyIsNew(InstanceConfigAuditModel auditModel, Long instanceId) {
+    private String loadConfigKeyInCacheIfReleaseKeyIsNew(InstanceConfigRefreshModel auditModel, Long instanceId) {
         //load instance config release key from cache, and check if release key is the same
         String instanceConfigCacheKey = auditModel.assembleInstanceConfigKey(instanceId);
 
@@ -144,20 +160,34 @@ public class InstanceConfigHeartBeatUtil implements InitializingBean {
         return instanceConfigCacheKey;
     }
 
-    private Long createOrUpdateCacheInstanceId(InstanceConfigAuditModel auditModel) {
-        String instanceKey = auditModel.assembleInstanceKey();
 
-        Long instanceId = instanceCache.getIfPresent(instanceKey);
-        if (instanceId == null) {
-            instanceId = createInstanceIdIfNotInDb(auditModel);
-            instanceCache.put(instanceKey, instanceId);
+    private Instance initInstanceInDB(InstanceConfigRefreshModel auditModel) {
+        NamespaceBo namespaceBo = auditModel.getNamespaceBo();
+        AppEnvCluster appEnvCluster = appEnvClusterRepository.findByApp_AppCodeAndEnvAndName(namespaceBo.getAppCode(), namespaceBo.getEnv(), namespaceBo.getClusterName());
+
+        Instance instance = new Instance();
+        instance.setAppEnvCluster(appEnvCluster);
+        instance.setDataCenter(namespaceBo.getDataCenter());
+        instance.setIp(auditModel.getIp());
+
+        try {
+            return instanceService.createInstance(instance);
+        } catch (DataIntegrityViolationException ex) {
+            //return the one exists
+            return instanceService.findInstance(instance.getAppEnvCluster().getApp().getAppCode(), namespaceBo.getEnv(), instance.getAppEnvCluster().getName(), instance.getDataCenter(), instance.getIp());
         }
-        return instanceId;
+
     }
 
-    private InstanceConfig createInstanceConfig(InstanceConfigAuditModel auditModel, Long instanceId) {
+
+    private Long loadFromMemory(String instanceKey) {
+        return instanceCache.getIfPresent(instanceKey);
+    }
+
+    private InstanceConfig createInstanceConfig(InstanceConfigRefreshModel auditModel, Long instanceId) {
         NamespaceBo namespaceBo = auditModel.getNamespaceBo();
-        InstanceConfig instanceConfig = new InstanceConfig();;
+        InstanceConfig instanceConfig = new InstanceConfig();
+        ;
         Instance instance = new Instance(instanceId);
         instanceConfig.setInstance(instance);
         instanceConfig.setAppCode(namespaceBo.getAppCode());
@@ -176,25 +206,13 @@ public class InstanceConfigHeartBeatUtil implements InitializingBean {
         return duration.getSeconds() < OFFER_TIME_LAST_MODIFIED_TIME_THRESHOLD_IN_MILLI;
     }
 
-    private long createInstanceIdIfNotInDb(InstanceConfigAuditModel auditModel) {
+    private Long loadFromDb(InstanceConfigRefreshModel auditModel) {
         NamespaceBo namespaceBo = auditModel.getNamespaceBo();
         Instance instance = instanceService.findInstance(namespaceBo.getAppCode(), namespaceBo.getEnv(), namespaceBo.getClusterName(), namespaceBo.getDataCenter(), auditModel.getIp());
         if (instance != null) {
             return instance.getId();
         }
-        AppEnvCluster appEnvCluster = appEnvClusterRepository.findByApp_AppCodeAndEnvAndName(namespaceBo.getAppCode(), namespaceBo.getEnv(), namespaceBo.getClusterName());
-
-        instance = new Instance();
-        instance.setAppEnvCluster(appEnvCluster);
-        instance.setDataCenter(namespaceBo.getDataCenter());
-        instance.setIp(auditModel.getIp());
-
-        try {
-            return instanceService.createInstance(instance).getId();
-        } catch (DataIntegrityViolationException ex) {
-            //return the one exists
-            return instanceService.findInstance(instance.getAppEnvCluster().getApp().getAppCode(), namespaceBo.getEnv(), instance.getAppEnvCluster().getName(), instance.getDataCenter(), instance.getIp()).getId();
-        }
+        return null;
     }
 
     @Override
@@ -202,7 +220,7 @@ public class InstanceConfigHeartBeatUtil implements InitializingBean {
         auditExecutorService.submit(() -> {
             while (!auditStopped.get() && !Thread.currentThread().isInterrupted()) {
                 try {
-                    InstanceConfigAuditModel model = audits.poll();
+                    InstanceConfigRefreshModel model = audits.poll();
                     if (model == null) {
                         TimeUnit.SECONDS.sleep(1);
                         continue;

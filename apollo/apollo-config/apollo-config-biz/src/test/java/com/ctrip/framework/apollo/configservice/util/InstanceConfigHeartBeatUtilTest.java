@@ -1,6 +1,6 @@
 package com.ctrip.framework.apollo.configservice.util;
 
-import com.ctrip.framework.apollo.configservice.InstanceConfigAuditModel;
+import com.ctrip.framework.apollo.configservice.InstanceConfigRefreshModel;
 import com.yofish.apollo.service.InstanceService;
 import common.NamespaceBo;
 import org.junit.Before;
@@ -25,7 +25,7 @@ public class InstanceConfigHeartBeatUtilTest {
 
   @Mock
   private InstanceService instanceService;
-  private BlockingQueue<InstanceConfigAuditModel> audits;
+  private BlockingQueue<InstanceConfigRefreshModel> audits;
 
   private String someAppId;
   private String someConfigClusterName;
@@ -37,7 +37,7 @@ public class InstanceConfigHeartBeatUtilTest {
   private String someReleaseKey;
   private String someEnv;
 
-  private InstanceConfigAuditModel someAuditModel;
+  private InstanceConfigRefreshModel someAuditModel;
   private NamespaceBo namespaceBo;
 
   @Before
@@ -46,7 +46,7 @@ public class InstanceConfigHeartBeatUtilTest {
 
     ReflectionTestUtils.setField(instanceConfigAuditUtil, "instanceService", instanceService);
 
-    audits = (BlockingQueue<InstanceConfigAuditModel>) ReflectionTestUtils.getField(instanceConfigAuditUtil, "audits");
+    audits = (BlockingQueue<InstanceConfigRefreshModel>) ReflectionTestUtils.getField(instanceConfigAuditUtil, "audits");
 
     someAppId = "someAppId";
     someClusterName = "someClusterName";
@@ -58,7 +58,7 @@ public class InstanceConfigHeartBeatUtilTest {
     someReleaseKey = "someReleaseKey";
     someEnv = "dev";
     namespaceBo = NamespaceBo.builder().build();
-    someAuditModel = new InstanceConfigAuditModel(namespaceBo,
+    someAuditModel = new InstanceConfigRefreshModel(namespaceBo,
         someConfigNamespace, someReleaseKey);
   }
 
@@ -66,7 +66,7 @@ public class InstanceConfigHeartBeatUtilTest {
   public void testAudit() throws Exception {
     boolean result = instanceConfigAuditUtil.offerHeartBeat(namespaceBo, someIp, someReleaseKey);
 
-    InstanceConfigAuditModel audit = audits.poll();
+    InstanceConfigRefreshModel audit = audits.poll();
 
     assertTrue(result);
     assertTrue(Objects.equals(someAuditModel, audit));

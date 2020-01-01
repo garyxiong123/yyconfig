@@ -16,7 +16,7 @@ import java.util.Objects;
  * @Date: 2019/12/30 下午3:25
  */
 @Data
-public class InstanceConfigAuditModel  {
+public class InstanceConfigRefreshModel {
     private String ip;
     private String releaseKey;
     private LocalDateTime offerTime;
@@ -26,7 +26,7 @@ public class InstanceConfigAuditModel  {
     private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR);
 
 
-    public InstanceConfigAuditModel(NamespaceBo namespaceBo, String clientIp,  String  releaseKey) {
+    public InstanceConfigRefreshModel(NamespaceBo namespaceBo, String clientIp, String  releaseKey) {
         this.namespaceBo = namespaceBo;
         this.offerTime = LocalDateTime.now();
         this.ip = clientIp;

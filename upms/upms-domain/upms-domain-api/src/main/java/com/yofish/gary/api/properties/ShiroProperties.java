@@ -22,6 +22,9 @@ import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 
+import static org.springframework.util.StringUtils.isEmpty;
+import static org.springframework.util.StringUtils.split;
+
 /**
  * @author pqq
  * @version v1.0
@@ -57,7 +60,7 @@ public class ShiroProperties {
      * 注:按逗号(,)切分,支持多个
      */
     @NotNull
-    private String noneUrlKeys = "/notifications/**,/*.js,/*.css,/user/login,/user/logout,/swagger-ui.html,/webjars/**,/v2/**,/swagger-resources/**,/deploy/jenkins/**,/actuator/**";
+    private String noneUrlKeys = "/notifications/**, /configs/**,/*.js,/*.css,/user/login,/user/logout,/*.html,/webjars/**,/v2/**,/swagger-resources/**,/actuator/**";
 
     /**
      * 需要认证key
@@ -92,4 +95,27 @@ public class ShiroProperties {
     @NotNull
     private String concurrentSessionStrategyNumber = "0";
 
+    /**
+     * 所有的请求地址
+     */
+    private static final String ALL_URL = "/**";
+
+
+    /**
+     * 获取 授权访问Url数组
+     *
+     * @return
+     */
+    public String[] getAuthcUrlKeyArray() {
+        if (ALL_URL.equals(this.authcUrlKeys)) {
+            return new String[]{ALL_URL};
+        }
+
+        String[] authcUrlKeyArray = split(this.authcUrlKeys, ",");
+        return authcUrlKeyArray;
+    }
+
+    public boolean isEmpty4AuthcUrlKeys() {
+        return isEmpty(getAuthcUrlKeyArray());
+    }
 }
