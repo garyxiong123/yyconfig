@@ -15,6 +15,7 @@ import common.dto.PageDTO;
 import common.utils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,8 @@ import org.springframework.util.CollectionUtils;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.springframework.util.StringUtils.isEmpty;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -56,13 +59,9 @@ public class InstanceService {
     }
 
 
-
     public PageDTO<InstanceDTO> getByRelease(long releaseId, Pageable pageable) {
         Release release = releaseService.findOne(releaseId);
 
-        if (release == null) {
-            throw new BizException(String.format("release not found for %s", releaseId));
-        }
         Page<InstanceConfig> instanceConfigsPage = instanceConfigRepository.findByReleaseKeyAndUpdateTimeAfter(release.getReleaseKey(), getValidInstanceConfigDate(), pageable);
 
         List<InstanceDTO> instanceDTOs = Collections.emptyList();
@@ -80,7 +79,7 @@ public class InstanceService {
 
             List<Instance> instances = findInstancesByIds(instanceIds);
 
-            if (!CollectionUtils.isEmpty(instances)) {
+            if (!isEmpty(instances)) {
                 instanceDTOs = BeanUtils.batchTransform(InstanceDTO.class, instances);
             }
 
@@ -107,20 +106,16 @@ public class InstanceService {
         return instanceConfigRepository.findByInstanceIdAndAppCodeAndNamespaceNameAndEnv(instanceId, appCode, namespaceName, env);
     }
 
-    public List<InstanceDTO> getByReleasesNotIn(Long appEnvClusterNamspace, Set<Long> releaseIdSet) {
+    public List<InstanceDTO> getByReleasesNotIn(Long namspaceId, Set<Long> releaseIdSet) {
 
         List<Release> releases = releaseService.findByReleaseIds(releaseIdSet);
-
         if (CollectionUtils.isEmpty(releases)) {
             throw new BizException(String.format("releases not found for %s", releaseIdSet.toString()));
         }
 
-        Set<String> releaseKeys = releases.stream().map(Release::getReleaseKey).collect(Collectors
-                .toSet());
+        Set<String> releaseKeys = releases.stream().map(Release::getReleaseKey).collect(Collectors.toSet());
 
-        List<InstanceConfig> instanceConfigs =
-                findInstanceConfigsByNamespaceWithReleaseKeysNotIn(appEnvClusterNamspace,
-                        releaseKeys);
+        List<InstanceConfig> instanceConfigs = findInstanceConfigsByNamespaceWithReleaseKeysNotIn(namspaceId, releaseKeys);
 
         Multimap<Long, InstanceConfig> instanceConfigMap = HashMultimap.create();
         Set<String> otherReleaseKeys = Sets.newHashSet();
@@ -154,8 +149,7 @@ public class InstanceService {
                 InstanceConfigDTO instanceConfigDTO = new InstanceConfigDTO();
                 instanceConfigDTO.setRelease(releaseMap.get(instanceConfig.getReleaseKey()));
                 instanceConfigDTO.setReleaseDeliveryTime(instanceConfig.getReleaseDeliveryTime());
-                instanceConfigDTO.setDataChangeLastModifiedTime(instanceConfig
-                        .getUpdateTime());
+                instanceConfigDTO.setDataChangeLastModifiedTime(instanceConfig.getUpdateTime());
                 return instanceConfigDTO;
             }).collect(Collectors.toList());
             instanceDTO.setConfigs(configDTOs);
@@ -220,6 +214,20 @@ public class InstanceService {
         existedInstanceConfig.setReleaseDeliveryTime(instanceConfig.getReleaseDeliveryTime());
 
         return instanceConfigRepository.save(existedInstanceConfig);
+    }
+
+    public int getInstanceCountByNamepsace(Long namespaceId, Pageable pageable) {
+//        Page<Instance> instances = findInstancesByNamespace(namespaceId, pageable);
+        return 0;
+    }
+
+    public Page<InstanceDTO> findInstancesByNamespace(Long namespaceId, Pageable pageable) {
+        return null;
+    }
+
+
+    public int getInstanceCountByNamepsace(Long namespaceId) {
+        return 0;
     }
 
 //    @Transactional

@@ -24,6 +24,7 @@ import com.youyu.common.utils.YyAssert;
 import common.dto.ReleaseDTO;
 import common.utils.RequestPrecondition;
 import framework.apollo.core.enums.Env;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -134,6 +135,7 @@ public class ReleaseController {
         return Result.ok(releaseService.findAllReleases(namespaceId, pageable));
     }
 
+    @ApiOperation(value = "查询最新的releaseId")
     @RequestMapping(value = "/namespaceId/{namespaceId}/releases/active", method = RequestMethod.GET)
     public Result<List<ReleaseDTO>> findActiveReleases(@PathVariable Long namespaceId, @RequestParam(defaultValue = "0") int page,
                                                @RequestParam(defaultValue = "5") int size) {
