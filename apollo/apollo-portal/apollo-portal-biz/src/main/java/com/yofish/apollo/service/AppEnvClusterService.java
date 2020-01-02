@@ -10,6 +10,8 @@ package com.yofish.apollo.service;
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppEnvCluster;
 import com.yofish.apollo.repository.AppEnvClusterRepository;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +56,9 @@ public class AppEnvClusterService {
 
 
     public AppEnvCluster createAppEnvCluster(AppEnvCluster appEnvCluster) {
+        if (!isClusterNameUnique(appEnvCluster.getApp().getId(), appEnvCluster.getEnv(), appEnvCluster.getName())) {
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "集群名称不能重复！");
+        }
         AppEnvCluster cluster = appEnvClusterRepository.save(appEnvCluster);
         // create linked namespace
         this.appEnvClusterNamespaceService.instanceOfAppNamespaces(appEnvCluster);
