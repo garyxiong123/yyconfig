@@ -82,6 +82,12 @@ class TableList extends React.Component {
   onConfigSave = () => {
     this.onFetchNamespaceList();
   }
+  onShowSyncConfig=()=>{
+    return
+    this.setState({
+      showSyncConfig: true
+    })
+  }
   onFetchNamespaceList = () => {
     const { dispatch, appDetail, currentEnv } = this.props;
     let currentCluster = currentEnv.cluster || {};
@@ -236,7 +242,7 @@ class TableList extends React.Component {
     return (
       <Row type="flex" justify="end" gutter={16} style={{ marginBottom: 15 }}>
         <Col>
-          <Button size="small">
+          <Button size="small" onClick={this.onShowSyncConfig}>
             同步配置
           </Button>
         </Col>
@@ -279,7 +285,7 @@ class TableList extends React.Component {
         {this.renderOpe(item)}
         {item.namespaceType === 'Associate' ? this.renderAssociateList() : this.renderTable(tableList)}
         {showEdit && <ConfigAdd onCancel={()=>this.onCancel('showEdit')} currentItem={currentItem} onSave={this.onConfigSave} baseInfo={item.baseInfo} opeType={opeType} />}
-        {showSyncConfig && <SyncConfig onCancel={()=>this.onCancel('showSyncConfig')} currentItem={currentItem}/>}
+        {showSyncConfig && <SyncConfig onCancel={()=>this.onCancel('showSyncConfig')} info={item}/>}
         <Input value={copyValue} id={'copy' + baseInfo.id} className={styles.copyInput} />
       </Fragment>
     );

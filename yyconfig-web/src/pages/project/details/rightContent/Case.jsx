@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import { Card, Table, Radio } from 'antd';
+import { instances } from '@/services/project';
 
 class Case extends React.Component {
   constructor(props) {
@@ -7,8 +8,14 @@ class Case extends React.Component {
     this.state = {
     };
   }
-  componentDidMount() { }
+  componentDidMount() { 
+    // this.onFetchRelease();
+  }
 
+  onFetchRelease = async () => {
+    let res = await instances.getByRelease({});
+    console.log('res-->', res)
+  }
   renderTable() {
     const columns = [
       {
@@ -64,7 +71,7 @@ class Case extends React.Component {
           size="samll"
           extra={this.renderExtra()}
           headStyle={{ backgroundColor: '#f5f5f5' }}
-          
+
         >
           {this.renderTable()}
         </Card>
