@@ -135,7 +135,7 @@ public class PermissionValidator {
 
     private App getApp(long appId) {
         App app = appRepository.findById(appId).orElse(null);
-        YyAssert.paramCheck(ObjectUtils.isEmpty(app), "appId:" + appId + " 不存在！");
+        YyAssert.paramCheck(ObjectUtils.isEmpty(app), "appCode:" + appId + " 不存在！");
         return app;
     }
 

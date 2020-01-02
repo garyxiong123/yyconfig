@@ -177,14 +177,14 @@ public class AppNamespaceController {
         return namespaceEnvTreeList;
     }
 //
-//  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces", method = RequestMethod.GET)
-//  public List<NamespaceBO> findNamespaces(@PathVariable String appId, @PathVariable String env,
+//  @RequestMapping(value = "/apps/{appCode}/envs/{env}/clusters/{clusterName}/namespaces", method = RequestMethod.GET)
+//  public List<NamespaceBO> findNamespaces(@PathVariable String appCode, @PathVariable String env,
 //                                          @PathVariable String clusterName) {
 //
-//    List<NamespaceBO> namespaceBOs = namespaceService.findNamespaceBOs(appId, Env.valueOf(env), clusterName);
+//    List<NamespaceBO> namespaceBOs = namespaceService.findNamespaceBOs(appCode, Env.valueOf(env), clusterName);
 //
 //    for (NamespaceBO namespaceBO : namespaceBOs) {
-//      if (permissionValidator.shouldHideConfigToCurrentUser(appId, env, namespaceBO.getBaseInfo().getNamespaceName())) {
+//      if (permissionValidator.shouldHideConfigToCurrentUser(appCode, env, namespaceBO.getBaseInfo().getNamespaceName())) {
 //        namespaceBO.hideItems();
 //      }
 //    }
@@ -192,32 +192,32 @@ public class AppNamespaceController {
 //    return namespaceBOs;
 //  }
 //
-//  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName:.+}", method = RequestMethod.GET)
-//  public NamespaceBO findNamespace(@PathVariable String appId, @PathVariable String env,
+//  @RequestMapping(value = "/apps/{appCode}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName:.+}", method = RequestMethod.GET)
+//  public NamespaceBO findNamespace(@PathVariable String appCode, @PathVariable String env,
 //                                   @PathVariable String clusterName, @PathVariable String namespaceName) {
 //
-//    NamespaceBO namespaceBO = namespaceService.loadNamespaceBO(appId, Env.valueOf(env), clusterName, namespaceName);
+//    NamespaceBO namespaceBO = namespaceService.loadNamespaceBO(appCode, Env.valueOf(env), clusterName, namespaceName);
 //
-//    if (namespaceBO != null && permissionValidator.shouldHideConfigToCurrentUser(appId, env, namespaceName)) {
+//    if (namespaceBO != null && permissionValidator.shouldHideConfigToCurrentUser(appCode, env, namespaceName)) {
 //      namespaceBO.hideItems();
 //    }
 //
 //    return namespaceBO;
 //  }
 //
-//  @RequestMapping(value = "/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/associated-public-appNamespace",
+//  @RequestMapping(value = "/envs/{env}/apps/{appCode}/clusters/{clusterName}/namespaces/{namespaceName}/associated-public-appNamespace",
 //      method = RequestMethod.GET)
 //  public NamespaceBO findPublicNamespaceForAssociatedNamespace(@PathVariable String env,
-//                                                               @PathVariable String appId,
+//                                                               @PathVariable String appCode,
 //                                                               @PathVariable String namespaceName,
 //                                                               @PathVariable String clusterName) {
 //
-//    return namespaceService.findPublicNamespaceForAssociatedNamespaceToBo(Env.valueOf(env), appId, clusterName, namespaceName);
+//    return namespaceService.findPublicNamespaceForAssociatedNamespaceToBo(Env.valueOf(env), appCode, clusterName, namespaceName);
 //  }
 //
-//  @PreAuthorize(value = "@permissionValidator.hasCreateNamespacePermission(#appId)")
-/*    @RequestMapping(value = "/apps/{appId}/namespaces", method = RequestMethod.POST)
-    public Result createNamespace(@PathVariable String appId,
+//  @PreAuthorize(value = "@permissionValidator.hasCreateNamespacePermission(#appCode)")
+/*    @RequestMapping(value = "/apps/{appCode}/namespaces", method = RequestMethod.POST)
+    public Result createNamespace(@PathVariable String appCode,
                                   @RequestBody List<NamespaceCreationModel> models) {
 
         checkModel(!CollectionUtils.isEmpty(models));
@@ -238,34 +238,34 @@ public class AppNamespaceController {
     }*/
 
     //
-//  @PreAuthorize(value = "@permissionValidator.hasDeleteNamespacePermission(#appId)")
-//  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName:.+}", method = RequestMethod.DELETE)
-//  public ResponseEntity<Void> deleteNamespace(@PathVariable String appId, @PathVariable String env,
+//  @PreAuthorize(value = "@permissionValidator.hasDeleteNamespacePermission(#appCode)")
+//  @RequestMapping(value = "/apps/{appCode}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName:.+}", method = RequestMethod.DELETE)
+//  public ResponseEntity<Void> deleteNamespace(@PathVariable String appCode, @PathVariable String env,
 //                                              @PathVariable String clusterName, @PathVariable String namespaceName) {
 //
-//    namespaceService.deleteNamespace(appId, Env.valueOf(env), clusterName, namespaceName);
+//    namespaceService.deleteNamespace(appCode, Env.valueOf(env), clusterName, namespaceName);
 //
 //    return ResponseEntity.ok().build();
 //  }
 //
 //  @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
-//  @RequestMapping(value = "/apps/{appId}/appnamespaces/{namespaceName:.+}", method = RequestMethod.DELETE)
-//  public ResponseEntity<Void> deleteAppNamespace(@PathVariable String appId, @PathVariable String namespaceName) {
+//  @RequestMapping(value = "/apps/{appCode}/appnamespaces/{namespaceName:.+}", method = RequestMethod.DELETE)
+//  public ResponseEntity<Void> deleteAppNamespace(@PathVariable String appCode, @PathVariable String namespaceName) {
 //
-//    AppNamespace appNamespace = appNamespaceService.deleteAppNamespace(appId, namespaceName);
+//    AppNamespace appNamespace = appNamespaceService.deleteAppNamespace(appCode, namespaceName);
 //
 //    publisher.publishEvent(new AppNamespaceDeletionEvent(appNamespace));
 //
 //    return ResponseEntity.ok().build();
 //  }
 //
-//  @RequestMapping(value = "/apps/{appId}/appnamespaces/{namespaceName:.+}", method = RequestMethod.GET)
-//  public AppNamespaceDTO findAppPublicNamespace(@PathVariable String appId, @PathVariable String namespaceName) {
-//    AppNamespace appNamespace = appNamespaceService.findByAppIdAndName(appId, namespaceName);
+//  @RequestMapping(value = "/apps/{appCode}/appnamespaces/{namespaceName:.+}", method = RequestMethod.GET)
+//  public AppNamespaceDTO findAppPublicNamespace(@PathVariable String appCode, @PathVariable String namespaceName) {
+//    AppNamespace appNamespace = appNamespaceService.findByAppIdAndName(appCode, namespaceName);
 //
 //    if (appNamespace == null) {
 //      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG,
-//          String.format("AppNamespace not exists. AppId = %s, NamespaceName = %s", appId, namespaceName));
+//          String.format("AppNamespace not exists. AppId = %s, NamespaceName = %s", appCode, namespaceName));
 //    }
 //
 //    return BeanUtils.transform(AppNamespaceDTO.class, appNamespace);
@@ -279,9 +279,9 @@ public class AppNamespaceController {
 //   *  default -> true   (default appEnvCluster has not published appNamespace)
 //   *  customCluster -> false (customCluster appEnvCluster's all namespaces had published)
 //
-//  @RequestMapping(value = "/apps/{appId}/namespaces/publish_info", method = RequestMethod.GET)
-//  public Map<String, Map<String, Boolean>> getNamespacesPublishInfo(@PathVariable String appId) {
-//    return namespaceService.getNamespacesPublishInfo(appId);
+//  @RequestMapping(value = "/apps/{appCode}/namespaces/publish_info", method = RequestMethod.GET)
+//  public Map<String, Map<String, Boolean>> getNamespacesPublishInfo(@PathVariable String appCode) {
+//    return namespaceService.getNamespacesPublishInfo(appCode);
 //  }
 //
 //  @RequestMapping(value = "/envs/{env}/appnamespaces/{publicNamespaceName}/namespaces", method = RequestMethod.GET)
@@ -294,15 +294,15 @@ public class AppNamespaceController {
 //
 //  }
 //
-//  private void assignNamespaceRoleToOperator(String appId, String namespaceName) {
+//  private void assignNamespaceRoleToOperator(String appCode, String namespaceName) {
 //    //default assign modify、release appNamespace role to appNamespace creator
 //    String operator = userInfoHolder.getUser().getUserId();
 //
 //    rolePermissionService
-//        .assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, RoleType.MODIFY_NAMESPACE),
+//        .assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appCode, namespaceName, RoleType.MODIFY_NAMESPACE),
 //                           Sets.newHashSet(operator), operator);
 //    rolePermissionService
-//        .assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, RoleType.RELEASE_NAMESPACE),
+//        .assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appCode, namespaceName, RoleType.RELEASE_NAMESPACE),
 //                           Sets.newHashSet(operator), operator);
 //  }
 }

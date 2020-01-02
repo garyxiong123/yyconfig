@@ -11,7 +11,7 @@ public class ReleaseKeyGenerator extends UniqueKeyGenerator {
 
 
   /**
-   * Generate the release key in the format: timestamp+appId+cluster+appNamespace+hash(ipAsInt+counter)
+   * Generate the release key in the format: timestamp+appCode+cluster+appNamespace+hash(ipAsInt+counter)
    *
    * @param namespace the appNamespace of the release
    * @return the unique release key

@@ -60,7 +60,7 @@ public class NamespaceBranchController {
         boolean canDelete = permissionValidator.hasReleaseNamespacePermission(appId, namespaceName) || (permissionValidator.hasModifyNamespacePermission(appId, namespaceName, env)
         );
 
-//        (releaseService.loadLatestRelease(appId, Env.valueOf(env), branchName, namespaceName) == null)
+//        (releaseService.loadLatestRelease(appCode, Env.valueOf(env), branchName, namespaceName) == null)
         if (!canDelete) {
 //            throw new AccessDeniedException("Forbidden operation. "
 //                    + "Caused by: 1.you don't have release permission "
@@ -88,7 +88,7 @@ public class NamespaceBranchController {
         }
         Release createdRelease = null;
 //        Release createdRelease = namespaceBranchService.
-//                merge(appId, Env.valueOf(env), clusterName, namespaceName, branchName, model.getReleaseTitle(), model.getReleaseComment(),
+//                merge(appCode, Env.valueOf(env), clusterName, namespaceName, branchName, model.getReleaseTitle(), model.getReleaseComment(),
 //                model.isEmergencyPublish(), deleteBranch);
 
         ConfigPublishEvent event = ConfigPublishEvent.instance();
@@ -112,7 +112,7 @@ public class NamespaceBranchController {
     }
 
 
-//    @PreAuthorize(value = "@permissionValidator.hasOperateNamespacePermission(#appId, #namespaceName, #env)")
+//    @PreAuthorize(value = "@permissionValidator.hasOperateNamespacePermission(#appCode, #namespaceName, #env)")
     @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}/rules", method = RequestMethod.PUT)
     public void updateBranchRules(@PathVariable String appId, @PathVariable String env,
                                   @PathVariable String clusterName, @PathVariable String namespaceName,

@@ -55,7 +55,7 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
   //store namespaceName -> AppNamespace
   private CaseInsensitiveMapWrapper<AppNamespace> publicAppNamespaceCache;
 
-  //store appId+namespaceName -> AppNamespace
+  //store appCode+namespaceName -> AppNamespace
   private CaseInsensitiveMapWrapper<AppNamespace> appNamespaceCache;
 
   //store id -> AppNamespace
@@ -75,12 +75,12 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
   }
 
   public AppNamespace findByAppIdAndNamespace(String appId, String namespaceName) {
-    Preconditions.checkArgument(!YyStringUtils.isContainEmpty(appId, namespaceName), "appId and namespaceName must not be empty");
+    Preconditions.checkArgument(!YyStringUtils.isContainEmpty(appId, namespaceName), "appCode and namespaceName must not be empty");
     return appNamespaceCache.get(STRING_JOINER.join(appId, namespaceName));
   }
 
   public List<AppNamespace> findByAppIdAndNamespaces(String appId, Set<String> namespaceNames) {
-    Preconditions.checkArgument(!Strings.isNullOrEmpty(appId), "appId must not be null");
+    Preconditions.checkArgument(!Strings.isNullOrEmpty(appId), "appCode must not be null");
     if (namespaceNames == null || namespaceNames.isEmpty()) {
       return Collections.emptyList();
     }
@@ -213,7 +213,7 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
         String newKey = assembleAppNamespaceKey(appNamespace);
         appNamespaceCache.put(newKey, appNamespace);
 
-        //in case appId or namespaceName changes
+        //in case appCode or namespaceName changes
         if (!newKey.equals(oldKey)) {
           appNamespaceCache.remove(oldKey);
         }

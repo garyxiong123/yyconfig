@@ -142,7 +142,7 @@ public class AppNamespaceService {
             }
 
             throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG,
-                    "Public AppNamespace " + appNamespace.getName() + " already exists as private AppNamespace in appId: "
+                    "Public AppNamespace " + appNamespace.getName() + " already exists as private AppNamespace in appCode: "
                             + APP_NAMESPACE_JOINER.join(appIds) + ", etc. Please select another name!");
         }
     }
@@ -150,7 +150,7 @@ public class AppNamespaceService {
     private void checkPublicAppNamespaceGlobalUniqueness(AppNamespace appNamespace) {
         AppNamespace publicAppNamespace = findPublicAppNamespace(appNamespace.getName());
         if (publicAppNamespace != null) {
-            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "AppNamespace " + appNamespace.getName() + " already exists as public appNamespace in appId: " + publicAppNamespace.getApp().getId() + "!");
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "AppNamespace " + appNamespace.getName() + " already exists as public appNamespace in appCode: " + publicAppNamespace.getApp().getId() + "!");
         }
     }
 

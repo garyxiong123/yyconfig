@@ -6,7 +6,7 @@ package common.dto;
 //
 //  private String name;
 //
-//  private String appId;
+//  private String appCode;
 //
 //  private String comment;
 //
@@ -31,11 +31,11 @@ package common.dto;
 //  }
 //
 //  public String getAppId() {
-//    return appId;
+//    return appCode;
 //  }
 //
-//  public void setAppId(String appId) {
-//    this.appId = appId;
+//  public void setAppId(String appCode) {
+//    this.appCode = appCode;
 //  }
 //
 //  public String getFormat() {

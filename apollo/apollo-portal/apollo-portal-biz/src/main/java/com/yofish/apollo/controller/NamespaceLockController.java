@@ -11,18 +11,18 @@ public class NamespaceLockController {
   private NamespaceLockService namespaceLockService;
 
   @Deprecated
-  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/lock", method = RequestMethod.GET)
-  public NamespaceLock getNamespaceLock(@PathVariable String appId, @PathVariable String env,
+  @RequestMapping(value = "/apps/{appCode}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/lock", method = RequestMethod.GET)
+  public NamespaceLock getNamespaceLock(@PathVariable String appCode, @PathVariable String env,
                                         @PathVariable String clusterName, @PathVariable String namespaceName) {
 
-    return namespaceLockService.getNamespaceLock(appId, Env.valueOf(env), clusterName, namespaceName);
+    return namespaceLockService.getNamespaceLock(appCode, Env.valueOf(env), clusterName, namespaceName);
   }
 
-  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/lock-info", method = RequestMethod.GET)
-  public LockInfo getNamespaceLockInfo(@PathVariable String appId, @PathVariable String env,
+  @RequestMapping(value = "/apps/{appCode}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/lock-info", method = RequestMethod.GET)
+  public LockInfo getNamespaceLockInfo(@PathVariable String appCode, @PathVariable String env,
                                        @PathVariable String clusterName, @PathVariable String namespaceName) {
 
-    return namespaceLockService.getNamespaceLockInfo(appId, Env.fromString(env), clusterName, namespaceName);
+    return namespaceLockService.getNamespaceLockInfo(appCode, Env.fromString(env), clusterName, namespaceName);
 
   }
 */

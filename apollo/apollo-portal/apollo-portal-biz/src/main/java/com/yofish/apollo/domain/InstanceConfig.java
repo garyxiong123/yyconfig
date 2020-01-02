@@ -23,4 +23,14 @@ public class InstanceConfig extends BaseEntity {
     private String releaseKey;
 
     private LocalDateTime releaseDeliveryTime;
+
+    private String env;
+
+    private String appCode;
+
+    private String cluster;
+
+    private String namespaceName;
+
+
 }

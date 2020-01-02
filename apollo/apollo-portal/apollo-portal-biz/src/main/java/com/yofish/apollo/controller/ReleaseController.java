@@ -64,7 +64,7 @@ public class ReleaseController {
         Release publish = releaseService.publish(namespace, namespaceReleaseModel.getReleaseTitle(), namespaceReleaseModel.getReleaseComment(), null, namespaceReleaseModel.isEmergencyPublish());
         ReleaseDTO createdRelease = transformRelease2Dto(publish);
         ConfigPublishEvent event = ConfigPublishEvent.instance();
-//        event.withAppId(appId)
+//        event.withAppId(appCode)
 //                .withCluster(clusterName)
 //                .withNamespace(namespaceName)
 //                .withReleaseId(createdRelease.getId())
@@ -83,12 +83,12 @@ public class ReleaseController {
         return null;
     }
 
-//    @PreAuthorize(value = "@permissionValidator.hasReleaseNamespacePermission(#appId, #namespaceName, #env)")
+//    @PreAuthorize(value = "@permissionValidator.hasReleaseNamespacePermission(#appCode, #namespaceName, #env)")
     @RequestMapping(value = "/createGrayRelease", method = RequestMethod.POST)
     public Result<ReleaseDTO> createGrayRelease(@RequestBody NamespaceReleaseModel model) {
 
         checkModel(Objects.nonNull(model));
-//        model.setAppId(appId);
+//        model.setAppId(appCode);
 //        model.setEnv(env);
 //        model.setClusterName(branchName);
 //        model.setNamespaceName(namespaceName);
@@ -100,7 +100,7 @@ public class ReleaseController {
         Release createdRelease = releaseService.publish(null, model.getReleaseTitle(), model.getReleaseComment(), null, model.isEmergencyPublish());
         ReleaseDTO releaseDTO = transformRelease2Dto(createdRelease);
         ConfigPublishEvent event = ConfigPublishEvent.instance();
-//        event.withAppId(appId)
+//        event.withAppId(appCode)
 //                .withCluster(clusterName)
 //                .withNamespace(namespaceName)
 //                .withReleaseId(createdRelease.getId())

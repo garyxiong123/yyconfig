@@ -36,7 +36,7 @@
 //  @InjectMocks
 //  private ReleaseService releaseService;
 //
-//  private String appId = "appId-test";
+//  private String appCode = "appCode-test";
 //  private String clusterName = "cluster-test";
 //  private String namespaceName = "appNamespace-test";
 //  private String user = "user-test";
@@ -50,13 +50,13 @@
 //
 //    firstRelease = new Release();
 //    firstRelease.setId(releaseId);
-//    firstRelease.setAppId(appId);
+//    firstRelease.setAppId(appCode);
 //    firstRelease.setClusterName(clusterName);
 //    firstRelease.setNamespaceName(namespaceName);
 //    firstRelease.setAbandoned(false);
 //
 //    secondRelease = new Release();
-//    secondRelease.setAppId(appId);
+//    secondRelease.setAppId(appCode);
 //    secondRelease.setClusterName(clusterName);
 //    secondRelease.setNamespaceName(namespaceName);
 //    secondRelease.setAbandoned(false);
@@ -76,7 +76,7 @@
 //  public void testHasNoRelease() {
 //
 //    when(releaseRepository.findOne(releaseId)).thenReturn(firstRelease);
-//    when(releaseRepository.findByAppIdAndClusterNameAndNamespaceNameAndIsAbandonedFalseOrderByIdDesc(appId,
+//    when(releaseRepository.findByAppIdAndClusterNameAndNamespaceNameAndIsAbandonedFalseOrderByIdDesc(appCode,
 //                                                                                                     clusterName,
 //                                                                                                     namespaceName,
 //                                                                                                     pageRequest))
@@ -89,7 +89,7 @@
 //  public void testRollback() {
 //
 //    when(releaseRepository.findOne(releaseId)).thenReturn(firstRelease);
-//    when(releaseRepository.findByAppIdAndClusterNameAndNamespaceNameAndIsAbandonedFalseOrderByIdDesc(appId,
+//    when(releaseRepository.findByAppIdAndClusterNameAndNamespaceNameAndIsAbandonedFalseOrderByIdDesc(appCode,
 //                                                                                                     clusterName,
 //                                                                                                     namespaceName,
 //                                                                                                     pageRequest))

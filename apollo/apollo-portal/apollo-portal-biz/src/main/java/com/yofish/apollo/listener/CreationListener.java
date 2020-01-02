@@ -35,8 +35,8 @@
 //      try {
 //        appAPI.createApp(env, appDTO);
 //      } catch (Throwable e) {
-//        logger.error("Create app failed. appId = {}, env = {})", appDTO.getAppId(), env, e);
-//        Tracer.logError(String.format("Create app failed. appId = %s, env = %s", appDTO.getAppId(), env), e);
+//        logger.error("Create app failed. appCode = {}, env = {})", appDTO.getAppId(), env, e);
+//        Tracer.logError(String.format("Create app failed. appCode = %s, env = %s", appDTO.getAppId(), env), e);
 //      }
 //    }
 //  }
@@ -49,8 +49,8 @@
 //      try {
 //        namespaceAPI.createAppNamespace(env, appNamespace);
 //      } catch (Throwable e) {
-//        logger.error("Create appNamespace failed. appId = {}, env = {}", appNamespace.getAppId(), env, e);
-//        Tracer.logError(String.format("Create appNamespace failed. appId = %s, env = %s", appNamespace.getAppId(), env), e);
+//        logger.error("Create appNamespace failed. appCode = {}, env = {}", appNamespace.getAppId(), env, e);
+//        Tracer.logError(String.format("Create appNamespace failed. appCode = %s, env = %s", appNamespace.getAppId(), env), e);
 //      }
 //    }
 //  }

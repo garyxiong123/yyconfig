@@ -4,10 +4,7 @@ import com.yofish.apollo.bo.ItemChangeSets;
 import com.yofish.apollo.component.txtresolver.ConfigChangeContentBuilder;
 import com.yofish.apollo.component.txtresolver.ConfigTextResolver;
 import com.yofish.apollo.domain.*;
-import com.yofish.apollo.dto.CreateItemReq;
-import com.yofish.apollo.dto.ItemReq;
-import com.yofish.apollo.dto.ModifyItemsByTextsReq;
-import com.yofish.apollo.dto.UpdateItemReq;
+import com.yofish.apollo.dto.*;
 import com.yofish.apollo.model.vo.ItemDiffs;
 import com.yofish.apollo.model.vo.NamespaceIdentifier;
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
@@ -110,7 +107,7 @@ public class ItemService {
         //protect. only value,comment,lastModifiedBy can be modified
         toUpdateItem.setComment(updateItemReq.getComment());
         toUpdateItem.setValue(updateItemReq.getValue());
-        itemService.updateItem(appId, Env.fromString(env), clusterName, namespaceName, toUpdateItem);
+        itemService.updateItem(appCode, Env.fromString(env), clusterName, namespaceName, toUpdateItem);
         itemRepository.save(item);*/
        if(updateItemReq.getItemId()!=null&&updateItemReq.getItemId()>0){
            updateItemById(updateItemReq.getItemId(),updateItemReq.getValue(),updateItemReq.getComment());
@@ -248,6 +245,44 @@ public class ItemService {
 
     }
 
+    public ConfigChangeContentBuilder itemSetBuild(ItemChangeSets changeSet){
+        ConfigChangeContentBuilder configChangeContentBuilder = new ConfigChangeContentBuilder();
+
+        if (!CollectionUtils.isEmpty(changeSet.getCreateItems())) {
+            for (Item item : changeSet.getCreateItems()) {
+                configChangeContentBuilder.createItem(item);
+            }
+        }
+
+        if (!CollectionUtils.isEmpty(changeSet.getUpdateItems())) {
+            for (Item item : changeSet.getUpdateItems()) {
+                Item entity = BeanUtils.transform(Item.class, item);
+
+                Item updateItem = findOne(entity.getId());
+                if (updateItem == null) {
+                    throw new NotFoundException(String.format("item not found.(key=%s)", entity.getKey()));
+                }
+                Item beforeUpdateItem = BeanUtils.transform(Item.class, updateItem);
+
+                //protect. only value,comment,lastModifiedBy,lineNum can be modified
+                updateItem.setValue(entity.getValue());
+                updateItem.setComment(entity.getComment());
+                updateItem.setLineNum(entity.getLineNum());
+
+                configChangeContentBuilder.updateItem(beforeUpdateItem, updateItem);
+            }
+
+        }
+
+        if (!CollectionUtils.isEmpty(changeSet.getDeleteItems())) {
+            for (Item item : changeSet.getDeleteItems()) {
+                configChangeContentBuilder.deleteItem(item);
+            }
+
+        }
+       return configChangeContentBuilder;
+    }
+
 
     @Transactional
     public Item delete(long id) {
@@ -344,9 +379,13 @@ public class ItemService {
         return result;
     }
 
+
     private ItemChangeSets parseChangeSets(NamespaceIdentifier namespace, List<Item> sourceItems) {
         ItemChangeSets changeSets = new ItemChangeSets();
         AppEnvClusterNamespace appEnvClusterNamespace= appEnvClusterNamespaceService.findAppEnvClusterNamespace(namespace.getAppEnvClusterId());
+        namespace.setClusterName(appEnvClusterNamespace.getAppEnvCluster().getName());
+        namespace.setEnv(appEnvClusterNamespace.getAppEnvCluster().getEnv());
+        namespace.setNamespaceName(appEnvClusterNamespace.getAppNamespace().getName());
         List<Item> targetItems =findItemsWithoutOrdered(appEnvClusterNamespace);
         //long namespaceId = getNamespaceId(namespace);
         if (CollectionUtils.isEmpty(targetItems)) {

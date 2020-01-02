@@ -29,7 +29,7 @@ public class WatchKeysUtil {
   private AppNamespaceServiceWithCache appNamespaceService;
 
   /**
-   * Assemble watch keys for the given appId, appEnvCluster, appNamespace, dataCenter combination
+   * Assemble watch keys for the given appCode, appEnvCluster, appNamespace, dataCenter combination
    */
   public Set<String> assembleAllWatchKeys(String appId, String clusterName, String env, String namespace,
                                           String dataCenter) {
@@ -38,7 +38,7 @@ public class WatchKeysUtil {
   }
 
   /**
-   * Assemble watch keys for the given appId, appEnvCluster, namespaces, dataCenter combination
+   * Assemble watch keys for the given appCode, appEnvCluster, namespaces, dataCenter combination
    *
    * @return a multimap with appNamespace as the key and watch keys as the value
    */
@@ -69,7 +69,7 @@ public class WatchKeysUtil {
     List<AppNamespace> appNamespaces = appNamespaceService.findPublicNamespacesByNames(namespaces);
 
     for (AppNamespace appNamespace : appNamespaces) {
-      //check whether the appNamespace's appId equals to current one
+      //check whether the appNamespace's appCode equals to current one
       if (Objects.equals(applicationId, appNamespace.getApp().getId())) {
         continue;
       }

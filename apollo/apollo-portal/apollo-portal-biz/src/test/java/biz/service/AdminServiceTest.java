@@ -35,9 +35,9 @@
 //
 //  @Test
 //  public void testCreateNewApp() {
-//    String appId = "someAppId";
+//    String appCode = "someAppId";
 //    App app = new App();
-//    app.setAppId(appId);
+//    app.setAppId(appCode);
 //    app.setName("someAppName");
 //    String owner = "someOwnerName";
 //    app.setOwnerName(owner);
@@ -47,13 +47,13 @@
 //    app.setDataChangeCreatedTime(new Date());
 //
 //    app = adminService.createNewApp(app);
-//    Assert.assertEquals(appId, app.getAppId());
+//    Assert.assertEquals(appCode, app.getAppId());
 //
 //    List<Cluster> clusters = clusterService.findParentClusters(app.getAppId());
 //    Assert.assertEquals(1, clusters.size());
 //    Assert.assertEquals(ConfigConsts.CLUSTER_NAME_DEFAULT, clusters.get(0).getName());
 //
-//    List<Namespace> namespaces = namespaceService.findNamespaces(appId, clusters.get(0).getName());
+//    List<Namespace> namespaces = namespaceService.findNamespaces(appCode, clusters.get(0).getName());
 //    Assert.assertEquals(1, namespaces.size());
 //    Assert.assertEquals(ConfigConsts.NAMESPACE_APPLICATION, namespaces.get(0).getNamespaceName());
 //
@@ -63,9 +63,9 @@
 //
 //  @Test(expected = ServiceException.class)
 //  public void testCreateDuplicateApp() {
-//    String appId = "someAppId";
+//    String appCode = "someAppId";
 //    App app = new App();
-//    app.setAppId(appId);
+//    app.setAppId(appCode);
 //    app.setName("someAppName");
 //    String owner = "someOwnerName";
 //    app.setOwnerName(owner);
@@ -81,9 +81,9 @@
 //
 //  @Test
 //  public void testDeleteApp() {
-//    String appId = "someAppId";
+//    String appCode = "someAppId";
 //    App app = new App();
-//    app.setAppId(appId);
+//    app.setAppId(appCode);
 //    app.setName("someAppName");
 //    String owner = "someOwnerName";
 //    app.setOwnerName(owner);
@@ -94,22 +94,22 @@
 //
 //    app = adminService.createNewApp(app);
 //
-//    Assert.assertEquals(appId, app.getAppId());
+//    Assert.assertEquals(appCode, app.getAppId());
 //
-//    Assert.assertEquals(1, appNamespaceService.findByAppId(appId).size());
+//    Assert.assertEquals(1, appNamespaceService.findByAppId(appCode).size());
 //
-//    Assert.assertEquals(1, clusterService.findClusters(appId).size());
+//    Assert.assertEquals(1, clusterService.findClusters(appCode).size());
 //
-//    Assert.assertEquals(1, namespaceService.findNamespaces(appId, ConfigConsts.CLUSTER_NAME_DEFAULT).size());
+//    Assert.assertEquals(1, namespaceService.findNamespaces(appCode, ConfigConsts.CLUSTER_NAME_DEFAULT).size());
 //
 //    adminService.deleteApp(app, owner);
 //
-//    Assert.assertEquals(0, appNamespaceService.findByAppId(appId).size());
+//    Assert.assertEquals(0, appNamespaceService.findByAppId(appCode).size());
 //
-//    Assert.assertEquals(0, clusterService.findClusters(appId).size());
+//    Assert.assertEquals(0, clusterService.findClusters(appCode).size());
 //
 //    Assert
-//        .assertEquals(0, namespaceService.findByAppIdAndNamespaceName(appId, ConfigConsts.CLUSTER_NAME_DEFAULT).size());
+//        .assertEquals(0, namespaceService.findByAppIdAndNamespaceName(appCode, ConfigConsts.CLUSTER_NAME_DEFAULT).size());
 //  }
 //
 //}

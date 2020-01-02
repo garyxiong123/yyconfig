@@ -29,7 +29,7 @@ public interface ReleaseRepository extends JpaRepository<Release, Long> {
     @Query(value = "select * from tb_task t where t.task_name = ?1", nativeQuery = true)
     int batchDelete(String appId, String clusterName, String namespaceName, String operator);
 
-//    int batchDelete(String appId, String clusterName, String namespaceName, String operator);
+//    int batchDelete(String appCode, String clusterName, String namespaceName, String operator);
 
     List<Release> findReleasesByReleaseKeyIn(Set<String> releaseKeys);
 

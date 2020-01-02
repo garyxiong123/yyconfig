@@ -83,7 +83,7 @@
 //    String someValidConfiguration = "{\"apollo.bar\": \"foo\"}";
 //    String somePublicConfiguration = "{\"apollo.public.bar\": \"foo\"}";
 //
-//    when(someRelease.getAppId()).thenReturn(someAppId);
+//    when(someRelease.getAppCode()).thenReturn(someAppId);
 //    when(someRelease.getClusterName()).thenReturn(someClusterName);
 //    when(someRelease.getConfigurations()).thenReturn(someValidConfiguration);
 //    when(somePublicRelease.getConfigurations()).thenReturn(somePublicConfiguration);
@@ -113,11 +113,11 @@
 //
 //    verify(configService, times(1)).loadConfig(someAppId, someClientIp, someAppId, someClusterName,
 //        defaultNamespaceName, someDataCenter, someNotificationMessages);
-//    assertEquals(someAppId, result.getAppId());
+//    assertEquals(someAppId, result.getAppCode());
 //    assertEquals(someClusterName, result.getCluster());
 //    assertEquals(defaultNamespaceName, result.getNamespaceName());
 //    assertEquals(someServerSideNewReleaseKey, result.getReleaseKey());
-//    verify(instanceConfigAuditUtil, times(1)).audit(someAppId, someClusterName, someDataCenter,
+//    verify(instanceConfigAuditUtil, times(1)).offerHeartBeat(someAppId, someClusterName, someDataCenter,
 //        someClientIp, someAppId, someClusterName, defaultNamespaceName, someServerSideNewReleaseKey);
 //  }
 //
@@ -140,7 +140,7 @@
 //
 //    verify(configService, times(1)).loadConfig(someAppId, someClientIp, someAppId, someClusterName,
 //        defaultNamespaceName, someDataCenter, someNotificationMessages);
-//    assertEquals(someAppId, result.getAppId());
+//    assertEquals(someAppId, result.getAppCode());
 //    assertEquals(someClusterName, result.getCluster());
 //    assertEquals(someNamespaceName, result.getNamespaceName());
 //    assertEquals(someServerSideNewReleaseKey, result.getReleaseKey());
@@ -167,7 +167,7 @@
 //        somePrivateNamespaceName, someDataCenter, someClientSideReleaseKey,
 //        someClientIp, someMessagesAsString, someRequest, someResponse);
 //
-//    assertEquals(someAppId, result.getAppId());
+//    assertEquals(someAppId, result.getAppCode());
 //    assertEquals(someClusterName, result.getCluster());
 //    assertEquals(somePrivateNamespaceName, result.getNamespaceName());
 //    assertEquals(someServerSideNewReleaseKey, result.getReleaseKey());
@@ -230,7 +230,7 @@
 //                someClientSideReleaseKey, someClientIp, someMessagesAsString, someRequest, someResponse);
 //
 //    assertEquals(someServerSideReleaseKey, result.getReleaseKey());
-//    assertEquals(someAppId, result.getAppId());
+//    assertEquals(someAppId, result.getAppCode());
 //    assertEquals(someClusterName, result.getCluster());
 //    assertEquals(someAppOwnNamespaceName, result.getNamespaceName());
 //    assertEquals("foo", result.getConfigurations().get("apollo.bar"));
@@ -253,7 +253,7 @@
 //    when(configService.loadConfig(someAppId, someClientIp, somePublicAppId, someClusterName, somePublicNamespaceName,
 //        someDataCenter, someNotificationMessages)).thenReturn(somePublicRelease);
 //    when(somePublicRelease.getReleaseKey()).thenReturn(someServerSideReleaseKey);
-//    when(somePublicRelease.getAppId()).thenReturn(somePublicAppId);
+//    when(somePublicRelease.getAppCode()).thenReturn(somePublicAppId);
 //    when(somePublicRelease.getClusterName()).thenReturn(somePublicClusterName);
 //    when(somePublicRelease.getNamespaceName()).thenReturn(somePublicNamespaceName);
 //
@@ -262,11 +262,11 @@
 //            someClientSideReleaseKey, someClientIp, someMessagesAsString, someRequest, someResponse);
 //
 //    assertEquals(someServerSideReleaseKey, result.getReleaseKey());
-//    assertEquals(someAppId, result.getAppId());
+//    assertEquals(someAppId, result.getAppCode());
 //    assertEquals(someClusterName, result.getCluster());
 //    assertEquals(somePublicNamespaceName, result.getNamespaceName());
 //    assertEquals("foo", result.getConfigurations().get("apollo.public.bar"));
-//    verify(instanceConfigAuditUtil, times(1)).audit(someAppId, someClusterName, someDataCenter,
+//    verify(instanceConfigAuditUtil, times(1)).offerHeartBeat(someAppId, someClusterName, someDataCenter,
 //        someClientIp, somePublicAppId, somePublicClusterName, somePublicNamespaceName, someServerSideReleaseKey);
 //  }
 //
@@ -296,7 +296,7 @@
 //            someClientSideReleaseKey, someClientIp, someMessagesAsString, someRequest, someResponse);
 //
 //    assertEquals(someServerSideReleaseKey, result.getReleaseKey());
-//    assertEquals(someAppId, result.getAppId());
+//    assertEquals(someAppId, result.getAppCode());
 //    assertEquals(someClusterName, result.getCluster());
 //    assertEquals(someNamespace, result.getNamespaceName());
 //    assertEquals("foo", result.getConfigurations().get("apollo.public.bar"));
@@ -325,7 +325,7 @@
 //    when(configService.loadConfig(someAppId, someClientIp, somePublicAppId, someClusterName, somePublicNamespaceName,
 //        someDataCenter, someNotificationMessages)).thenReturn(somePublicRelease);
 //    when(somePublicRelease.getReleaseKey()).thenReturn(somePublicAppSideReleaseKey);
-//    when(somePublicRelease.getAppId()).thenReturn(somePublicAppId);
+//    when(somePublicRelease.getAppCode()).thenReturn(somePublicAppId);
 //    when(somePublicRelease.getClusterName()).thenReturn(someDataCenter);
 //    when(somePublicRelease.getNamespaceName()).thenReturn(somePublicNamespaceName);
 //
@@ -337,14 +337,14 @@
 //    assertEquals(Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR)
 //            .join(someAppSideReleaseKey, somePublicAppSideReleaseKey),
 //        result.getReleaseKey());
-//    assertEquals(someAppId, result.getAppId());
+//    assertEquals(someAppId, result.getAppCode());
 //    assertEquals(someClusterName, result.getCluster());
 //    assertEquals(somePublicNamespaceName, result.getNamespaceName());
 //    assertEquals("foo-override", result.getConfigurations().get("apollo.public.foo"));
 //    assertEquals("bar", result.getConfigurations().get("apollo.public.bar"));
-//    verify(instanceConfigAuditUtil, times(1)).audit(someAppId, someClusterName, someDataCenter,
+//    verify(instanceConfigAuditUtil, times(1)).offerHeartBeat(someAppId, someClusterName, someDataCenter,
 //        someClientIp, someAppId, someClusterName, somePublicNamespaceName, someAppSideReleaseKey);
-//    verify(instanceConfigAuditUtil, times(1)).audit(someAppId, someClusterName, someDataCenter,
+//    verify(instanceConfigAuditUtil, times(1)).offerHeartBeat(someAppId, someClusterName, someDataCenter,
 //        someClientIp, somePublicAppId, someDataCenter, somePublicNamespaceName, somePublicAppSideReleaseKey);
 //  }
 //
@@ -389,13 +389,13 @@
 //  public void testQueryConfigForNoAppIdPlaceHolder() throws Exception {
 //    String someClientSideReleaseKey = "1";
 //    HttpServletResponse someResponse = mock(HttpServletResponse.class);
-//    String appId = ConfigConsts.NO_APPID_PLACEHOLDER;
+//    String appCode = ConfigConsts.NO_APPID_PLACEHOLDER;
 //
-//    ApolloConfig result = configController.queryConfig(appId, someClusterName,
+//    ApolloConfig result = configController.queryConfig(appCode, someClusterName,
 //        defaultNamespaceName, someDataCenter, someClientSideReleaseKey,
 //        someClientIp, someMessagesAsString, someRequest, someResponse);
 //
-//    verify(configService, never()).loadConfig(appId, someClientIp, someAppId, someClusterName, defaultNamespaceName,
+//    verify(configService, never()).loadConfig(appCode, someClientIp, someAppId, someClusterName, defaultNamespaceName,
 //        someDataCenter, someNotificationMessages);
 //    verify(appNamespaceService, never()).findPublicNamespaceByName(defaultNamespaceName);
 //    assertNull(result);
@@ -410,23 +410,23 @@
 //    String somePublicAppId = "somePublicAppId";
 //    AppNamespace somePublicAppNamespace =
 //        assemblePublicAppNamespace(somePublicAppId, somePublicNamespaceName);
-//    String appId = ConfigConsts.NO_APPID_PLACEHOLDER;
+//    String appCode = ConfigConsts.NO_APPID_PLACEHOLDER;
 //
 //    when(appNamespaceService.findPublicNamespaceByName(somePublicNamespaceName))
 //        .thenReturn(somePublicAppNamespace);
-//    when(configService.loadConfig(appId, someClientIp, somePublicAppId, someClusterName, somePublicNamespaceName,
+//    when(configService.loadConfig(appCode, someClientIp, somePublicAppId, someClusterName, somePublicNamespaceName,
 //        someDataCenter, someNotificationMessages)).thenReturn(somePublicRelease);
 //    when(somePublicRelease.getReleaseKey()).thenReturn(someServerSideReleaseKey);
-//    when(namespaceUtil.normalizeNamespace(appId, somePublicNamespaceName)).thenReturn(somePublicNamespaceName);
+//    when(namespaceUtil.normalizeNamespace(appCode, somePublicNamespaceName)).thenReturn(somePublicNamespaceName);
 //
-//    ApolloConfig result = configController.queryConfig(appId, someClusterName,
+//    ApolloConfig result = configController.queryConfig(appCode, someClusterName,
 //        somePublicNamespaceName, someDataCenter, someClientSideReleaseKey,
 //        someClientIp, someMessagesAsString, someRequest, someResponse);
 //
-//    verify(configService, never()).loadConfig(appId, someClientIp, appId, someClusterName,
+//    verify(configService, never()).loadConfig(appCode, someClientIp, appCode, someClusterName,
 //        somePublicNamespaceName, someDataCenter, someNotificationMessages);
 //    assertEquals(someServerSideReleaseKey, result.getReleaseKey());
-//    assertEquals(appId, result.getAppId());
+//    assertEquals(appCode, result.getAppCode());
 //    assertEquals(someClusterName, result.getCluster());
 //    assertEquals(somePublicNamespaceName, result.getNamespaceName());
 //    assertEquals("foo", result.getConfigurations().get("apollo.public.bar"));
@@ -456,13 +456,13 @@
 //    assertNull(configController.transformMessages(someInvalidMessages));
 //  }
 //
-//  private AppNamespace assemblePublicAppNamespace(String appId, String appNamespace) {
-//    return assembleAppNamespace(appId, appNamespace, true);
+//  private AppNamespace assemblePublicAppNamespace(String appCode, String appNamespace) {
+//    return assembleAppNamespace(appCode, appNamespace, true);
 //  }
 //
-//  private AppNamespace assembleAppNamespace(String appId, String appNamespace, boolean isPublic) {
+//  private AppNamespace assembleAppNamespace(String appCode, String appNamespace, boolean isPublic) {
 //    AppNamespace appNamespace = new AppNamespace();
-//    appNamespace.setAppId(appId);
+//    appNamespace.setAppCode(appCode);
 //    appNamespace.setName(appNamespace);
 //    appNamespace.setPublic(isPublic);
 //    return appNamespace;

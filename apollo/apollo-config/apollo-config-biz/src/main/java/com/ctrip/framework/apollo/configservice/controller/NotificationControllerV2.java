@@ -127,7 +127,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
         deferredResultWrapper.setResult(newServerNotifications);
     }
 
-    private void doAsyncCallbackMethodAndWactchedKeyRegistry(@RequestParam(value = "appId") String appId, @RequestParam(value = "cluster") String cluster, @RequestParam(value = "dataCenter", required = false) String dataCenter, DeferredResultWrapper deferredResultWrapper, Set<String> namespaces, Set<String> clientWatchedKeys) {
+    private void doAsyncCallbackMethodAndWactchedKeyRegistry(@RequestParam(value = "appCode") String appId, @RequestParam(value = "cluster") String cluster, @RequestParam(value = "dataCenter", required = false) String dataCenter, DeferredResultWrapper deferredResultWrapper, Set<String> namespaces, Set<String> clientWatchedKeys) {
         deferredResultWrapper.onTimeout(() -> logWatchedKeys(clientWatchedKeys, "Apollo.LongPoll.TimeOutKeys"));
 
         deferredResultWrapper.onCompletion(() -> {
@@ -140,7 +140,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
 
         registerWatchedKeys(deferredResultWrapper, clientWatchedKeys);
 
-        logger.debug("Listening {} from appId: {}, cluster: {}, appNamespace: {}, datacenter: {}", clientWatchedKeys, appId, cluster, namespaces, dataCenter);
+        logger.debug("Listening {} from appCode: {}, cluster: {}, appNamespace: {}, datacenter: {}", clientWatchedKeys, appId, cluster, namespaces, dataCenter);
     }
 
     @Override
@@ -334,7 +334,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
                     return null;
                 }
                 List<String> keys = STRING_SPLITTER.splitToList(releaseMessage);
-                //message should be appId+appEnvCluster+appNamespace
+                //message should be appCode+appEnvCluster+appNamespace
                 if (keys.size() != 4) {
                     logger.error("message format invalid - {}", releaseMessage);
                     return null;

@@ -76,9 +76,9 @@ public class AppPreAuthorizeHandler {
         log.info("进行项目权限验证：[{}]", request.getRequestURL());
 
         //项目的ID或Code标识
-        Long appId = ((Map<String, Long>) request.getAttribute(View.PATH_VARIABLES)).get("appId");
+        Long appId = ((Map<String, Long>) request.getAttribute(View.PATH_VARIABLES)).get("appCode");
         String appCode = ((Map<String, String>) request.getAttribute(View.PATH_VARIABLES)).get("appCode");
-        YyAssert.paramCheck(isEmpty(appId) && isEmpty(appCode), "pathVariables 没有 appId 或 appCode！");
+        YyAssert.paramCheck(isEmpty(appId) && isEmpty(appCode), "pathVariables 没有 appCode 或 appCode！");
 
         //项目拥有者放行
         boolean isAppOwner = isEmpty(appId) ? permissionValidator.isAppOwner(appCode) : permissionValidator.isAppOwner(appId);

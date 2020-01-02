@@ -236,23 +236,23 @@
 //    assertEquals(Lists.newArrayList(someInstanceConfig, anotherInstanceConfig), instanceConfigs);
 //  }
 //
-//  private InstanceConfig prepareInstanceConfigForInstance(long instanceId, String configAppId,
+//  private InstanceConfig prepareInstanceConfigForInstance(long instanceId, String configAppCode,
 //                                                          String configClusterName, String
-//                                                              configNamespace, String releaseKey,
+//                                                              namespaceName, String releaseKey,
 //                                                          Date lastModifiedTime) {
 //
-//    InstanceConfig someConfig = assembleInstanceConfig(instanceId, configAppId, configClusterName,
-//        configNamespace, releaseKey);
+//    InstanceConfig someConfig = assembleInstanceConfig(instanceId, configAppCode, configClusterName,
+//        namespaceName, releaseKey);
 //    someConfig.setDataChangeCreatedTime(lastModifiedTime);
 //    someConfig.setDataChangeLastModifiedTime(lastModifiedTime);
 //
 //    return instanceService.createInstanceConfig(someConfig);
 //  }
 //
-//  private Instance assembleInstance(String appId, String clusterName, String dataCenter, String
+//  private Instance assembleInstance(String appCode, String clusterName, String dataCenter, String
 //      ip) {
 //    Instance instance = new Instance();
-//    instance.setAppId(appId);
+//    instance.setAppId(appCode);
 //    instance.setIp(ip);
 //    instance.setClusterName(clusterName);
 //    instance.setDataCenter(dataCenter);
@@ -260,11 +260,11 @@
 //    return instance;
 //  }
 //
-//  private InstanceConfig assembleInstanceConfig(long instanceId, String configAppId, String
+//  private InstanceConfig assembleInstanceConfig(long instanceId, String configAppCode, String
 //      configClusterName, String configNamespaceName, String releaseKey) {
 //    InstanceConfig instanceConfig = new InstanceConfig();
 //    instanceConfig.setInstanceId(instanceId);
-//    instanceConfig.setConfigAppId(configAppId);
+//    instanceConfig.setConfigAppId(configAppCode);
 //    instanceConfig.setConfigClusterName(configClusterName);
 //    instanceConfig.setConfigNamespaceName(configNamespaceName);
 //    instanceConfig.setReleaseKey(releaseKey);

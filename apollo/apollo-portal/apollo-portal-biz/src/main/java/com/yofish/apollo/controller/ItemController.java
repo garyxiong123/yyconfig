@@ -2,10 +2,7 @@ package com.yofish.apollo.controller;
 
 
 import com.yofish.apollo.domain.Item;
-import com.yofish.apollo.dto.CreateItemReq;
-import com.yofish.apollo.dto.ItemReq;
-import com.yofish.apollo.dto.ModifyItemsByTextsReq;
-import com.yofish.apollo.dto.UpdateItemReq;
+import com.yofish.apollo.dto.*;
 import com.yofish.apollo.model.NamespaceTextModel;
 import com.yofish.apollo.model.model.NamespaceSyncModel;
 import com.yofish.apollo.model.vo.ItemDiffs;
@@ -25,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static common.utils.RequestPrecondition.checkModel;
@@ -86,18 +84,18 @@ public class ItemController {
    return Result.ok();
   }
   @PostMapping(value = "/diff")
-  public Result<List<ItemDiffs>> diff(@RequestBody NamespaceSyncModel model) {
-
+  public Result<List<ItemChangeSetDto>> diff(@RequestBody NamespaceSyncModel model) {
+    List<ItemChangeSetDto> itemChangeSetDtos=new ArrayList<>();
     List<ItemDiffs> itemDiffs = itemService.compare(model.getSyncToNamespaces(), model.getSyncItems());
-
-    for (ItemDiffs diff : itemDiffs) {
-      NamespaceIdentifier namespace = diff.getNamespace();
-      if (namespace == null) {
-        continue;
-      }
+    for(ItemDiffs item:itemDiffs){
+      ItemChangeSetDto dto=new ItemChangeSetDto();
+      dto.setNamespace(item.getNamespace());
+      dto.setDiffs(itemService.itemSetBuild(item.getDiffs()));
+      dto.setExtInfo(item.getExtInfo());
+      itemChangeSetDtos.add(dto);
     }
 
-    return Result.ok(itemDiffs);
+    return Result.ok(itemChangeSetDtos);
   }
   @PostMapping(value = "syntax-check")
   public Result syntaxCheckText(@RequestBody NamespaceTextModel model) {

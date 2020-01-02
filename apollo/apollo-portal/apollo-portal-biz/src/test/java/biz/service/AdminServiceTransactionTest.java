@@ -56,9 +56,9 @@
 //  @Test
 //  @Rollback
 //  public void modifyDatabaseWithinTransaction() {
-//    String appId = "someAppId";
+//    String appCode = "someAppId";
 //    App app = new App();
-//    app.setAppId(appId);
+//    app.setAppId(appCode);
 //    app.setName("someAppName");
 //    String owner = "someOwnerName";
 //    app.setOwnerName(owner);

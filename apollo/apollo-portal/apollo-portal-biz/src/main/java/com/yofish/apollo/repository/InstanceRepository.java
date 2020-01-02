@@ -1,5 +1,6 @@
 package com.yofish.apollo.repository;
 
+import com.yofish.apollo.domain.AppEnvCluster;
 import com.yofish.apollo.domain.AppEnvClusterNamespace;
 import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.domain.Instance;
@@ -17,13 +18,18 @@ import java.util.List;
 @Component
 public interface InstanceRepository extends JpaRepository<Instance, Long> {
 
-//    Instance findByAppIdAndClusterNameAndDataCenterAndIp(String appId, String clusterName, String dataCenter, String ip);
+//    Instance findByAppIdAndClusterNameAndDataCenterAndIp(String appCode, String clusterName, String dataCenter, String ip);
 
 //    Instance findByAppNamespaceAndDataCenterAndIp(AppNamespace appNamespace, String dataCenter, String ip);
 
-    List<Instance> findAllByAppEnvClusterNamespace(AppEnvClusterNamespace appEnvClusterNamespace);
+    List<Instance> findAllByAppEnvCluster(AppEnvCluster appEnvCluster);
 
     List<Instance> findInstancesByIdIn(Iterable<Long> ids);
+
+
+//    Instance findByAppCodeAndClusterNameAndDataCenterAndIp(String appCode, String clusterName, String dataCenter, String ip);
+
+    Instance findByAppEnvClusterAndDataCenterAndIp(AppEnvCluster appEnvCluster, String dataCenter, String ip);
 
 
 }

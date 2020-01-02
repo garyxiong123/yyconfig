@@ -20,4 +20,5 @@ public class ItemDTO extends BaseDTO {
     private String comment;
 
     private Integer lineNum;
+
 }

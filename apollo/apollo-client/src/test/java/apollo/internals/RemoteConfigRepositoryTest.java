@@ -231,7 +231,7 @@ public class RemoteConfigRepositoryTest {
   }
 
   private ApolloConfig assembleApolloConfig(Map<String, String> configurations) {
-    String someAppId = "appId";
+    String someAppId = "appCode";
     String someClusterName = "appEnvCluster";
     String someReleaseKey = "1";
     ApolloConfig apolloConfig =
