@@ -15,7 +15,6 @@ import common.dto.PageDTO;
 import common.utils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,10 +59,6 @@ public class InstanceService {
 
     /**
      * 获取【使用最新配置】的 实例列表：
-     *
-     * @param releaseId4Lastest
-     * @param pageable
-     * @return
      */
     public PageDTO<InstanceDTO> getByRelease(long releaseId4Lastest, Pageable pageable) {
 
@@ -73,11 +68,11 @@ public class InstanceService {
 
         List<InstanceDTO> instanceDTOs = Collections.emptyList();
 
-        PageDTO<InstanceDTO> instanceDTOPageDTO = transformToDtos(pageable, instanceConfigs4Lastest, instanceDTOs);
+        PageDTO<InstanceDTO> instanceDTOPageDTO = transformToDTOs(pageable, instanceConfigs4Lastest, instanceDTOs);
         return instanceDTOPageDTO;
     }
 
-    private PageDTO<InstanceDTO> transformToDtos(Pageable pageable, Page<InstanceConfig> instanceConfigs4Lastest, List<InstanceDTO> instanceDTOs) {
+    private PageDTO<InstanceDTO> transformToDTOs(Pageable pageable, Page<InstanceConfig> instanceConfigs4Lastest, List<InstanceDTO> instanceDTOs) {
         if (instanceConfigs4Lastest.hasContent()) {
             return null;
         }
