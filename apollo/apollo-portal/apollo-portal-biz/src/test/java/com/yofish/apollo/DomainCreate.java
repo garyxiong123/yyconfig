@@ -57,7 +57,7 @@ public class DomainCreate {
         NamespaceIdentifier namespaceIdentifier1=new NamespaceIdentifier();
         NamespaceIdentifier namespaceIdentifier2=new NamespaceIdentifier();
         NamespaceIdentifier namespaceIdentifier3=new NamespaceIdentifier();
-        namespaceIdentifier1.setAppEnvClusterId(17L);
+        namespaceIdentifier1.setAppEnvClusterId(36L);
         namespaceIdentifier2.setAppEnvClusterId(18L);
         namespaceIdentifier3.setAppEnvClusterId(16L);
         nas.add(namespaceIdentifier1);
@@ -69,7 +69,7 @@ public class DomainCreate {
     public static List<Item> createItemList(){
         List<Item> items=new ArrayList<>();
         Item item1=Item.builder().appEnvClusterNamespace(DomainCreate.createNamespace4Main())
-                .key("password").value("123456").build();
+                .key("23").value("333444").build();
         Item item2=Item.builder().appEnvClusterNamespace(DomainCreate.createNamespace4Main())
                 .key("message.a.value").value("h12313").build();
         items.add(item1);

@@ -25,6 +25,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.HttpClientErrorException;
 
+import javax.persistence.EntityManager;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -62,6 +63,8 @@ public class ItemService {
     private ConfigTextResolver propertyResolver;
     @Autowired
     private CommitService commitService;
+    @Autowired
+    private EntityManager entityManager;
 
 
     public void createItem(CreateItemReq createItemReq) {
@@ -246,6 +249,7 @@ public class ItemService {
     }
 
     public ConfigChangeContentBuilder itemSetBuild(ItemChangeSets changeSet){
+        entityManager.clear();
         ConfigChangeContentBuilder configChangeContentBuilder = new ConfigChangeContentBuilder();
 
         if (!CollectionUtils.isEmpty(changeSet.getCreateItems())) {
@@ -321,7 +325,7 @@ public class ItemService {
     }
 
     public Item findOne(Long id){
-        return itemRepository.findById(id).get();
+        return itemRepository.findFirstById(id);
     }
     public Item findOne(AppEnvClusterNamespace appEnvClusterNamespace,String key){
         if (appEnvClusterNamespace == null) {

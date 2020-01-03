@@ -58,7 +58,7 @@ public class ReleaseService {
     }
 
     public Release findOne(long releaseId) {
-        return releaseRepository.findById(releaseId).get();
+        return releaseRepository.findById(releaseId).orElseGet(()->{throw new BizException(String.format("release not found for %s", releaseId));});
     }
 
     public List<Release> findByReleaseIds(Set<Long> releaseIds) {

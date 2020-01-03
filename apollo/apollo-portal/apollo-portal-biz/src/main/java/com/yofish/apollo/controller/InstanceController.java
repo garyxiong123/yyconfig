@@ -1,15 +1,19 @@
 package com.yofish.apollo.controller;
 
 import com.google.common.base.Splitter;
+import com.yofish.apollo.domain.Instance;
 import com.yofish.apollo.dto.InstanceDTO;
 import com.yofish.apollo.dto.InstanceNamespaceReq;
 import com.yofish.apollo.service.InstanceService;
+import com.yofish.apollo.service.ReleaseService;
 import com.yofish.apollo.util.PageQuery;
 import com.youyu.common.api.Result;
 
 import com.youyu.common.exception.BizException;
 import common.dto.PageDTO;
 import framework.apollo.core.enums.Env;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,51 +32,50 @@ public class InstanceController {
     @Autowired
     private InstanceService instanceService;
 
-    private static final Splitter RELEASES_SPLITTER = Splitter.on(",").omitEmptyStrings()
-            .trimResults();
+    private static final Splitter RELEASES_SPLITTER = Splitter.on(",").omitEmptyStrings().trimResults();
 
-//    @Autowired
-//    private InstanceService instanceService;
-//    @Autowired
-//    private ReleaseService releaeService;
+    @Autowired
+    private ReleaseService releaeService;
 
+
+    @ApiOperation("使用最新配置实例")
     @RequestMapping(value = "by-release", method = RequestMethod.GET)
     public Result<PageDTO<InstanceDTO>> getByRelease(@RequestBody PageQuery<Long> releasePage) {
         Pageable pageable = PageRequest.of(releasePage.getPageNo(), releasePage.getPageSize());
-        PageDTO<InstanceDTO> pa=  instanceService.getByRelease(releasePage.getData(),pageable);
-        return Result.ok(pa);
+        //最新的releaseId
+        Long releaseId4Lastest = releasePage.getData();
+        PageDTO<InstanceDTO> instances = instanceService.getByRelease(releaseId4Lastest, pageable);
+        return Result.ok(instances);
     }
 
-/*
+
+    @ApiOperation("所有实例")
     @RequestMapping(value = "by-namespace", method = RequestMethod.GET)
-    public Page<InstanceDTO> getByNamespace(PageQuery<InstanceNamespaceReq> instanceNamespaceReqPageQuery) {
-        Pageable pageable = PageRequest.of(instanceNamespaceReqPageQuery.getPageNo(), instanceNamespaceReqPageQuery.getPageSize());
-      return instanceService.findInstancesByNamespace(instanceNamespaceReqPageQuery.getData().getReleaseId(),pageable);
+    public Page<InstanceDTO> getByNamespace(PageQuery<InstanceNamespaceReq> instancePageQuery) {
+        Pageable pageable = PageRequest.of(instancePageQuery.getPageNo(), instancePageQuery.getPageSize());
+        return instanceService.findInstancesByNamespace(instancePageQuery.getData().getNamespaceId(), pageable);
 
-    }*/
-
-    @RequestMapping(value = "/envs/{env}/instances/by-namespace/count", method = RequestMethod.GET)
-    public ResponseEntity<Number> getInstanceCountByNamespace(@PathVariable String env, @RequestParam String appId,
-                                                              @RequestParam String clusterName,
-                                                              @RequestParam String namespaceName) {
-
-//        int count = instanceService.getInstanceCountByNamepsace(appCode, Env.valueOf(env), clusterName, namespaceName);
-//        return ResponseEntity.ok(new Number(count));
-        return null;
     }
 
-    @RequestMapping(value = "/by-namespace-and-releases-not-in", method = RequestMethod.GET)
-    public List<InstanceDTO> getByReleasesNotIn(@RequestParam Long appEnvClusterNamespaceId,
-                                             @RequestParam String releaseIds) {
+    @ApiOperation("所有实例数")
+    @RequestMapping(value = "/namespaceId/{namespaceId}/count", method = RequestMethod.GET)
+    public Result<Number> getInstanceCountByNamespace(@PathVariable Long namespaceId) {
 
-        Set<Long> releaseIdSet = RELEASES_SPLITTER.splitToList(releaseIds).stream().map(Long::parseLong)
-                .collect(Collectors.toSet());
+        int count = instanceService.getInstanceCountByNamepsace(namespaceId);
+        return Result.ok(count);
+    }
+
+    @ApiOperation("使用的非最新配置的实例")
+    @RequestMapping(value = "/namespaceId/{namespaceId}/releaseIds/{releaseIds}/by-namespace-and-releases-not-in", method = RequestMethod.GET)
+    public List<InstanceDTO> getByReleasesNotIn(@RequestParam Long namespaceId, @RequestParam String releaseIds) {
+
+        Set<Long> releaseIdSet = RELEASES_SPLITTER.splitToList(releaseIds).stream().map(Long::parseLong).collect(Collectors.toSet());
 
         if (CollectionUtils.isEmpty(releaseIdSet)) {
             throw new BizException("release ids can not be empty");
         }
 
-        return instanceService.getByReleasesNotIn(appEnvClusterNamespaceId, releaseIdSet);
+        return instanceService.getByReleasesNotIn(namespaceId, releaseIdSet);
     }
 
 

@@ -24,6 +24,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.springframework.util.StringUtils.isEmpty;
+
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
@@ -55,50 +57,54 @@ public class InstanceService {
         return instanceRepository.save(instance);
     }
 
+    /**
+     * 获取【使用最新配置】的 实例列表：
+     */
+    public PageDTO<InstanceDTO> getByRelease(long releaseId4Lastest, Pageable pageable) {
 
+        Release release4Lastest = releaseService.findOne(releaseId4Lastest);
 
-    public PageDTO<InstanceDTO> getByRelease(long releaseId, Pageable pageable) {
-        Release release = releaseService.findOne(releaseId);
-
-        if (release == null) {
-            throw new BizException(String.format("release not found for %s", releaseId));
-        }
-        Page<InstanceConfig> instanceConfigsPage = instanceConfigRepository.findByReleaseKeyAndUpdateTimeAfter(release.getReleaseKey(), getValidInstanceConfigDate(), pageable);
+        Page<InstanceConfig> instanceConfigs4Lastest = instanceConfigRepository.findByReleaseKeyAndUpdateTimeAfter(release4Lastest.getReleaseKey(), getValidInstanceConfigDate(), pageable);
 
         List<InstanceDTO> instanceDTOs = Collections.emptyList();
 
-        if (instanceConfigsPage.hasContent()) {
-            Multimap<Long, InstanceConfig> instanceConfigMap = HashMultimap.create();
-            Set<String> otherReleaseKeys = Sets.newHashSet();
+        PageDTO<InstanceDTO> instanceDTOPageDTO = transformToDTOs(pageable, instanceConfigs4Lastest, instanceDTOs);
+        return instanceDTOPageDTO;
+    }
 
-            for (InstanceConfig instanceConfig : instanceConfigsPage.getContent()) {
-                instanceConfigMap.put(instanceConfig.getInstance().getId(), instanceConfig);
-                otherReleaseKeys.add(instanceConfig.getReleaseKey());
-            }
+    private PageDTO<InstanceDTO> transformToDTOs(Pageable pageable, Page<InstanceConfig> instanceConfigs4Lastest, List<InstanceDTO> instanceDTOs) {
+        if (instanceConfigs4Lastest.hasContent()) {
+            return null;
+        }
+        Multimap<Long, InstanceConfig> instanceConfigMap = HashMultimap.create();
+        Set<String> otherReleaseKeys = Sets.newHashSet();
 
-            Set<Long> instanceIds = instanceConfigMap.keySet();
-
-            List<Instance> instances = findInstancesByIds(instanceIds);
-
-            if (!CollectionUtils.isEmpty(instances)) {
-                instanceDTOs = BeanUtils.batchTransform(InstanceDTO.class, instances);
-            }
-
-            for (InstanceDTO instanceDTO : instanceDTOs) {
-                Collection<InstanceConfig> configs = instanceConfigMap.get(instanceDTO.getId());
-                List<InstanceConfigDTO> configDTOs = configs.stream().map(instanceConfig -> {
-                    InstanceConfigDTO instanceConfigDTO = new InstanceConfigDTO();
-                    //to save some space
-                    instanceConfigDTO.setRelease(null);
-                    instanceConfigDTO.setReleaseDeliveryTime(instanceConfig.getReleaseDeliveryTime());
-                    instanceConfigDTO.setDataChangeLastModifiedTime(instanceConfig.getUpdateTime());
-                    return instanceConfigDTO;
-                }).collect(Collectors.toList());
-                instanceDTO.setConfigs(configDTOs);
-            }
+        for (InstanceConfig instanceConfig : instanceConfigs4Lastest.getContent()) {
+            instanceConfigMap.put(instanceConfig.getInstance().getId(), instanceConfig);
+            otherReleaseKeys.add(instanceConfig.getReleaseKey());
         }
 
-        return new PageDTO<>(instanceDTOs, pageable, instanceConfigsPage.getTotalElements());
+        Set<Long> instanceIds = instanceConfigMap.keySet();
+
+        List<Instance> instances = findInstancesByIds(instanceIds);
+
+        if (!isEmpty(instances)) {
+            instanceDTOs = BeanUtils.batchTransform(InstanceDTO.class, instances);
+        }
+
+        for (InstanceDTO instanceDTO : instanceDTOs) {
+            Collection<InstanceConfig> configs = instanceConfigMap.get(instanceDTO.getId());
+            List<InstanceConfigDTO> configDTOs = configs.stream().map(instanceConfig -> {
+                InstanceConfigDTO instanceConfigDTO = new InstanceConfigDTO();
+                //to save some space
+                instanceConfigDTO.setRelease(null);
+                instanceConfigDTO.setReleaseDeliveryTime(instanceConfig.getReleaseDeliveryTime());
+                instanceConfigDTO.setDataChangeLastModifiedTime(instanceConfig.getUpdateTime());
+                return instanceConfigDTO;
+            }).collect(Collectors.toList());
+            instanceDTO.setConfigs(configDTOs);
+        }
+        return new PageDTO<>(instanceDTOs, pageable, instanceConfigs4Lastest.getTotalElements());
     }
 
 
@@ -107,20 +113,16 @@ public class InstanceService {
         return instanceConfigRepository.findByInstanceIdAndAppCodeAndNamespaceNameAndEnv(instanceId, appCode, namespaceName, env);
     }
 
-    public List<InstanceDTO> getByReleasesNotIn(Long appEnvClusterNamspace, Set<Long> releaseIdSet) {
+    public List<InstanceDTO> getByReleasesNotIn(Long namspaceId, Set<Long> releaseIdSet) {
 
         List<Release> releases = releaseService.findByReleaseIds(releaseIdSet);
-
         if (CollectionUtils.isEmpty(releases)) {
             throw new BizException(String.format("releases not found for %s", releaseIdSet.toString()));
         }
 
-        Set<String> releaseKeys = releases.stream().map(Release::getReleaseKey).collect(Collectors
-                .toSet());
+        Set<String> releaseKeys = releases.stream().map(Release::getReleaseKey).collect(Collectors.toSet());
 
-        List<InstanceConfig> instanceConfigs =
-                findInstanceConfigsByNamespaceWithReleaseKeysNotIn(appEnvClusterNamspace,
-                        releaseKeys);
+        List<InstanceConfig> instanceConfigs = findInstanceConfigsByNamespaceWithReleaseKeysNotIn(namspaceId, releaseKeys);
 
         Multimap<Long, InstanceConfig> instanceConfigMap = HashMultimap.create();
         Set<String> otherReleaseKeys = Sets.newHashSet();
@@ -154,8 +156,7 @@ public class InstanceService {
                 InstanceConfigDTO instanceConfigDTO = new InstanceConfigDTO();
                 instanceConfigDTO.setRelease(releaseMap.get(instanceConfig.getReleaseKey()));
                 instanceConfigDTO.setReleaseDeliveryTime(instanceConfig.getReleaseDeliveryTime());
-                instanceConfigDTO.setDataChangeLastModifiedTime(instanceConfig
-                        .getUpdateTime());
+                instanceConfigDTO.setDataChangeLastModifiedTime(instanceConfig.getUpdateTime());
                 return instanceConfigDTO;
             }).collect(Collectors.toList());
             instanceDTO.setConfigs(configDTOs);
@@ -220,6 +221,20 @@ public class InstanceService {
         existedInstanceConfig.setReleaseDeliveryTime(instanceConfig.getReleaseDeliveryTime());
 
         return instanceConfigRepository.save(existedInstanceConfig);
+    }
+
+    public int getInstanceCountByNamepsace(Long namespaceId, Pageable pageable) {
+//        Page<Instance> instances = findInstancesByNamespace(namespaceId, pageable);
+        return 0;
+    }
+
+    public Page<InstanceDTO> findInstancesByNamespace(Long namespaceId, Pageable pageable) {
+        return null;
+    }
+
+
+    public int getInstanceCountByNamepsace(Long namespaceId) {
+        return 0;
     }
 
 //    @Transactional

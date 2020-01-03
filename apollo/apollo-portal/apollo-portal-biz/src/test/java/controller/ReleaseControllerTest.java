@@ -1,34 +1,29 @@
 package controller;
 
-import com.google.common.base.Joiner;
 import com.google.gson.Gson;
-//import com.yofish.apollo.controller.ReleaseController;
 import com.yofish.apollo.DomainCreate;
 import com.yofish.apollo.component.PermissionValidator;
 import com.yofish.apollo.controller.ItemController;
 import com.yofish.apollo.controller.ReleaseController;
-import com.yofish.apollo.domain.*;
+import com.yofish.apollo.domain.AppEnvClusterNamespace4Branch;
+import com.yofish.apollo.domain.AppEnvClusterNamespace4Main;
+import com.yofish.apollo.domain.Release;
+import com.yofish.apollo.domain.ReleaseHistory;
 import com.yofish.apollo.dto.CreateItemReq;
 import com.yofish.apollo.dto.ReleaseDTO;
 import com.yofish.apollo.dto.ReleaseHistoryDTO;
-import com.yofish.apollo.message.Topics;
 import com.yofish.apollo.model.bo.ReleaseBO;
-import com.yofish.apollo.model.bo.ReleaseHistoryBO;
 import com.yofish.apollo.model.model.NamespaceReleaseModel;
 import com.yofish.apollo.model.vo.ReleaseCompareResult;
 import com.yofish.apollo.repository.*;
 import com.yofish.apollo.service.CommitService;
 import com.yofish.apollo.service.ReleaseHistoryService;
-import com.yofish.apollo.service.ReleaseService;
 import com.youyu.common.api.Result;
 import com.youyu.common.exception.BizException;
 import common.dto.AppDTO;
 import common.dto.ClusterDTO;
 import common.dto.ItemDTO;
 import common.dto.NamespaceDTO;
-import framework.apollo.core.ConfigConsts;
-import framework.apollo.core.enums.Env;
-import net.bytebuddy.asm.Advice;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -39,10 +34,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
-import org.springframework.orm.jpa.EntityManagerFactoryUtils;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -53,9 +44,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.yofish.apollo.DomainCreate.createAppEnvClusterNamespace4Main;
-import static com.yofish.apollo.DomainCreate.createNamespace4Main;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 
 public class ReleaseControllerTest extends AbstractControllerTest {
 

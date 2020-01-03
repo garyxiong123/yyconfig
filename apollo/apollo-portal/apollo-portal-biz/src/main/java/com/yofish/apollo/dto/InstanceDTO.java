@@ -1,79 +1,25 @@
 package com.yofish.apollo.dto;
 
+import lombok.Data;
+
 import java.util.Date;
 import java.util.List;
 
-/**
- * @author Jason Song(song_s@ctrip.com)
- */
+@Data
 public class InstanceDTO {
-  private long id;
 
-  private String appId;
+    private Long id;
 
-  private String clusterName;
+    private String appId;
 
-  private String dataCenter;
+    private String clusterName;
 
-  private String ip;
+    private String dataCenter;
 
-  private List<InstanceConfigDTO> configs;
+    private String ip;
 
-  private Date dataChangeCreatedTime;
+    private List<InstanceConfigDTO> configs;
 
-  public long getId() {
-    return id;
-  }
+    private Date dataChangeCreatedTime;
 
-  public void setId(long id) {
-    this.id = id;
-  }
-
-  public String getAppId() {
-    return appId;
-  }
-
-  public void setAppId(String appId) {
-    this.appId = appId;
-  }
-
-  public String getClusterName() {
-    return clusterName;
-  }
-
-  public void setClusterName(String clusterName) {
-    this.clusterName = clusterName;
-  }
-
-  public String getDataCenter() {
-    return dataCenter;
-  }
-
-  public void setDataCenter(String dataCenter) {
-    this.dataCenter = dataCenter;
-  }
-
-  public String getIp() {
-    return ip;
-  }
-
-  public void setIp(String ip) {
-    this.ip = ip;
-  }
-
-  public List<InstanceConfigDTO> getConfigs() {
-    return configs;
-  }
-
-  public void setConfigs(List<InstanceConfigDTO> configs) {
-    this.configs = configs;
-  }
-
-  public Date getDataChangeCreatedTime() {
-    return dataChangeCreatedTime;
-  }
-
-  public void setDataChangeCreatedTime(Date dataChangeCreatedTime) {
-    this.dataChangeCreatedTime = dataChangeCreatedTime;
-  }
 }

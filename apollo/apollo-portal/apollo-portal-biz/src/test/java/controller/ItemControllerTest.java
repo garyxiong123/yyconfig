@@ -37,9 +37,9 @@ public class ItemControllerTest extends AbstractControllerTest{
     @Test
     public void createItem() {
        CreateItemReq req=new CreateItemReq();
-       req.setAppEnvClusterNamespaceIds(new ArrayList<>(Arrays.asList(18L)));
-       req.setKey("mmm.aa1");
-       req.setValue("jdbc:mysql://192.168.1.95:3306/ops-upms?useUnicode=true&amp;characterEncoding=UTF-8");
+       req.setAppEnvClusterNamespaceIds(new ArrayList<>(Arrays.asList(38L)));
+       req.setKey("23");
+       req.setValue("gagag");
        req.setComment("数据库连接地址2");
        itemController.createItem(req);
     }
