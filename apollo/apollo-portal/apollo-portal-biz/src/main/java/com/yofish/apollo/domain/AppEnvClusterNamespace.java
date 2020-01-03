@@ -1,5 +1,6 @@
 package com.yofish.apollo.domain;
 
+import com.yofish.apollo.repository.InstanceConfigRepository;
 import com.yofish.apollo.repository.ReleaseRepository;
 import com.yofish.apollo.service.AppNamespaceService;
 import com.yofish.apollo.service.ItemService;
@@ -53,6 +54,11 @@ public class AppEnvClusterNamespace extends BaseEntity {
     public List<Item> getItems() {
         List<Item> items = getBeanByClass(ItemService.class).findItemsWithoutOrdered(this.getId());
         return items;
+    }
+
+    public Page<InstanceConfig> getInstanceConfigs(Pageable pageable) {
+        Page<InstanceConfig> InstanceConfigPage = getBeanByClass(InstanceConfigRepository.class).findByNamespaceId(this.getId(), pageable);
+        return InstanceConfigPage;
     }
 
     @Getter

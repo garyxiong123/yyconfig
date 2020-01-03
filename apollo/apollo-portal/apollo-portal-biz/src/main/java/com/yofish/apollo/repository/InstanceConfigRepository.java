@@ -32,4 +32,8 @@ Page<Instance> findbyNamespace(Long appEnvClusterNamespaceId,String releaseKey);
     List<InstanceConfig> findAllByInstanceAndUpdateTimeAfterAndReleaseKeyNotIn(Iterable<Instance> instance, LocalDateTime dateTime,Set<String> releaseKey);
 
     InstanceConfig findByInstanceIdAndAppCodeAndNamespaceNameAndEnv(long instanceId, String appCode, String namespaceName, String env);
+
+    Page<InstanceConfig> findByNamespaceId(Long namespaceId, Pageable pageable);
+
+
 }

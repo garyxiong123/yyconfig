@@ -32,5 +32,10 @@ public class InstanceConfig extends BaseEntity {
 
     private String namespaceName;
 
+    @ManyToOne
+    private AppEnvClusterNamespace namespace;
+
+
+
 
 }

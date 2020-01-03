@@ -10,6 +10,7 @@ import com.yofish.apollo.util.PageQuery;
 import com.youyu.common.api.Result;
 
 import com.youyu.common.exception.BizException;
+import com.youyu.common.utils.YyAssert;
 import common.dto.PageDTO;
 import framework.apollo.core.enums.Env;
 import io.swagger.annotations.ApiModel;
@@ -39,7 +40,7 @@ public class InstanceController {
 
 
     @ApiOperation("使用最新配置实例")
-    @RequestMapping(value = "by-release", method = RequestMethod.GET)
+    @PostMapping(value = "by-release")
     public Result<PageDTO<InstanceDTO>> getByRelease(@RequestBody PageQuery<Long> releasePage) {
         Pageable pageable = PageRequest.of(releasePage.getPageNo(), releasePage.getPageSize());
         //最新的releaseId
@@ -50,8 +51,8 @@ public class InstanceController {
 
 
     @ApiOperation("所有实例")
-    @RequestMapping(value = "by-namespace", method = RequestMethod.GET)
-    public Page<InstanceDTO> getByNamespace(PageQuery<InstanceNamespaceReq> instancePageQuery) {
+    @PostMapping(value = "by-namespace")
+    public PageDTO<InstanceDTO> getByNamespace(@RequestBody PageQuery<InstanceNamespaceReq> instancePageQuery) {
         Pageable pageable = PageRequest.of(instancePageQuery.getPageNo(), instancePageQuery.getPageSize());
         return instanceService.findInstancesByNamespace(instancePageQuery.getData().getNamespaceId(), pageable);
 

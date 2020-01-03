@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Setter
 @Getter
 @Entity
-@Table( uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "env", "app_id"})})
+//@Table( uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "env", "app_id"})})
 public class AppEnvCluster extends BaseEntity {
 
     @Column(name = "name")
