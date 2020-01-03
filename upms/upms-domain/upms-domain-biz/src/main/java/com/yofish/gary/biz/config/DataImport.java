@@ -40,13 +40,8 @@ public class DataImport {
     @Autowired
     private DepartmentRepository departmentRepository;
 
-    private final String defaultDepartment = "默认部门";
-    private final String defaultDepartmentCode = "DefaultDepartment";
-
-    private String adminUsername = "apollo";
-    private String adminPassword = "apollo";
-    private String adminRealName = "管理员用户";
-    private String adminEmail = "apollo@yofish.com";
+    @Autowired
+    private UpmsProperties upmsProperties;
 
     /**
      * 初始化部门、角色、用户数据
@@ -55,10 +50,16 @@ public class DataImport {
     public void importDepartmentAndRoleAndUser() {
         log.info("初始化部门、角色、用户数据...");
 
+        InitProperties init = upmsProperties.getInit();
+        if (!init.isInitData()) {
+            log.info("系统参数`upms.initData`配置不需要初始化默认数据.");
+            return;
+        }
+
         log.info("[1/3] 初始化部门信息...");
-        Department department = this.departmentRepository.findByName(defaultDepartment);
+        Department department = this.departmentRepository.findByName(init.getDepartment());
         if (ObjectUtils.isEmpty(department)) {
-            department = Department.builder().code(defaultDepartmentCode).name(defaultDepartment).comment("系统初始化默认部门").build();
+            department = Department.builder().code(init.getDepartmentCode()).name(init.getDepartment()).comment(init.getDepartmentComment()).build();
             this.departmentRepository.save(department);
         }
         log.info("[1/3] 初始化部门信息完成:{}", department.getName());
@@ -81,21 +82,22 @@ public class DataImport {
 
 
         log.info("[3/3] 初始化用户数据...");
-        User defaultAdminUser = this.userRepository.findByUsername(adminUsername);
+        User defaultAdminUser = this.userRepository.findByUsername(init.getAdminUsername());
         if (isEmpty(defaultAdminUser)) {
             UserAddReqDTO initAdmin = UserAddReqDTO.builder()
                     .remark("初始用户")
-                    .username(adminUsername)
-                    .password(adminPassword)
-                    .realName(adminRealName)
-                    .email(adminEmail)
+                    .username(init.getAdminUsername())
+                    .password(init.getAdminPassword())
+                    .realName(init.getAdminRealName())
+                    .email(init.getAdminEmail())
                     .departmentId(department.getId())
                     .roleIds(Arrays.asList(Long.valueOf(adminRole.getId())))
                     .build();
             this.userService.add(initAdmin);
+            log.info("[3/3] 初始化用户完成！ UserName:{},Password:{}", init.getAdminUsername(), init.getAdminPassword());
+        } else {
+            log.info("[3/3] 初始用户已存在！ UserName:{}", defaultAdminUser.getUsername());
         }
-
-        log.info("[3/3] 初始化用户完成！ UserName:{},Password:{}", adminUsername, adminPassword);
 
     }
 }

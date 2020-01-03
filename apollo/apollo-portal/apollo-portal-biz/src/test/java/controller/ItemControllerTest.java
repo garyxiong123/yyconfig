@@ -106,7 +106,7 @@ public class ItemControllerTest extends AbstractControllerTest{
 
     private ModifyItemsByTextsReq createModifyItemsByTextsReq(){
         ModifyItemsByTextsReq req=new ModifyItemsByTextsReq();
-        req.setAppEnvClusterNamespaceId(44L);
+        req.setAppEnvClusterNamespaceId(19L);
         req.setConfigText(propertityFromat());
         req.setFormat(ConfigFileFormat.Properties);
        /* req.setConfigText(jsonFromat());
@@ -149,7 +149,7 @@ public class ItemControllerTest extends AbstractControllerTest{
                 "caiyi.company.accounts = tiyuquzou,liaodaotiyu\n" +
                 "finance.company.accounts = youyujizhang,youyudaike";
 
-        String b="12 = 5r2361\ngg = gag33455";
+        String b="dbName = payment11\npassword = 123456\nuserName-toPublish = garyxiong-toPublish\n666 = 5666\n\n\n122 = 2333\n23 = 333444\ndd = dd";
         return b;
     }
 

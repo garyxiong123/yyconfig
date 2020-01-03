@@ -224,7 +224,7 @@ public class AppEnvClusterNamespaceService {
 
         //not Release config items
         // TODO: 2019-12-21 not release config items
-        List<ItemDTO> items = itemService.findItemsWithoutOrdered(appEnvClusterNamespace.getId()).stream().map(item -> transformItemDTO(item)).collect(Collectors.toList());
+        List<ItemDTO> items = itemService.findItemsWithoutOrdered(appEnvClusterNamespace.getId()).stream().sorted(Comparator.comparing(Item::getLineNum)).map(item -> transformItemDTO(item)).collect(Collectors.toList());
         int modifiedItemCnt = 0;
         for (ItemDTO itemDTO : items) {
 
@@ -236,7 +236,6 @@ public class AppEnvClusterNamespaceService {
 
             itemBOs.add(itemBO);
         }
-
         //deleted items
         itemService.findDeletedItems(appEnvClusterNamespace.getId()).stream()
                 .forEach(item -> deletedItemDTOs.put(item.getKey(), item));
