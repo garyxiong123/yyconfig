@@ -1,0 +1,60 @@
+{
+  "properties": [
+    {
+      "name": "upms.init.initData",
+      "type": "java.lang.Boolean",
+      "sourceType": "com.yofish.gary.biz.config.InitProperties",
+      "description": "初始化默认数据.",
+      "defaultValue": true
+    },
+    {
+      "name": "upms.init.department",
+      "type": "java.lang.String",
+      "sourceType": "com.yofish.gary.biz.config.InitProperties",
+      "description": "默认的部门名称.",
+      "defaultValue": "默认部门"
+    },
+    {
+      "name": "upms.init.departmentCode",
+      "type": "java.lang.String",
+      "sourceType": "com.yofish.gary.biz.config.InitProperties",
+      "description": "默认的部门CODE.",
+      "defaultValue": "DefaultDepartment"
+    },
+    {
+      "name": "upms.init.departmentComment",
+      "type": "java.lang.String",
+      "sourceType": "com.yofish.gary.biz.config.InitProperties",
+      "description": "默认部门的描述信息.",
+      "defaultValue": "系统初始化默认部门"
+    },
+    {
+      "name": "upms.init.adminUsername",
+      "type": "java.lang.String",
+      "sourceType": "com.yofish.gary.biz.config.InitProperties",
+      "description": "管理员用户名.",
+      "defaultValue": "默认部门"
+    },
+    {
+      "name": "upms.init.adminPassword",
+      "type": "java.lang.String",
+      "sourceType": "com.yofish.gary.biz.config.InitProperties",
+      "description": "管理员密码.",
+      "defaultValue": "DefaultDepartment"
+    },
+    {
+      "name": "upms.init.adminRealName",
+      "type": "java.lang.String",
+      "sourceType": "com.yofish.gary.biz.config.InitProperties",
+      "description": "管理员用户真实姓名.",
+      "defaultValue": "管理员用户"
+    },
+    {
+      "name": "upms.init.adminEmail",
+      "type": "java.lang.String",
+      "sourceType": "com.yofish.gary.biz.config.InitProperties",
+      "description": "管理员用户邮箱.",
+      "defaultValue": "apollo@yofish.com"
+    }
+  ]
+}
