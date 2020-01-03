@@ -38,14 +38,14 @@ public class InstanceController {
     private ReleaseService releaeService;
 
 
-    @ApiOperation("使用最新配置")
+    @ApiOperation("使用最新配置实例")
     @RequestMapping(value = "by-release", method = RequestMethod.GET)
     public Result<PageDTO<InstanceDTO>> getByRelease(@RequestBody PageQuery<Long> releasePage) {
         Pageable pageable = PageRequest.of(releasePage.getPageNo(), releasePage.getPageSize());
         //最新的releaseId
         Long releaseId4Lastest = releasePage.getData();
-        PageDTO<InstanceDTO> pa = instanceService.getByRelease(releaseId4Lastest, pageable);
-        return Result.ok(pa);
+        PageDTO<InstanceDTO> instances = instanceService.getByRelease(releaseId4Lastest, pageable);
+        return Result.ok(instances);
     }
 
 
