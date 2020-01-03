@@ -83,7 +83,6 @@ class TableList extends React.Component {
     this.onFetchNamespaceList();
   }
   onShowSyncConfig=()=>{
-    return
     this.setState({
       showSyncConfig: true
     })

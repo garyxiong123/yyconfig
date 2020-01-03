@@ -4,6 +4,7 @@ import { Drawer, Form, message, Button, Tree, Table } from 'antd';
 import moment from 'moment';
 import styles from '../../index.less';
 import DiffList from './syncConfig/DiffList';
+import { project } from '@/services/project';
 
 const FormItem = Form.Item;
 const { TreeNode } = Tree;
@@ -66,8 +67,21 @@ class SyncConfig extends React.Component {
       }
     })
   }
-
-  onSubmit = () => {
+  //同步
+  onSyncConfig = async () => {
+    const { syncItems, syncToNamespaces } = this.state;
+    const { onCancel } = this.props;
+    this.setState({
+      loading: true
+    })
+    let res = await project.syncConfig({ syncItems, syncToNamespaces });
+    if(res && res.code === '1') {
+      message.success('同步成功');
+      onCancel();
+    }
+    this.setState({
+      loading: false
+    })
 
   }
   onGetAppEnvClusterNamespaceIds = () => {
@@ -104,7 +118,7 @@ class SyncConfig extends React.Component {
   }
   onNext = () => {
     const { selectedRowKeys } = this.state;
-    if(!selectedRowKeys.length) {
+    if (!selectedRowKeys.length) {
       message.error('请选择要同步的配置')
       return
     }
@@ -212,7 +226,7 @@ class SyncConfig extends React.Component {
     )
   }
   renderFooter() {
-    const { step } = this.state;
+    const { step,loading } = this.state;
     return (
       <div className={styles.drawerBottom}>
         {
@@ -222,7 +236,7 @@ class SyncConfig extends React.Component {
           step === 2 &&
           <div>
             <Button onClick={this.onPrev} style={{ marginRight: 15 }}>上一步</Button>
-            <Button type="primary">同步</Button>
+            <Button type="primary" onClick={this.onSyncConfig} loading={loading}>同步</Button>
           </div>
         }
       </div>
@@ -230,13 +244,13 @@ class SyncConfig extends React.Component {
   }
   render() {
     const { onCancel } = this.props;
-    const { loading, step, syncItems, syncToNamespaces } = this.state;
+    const { step, syncItems, syncToNamespaces } = this.state;
     return (
       <Drawer
         title={`同步配置`}
         visible={true}
         onClose={onCancel}
-        width={800}
+        width={900}
       // footer={this.renderFooter()}
       >
         {

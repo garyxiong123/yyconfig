@@ -92,8 +92,12 @@ const project = {
     return requestPost(`/apps/${params.appId}/namespaces/${params.namespace}/authorize`, params.apps);
   },
   //同步配置diff
-  syncConfigDiff:async function (params = {}) {
+  syncConfigDiff: async function (params = {}) {
     return requestPost(`/item/diff`, params);
+  },
+  //同步操作
+  syncConfig: async function (params = {}) {
+    return requestPost(`/item/updateEnv`, params);
   },
 };
 const cluster = {
@@ -101,7 +105,7 @@ const cluster = {
     return requestPost(`/apps/${params.appId}/envs/${params.env}/clusters/${params.clusterName}`);
   }
 };
-const instances={
+const instances = {
   getByRelease: async function (params = {}) {
     return requestGet(`/instances/by-release`, params);
   },
