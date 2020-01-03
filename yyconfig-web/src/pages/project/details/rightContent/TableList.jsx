@@ -82,7 +82,7 @@ class TableList extends React.Component {
   onConfigSave = () => {
     this.onFetchNamespaceList();
   }
-  onShowSyncConfig=()=>{
+  onShowSyncConfig = () => {
     this.setState({
       showSyncConfig: true
     })
@@ -234,6 +234,11 @@ class TableList extends React.Component {
         rowKey={record => {
           return record.item.id;
         }}
+        rowClassName={(record) => {
+          if ((record.item.comment && !record.item.key) || (!record.item.key)) {
+            return styles.hidden
+          }
+        }}
       />
     )
   }
@@ -283,8 +288,8 @@ class TableList extends React.Component {
       <Fragment>
         {this.renderOpe(item)}
         {item.namespaceType === 'Associate' ? this.renderAssociateList() : this.renderTable(tableList)}
-        {showEdit && <ConfigAdd onCancel={()=>this.onCancel('showEdit')} currentItem={currentItem} onSave={this.onConfigSave} baseInfo={item.baseInfo} opeType={opeType} />}
-        {showSyncConfig && <SyncConfig onCancel={()=>this.onCancel('showSyncConfig')} info={item}/>}
+        {showEdit && <ConfigAdd onCancel={() => this.onCancel('showEdit')} currentItem={currentItem} onSave={this.onConfigSave} baseInfo={item.baseInfo} opeType={opeType} />}
+        {showSyncConfig && <SyncConfig onCancel={() => this.onCancel('showSyncConfig')} info={item} />}
         <Input value={copyValue} id={'copy' + baseInfo.id} className={styles.copyInput} />
       </Fragment>
     );

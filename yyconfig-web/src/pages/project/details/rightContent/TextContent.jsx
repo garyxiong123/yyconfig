@@ -70,11 +70,15 @@ class TextContent extends React.Component {
   }
   onGetProperties = (text, i, len) => {
     let value = "";
-    if (i === len - 1) {
-      value = `${text.key} = ${text.value}`;
-    } else {
-      value = `${text.key} = ${text.value}\n`;
+    if (!text.key && !text.value && text.comment) {
+      value = `${text.comment}\n`
+      return value
     }
+    if (!text.key && !text.value) {
+      value = '\n'
+      return value
+    }
+    value = `${text.key} = ${text.value}\n`;
     return value
   }
   onGetOther = (text) => {
