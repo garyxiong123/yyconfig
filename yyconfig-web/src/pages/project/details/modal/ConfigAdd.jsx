@@ -2,7 +2,6 @@ import React, { Fragment } from 'react';
 import { connect } from 'dva';
 import { Modal, Form, Input, Tree, message, Checkbox, Row, Col } from 'antd';
 import { project } from '@/services/project';
-import { isTSExpressionWithTypeArguments } from '@babel/types';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;

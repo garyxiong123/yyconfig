@@ -2,7 +2,9 @@ package com.yofish.apollo.model.vo;
 
 
 import com.yofish.apollo.bo.ItemChangeSets;
+import lombok.Data;
 
+@Data
 public class ItemDiffs {
   private NamespaceIdentifier namespace;
   private ItemChangeSets diffs;

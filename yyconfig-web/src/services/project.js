@@ -91,13 +91,27 @@ const project = {
   authorizeProtectApp: async function (params = {}) {
     return requestPost(`/apps/${params.appId}/namespaces/${params.namespace}/authorize`, params.apps);
   },
+  //同步配置diff
+  syncConfigDiff:async function (params = {}) {
+    return requestPost(`/item/diff`, params);
+  },
 };
 const cluster = {
   clusterAdd: async function (params = {}) {
     return requestPost(`/apps/${params.appId}/envs/${params.env}/clusters/${params.clusterName}`);
   }
+};
+const instances={
+  getByRelease: async function (params = {}) {
+    return requestGet(`/instances/by-release`, params);
+  },
+  getByReleaseNotIn: async function (params = {}) {
+    return requestGet(`/instances/by-namespace-and-releases-not-in`, params);
+  },
 }
+
 export {
   project,
-  cluster
+  cluster,
+  instances
 }
