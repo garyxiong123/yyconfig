@@ -12,5 +12,5 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "upms")
 public class UpmsProperties {
-    private InitProperties init;
+    private InitProperties init = new InitProperties();
 }
