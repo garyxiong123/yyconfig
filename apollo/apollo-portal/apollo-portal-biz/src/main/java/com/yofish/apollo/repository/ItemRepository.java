@@ -23,4 +23,5 @@ public interface ItemRepository  extends JpaRepository<Item, Long> {
 //   Item findFirstByClusterNamespaceOrderByLineNumDesc(AppEnvClusterNamespace clusterNamespace);
    Item findFirstByAppEnvClusterNamespaceOrderByLineNumDesc(AppEnvClusterNamespace appEnvClusterNamespace);
    Item findItemByAppEnvClusterNamespaceAndKey(AppEnvClusterNamespace appEnvClusterNamespace,String key);
+   Item findFirstById(Long id);
 }
