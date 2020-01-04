@@ -31,9 +31,6 @@ import java.util.stream.Collectors;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static framework.apollo.core.ConfigConsts.NO_APPID_PLACEHOLDER;
 
-/**
- * @author Jason Song(song_s@ctrip.com)
- */
 @RestController
 @RequestMapping("/configs")
 public class ConfigController {
@@ -91,24 +88,23 @@ public class ConfigController {
         }
 
         if (releases.isEmpty()) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND,
-                    String.format(
-                            "Could not load configurations with appCode: %s, clusterName: %s, appNamespace: %s",
-                            appId, clusterName, originalNamespace));
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, String.format(
+                            "Could not load configurations with appCode: %s, clusterName: %s, appNamespace: %s", appId, clusterName, originalNamespace));
             return null;
         }
         NamespaceBo namespaceBo = NamespaceBo.builder().appCode(appId).env(env).clusterName(clusterName).namespaceName(namespace).build();
 
         heartBeatReleases(namespaceBo, clientIp, releases);
 
+        //配置是否 有变化
         String mergedReleaseKey = releases.stream().map(Release::getReleaseKey).collect(Collectors.joining(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR));
-
         if (mergedReleaseKey.equals(clientSideReleaseKey)) {
             // Client side configuration is the same with server side, return 304
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             Tracer.logEvent("Apollo.Config.NotModified", assembleKey(appId, appClusterNameLoaded, originalNamespace, dataCenter));
             return null;
         }
+
 
         ApolloConfig apolloConfig = new ApolloConfig(appId, appClusterNameLoaded, originalNamespace, mergedReleaseKey);
         apolloConfig.setConfigurations(mergeReleaseConfigurations(releases));

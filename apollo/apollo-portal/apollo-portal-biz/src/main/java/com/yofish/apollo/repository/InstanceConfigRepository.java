@@ -29,11 +29,18 @@ countQuery = "select count(1)" +
 Page<Instance> findbyNamespace(Long appEnvClusterNamespaceId,String releaseKey);*/
     Page<InstanceConfig> findByReleaseKeyAndUpdateTimeAfter(String releaseKey, LocalDateTime validDate, Pageable pageable);
 
+
+
     List<InstanceConfig> findAllByInstanceAndUpdateTimeAfterAndReleaseKeyNotIn(Iterable<Instance> instance, LocalDateTime dateTime,Set<String> releaseKey);
+
+    List<InstanceConfig> findAllByInstanceInAndUpdateTimeAfterAndReleaseKeyNotIn(Iterable<Instance> instance, LocalDateTime dateTime,Set<String> releaseKey);
 
     InstanceConfig findByInstanceIdAndAppCodeAndNamespaceNameAndEnv(long instanceId, String appCode, String namespaceName, String env);
 
     Page<InstanceConfig> findByNamespaceId(Long namespaceId, Pageable pageable);
+
+    int countByNamespaceId(Long namespaceId);
+
 
 
 }

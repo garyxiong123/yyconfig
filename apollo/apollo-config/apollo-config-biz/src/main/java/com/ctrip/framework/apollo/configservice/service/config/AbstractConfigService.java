@@ -11,9 +11,6 @@ import java.util.Objects;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Objects.isNull;
 
-/**
- * @author Jason Song(song_s@ctrip.com)
- */
 public abstract class AbstractConfigService implements ConfigService {
   @Autowired
   private GrayReleaseRulesHolder grayReleaseRulesHolder;

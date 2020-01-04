@@ -1,10 +1,13 @@
 package framework.apollo.core.dto;
 
+import lombok.Data;
+
 import java.util.Map;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
+@Data
 public class ApolloConfig {
 
   private String appId;
@@ -30,45 +33,6 @@ public class ApolloConfig {
     this.releaseKey = releaseKey;
   }
 
-  public String getAppId() {
-    return appId;
-  }
-
-  public String getCluster() {
-    return cluster;
-  }
-
-  public String getNamespaceName() {
-    return namespaceName;
-  }
-
-  public String getReleaseKey() {
-    return releaseKey;
-  }
-
-  public Map<String, String> getConfigurations() {
-    return configurations;
-  }
-
-  public void setAppId(String appId) {
-    this.appId = appId;
-  }
-
-  public void setCluster(String cluster) {
-    this.cluster = cluster;
-  }
-
-  public void setNamespaceName(String namespaceName) {
-    this.namespaceName = namespaceName;
-  }
-
-  public void setReleaseKey(String releaseKey) {
-    this.releaseKey = releaseKey;
-  }
-
-  public void setConfigurations(Map<String, String> configurations) {
-    this.configurations = configurations;
-  }
 
   @Override
   public String toString() {

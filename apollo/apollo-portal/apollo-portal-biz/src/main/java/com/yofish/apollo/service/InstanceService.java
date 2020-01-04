@@ -1,6 +1,5 @@
 package com.yofish.apollo.service;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.*;
 import com.yofish.apollo.domain.*;
@@ -77,7 +76,7 @@ public class InstanceService {
     }
 
     private PageDTO<InstanceDTO> transformToDTOs(Page<InstanceConfig> instanceConfigs4Lastest, List<InstanceDTO> instanceDTOs, Pageable pageable) {
-        if (instanceConfigs4Lastest.hasContent()) {
+        if (!instanceConfigs4Lastest.hasContent()) {
             return null;
         }
         Multimap<Long, InstanceConfig> instanceConfigMap = HashMultimap.create();
@@ -101,7 +100,11 @@ public class InstanceService {
             List<InstanceConfigDTO> configDTOs = configs.stream().map(instanceConfig -> {
                 InstanceConfigDTO instanceConfigDTO = new InstanceConfigDTO();
                 //to save some space
-                instanceConfigDTO.setRelease(null);
+                ReleaseDTO releaseDTO =  createReleaseDTO(instanceConfig);
+                instanceConfigDTO.setRelease(releaseDTO);
+                instanceDTO.setAppId(instanceConfig.getAppCode());
+                instanceDTO.setClusterName(instanceConfig.getCluster());
+                instanceDTO.setDataCenter(null);
                 instanceConfigDTO.setReleaseDeliveryTime(instanceConfig.getReleaseDeliveryTime());
                 instanceConfigDTO.setDataChangeLastModifiedTime(instanceConfig.getUpdateTime());
                 return instanceConfigDTO;
@@ -109,6 +112,12 @@ public class InstanceService {
             instanceDTO.setConfigs(configDTOs);
         }
         return new PageDTO<>(instanceDTOs, pageable, instanceConfigs4Lastest.getTotalElements());
+    }
+
+    private ReleaseDTO createReleaseDTO(InstanceConfig instanceConfig) {
+        ReleaseDTO releaseDTO = ReleaseDTO.builder().appId(instanceConfig.getAppCode()).namespaceName(instanceConfig.getNamespaceName()).clusterName(instanceConfig.getCluster()).releaseKey(instanceConfig.getReleaseKey()).build();
+
+        return releaseDTO;
     }
 
 
@@ -149,7 +158,7 @@ public class InstanceService {
         AppEnvClusterNamespace namespace = appEnvClusterNamespaceService.findAppEnvClusterNamespace(namespaceId);
 
         List<Instance> instances = instanceRepository.findAllByAppEnvCluster(namespace.getAppEnvCluster());
-        List<InstanceConfig> instanceConfigs = instanceConfigRepository.findAllByInstanceAndUpdateTimeAfterAndReleaseKeyNotIn(instances, getValidInstanceConfigDate(), releaseKeysNotIn);
+        List<InstanceConfig> instanceConfigs = instanceConfigRepository.findAllByInstanceInAndUpdateTimeAfterAndReleaseKeyNotIn(instances, getValidInstanceConfigDate(), releaseKeysNotIn);
 
         if (CollectionUtils.isEmpty(instanceConfigs)) {
             return Collections.emptyList();
@@ -229,7 +238,7 @@ public class InstanceService {
      * 默认一天前的
      */
     private LocalDateTime getValidInstanceConfigDate() {
-        LocalDateTime dateTime = LocalDateTime.now().minusDays(-1).minusHours(-1);
+        LocalDateTime dateTime = LocalDateTime.now().minusDays(+1).minusHours(+1);
         return dateTime;
     }
 
@@ -273,7 +282,10 @@ public class InstanceService {
 
 
     public int getInstanceCountByNamepsace(Long namespaceId) {
-        return 0;
+        AppEnvClusterNamespace namespace = namespaceRepository.findById(namespaceId).orElseGet(() -> {
+            throw new BizException(String.format("namespaceId %d doesn't exist", namespaceId.toString()));
+        });
+        return namespace.calcInstanceConfigsCount();
     }
 
 //    @Transactional

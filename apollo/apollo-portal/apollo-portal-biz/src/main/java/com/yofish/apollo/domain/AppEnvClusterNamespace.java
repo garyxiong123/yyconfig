@@ -40,8 +40,6 @@ public class AppEnvClusterNamespace extends BaseEntity {
     private AppNamespace appNamespace;
 
 
-
-
     public Release findLatestActiveRelease() {
 
         return getBeanByClass(ReleaseRepository.class).findFirstByAppEnvClusterNamespace_IdAndAbandonedIsFalseOrderByIdDesc(this.getId());
@@ -61,9 +59,14 @@ public class AppEnvClusterNamespace extends BaseEntity {
         return InstanceConfigPage;
     }
 
+    public int calcInstanceConfigsCount() {
+
+        return getBeanByClass(InstanceConfigRepository.class).countByNamespaceId(this.getId());
+    }
+
     @Getter
     @AllArgsConstructor
-    public enum Type{
+    public enum Type {
         Main("main"),
         Branch("branch");
 
