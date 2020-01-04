@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
@@ -67,26 +66,18 @@ public class DataImport {
 
     private AppEnvClusterNamespace namespace;
 
-    /**
-     * 数据的原子性规则
-     */
+
     @PostConstruct
     public void activeDefaultEnvsAndInitData() {
         log.info("初始化系统配置...");
-
-        ServerConfig envConfig = this.serverConfigRepository.findByKey(ServerConfigKey.APOLLO_PORTAL_ENVS.name());
-        if (!ObjectUtils.isEmpty(envConfig)) {
-            log.info("已有数据，不再执行初始化！");
-            return;
-        }
 
         log.info("加载配置信息执行初始化...");
         Map<ServerConfigKey, String> serverConfig = configProperties.getServerConfig();
 
         serverConfig.forEach((k, v) -> {
-            if (this.serverConfigRepository.count(Example.of(ServerConfig.builder().key(k.name()).build())) == 0) {
-                log.info("初始化：{}", k);
-                ServerConfig config = new ServerConfig(k.name(), configProperties.get(k), "初始化配置");
+            if (this.serverConfigRepository.count(Example.of(ServerConfig.builder().key(k).build())) == 0) {
+                log.info("初始化：{}:{}", k, v);
+                ServerConfig config = new ServerConfig(k, configProperties.get(k), "初始化配置");
                 this.serverConfigRepository.save(config);
             }
         });
@@ -95,6 +86,10 @@ public class DataImport {
 
         log.info("初始化默认项目...");
 
+        if (appRepository.count() > 0) {
+            log.info("已有项目信息，不再执行初始化默认项目！");
+            return;
+        }
         App app = createDefaultApp();
 
 

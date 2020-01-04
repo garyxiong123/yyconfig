@@ -21,7 +21,7 @@ import javax.persistence.Entity;
 @Entity
 public class ServerConfig extends BaseEntity {
     @Column(name = "`Key`", nullable = false, unique = true)
-    private String key;
+    private ServerConfigKey key;
 
     @Column(name = "Value", nullable = false)
     private String value;

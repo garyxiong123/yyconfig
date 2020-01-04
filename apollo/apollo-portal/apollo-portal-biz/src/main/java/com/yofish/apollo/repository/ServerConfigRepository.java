@@ -1,5 +1,6 @@
 package com.yofish.apollo.repository;
 
+import com.yofish.apollo.config.ServerConfigKey;
 import com.yofish.apollo.domain.ServerConfig;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -12,5 +13,5 @@ import org.springframework.stereotype.Repository;
 public interface ServerConfigRepository extends JpaRepository<ServerConfig, Long> {
 
 
-    ServerConfig findByKey(String key);
+    ServerConfig findByKey(ServerConfigKey key);
 }
