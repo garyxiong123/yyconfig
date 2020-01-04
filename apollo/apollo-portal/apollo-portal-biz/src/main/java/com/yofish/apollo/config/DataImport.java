@@ -3,7 +3,6 @@ package com.yofish.apollo.config;
 import com.google.common.collect.Sets;
 import com.yofish.apollo.domain.*;
 import com.yofish.apollo.dto.CreateItemReq;
-import com.yofish.apollo.enums.ServerConfigKey;
 import com.yofish.apollo.repository.*;
 import com.yofish.apollo.service.AppService;
 import com.yofish.apollo.service.ItemService;
@@ -17,12 +16,14 @@ import common.dto.NamespaceDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -61,11 +62,9 @@ public class DataImport {
     @Autowired
     private OpenNamespaceTypeRepository openNamespaceTypeRepository;
 
-    private final String activeEvns = "dev,test,pre,prod";
-    private final String defaultAppName = "中台支付";
-    private final String defaultAppCode = "payment";
-    private final String defaultNamespaceName = "application";
-    private final List<String> openNamespaceTypeList = Arrays.asList("MySql", "Redis", "Other");
+    @Autowired
+    private ServerConfigProperties configProperties;
+
     private AppEnvClusterNamespace namespace;
 
     /**
@@ -75,14 +74,23 @@ public class DataImport {
     public void activeDefaultEnvsAndInitData() {
         log.info("初始化系统配置...");
 
-        log.info("配置可支持的环境列表");
-        ServerConfig envConfig = this.serverConfigRepository.findByKey(ServerConfigKey.ApolloPortalEnvs.getKey());
+        ServerConfig envConfig = this.serverConfigRepository.findByKey(ServerConfigKey.APOLLO_PORTAL_ENVS.name());
         if (!ObjectUtils.isEmpty(envConfig)) {
+            log.info("已有数据，不再执行初始化！");
             return;
         }
-        envConfig = new ServerConfig(ServerConfigKey.ApolloPortalEnvs.getKey(), activeEvns, "可支持的环境列表");
-        this.serverConfigRepository.save(envConfig);
-        log.info("可支持的环境列表:{}", envConfig.getValue());
+
+        log.info("加载配置信息执行初始化...");
+        Map<ServerConfigKey, String> serverConfig = configProperties.getServerConfig();
+
+        serverConfig.forEach((k, v) -> {
+            if (this.serverConfigRepository.count(Example.of(ServerConfig.builder().key(k.name()).build())) == 0) {
+                log.info("初始化：{}", k);
+                ServerConfig config = new ServerConfig(k.name(), configProperties.get(k), "初始化配置");
+                this.serverConfigRepository.save(config);
+            }
+        });
+        log.info("系统配置初始化完成.");
 
 
         log.info("初始化默认项目...");
@@ -115,7 +123,7 @@ public class DataImport {
 
         long count = openNamespaceTypeRepository.count();
         if (count < 1) {
-            List<OpenNamespaceType> openNamespaceTypes = openNamespaceTypeList.stream().map(name -> OpenNamespaceType.builder().name(name).build()).collect(Collectors.toList());
+            List<OpenNamespaceType> openNamespaceTypes = Arrays.asList(configProperties.get(SystemInitConfigKey.OPEN_NAMESPACE_TYPES)).stream().map(name -> OpenNamespaceType.builder().name(name).build()).collect(Collectors.toList());
             openNamespaceTypeRepository.saveAll(openNamespaceTypes);
         }
         log.info("初始化公开命名空间类型完成.");
@@ -179,7 +187,10 @@ public class DataImport {
     private App createDefaultApp() {
 
         List<Department> departmentList = departmentRepository.findAll();
-        App app = App.builder().name(defaultAppName).appCode(defaultAppCode).department(departmentList.get(0)).build();
+        App app = App.builder()
+                .name(configProperties.get(SystemInitConfigKey.DEFAULT_APP_NAME))
+                .appCode(configProperties.get(SystemInitConfigKey.DEFAULT_APP_CODE))
+                .department(departmentList.get(0)).build();
         List<User> users = userRepository.findAll();
         app.setAppOwner(users.get(0));
         app.setAppAdmins(Sets.newHashSet(users));

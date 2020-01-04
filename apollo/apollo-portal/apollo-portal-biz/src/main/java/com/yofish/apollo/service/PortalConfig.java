@@ -8,11 +8,10 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yofish.apollo.domain.ServerConfig;
 //import com.yofish.apollo.model.vo.Organization;
+import com.yofish.apollo.config.ServerConfigKey;
 import com.yofish.apollo.repository.ServerConfigRepository;
-import com.youyu.common.helper.YyRequestInfoHelper;
 import common.config.RefreshableConfig;
 import common.config.RefreshablePropertySource;
-import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.enums.Env;
 import framework.apollo.tracer.Tracer;
 import framework.foundation.Foundation;
@@ -25,8 +24,6 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -179,7 +176,7 @@ public class PortalConfig extends RefreshableConfig {
      * Level: important
      **/
     public List<Env> portalSupportedEnvs() {
-        String[] configurations = getArrayProperty("apollo.portal.envs", new String[]{"FAT", "UAT", "PRO"});
+        String[] configurations = getArrayProperty(ServerConfigKey.APOLLO_PORTAL_ENVS.name(), new String[]{"FAT", "UAT", "PRO"});
         List<Env> envs = Lists.newLinkedList();
 
         for (String env : configurations) {

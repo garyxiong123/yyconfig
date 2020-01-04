@@ -24,3 +24,16 @@ logging:
               BasicBinder: trace
 shiro:
   concurrentSessionStrategyNumber: 1
+
+apollo:
+  initConfig:
+    DEFAULT_APP_NAME: 阿波罗迷你版
+    DEFAULT_APP_CODE: apollo-mini
+    DEFAULT_CLUSTER_NAME: default
+    DEFAULT_NAMESPACE_NAME: application
+    OPEN_NAMESPACE_TYPES: DataSource,Feign,Network,Other
+
+  serverConfig:
+    APOLLO_PORTAL_ENVS: DEV,TEST,PRE,PROD
+    APIREAD_TIMEOUT: 1000
+    CONSUMER_TOKEN_SALT: ausdom

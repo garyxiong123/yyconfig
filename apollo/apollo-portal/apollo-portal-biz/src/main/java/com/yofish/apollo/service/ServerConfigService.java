@@ -1,7 +1,7 @@
 package com.yofish.apollo.service;
 
 import com.yofish.apollo.domain.ServerConfig;
-import com.yofish.apollo.enums.ServerConfigKey;
+import com.yofish.apollo.config.ServerConfigKey;
 import com.yofish.apollo.repository.ServerConfigRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class ServerConfigService {
     private ServerConfigRepository serverConfigRepository;
 
     public List<String> getActiveEnvs() {
-        ServerConfig apolloPortalEnvs = this.serverConfigRepository.findByKey(ServerConfigKey.ApolloPortalEnvs.getKey());
+        ServerConfig apolloPortalEnvs = this.serverConfigRepository.findByKey(ServerConfigKey.APOLLO_PORTAL_ENVS.name());
         if (ObjectUtils.isEmpty(apolloPortalEnvs) || StringUtils.isEmpty(apolloPortalEnvs.getValue())) {
             return null;
         } else {
