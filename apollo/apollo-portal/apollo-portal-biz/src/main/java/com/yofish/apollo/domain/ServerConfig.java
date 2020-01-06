@@ -6,6 +6,8 @@ import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 /**
  * @Author: xiongchengwei
@@ -21,6 +23,7 @@ import javax.persistence.Entity;
 @Entity
 public class ServerConfig extends BaseEntity {
     @Column(name = "`Key`", nullable = false, unique = true)
+    @Enumerated(EnumType.STRING)
     private ServerConfigKey key;
 
     @Column(name = "Value", nullable = false)

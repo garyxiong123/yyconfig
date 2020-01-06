@@ -118,7 +118,7 @@ public class DataImport {
 
         long count = openNamespaceTypeRepository.count();
         if (count < 1) {
-            List<OpenNamespaceType> openNamespaceTypes = Arrays.asList(configProperties.get(SystemInitConfigKey.OPEN_NAMESPACE_TYPES)).stream().map(name -> OpenNamespaceType.builder().name(name).build()).collect(Collectors.toList());
+            List<OpenNamespaceType> openNamespaceTypes = Arrays.asList(configProperties.get(SystemInitConfigKey.OPEN_NAMESPACE_TYPES).split(",")).stream().map(name -> OpenNamespaceType.builder().name(name).build()).collect(Collectors.toList());
             openNamespaceTypeRepository.saveAll(openNamespaceTypes);
         }
         log.info("初始化公开命名空间类型完成.");
