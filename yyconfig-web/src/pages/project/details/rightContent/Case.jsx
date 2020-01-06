@@ -35,6 +35,15 @@ class Case extends React.Component {
         newRelease: {},
         notNewRelease: {},
         allRelease: {},
+        newReleaseParams: {
+          pageNo: 0
+        },
+        notNewReleaseParams: {
+          pageNo: 0
+        },
+        allReleaseParams: {
+          pageNo: 0
+        },
       })
       this.onFetchNewRelease()
     }
