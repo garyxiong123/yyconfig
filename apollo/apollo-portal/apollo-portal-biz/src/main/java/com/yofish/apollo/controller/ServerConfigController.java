@@ -4,6 +4,7 @@ package com.yofish.apollo.controller;
 import com.yofish.apollo.component.AppPreAuthorize;
 import com.yofish.apollo.config.ServerConfigKey;
 import com.yofish.apollo.domain.ServerConfig;
+import com.yofish.apollo.model.model.ServerConfigModel;
 import com.yofish.apollo.repository.ServerConfigRepository;
 import com.youyu.common.api.Result;
 import common.utils.BeanUtils;
@@ -12,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -34,14 +36,14 @@ public class ServerConfigController {
     @AppPreAuthorize(AppPreAuthorize.Authorize.SuperAdmin)
     @PostMapping
     @ApiOperation("创建或修改")
-    public Result<ServerConfig> createOrUpdate(ServerConfig serverConfig) {
+    public Result<ServerConfig> createOrUpdate(@RequestBody @Valid ServerConfigModel model) {
 
-        ServerConfig storedConfig = serverConfigRepository.findByKey(serverConfig.getKey());
+        ServerConfig storedConfig = serverConfigRepository.findByKey(model.getKey());
 
         if (isNull(storedConfig)) {
-            return Result.ok(serverConfigRepository.save(serverConfig));
+            return Result.ok(serverConfigRepository.save(ServerConfig.builder().key(model.getKey()).value(model.getValue()).comment(model.getComment()).build()));
         } else {//update
-            BeanUtils.copyEntityProperties(serverConfig, storedConfig);
+            BeanUtils.copyEntityProperties(model, storedConfig);
             return Result.ok(serverConfigRepository.save(storedConfig));
         }
     }
