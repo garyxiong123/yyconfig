@@ -99,12 +99,12 @@ public class AppEnvClusterNamespaceService {
     }
 
 
-
     public NamespaceVO findPublicNamespaceVoForAssociatedNamespace(String env, String clusterName, String namespaceName) {
         AppEnvClusterNamespace publicNamespaceForAssociatedNamespace = findPublicNamespaceForAssociatedNamespace(env, clusterName, namespaceName);
         NamespaceVO namespaceVO = transformNamespace2VO(publicNamespaceForAssociatedNamespace);
         return namespaceVO;
     }
+
     public AppEnvClusterNamespace findPublicNamespaceForAssociatedNamespace(String env, String clusterName, String namespaceName) {
         AppNamespace appNamespace = appNamespaceService.findPublicAppNamespace(namespaceName);
         if (appNamespace == null) {
@@ -193,7 +193,8 @@ public class AppEnvClusterNamespaceService {
                 namespace.getId(),
                 namespace.getAppEnvCluster().getApp().getAppCode(),
                 namespace.getAppEnvCluster().getName(),
-                namespace.getAppNamespace().getName()
+                namespace.getAppNamespace().getName(),
+                namespace.calcInstanceConfigsCount()
         );
         return dto;
     }

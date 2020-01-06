@@ -24,11 +24,14 @@ public class NamespaceDTO extends BaseDTO {
     )
     private String namespaceName;
 
-    public NamespaceDTO(String createAuthor, LocalDateTime createTime, String updateAuthor, LocalDateTime updateTime, long id, String appCode, String clusterName, String namespaceName) {
+    private Integer instanceCount;
+
+    public NamespaceDTO(String createAuthor, LocalDateTime createTime, String updateAuthor, LocalDateTime updateTime, long id, String appCode, String clusterName, String namespaceName, Integer instanceCount) {
         super(createAuthor, createTime, updateAuthor, updateTime);
         this.id = id;
         this.appCode = appCode;
         this.clusterName = clusterName;
         this.namespaceName = namespaceName;
+        this.instanceCount = instanceCount;
     }
 }
