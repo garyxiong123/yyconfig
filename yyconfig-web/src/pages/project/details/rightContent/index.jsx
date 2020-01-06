@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Button, Icon, Collapse, Tabs, Table, Spin, Tag, Row, Col, Dropdown, Menu, Empty, message } from 'antd';
+import { Button, Icon, Collapse, Tabs, Table, Spin, Tag, Row, Col, Dropdown, Menu, Empty, message, Badge } from 'antd';
 import { Loading } from '@/pages/components/';
 import styles from '../../index.less';
 import TextContent from './TextContent';
@@ -54,7 +54,7 @@ class RightContent extends React.Component {
       currentItem: item
     })
   }
-  onProtectEdit=(e, item)=>{
+  onProtectEdit = (e, item) => {
     e && e.stopPropagation();
     this.setState({
       showProtectEdit: true,
@@ -117,7 +117,7 @@ class RightContent extends React.Component {
             {
               item.namespaceType === 'Protect' &&
               <Col>
-                <Button size="small" onClick={(e)=>this.onProtectEdit(e, item)}>命名空间管理</Button>
+                <Button size="small" onClick={(e) => this.onProtectEdit(e, item)}>命名空间管理</Button>
               </Col>
             }
             <Col>
@@ -166,7 +166,7 @@ class RightContent extends React.Component {
           showRollBack && <RollBack onCancel={() => this.onCancelModal('showRollBack')} onSave={this.onSaveSuccess} currentItem={currentItem} />
         }
         {
-          showProtectEdit && <ProtectEdit onCancel={() => this.onCancelModal('showProtectEdit')} onSave={this.onSaveSuccess} currentItem={currentItem}/>
+          showProtectEdit && <ProtectEdit onCancel={() => this.onCancelModal('showProtectEdit')} onSave={this.onSaveSuccess} currentItem={currentItem} />
         }
       </Fragment>
     )
@@ -203,13 +203,15 @@ class RightContent extends React.Component {
               <TabPane tab="更改历史" key="3">
                 <History item={item} />
               </TabPane>
-              <TabPane tab="实例列表" key="4">
-                <Case />
+              <TabPane tab={
+                <span>{`实例列表`}</span>
+              } key="4">
+                <Case item={item} />
               </TabPane>
             </Tabs>
           </Panel>
         </Collapse>
-        
+
       </Fragment>
     )
   }

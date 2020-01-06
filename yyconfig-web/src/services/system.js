@@ -12,6 +12,14 @@ const system = {
   openNamespaceTypeDelete: async function (params = {}) {
     return requestDelete(`/openNamespaceType/${params.id}`);
   },
+  //系统参数列表
+  serverConfigList: async function (params = {}) {
+    return requestGet('/server/config/list', params);
+  },
+  //创建|修改 系统参数
+  serverConfigEdit: async function (params = {}) {
+    return requestPost('/server/config', params);
+  },
 }
 export {
   system

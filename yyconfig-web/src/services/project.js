@@ -106,11 +106,21 @@ const cluster = {
   }
 };
 const instances = {
+  //最新配置的实例
   getByRelease: async function (params = {}) {
-    return requestGet(`/instances/by-release`, params);
+    return requestPost(`/instances/by-release`, params);
   },
+   //非最新配置的实例
   getByReleaseNotIn: async function (params = {}) {
-    return requestGet(`/instances/by-namespace-and-releases-not-in`, params);
+    return requestGet(`/instances/namespaceId/${params.namespaceId}/releaseIds/${params.releaseIds}/by-namespace-and-releases-not-in`, params);
+  },
+  //所有实例
+  getAllRelease: async function(params = {}) {
+    return requestPost(`/instances/by-namespace`, params);
+  },
+  //查询最新的releaseId
+  activeRelease: async function (params = {}) {
+    return requestGet(`/namespaceId/${params.namespaceId}/releases/active`, params);
   },
 }
 
