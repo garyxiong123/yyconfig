@@ -256,10 +256,11 @@ public class ReleaseService {
 
 
     public List<ReleaseDTO> findActiveReleases(Long namespaceId, Pageable pageable) {
-        AppEnvClusterNamespace4Main appEnvClusterNamespace4Main = namespace4MainRepository.findById(namespaceId).orElse(null);
-        Pageable page = PageRequest.of(0, 2);
+        AppEnvClusterNamespace appEnvClusterNamespace = namespaceRepository.findById(namespaceId).orElseGet(()->{
+            throw new BizException("namespaceId不存在");
+        });
 
-        List<Release> latestActiveReleases = appEnvClusterNamespace4Main.findLatestActiveReleases(page);
+        List<Release> latestActiveReleases = appEnvClusterNamespace.findLatestActiveReleases(pageable);
 
         return transform2Dtos(latestActiveReleases);
     }

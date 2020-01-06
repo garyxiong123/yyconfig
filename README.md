@@ -38,7 +38,7 @@ Mysql5.6+
 / 方式1：使用默认配置，mysql默认为本地地址；
 java -jar yyconfig.jar
 // 方式2：支持自定义 mysql 地址；
-java -jar xxl-conf-admin.jar --spring.datasource.url=jdbc:mysql://127.0.0.1:3306/yyconf?Unicode=true&characterEncoding=UTF-8
+java -jar yyconfig.jar --spring.datasource.url=jdbc:mysql://127.0.0.1:3306/yyconf?Unicode=true&characterEncoding=UTF-8
 
 方式2：Docker 镜像方式搭建：
 
@@ -54,18 +54,18 @@ docker run -p 8080:8080 -v /tmp:/data/applogs --name yyconfig  -d yy/yyconfig
 * 配置项参考文件：
 */
 
-docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl-conf?Unicode=true&characterEncoding=UTF-8 " -p 8080:8080 -v /tmp:/data/applogs --name xxl-conf-admin  -d xuxueli/xxl-conf-admin
+docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/yyconfig?Unicode=true&characterEncoding=UTF-8 --spring.datasource.username=zhangsan --spring.datasource.password=zhangsan " -p 8080:8080 -v /tmp:/data/applogs --name yyconfig  -d yyconfig/yyconfig
 
 
 2.4 “接入yyconfig的示例项目” 项目配置
 项目：yyconfig-sample-springboot
-作用：接入XXl-CONF的示例项目，供用户参考学习。这里以 springboot 版本进行介绍，其他版本可参考各自sample项目。
+作用：接入接入yyconfig的示例项目的示例项目，供用户参考学习。这里以 springboot 版本进行介绍，其他版本可参考各自sample项目。
 
 A、引入maven依赖
-<!-- xxl-conf-client -->
+<!-- yyconfig-client -->
 <dependency>
-    <groupId>com.xuxueli</groupId>
-    <artifactId>xxl-conf-core</artifactId>
+    <groupId>com.yyconfig</groupId>
+    <artifactId>yyconfig-core</artifactId>
     <version>{最新稳定版}</version>
 </dependency>
 
