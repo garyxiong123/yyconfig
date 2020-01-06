@@ -16,14 +16,14 @@ public abstract class AbstractConfigService implements ConfigService {
   private GrayReleaseRulesHolder grayReleaseRulesHolder;
 
   @Override
-  public Release loadConfig4SingleClient(String clientAppId, String clientIp, String configAppId, String configClusterName, String env,
-                                         String configNamespace, String dataCenter, ApolloNotificationMessages clientMessages) {
-    // load from specified cluster fist
+  public Release loadRelease4Client(String clientAppId, String clientIp, String configAppId, String configClusterName, String env,
+                                    String configNamespace, String dataCenter, ApolloNotificationMessages clientMessages) {
+    // 特殊集群： 非默认
     if (!isDefaultCluster(configClusterName)) {
       Release clusterRelease = tryToLoadViaSpecifiedCluster(clientAppId, clientIp, configAppId, configClusterName,  env,configNamespace, clientMessages);
       if (!isNull(clusterRelease)) {return clusterRelease;}
     }
-
+    // 特殊的数据中心： 非默认
     if (isDataCenterValid(configClusterName, dataCenter)) {
       Release dataCenterRelease = tryToLoadViaDataCenter(clientAppId, clientIp, configAppId,env, configNamespace, dataCenter, clientMessages);
       if (!isNull(dataCenterRelease)) {

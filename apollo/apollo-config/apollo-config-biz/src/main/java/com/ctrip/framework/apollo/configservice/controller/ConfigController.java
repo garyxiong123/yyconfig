@@ -70,7 +70,7 @@ public class ConfigController {
 
         String appClusterNameLoaded = clusterName;
         if (!NO_APPID_PLACEHOLDER.equalsIgnoreCase(appId)) {
-            Release currentRelease4ThisClient = configService.loadConfig4SingleClient(appId, clientIp, appId, clusterName, env, namespace, dataCenter, clientMessages);
+            Release currentRelease4ThisClient = configService.loadRelease4Client(appId, clientIp, appId, clusterName, env, namespace, dataCenter, clientMessages);
 
             if (currentRelease4ThisClient != null) {
                 releases.add(currentRelease4ThisClient);
@@ -148,7 +148,7 @@ public class ConfigController {
 
         String publicConfigAppId = String.valueOf(appNamespace.getApp().getId());
 
-        return configService.loadConfig4SingleClient(clientAppId, clientIp, publicConfigAppId, clusterName, env,namespace, dataCenter, clientMessages);
+        return configService.loadRelease4Client(clientAppId, clientIp, publicConfigAppId, clusterName, env,namespace, dataCenter, clientMessages);
     }
 
 

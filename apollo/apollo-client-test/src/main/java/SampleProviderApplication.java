@@ -4,7 +4,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
-//import tk.mybatis.spring.annotation.MapperScan;
 
 /**
  * Created by xiongchengwei on 2018/8/20.
