@@ -52,9 +52,9 @@ public class InstanceController {
 
     @ApiOperation("所有实例")
     @PostMapping(value = "by-namespace")
-    public PageDTO<InstanceDTO> getByNamespace(@RequestBody PageQuery<InstanceNamespaceReq> instancePageQuery) {
+    public Result<PageDTO<InstanceDTO>> getByNamespace(@RequestBody PageQuery<InstanceNamespaceReq> instancePageQuery) {
         Pageable pageable = PageRequest.of(instancePageQuery.getPageNo(), instancePageQuery.getPageSize());
-        return instanceService.findInstancesByNamespace(instancePageQuery.getData().getNamespaceId(), pageable);
+        return Result.ok(instanceService.findInstancesByNamespace(instancePageQuery.getData().getNamespaceId(), pageable));
 
     }
 
@@ -68,7 +68,7 @@ public class InstanceController {
 
     @ApiOperation("使用的非最新配置的实例")
     @RequestMapping(value = "/namespaceId/{namespaceId}/releaseIds/{releaseIds}/by-namespace-and-releases-not-in", method = RequestMethod.GET)
-    public List<InstanceDTO> getByReleasesNotIn(@RequestParam Long namespaceId, @RequestParam String releaseIds) {
+    public Result<List<InstanceDTO>> getByReleasesNotIn(@RequestParam Long namespaceId, @RequestParam String releaseIds) {
 
         Set<Long> releaseIdSet = RELEASES_SPLITTER.splitToList(releaseIds).stream().map(Long::parseLong).collect(Collectors.toSet());
 
@@ -76,7 +76,7 @@ public class InstanceController {
             throw new BizException("release ids can not be empty");
         }
 
-        return instanceService.getByReleasesNotIn(namespaceId, releaseIdSet);
+        return Result.ok(instanceService.getByReleasesNotIn(namespaceId, releaseIdSet));
     }
 
 
