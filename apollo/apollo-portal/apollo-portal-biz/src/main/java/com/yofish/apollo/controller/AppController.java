@@ -23,6 +23,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.youyu.common.api.Result.ok;
 
 @Api(description = "项目")
 @RestController
@@ -61,7 +64,7 @@ public class AppController {
 
         appService.createApp(app);
 
-        return Result.ok(app);
+        return ok(app);
     }
 
 
@@ -70,9 +73,9 @@ public class AppController {
     public Result<PageData<App>> searchByAppCodeOrAppName(@RequestParam(required = false) String query, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "20") int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
         if (StringUtils.isEmpty(query)) {
-            return Result.ok(appService.findAllWithAuthorize(pageable));
+            return ok(appService.findAllWithAuthorize(pageable));
         } else {
-            return Result.ok(appService.searchByAppCodeOrAppName(query, pageable));
+            return ok(appService.searchByAppCodeOrAppName(query, pageable));
         }
     }
 
@@ -80,14 +83,14 @@ public class AppController {
     @ApiOperation("查询所有的项目")
     public Result<List<App>> getAllAppWithAuthorize() {
         List<App> all = appService.findAllWithAuthorize();
-        return Result.ok(all);
+        return ok(all);
     }
 
     @GetMapping("/{appId:\\d+}")
     @ApiOperation("查询项目信息")
     public Result<App> getApp(@PathVariable Long appId) {
         App app = appService.getApp(appId);
-        return Result.ok(app);
+        return ok(app);
     }
 
 
@@ -99,7 +102,7 @@ public class AppController {
         app.setId(appId);
 
         App updatedApp = appService.updateApp(app);
-        return Result.ok(updatedApp);
+        return ok(updatedApp);
     }
 
     @GetMapping("/code/{appCode:[0-9a-zA-Z_.-]+}")
@@ -109,7 +112,7 @@ public class AppController {
         if (app == null) {
             throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "项目不存在！");
         }
-        return Result.ok(app);
+        return ok(app);
     }
 
     @ApiOperation("项目菜单")
@@ -117,10 +120,13 @@ public class AppController {
     public Result<List<EnvClusterInfo>> nav(@PathVariable long appId) {
         List<EnvClusterInfo> envClusterInfoList = new ArrayList<>();
         List<String> envs = this.serverConfigService.getActiveEnvs();
+        if(CollectionUtils.isEmpty(envs)){
+          return ok(null);
+        }
         for (String env : envs) {
             envClusterInfoList.add(appService.createEnvNavNode(env, appId));
         }
-        return Result.ok(envClusterInfoList);
+        return ok(envClusterInfoList);
     }
 
 

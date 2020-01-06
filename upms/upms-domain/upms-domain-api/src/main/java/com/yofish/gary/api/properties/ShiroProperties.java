@@ -60,7 +60,7 @@ public class ShiroProperties {
      * 注:按逗号(,)切分,支持多个
      */
     @NotNull
-    private String noneUrlKeys = "/notifications/**, /configs/**,/*.js,/*.css,/user/login,/user/logout,/*.html,/webjars/**,/v2/**,/swagger-resources/**,/actuator/**";
+    private String noneUrlKeys = "/notifications/**,/configs/**,/*.js,/*.css,/user/login,/user/logout,/*.html,/webjars/**, /v2/**, /swagger-resources/**, /actuator/**" ;
 
     /**
      * 需要认证key

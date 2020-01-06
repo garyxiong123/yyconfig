@@ -5,8 +5,10 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Queues;
 import com.yofish.apollo.domain.AppEnvCluster;
+import com.yofish.apollo.domain.AppEnvClusterNamespace;
 import com.yofish.apollo.domain.Instance;
 import com.yofish.apollo.domain.InstanceConfig;
+import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.repository.AppEnvClusterRepository;
 import com.yofish.apollo.repository.InstanceRepository;
 import com.yofish.apollo.service.InstanceService;
@@ -49,6 +51,8 @@ public class InstanceConfigHeartBeatUtil implements InitializingBean {
     private InstanceRepository instanceRepository;
     @Autowired
     private AppEnvClusterRepository appEnvClusterRepository;
+    @Autowired
+    private AppEnvClusterNamespaceRepository namespaceRepository;
 
     public InstanceConfigHeartBeatUtil() {
         auditExecutorService = Executors.newSingleThreadExecutor(ApolloThreadFactory.create("InstanceConfigAuditUtil", true));
@@ -87,9 +91,9 @@ public class InstanceConfigHeartBeatUtil implements InitializingBean {
 
         Instance instance = initInstanceInDB(auditModel);
 
-        instanceCache.put(instanceKey, instanceId);
+        instanceCache.put(instanceKey, instance.getId());
 
-        return instanceId;
+        return instance.getId();
     }
 
     private void refreshInstanceConfig(InstanceConfigRefreshModel auditModel, Long instanceId) {
@@ -187,9 +191,12 @@ public class InstanceConfigHeartBeatUtil implements InitializingBean {
     private InstanceConfig createInstanceConfig(InstanceConfigRefreshModel auditModel, Long instanceId) {
         NamespaceBo namespaceBo = auditModel.getNamespaceBo();
         InstanceConfig instanceConfig = new InstanceConfig();
-        ;
+
+        AppEnvClusterNamespace namespace = namespaceRepository.findAppEnvClusterNamespace(namespaceBo.getAppCode(),namespaceBo.getEnv(),namespaceBo.getNamespaceName(),namespaceBo.getClusterName(),"main" );
+
         Instance instance = new Instance(instanceId);
         instanceConfig.setInstance(instance);
+        instanceConfig.setNamespace(namespace);
         instanceConfig.setAppCode(namespaceBo.getAppCode());
         instanceConfig.setEnv(namespaceBo.getEnv());
         instanceConfig.setCluster(namespaceBo.getClusterName());

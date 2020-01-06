@@ -20,7 +20,7 @@ public class PageQuery<T> {
     private T data;
 
     public void setPageNo(int pageNo) {
-        this.pageNo = pageNo <= 0 ? 1 : pageNo;
+        this.pageNo = pageNo < 0 ? 1 : pageNo;
     }
 
     public void setPageSize(int pageSize) {

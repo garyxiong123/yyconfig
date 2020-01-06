@@ -1,6 +1,8 @@
 package com.yofish.apollo.controller;
 
 import com.yofish.apollo.dto.InstanceDTO;
+import com.yofish.apollo.dto.InstanceNamespaceReq;
+import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.util.PageQuery;
 import com.youyu.common.api.Result;
 import common.dto.PageDTO;
@@ -19,6 +21,8 @@ public class InstanceControllerTest extends AbstractControllerTest {
 
     @Autowired
     private InstanceController instanceController;
+    @Autowired
+    private AppEnvClusterNamespaceRepository namespaceRepository;
 
     @Before
     public void setUp() throws Exception {
@@ -34,10 +38,24 @@ public class InstanceControllerTest extends AbstractControllerTest {
 
     @Test
     public void getByNamespace() {
+        Long namespaceId = namespaceRepository.findAll().get(0).getId();
+
+        PageQuery<InstanceNamespaceReq> instanceNamespaceReqPageQuery = createPageQuery(namespaceId);
+        instanceController.getByNamespace(instanceNamespaceReqPageQuery);
+    }
+
+    private PageQuery<InstanceNamespaceReq> createPageQuery(Long namespaceId) {
+        PageQuery<InstanceNamespaceReq> instanceNamespaceReqPageQuery = new PageQuery<>();
+        InstanceNamespaceReq namespaceReq = new InstanceNamespaceReq();
+        namespaceReq.setNamespaceId(namespaceId);
+        instanceNamespaceReqPageQuery.setData(namespaceReq);
+        return instanceNamespaceReqPageQuery;
     }
 
     @Test
     public void getInstanceCountByNamespace() {
+        Long namespaceId = namespaceRepository.findAll().get(0).getId();
+        instanceController.getInstanceCountByNamespace(namespaceId);
     }
 
     @Test

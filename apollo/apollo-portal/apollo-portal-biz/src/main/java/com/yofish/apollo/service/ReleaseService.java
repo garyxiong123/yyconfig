@@ -2,7 +2,6 @@ package com.yofish.apollo.service;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
-import com.yofish.apollo.bo.ItemChangeSets;
 import com.yofish.apollo.domain.*;
 import com.yofish.apollo.enums.ChangeType;
 import com.yofish.apollo.model.bo.KVEntity;
@@ -15,7 +14,6 @@ import common.dto.ReleaseDTO;
 import common.utils.BeanUtils;
 import framework.apollo.core.enums.Env;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,17 +22,11 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 
 import static com.yofish.gary.utils.OrikaCopyUtil.copyProperty4List;
-import static org.apache.commons.lang.StringUtils.isEmpty;
 
-/**
- * @author Jason Song(song_s@ctrip.com)
- */
 @Service
 public class ReleaseService {
 
-
     private Gson gson = new Gson();
-
     @Autowired
     private ReleaseRepository releaseRepository;
     @Autowired
@@ -58,7 +50,9 @@ public class ReleaseService {
     }
 
     public Release findOne(long releaseId) {
-        return releaseRepository.findById(releaseId).orElseGet(()->{throw new BizException(String.format("release not found for %s", releaseId));});
+        return releaseRepository.findById(releaseId).orElseGet(() -> {
+            throw new BizException(String.format("release not found for %s", releaseId));
+        });
     }
 
     public List<Release> findByReleaseIds(Set<Long> releaseIds) {
@@ -90,30 +84,6 @@ public class ReleaseService {
 
 
     @Transactional
-    public Release mergeBranchChangeSetsAndRelease(AppNamespace namespace, String branchName, String releaseName,
-                                                   String releaseComment, boolean isEmergencyPublish,
-                                                   ItemChangeSets changeSets) {
-
-//        checkLock(namespace, isEmergencyPublish, changeSets.getDataChangeLastModifiedBy());
-
-//        itemSetService.updateSet(namespace, changeSets);
-//
-//        Release branchRelease = findLatestActiveRelease(namespace.getAppId(), branchName, namespace.getNamespaceName());
-//        long branchReleaseId = branchRelease == null ? 0 : branchRelease.getId();
-//
-//        Map<String, String> operateNamespaceItems = getConfigurations(namespace);
-//
-//        Map<String, Object> operationContext = Maps.newHashMap();
-//        operationContext.put(ReleaseOperationContext.SOURCE_BRANCH, branchName);
-//        operationContext.put(ReleaseOperationContext.BASE_RELEASE_ID, branchReleaseId);
-//        operationContext.put(ReleaseOperationContext.IS_EMERGENCY_PUBLISH, isEmergencyPublish);
-//
-//        return masterRelease(namespace, releaseName, releaseComment, operateNamespaceItems, changeSets.getUpdateTime(), ReleaseOperation.GRAY_RELEASE_MERGE_TO_MASTER, operationContext);
-
-        return null;
-    }
-
-    @Transactional
     public Release publish(AppEnvClusterNamespace namespace, String releaseName, String releaseComment, String operator, boolean isEmergencyPublish) {
 
         checkLock(namespace, isEmergencyPublish, operator);
@@ -143,21 +113,6 @@ public class ReleaseService {
     }
 
 
-    private Map<String, String> getConfigurations(List<Item> items) {
-
-        if (CollectionUtils.isEmpty(items)) return null;
-        Map<String, String> configurations = new HashMap<String, String>();
-        for (Item item : items) {
-            if (isEmpty(item.getKey())) {
-                continue;
-            }
-            configurations.put(item.getKey(), item.getValue());
-        }
-
-        return configurations;
-    }
-
-
     private Release createRelease(AppEnvClusterNamespace namespace, String releaseName, String comment, Map<String, String> configurations, boolean isEmergencyPublish) {
         if (namespace instanceof AppEnvClusterNamespace4Branch) {
             Release4Branch release4Branch = new Release4Branch(namespace, releaseName, comment, configurations, isEmergencyPublish);
@@ -171,22 +126,7 @@ public class ReleaseService {
     }
 
 
-    @Transactional
-    public int batchDelete(String appId, String clusterName, String namespaceName, String operator) {
-        return releaseRepository.batchDelete(appId, clusterName, namespaceName, operator);
-    }
-
-    public List<ReleaseBO> findAllReleases(String appId, Env env, String clusterName, String namespaceName, int page, int size) {
-        return null;
-    }
-
-
-    public List<ReleaseDTO> findActiveReleases(String appId, Env env, String clusterName, String namespaceName, int page, int size) {
-        return null;
-    }
-
     public ReleaseCompareResult compare(long baseReleaseId, long toCompareReleaseId) {
-
 
         Release baseRelease = null;
         Release toCompareRelease = null;
@@ -256,10 +196,11 @@ public class ReleaseService {
 
 
     public List<ReleaseDTO> findActiveReleases(Long namespaceId, Pageable pageable) {
-        AppEnvClusterNamespace4Main appEnvClusterNamespace4Main = namespace4MainRepository.findById(namespaceId).orElse(null);
-        Pageable page = PageRequest.of(0, 2);
+        AppEnvClusterNamespace appEnvClusterNamespace = namespaceRepository.findById(namespaceId).orElseGet(() -> {
+            throw new BizException("namespaceId不存在");
+        });
 
-        List<Release> latestActiveReleases = appEnvClusterNamespace4Main.findLatestActiveReleases(page);
+        List<Release> latestActiveReleases = appEnvClusterNamespace.findLatestActiveReleases(pageable);
 
         return transform2Dtos(latestActiveReleases);
     }
@@ -277,7 +218,11 @@ public class ReleaseService {
     }
 
     public Release findLatestActiveRelease(String appCode, String clusterName, String env, String namespaceName) {
-        AppEnvClusterNamespace namespace = namespaceRepository.findAppEnvClusterNamespace(appCode, env,namespaceName, clusterName,"main");
+        AppEnvClusterNamespace namespace = namespaceRepository.findAppEnvClusterNamespace(appCode, env, namespaceName, clusterName, "main");
+        if(namespace == null){
+            return null;
+        }
+
         return namespace.findLatestActiveRelease();
     }
 }

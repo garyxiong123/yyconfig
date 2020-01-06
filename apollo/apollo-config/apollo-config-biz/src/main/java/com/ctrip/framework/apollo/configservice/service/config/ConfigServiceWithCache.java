@@ -74,8 +74,7 @@ public class ConfigServiceWithCache extends AbstractConfigService {
             Transaction transaction = Tracer.newTransaction(TRACER_EVENT_CACHE_LOAD, key);
             try {
               ReleaseMessage latestReleaseMessage = releaseMessageService.findLatestReleaseMessageForMessages(Lists.newArrayList(key));
-              Release latestRelease = releaseService.findLatestActiveRelease(namespaceInfo.get(0), namespaceInfo.get(1),
-                  namespaceInfo.get(2), namespaceInfo.get(3));
+              Release latestRelease = releaseService.findLatestActiveRelease(namespaceInfo.get(0), namespaceInfo.get(1), namespaceInfo.get(2), namespaceInfo.get(3));
 
               transaction.setStatus(Transaction.SUCCESS);
 

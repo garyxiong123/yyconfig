@@ -1,16 +1,17 @@
 package com.yofish.apollo.service;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.*;
 import com.yofish.apollo.domain.*;
 import com.yofish.apollo.dto.InstanceConfigDTO;
 import com.yofish.apollo.dto.InstanceDTO;
 import com.yofish.apollo.dto.ReleaseDTO;
+import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.repository.AppEnvClusterRepository;
 import com.yofish.apollo.repository.InstanceConfigRepository;
 import com.yofish.apollo.repository.InstanceRepository;
 import com.youyu.common.exception.BizException;
+import com.youyu.common.utils.YyAssert;
 import common.dto.PageDTO;
 import common.utils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,8 @@ public class InstanceService {
     @Autowired
     private AppEnvClusterNamespaceService appEnvClusterNamespaceService;
     @Autowired
+    private AppEnvClusterNamespaceRepository namespaceRepository;
+    @Autowired
     private AppEnvClusterRepository clusterRepository;
 
     public Instance findInstance(String appCode, String env, String clusterName, String dataCenter, String ip) {
@@ -68,12 +71,12 @@ public class InstanceService {
 
         List<InstanceDTO> instanceDTOs = Collections.emptyList();
 
-        PageDTO<InstanceDTO> instanceDTOPageDTO = transformToDTOs(pageable, instanceConfigs4Lastest, instanceDTOs);
+        PageDTO<InstanceDTO> instanceDTOPageDTO = transformToDTOs(instanceConfigs4Lastest, instanceDTOs, pageable);
         return instanceDTOPageDTO;
     }
 
-    private PageDTO<InstanceDTO> transformToDTOs(Pageable pageable, Page<InstanceConfig> instanceConfigs4Lastest, List<InstanceDTO> instanceDTOs) {
-        if (instanceConfigs4Lastest.hasContent()) {
+    private PageDTO<InstanceDTO> transformToDTOs(Page<InstanceConfig> instanceConfigs4Lastest, List<InstanceDTO> instanceDTOs, Pageable pageable) {
+        if (!instanceConfigs4Lastest.hasContent()) {
             return null;
         }
         Multimap<Long, InstanceConfig> instanceConfigMap = HashMultimap.create();
@@ -97,7 +100,11 @@ public class InstanceService {
             List<InstanceConfigDTO> configDTOs = configs.stream().map(instanceConfig -> {
                 InstanceConfigDTO instanceConfigDTO = new InstanceConfigDTO();
                 //to save some space
-                instanceConfigDTO.setRelease(null);
+                ReleaseDTO releaseDTO =  createReleaseDTO(instanceConfig);
+                instanceConfigDTO.setRelease(releaseDTO);
+                instanceDTO.setAppId(instanceConfig.getAppCode());
+                instanceDTO.setClusterName(instanceConfig.getCluster());
+                instanceDTO.setDataCenter(null);
                 instanceConfigDTO.setReleaseDeliveryTime(instanceConfig.getReleaseDeliveryTime());
                 instanceConfigDTO.setDataChangeLastModifiedTime(instanceConfig.getUpdateTime());
                 return instanceConfigDTO;
@@ -107,48 +114,80 @@ public class InstanceService {
         return new PageDTO<>(instanceDTOs, pageable, instanceConfigs4Lastest.getTotalElements());
     }
 
+    private ReleaseDTO createReleaseDTO(InstanceConfig instanceConfig) {
+        ReleaseDTO releaseDTO = ReleaseDTO.builder().appId(instanceConfig.getAppCode()).namespaceName(instanceConfig.getNamespaceName()).clusterName(instanceConfig.getCluster()).releaseKey(instanceConfig.getReleaseKey()).build();
+
+        return releaseDTO;
+    }
+
 
     public InstanceConfig findInstanceConfig(long instanceId, String appCode, String env, String namespaceName) {
 
         return instanceConfigRepository.findByInstanceIdAndAppCodeAndNamespaceNameAndEnv(instanceId, appCode, namespaceName, env);
     }
 
+    /**
+     * 使用的非最新配置的实例
+     */
     public List<InstanceDTO> getByReleasesNotIn(Long namspaceId, Set<Long> releaseIdSet) {
+        // 获取非最新的实例配置
+        List<InstanceConfig> instanceConfigsNotIn = findInstanceConfigNotIn(namspaceId, releaseIdSet);
 
+        return transform2InstanceDTO(instanceConfigsNotIn);
+    }
+
+    /**
+     * 获取非最新的实例配置
+     */
+    private List<InstanceConfig> findInstanceConfigNotIn(Long namspaceId, Set<Long> releaseIdSet) {
+        Set<String> releaseKeysNotIn = findReleaseKeys4NotIn(releaseIdSet);
+
+        return findInstanceConfigsByNamespaceWithReleaseKeysNotIn(namspaceId, releaseKeysNotIn);
+    }
+
+    /**
+     * 获取非最新
+     */
+    private Set<String> findReleaseKeys4NotIn(Set<Long> releaseIdSet) {
         List<Release> releases = releaseService.findByReleaseIds(releaseIdSet);
-        if (CollectionUtils.isEmpty(releases)) {
-            throw new BizException(String.format("releases not found for %s", releaseIdSet.toString()));
+        YyAssert.assertEmptys(new BizException(String.format("releases not found for %s", releaseIdSet.toString())), releases);
+        return releases.stream().map(Release::getReleaseKey).collect(Collectors.toSet());
+    }
+
+    private List<InstanceConfig> findInstanceConfigsByNamespaceWithReleaseKeysNotIn(Long namespaceId, Set<String> releaseKeysNotIn) {
+        AppEnvClusterNamespace namespace = appEnvClusterNamespaceService.findAppEnvClusterNamespace(namespaceId);
+
+        List<Instance> instances = instanceRepository.findAllByAppEnvCluster(namespace.getAppEnvCluster());
+        List<InstanceConfig> instanceConfigs = instanceConfigRepository.findAllByInstanceInAndUpdateTimeAfterAndReleaseKeyNotIn(instances, getValidInstanceConfigDate(), releaseKeysNotIn);
+
+        if (CollectionUtils.isEmpty(instanceConfigs)) {
+            return Collections.emptyList();
         }
 
-        Set<String> releaseKeys = releases.stream().map(Release::getReleaseKey).collect(Collectors.toSet());
+        return instanceConfigs;
+    }
 
-        List<InstanceConfig> instanceConfigs = findInstanceConfigsByNamespaceWithReleaseKeysNotIn(namspaceId, releaseKeys);
-
+    /**
+     * 转化 实例配置 =》 实例DTO
+     */
+    private List<InstanceDTO> transform2InstanceDTO(List<InstanceConfig> instanceConfigsNotIn) {
         Multimap<Long, InstanceConfig> instanceConfigMap = HashMultimap.create();
         Set<String> otherReleaseKeys = Sets.newHashSet();
 
-        for (InstanceConfig instanceConfig : instanceConfigs) {
+        for (InstanceConfig instanceConfig : instanceConfigsNotIn) {
             instanceConfigMap.put(instanceConfig.getInstance().getId(), instanceConfig);
             otherReleaseKeys.add(instanceConfig.getReleaseKey());
         }
 
         List<Instance> instances = instanceRepository.findInstancesByIdIn(instanceConfigMap.keySet());
-
-        if (CollectionUtils.isEmpty(instances)) {
+        if (isEmpty(instances)) {
             return Collections.emptyList();
         }
 
+
+        Map<String, ReleaseDTO> releaseMap = buildReleaseMap(otherReleaseKeys);
+
         List<InstanceDTO> instanceDTOs = BeanUtils.batchTransform(InstanceDTO.class, instances);
-
-        List<Release> otherReleases = releaseService.findByReleaseKeys(otherReleaseKeys);
-        Map<String, ReleaseDTO> releaseMap = Maps.newHashMap();
-
-        for (Release release : otherReleases) {
-            //unset configurations to save space
-            release.setConfigurations(null);
-            ReleaseDTO releaseDTO = BeanUtils.transform(ReleaseDTO.class, release);
-            releaseMap.put(release.getReleaseKey(), releaseDTO);
-        }
 
         for (InstanceDTO instanceDTO : instanceDTOs) {
             Collection<InstanceConfig> configs = instanceConfigMap.get(instanceDTO.getId());
@@ -163,6 +202,18 @@ public class InstanceService {
         }
 
         return instanceDTOs;
+    }
+
+    private Map<String, ReleaseDTO> buildReleaseMap(Set<String> otherReleaseKeys) {
+        List<Release> otherReleases = releaseService.findByReleaseKeys(otherReleaseKeys);
+        Map<String, ReleaseDTO> releaseMap = Maps.newHashMap();
+        for (Release release : otherReleases) {
+            //unset configurations to save space
+            release.setConfigurations(null);
+            ReleaseDTO releaseDTO = BeanUtils.transform(ReleaseDTO.class, release);
+            releaseMap.put(release.getReleaseKey(), releaseDTO);
+        }
+        return releaseMap;
     }
 
 
@@ -182,25 +233,12 @@ public class InstanceService {
         return Lists.newArrayList(instances);
     }
 
-    public List<InstanceConfig> findInstanceConfigsByNamespaceWithReleaseKeysNotIn(Long appEnvClusterNamespaceId
-            , Set<String> releaseKeysNotIn) {
-        AppEnvClusterNamespace appEnvClusterNamespace = appEnvClusterNamespaceService.findAppEnvClusterNamespace(appEnvClusterNamespaceId);
 
-        List<Instance> instances = instanceRepository.findAllByAppEnvCluster(appEnvClusterNamespace.getAppEnvCluster());
-        List<InstanceConfig> instanceConfigs = instanceConfigRepository.
-                findAllByInstanceAndUpdateTimeAfterAndReleaseKeyNotIn(instances, getValidInstanceConfigDate(), releaseKeysNotIn);
-
-        if (CollectionUtils.isEmpty(instanceConfigs)) {
-            return Collections.emptyList();
-        }
-
-        return instanceConfigs;
-    }
-
-
+    /**
+     * 默认一天前的
+     */
     private LocalDateTime getValidInstanceConfigDate() {
-
-        LocalDateTime dateTime = LocalDateTime.now().minusDays(-1).minusHours(-1);
+        LocalDateTime dateTime = LocalDateTime.now().minusDays(+1).minusHours(+1);
         return dateTime;
     }
 
@@ -213,8 +251,9 @@ public class InstanceService {
 
     @Transactional
     public InstanceConfig updateInstanceConfig(InstanceConfig instanceConfig) {
-        InstanceConfig existedInstanceConfig = instanceConfigRepository.findById(instanceConfig.getId()).get();
-        Preconditions.checkArgument(existedInstanceConfig != null, String.format("Instance config %d doesn't exist", instanceConfig.getId()));
+        InstanceConfig existedInstanceConfig = instanceConfigRepository.findById(instanceConfig.getId()).orElseGet(() -> {
+            throw new BizException(String.format("instanceId %d doesn't exist", instanceConfig.getId()));
+        });
 
         existedInstanceConfig.setCluster(instanceConfig.getCluster());
         existedInstanceConfig.setReleaseKey(instanceConfig.getReleaseKey());
@@ -224,17 +263,29 @@ public class InstanceService {
     }
 
     public int getInstanceCountByNamepsace(Long namespaceId, Pageable pageable) {
-//        Page<Instance> instances = findInstancesByNamespace(namespaceId, pageable);
-        return 0;
+        PageDTO<InstanceDTO> instances = findInstancesByNamespace(namespaceId, pageable);
+        return (int) instances.getTotal();
     }
 
-    public Page<InstanceDTO> findInstancesByNamespace(Long namespaceId, Pageable pageable) {
-        return null;
+    public PageDTO<InstanceDTO> findInstancesByNamespace(Long namespaceId, Pageable pageable) {
+        AppEnvClusterNamespace namespace = namespaceRepository.findById(namespaceId).orElseGet(() -> {
+            throw new BizException(String.format("namespaceId %d doesn't exist", namespaceId.toString()));
+        });
+        Page<InstanceConfig> instanceConfigs = namespace.getInstanceConfigs(pageable);
+        if (!instanceConfigs.hasContent()) {
+            return null;
+        }
+
+        List<InstanceDTO> instanceDTOs = new ArrayList<>();
+        return transformToDTOs(instanceConfigs, instanceDTOs, pageable);
     }
 
 
     public int getInstanceCountByNamepsace(Long namespaceId) {
-        return 0;
+        AppEnvClusterNamespace namespace = namespaceRepository.findById(namespaceId).orElseGet(() -> {
+            throw new BizException(String.format("namespaceId %d doesn't exist", namespaceId.toString()));
+        });
+        return namespace.calcInstanceConfigsCount();
     }
 
 //    @Transactional

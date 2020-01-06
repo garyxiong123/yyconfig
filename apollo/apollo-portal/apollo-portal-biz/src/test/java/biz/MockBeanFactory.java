@@ -1,6 +1,7 @@
 package biz;
 
 
+import com.yofish.apollo.config.ServerConfigKey;
 import com.yofish.apollo.domain.AppEnvClusterNamespace;
 import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.domain.Release;
@@ -31,7 +32,7 @@ public class MockBeanFactory {
     public static ServerConfig mockServerConfig(String key, String value, String cluster) {
         ServerConfig instance = new ServerConfig();
 
-        instance.setKey(key);
+        instance.setKey(ServerConfigKey.valueOf(key));
         instance.setValue(value);
 //        instance.setCluster(cluster);
 

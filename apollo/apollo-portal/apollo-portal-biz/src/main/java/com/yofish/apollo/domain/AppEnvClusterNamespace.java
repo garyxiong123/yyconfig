@@ -1,5 +1,6 @@
 package com.yofish.apollo.domain;
 
+import com.yofish.apollo.repository.InstanceConfigRepository;
 import com.yofish.apollo.repository.ReleaseRepository;
 import com.yofish.apollo.service.AppNamespaceService;
 import com.yofish.apollo.service.ItemService;
@@ -39,8 +40,6 @@ public class AppEnvClusterNamespace extends BaseEntity {
     private AppNamespace appNamespace;
 
 
-
-
     public Release findLatestActiveRelease() {
 
         return getBeanByClass(ReleaseRepository.class).findFirstByAppEnvClusterNamespace_IdAndAbandonedIsFalseOrderByIdDesc(this.getId());
@@ -55,9 +54,19 @@ public class AppEnvClusterNamespace extends BaseEntity {
         return items;
     }
 
+    public Page<InstanceConfig> getInstanceConfigs(Pageable pageable) {
+        Page<InstanceConfig> InstanceConfigPage = getBeanByClass(InstanceConfigRepository.class).findByNamespaceId(this.getId(), pageable);
+        return InstanceConfigPage;
+    }
+
+    public int calcInstanceConfigsCount() {
+
+        return getBeanByClass(InstanceConfigRepository.class).countByNamespaceId(this.getId());
+    }
+
     @Getter
     @AllArgsConstructor
-    public enum Type{
+    public enum Type {
         Main("main"),
         Branch("branch");
 
