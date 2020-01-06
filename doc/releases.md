@@ -18,7 +18,7 @@ master节点|1个以上，按业务需求，多个节点可以预防单机故障
 
 # <br/><br/><br/>安装步骤
 ## 1. 安装必要软件（master、public agent和private agent节点执行）
-```bash
+```bash  
 yum update && yum install -y tar xz unzip curl ipset yum-utils chrony
 ```
 ## 2. 节点配置（master、public agent和private agent节点执行）

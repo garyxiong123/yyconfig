@@ -50,8 +50,8 @@ public class UserController implements ApplicationContextAware {
     @ApolloConfig("application")
     private Config config;
 
-//    @ApolloConfig("testJson.json")
-//    private Config testJsonConfig;
+    @ApolloConfig("testJson")
+    private Config testJsonConfig;
 
 
 

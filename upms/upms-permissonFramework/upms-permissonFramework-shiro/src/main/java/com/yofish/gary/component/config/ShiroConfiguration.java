@@ -16,7 +16,6 @@
 package com.yofish.gary.component.config;
 
 import com.yofish.gary.component.filter.NoneLoginFilter;
-import com.yofish.gary.component.filter.NoneRegistryFilter;
 import com.yofish.gary.component.filter.PermFailFilter;
 import com.yofish.gary.component.filter.ShiroUrlPathMatchingFilter;
 import com.yofish.gary.api.properties.ShiroProperties;
@@ -76,7 +75,7 @@ public class ShiroConfiguration {
         //接口未登录
         shiroFilterFactoryBean.getFilters().put("authc", new NoneLoginFilter());
         //接口未注册
-        shiroFilterFactoryBean.getFilters().put("noneRegistry", new NoneRegistryFilter());
+//        shiroFilterFactoryBean.getFilters().put("noneRegistry", new NoneRegistryFilter());
         //所有接口都必须进行接口注册检查
         return shiroFilterFactoryBean;
     }

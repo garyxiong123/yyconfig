@@ -1,4 +1,4 @@
-![logo](./img/logo160x160.png)
+![logo](_`****`_./img/logo160x160.png)
 # 阿塔云-sword 本地集群安装方案
 
 # <br/><br/><br/>资源需求
@@ -11,15 +11,14 @@ DC/OS集群由三种类型的节点（master节点、public agent节点和privat
 ## 硬件资源需求
 节点类型|节点个数|Linux版本|最小配置|生产环境推荐配置
 :-:|:-:|:-:|:-:|:-:|
-安装引导节点|1|-|-|-
-master节点|1个以上，推荐3个|CentOS 7.5|CPU：2核；内存：4G；磁盘：80G|CPU：4核，内存：8G，磁盘：160G
-public agent节点|1个以上，推荐2-3个|CentOS 7.5|CPU：2核，内存：4G，磁盘：50G|CPU：4核，内存：8G，磁盘：50G
-master节点|1个以上，按业务需求，多个节点可以预防单机故障|CentOS 7.5|CPU：4核，内存：8G，磁盘：50G|CPU和内存按业务需求量，但请保证每个节点磁盘在50G以上
+内存需求2G
 
 # <br/><br/><br/>安装步骤
-## 1. 安装必要软件（master、public agent和private agent节点执行）
+## 1. 
+
 ```bash
-yum update && yum install -y tar xz unzip curl ipset yum-utils chrony
+初始化“数据库”
+执行Sql 创建数据库
 ```
 ## 2. 节点配置（master、public agent和private agent节点执行）
 ### 2.1 停止firewalld
@@ -50,7 +49,7 @@ groupadd nogroup && groupadd docker
 设置并统一网卡名，统一的网卡名将被填写在安装导引节点的安装配置中
 ### 2.7 重启节点
 重启节点以确保配置生效
-```bash
+```bas
 sudo reboot
 ```
 ## 3 安装docker（master、public agent和private agent节点执行）
