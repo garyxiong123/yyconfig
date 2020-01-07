@@ -9,7 +9,6 @@ import com.yofish.apollo.repository.AppRepository;
 import com.yofish.gary.biz.domain.Department;
 import com.yofish.gary.biz.domain.User;
 import com.yofish.gary.biz.repository.DepartmentRepository;
-import com.yofish.gary.biz.repository.UserRepository;
 import com.yofish.gary.biz.service.UserService;
 import com.youyu.common.api.PageData;
 import com.youyu.common.enums.BaseResultCode;
@@ -45,8 +44,6 @@ public class AppService {
     private DepartmentRepository departmentRepository;
     @Autowired
     private AppEnvClusterService clusterService;
-    @Autowired
-    private UserRepository userRepository;
     @Autowired
     private PermissionValidator permissionValidator;
 
@@ -209,105 +206,4 @@ public class AppService {
         node.setClusters(clusterService.findClusters(env, appCode));
         return node;
     }
-/*
-  public List<App> findAll() {
-    Iterable<App> apps = appRepository.findAll();
-    if (apps == null) {
-      return Collections.emptyList();
-    }
-    return Lists.newArrayList((apps));
-  }
-
-  public PageDTO<App> findAll(Pageable pageable) {
-    Page<App> apps = appRepository.findAll(pageable);
-
-    return new PageDTO<>(apps.getContent(), pageable, apps.getTotalElements());
-  }
-  public PageDTO<App> searchByAppCodeOrAppName(String query, Pageable pageable) {
-    Page<App> apps = appRepository.findByAppIdContainingOrNameContaining(query, query, pageable);
-
-    return new PageDTO<>(apps.getContent(), pageable, apps.getTotalElements());
-  }
-
-  public List<App> findByAppIds(Set<String> appIds) {
-    return appRepository.findByAppIdIn(appIds);
-  }
-
-  public List<App> findByAppIds(Set<String> appIds, Pageable pageable) {
-    return appRepository.findByAppIdIn(appIds, pageable);
-  }
-
-  public List<App> findByOwnerName(String ownerName, Pageable page) {
-    return appRepository.findByOwnerName(ownerName, page);
-  }
-
-  public App load(String appCode) {
-    return appRepository.findByAppId(appCode);
-  }
-
-  public AppDTO load(Env env, String appCode) {
-    return appAPI.loadApp(env, appCode);
-  }
-
-  public void createAppInRemote(Env env, App app) {
-    String username = userInfoHolder.getUser().getUserId();
-    app.setDataChangeCreatedBy(username);
-    app.setDataChangeLastModifiedBy(username);
-
-    AppDTO appDTO = BeanUtils.transform(AppDTO.class, app);
-    appAPI.createApp(env, appDTO);
-  }
-
-  @Transactional
-  public App updateAppInLocal(App app) {
-    String appCode = app.getAppId();
-
-    App managedApp = appRepository.findByAppId(appCode);
-    if (managedApp == null) {
-      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("App not exists. AppId = %s", appCode));
-    }
-
-    managedApp.setName(app.getName());
-    managedApp.setOrgId(app.getOrgId());
-    managedApp.setOrgName(app.getOrgName());
-
-    String ownerName = app.getOwnerName();
-    UserInfo owner = userService.findByUserId(ownerName);
-    if (owner == null) {
-      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("App's owner not exists. owner = %s", ownerName));
-    }
-    managedApp.setOwnerName(owner.getUserId());
-    managedApp.setOwnerEmail(owner.getEmail());
-
-    String operator = userInfoHolder.getUser().getUserId();
-    managedApp.setDataChangeLastModifiedBy(operator);
-
-    return appRepository.save(managedApp);
-  }
-
-  @Transactional
-  public App deleteAppInLocal(String appCode) {
-    App managedApp = appRepository.findByAppId(appCode);
-    if (managedApp == null) {
-      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("App not exists. AppId = %s", appCode));
-    }
-    String operator = userInfoHolder.getUser().getUserId();
-
-    //this operator is passed to com.ctrip.framework.apollo.portal.listener.DeletionListener.onAppDeletionEvent
-    managedApp.setDataChangeLastModifiedBy(operator);
-
-    //删除portal数据库中的app
-    appRepository.deleteApp(appCode, operator);
-
-    //删除portal数据库中的appNamespace
-    appNamespaceService.batchDeleteByAppId(appCode, operator);
-
-    //删除portal数据库中的收藏表
-    favoriteService.batchDeleteByAppId(appCode, operator);
-
-    //删除portal数据库中Permission、Role相关数据
-    rolePermissionService.deleteRolePermissionsByAppId(appCode, operator);
-
-    return managedApp;
-  }*/
 }

@@ -5,13 +5,11 @@ import com.yofish.gary.biz.domain.Department;
 import com.yofish.gary.biz.domain.User;
 import com.yofish.gary.biz.repository.DepartmentRepository;
 import com.yofish.gary.biz.repository.UserRepository;
-import com.youyu.common.api.PageData;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.ObjectUtils;
 
@@ -45,19 +43,4 @@ public class AppServiceTest {
         Assert.assertTrue(!ObjectUtils.isEmpty(createApp.getId()));
     }
 
-    @Test
-    public void findAll() {
-
-
-    }
-
-    @Test
-    public void searchByAppCodeOrAppName() {
-        PageData<App> pageData = this.appService.searchByAppCodeOrAppName("auth", PageRequest.of(0, 5));
-
-    }
-
-    @Test
-    public void updateApp() {
-    }
 }
