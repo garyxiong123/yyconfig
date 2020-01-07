@@ -20,9 +20,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * @author Jason Song(song_s@ctrip.com)
- */
 @Component
 public class ReleaseMessageSender4Database implements ReleaseMessageSender {
     private static final Logger logger = LoggerFactory.getLogger(ReleaseMessageSender4Database.class);
