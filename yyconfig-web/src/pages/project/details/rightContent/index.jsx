@@ -204,7 +204,7 @@ class RightContent extends React.Component {
                 <History item={item} />
               </TabPane>
               <TabPane tab={
-                <span>{`实例列表`}</span>
+                <div><span>实例列表</span> <span>({baseInfo.instanceCount})</span></div>
               } key="4">
                 <Case item={item} />
               </TabPane>

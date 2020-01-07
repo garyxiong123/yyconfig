@@ -30,21 +30,6 @@ class Case extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     const { releaseId } = this.state;
     if (releaseId && prevState.releaseId !== releaseId) {
-      this.setState({
-        type: '1',
-        newRelease: {},
-        notNewRelease: {},
-        allRelease: {},
-        newReleaseParams: {
-          pageNo: 0
-        },
-        notNewReleaseParams: {
-          pageNo: 0
-        },
-        allReleaseParams: {
-          pageNo: 0
-        },
-      })
       this.onFetchNewRelease()
     }
   }
@@ -157,6 +142,23 @@ class Case extends React.Component {
   }
   onRefresh = () => {
     this.onFetchRelease();
+    this.setState({
+      type: '1',
+      newRelease: {},
+      notNewRelease: {},
+      allRelease: {},
+      newReleaseParams: {
+        pageNo: 0
+      },
+      notNewReleaseParams: {
+        pageNo: 0
+      },
+      allReleaseParams: {
+        pageNo: 0
+      },
+    },()=>{
+      this.onFetchNewRelease();
+    })
   }
   getReleaseKey = () => {
     const { type, newRelease } = this.state;
