@@ -3,9 +3,12 @@ package com.yofish.apollo.service;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 import com.yofish.apollo.domain.*;
+import com.yofish.apollo.dto.PublicProtectNamespaceDto;
 import com.yofish.apollo.repository.*;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
+import com.youyu.common.utils.YyAssert;
+import common.dto.NamespaceDTO;
 import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.enums.ConfigFileFormat;
 import lombok.extern.slf4j.Slf4j;
@@ -13,11 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author WangSongJun
@@ -49,10 +54,42 @@ public class AppNamespaceService {
     }
 
 
+    public List<AppNamespace4Protect> findAllProtectAppNamespaceByAuthorized(String appCode) {
+        App app = appRepository.findByAppCode(appCode);
+        YyAssert.paramCheck(ObjectUtils.isEmpty(app), "appCode not exists");
+        List<AppNamespace4Protect> appNamespaces = appNamespace4ProtectRepository.findAllByAuthorizedAppContains(app);
+        return appNamespaces;
+    }
+
+    public PublicProtectNamespaceDto findAllPublicAndAuthorizedNamespace(String appCode) {
+        PublicProtectNamespaceDto dto = new PublicProtectNamespaceDto();
+
+        List<AppNamespace4Public> allPublicAppNamespace = findAllPublicAppNamespace();
+        List<AppNamespace4Protect> authorized = findAllProtectAppNamespaceByAuthorized(appCode);
+        if (allPublicAppNamespace != null) {
+            List<NamespaceDTO> publicNamespaceDtoList = allPublicAppNamespace.stream().map(this::appNamespacesToDto).collect(Collectors.toList());
+            dto.setPublicNamespaces(publicNamespaceDtoList);
+        }
+        if (authorized != null) {
+            List<NamespaceDTO> authorizedNamespaceList = authorized.stream().map(this::appNamespacesToDto).collect(Collectors.toList());
+            dto.setProtectNamespaces(authorizedNamespaceList);
+        }
+        return dto;
+    }
+
+    private NamespaceDTO appNamespacesToDto(AppNamespace appNamespace) {
+        return NamespaceDTO.builder()
+                .id(appNamespace.getId())
+                .appCode(appNamespace.getApp().getAppCode())
+                .namespaceName(appNamespace.getName())
+                .build();
+    }
+
     public AppNamespace4Public findAppPublicNamespace(long namespaceId) {
         Optional<AppNamespace4Public> appNamespace4PublicOptional = this.appNamespace4PublicRepository.findById(namespaceId);
         return appNamespace4PublicOptional.orElse(null);
     }
+
     public AppNamespace findPublicAppNamespace(String namespaceName) {
         return appNamespace4PublicRepository.findByName(namespaceName);
     }
@@ -65,14 +102,16 @@ public class AppNamespaceService {
     public AppNamespace findByAppIdAndName(Long appId, String namespaceName) {
         return appNamespaceRepository.findByAppAndName(new App(appId), namespaceName);
     }
-    public AppNamespace findByAppCodeAndName(String  appCode, String namespaceName) {
+
+    public AppNamespace findByAppCodeAndName(String appCode, String namespaceName) {
         return appNamespaceRepository.findByAppAppCodeAndName(appCode, namespaceName);
     }
+
     public AppNamespace4Protect findProtectAppNamespaceByAppIdAndName(Long appId, String namespaceName) {
         return appNamespace4ProtectRepository.findByAppIdAndName(appId, namespaceName);
     }
 
-    public <T extends AppNamespace>  AppNamespace updateAppNamespace(T appNamespace) {
+    public <T extends AppNamespace> AppNamespace updateAppNamespace(T appNamespace) {
         appNamespaceRepository.save(appNamespace);
         return appNamespace;
     }
@@ -127,6 +166,7 @@ public class AppNamespaceService {
         this.appNamespace4ProtectRepository.save(protect);
         return protect;
     }
+
     private void checkAppNamespaceGlobalUniqueness(AppNamespace appNamespace) {
         checkPublicAppNamespaceGlobalUniqueness(appNamespace);
 

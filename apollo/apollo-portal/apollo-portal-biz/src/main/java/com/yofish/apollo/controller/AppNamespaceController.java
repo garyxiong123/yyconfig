@@ -4,6 +4,7 @@ import com.yofish.apollo.domain.*;
 import com.yofish.apollo.dto.NamespaceEnvTree;
 import com.yofish.apollo.dto.NamespaceListReq;
 import com.yofish.apollo.dto.NamespaceListResp;
+import com.yofish.apollo.dto.PublicProtectNamespaceDto;
 import com.yofish.apollo.model.bo.NamespaceVO;
 import com.yofish.apollo.model.model.AppNamespaceModel;
 import com.yofish.apollo.service.AppEnvClusterNamespaceService;
@@ -143,6 +144,19 @@ public class AppNamespaceController {
         return Result.ok(appNamespaceService.findAllPublicAppNamespace());
     }
 
+    @ApiOperation("查询项目拥有授权的protect命名空间")
+    @GetMapping("/app/{appCode}/namespaces/protect/authorized")
+    public Result<List<AppNamespace4Protect>> findProtectAppNamespaces(@PathVariable String appCode) {
+        return Result.ok(appNamespaceService.findAllProtectAppNamespaceByAuthorized(appCode));
+    }
+
+    @ApiOperation("查询所有的公共命名空间和项目拥有授权的protect命名空间")
+    @GetMapping("/app/{appCode}/namespaces/publicAndProtect")
+    public Result<PublicProtectNamespaceDto> findPublicAppNamespacesAndProtectAppNamespaces(@PathVariable String appCode) {
+        PublicProtectNamespaceDto allPublicAndAuthorizedNamespace = appNamespaceService.findAllPublicAndAuthorizedNamespace(appCode);
+        return Result.ok(allPublicAndAuthorizedNamespace);
+    }
+
 
     @ApiOperation("查询所有app下环境集群附带id")
     @PostMapping("/namespaceList")
@@ -159,17 +173,17 @@ public class AppNamespaceController {
                 respVos.add(respvo);
             }
         }
-        List<NamespaceEnvTree> trees=tansTotree(respVos);
+        List<NamespaceEnvTree> trees = tansTotree(respVos);
         return Result.ok(trees);
 
     }
 
-    private List<NamespaceEnvTree> tansTotree(List<NamespaceListResp> listResps){
-        List<NamespaceEnvTree> namespaceEnvTreeList=new ArrayList<>();
-        Map<String,List<NamespaceListResp>> nameTrees= new HashMap<>(4);
-        nameTrees=  listResps.stream().sorted(Comparator.comparing(NamespaceListResp::getEnv)).collect(Collectors.groupingBy(m -> m.getEnv()));
-        for(String itemKey:nameTrees.keySet()){
-            NamespaceEnvTree namespaceEnvTree=new NamespaceEnvTree();
+    private List<NamespaceEnvTree> tansTotree(List<NamespaceListResp> listResps) {
+        List<NamespaceEnvTree> namespaceEnvTreeList = new ArrayList<>();
+        Map<String, List<NamespaceListResp>> nameTrees = new HashMap<>(4);
+        nameTrees = listResps.stream().sorted(Comparator.comparing(NamespaceListResp::getEnv)).collect(Collectors.groupingBy(m -> m.getEnv()));
+        for (String itemKey : nameTrees.keySet()) {
+            NamespaceEnvTree namespaceEnvTree = new NamespaceEnvTree();
             namespaceEnvTree.setEnv(itemKey);
             namespaceEnvTree.setNamespaceListResps(nameTrees.get(itemKey));
             namespaceEnvTreeList.add(namespaceEnvTree);

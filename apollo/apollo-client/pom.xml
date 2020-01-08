@@ -32,11 +32,6 @@
             <version>1.0.0.RELEASE</version>
             <groupId>com.yofish.platform</groupId>
         </dependency>
-        <dependency>
-            <artifactId>apollo-config-api</artifactId>
-            <version>1.0.0.RELEASE</version>
-            <groupId>com.yofish.platform</groupId>
-        </dependency>
         <!-- end of apollo -->
         <dependency>
             <groupId>com.google.inject</groupId>
