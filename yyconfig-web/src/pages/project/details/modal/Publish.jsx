@@ -76,14 +76,17 @@ class Publish extends React.Component {
       {
         title: 'Key',
         dataIndex: 'item.key',
+        width: '20%'
       },
       {
         title: '发布的值',
         dataIndex: 'newValue',
+        width: '20%'
       },
       {
         title: '未发布的值',
         dataIndex: 'oldValue',
+        width: '20%'
       },
       {
         title: '修改人',
