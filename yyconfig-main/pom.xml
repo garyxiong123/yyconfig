@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>yyconfig</artifactId>
-        <groupId>com.yofish.gary</groupId>
-        <version>1.0.0-SNAPSHOT</version>
+        <groupId>com.yofish.platform</groupId>
+        <version>1.0.0.RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -30,9 +30,9 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.yofish.gary</groupId>
+            <groupId>com.yofish.platform</groupId>
             <artifactId>upms-permissonFramework-shiro</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0.RELEASE</version>
             <exclusions>
                 <exclusion>
                     <artifactId>persistence-api</artifactId>
@@ -41,15 +41,15 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.yofish.gary</groupId>
+            <groupId>com.yofish.platform</groupId>
             <artifactId>apollo-config-biz</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0.RELEASE</version>
         </dependency>
 
         <dependency>
-            <groupId>com.yofish.gary</groupId>
+            <groupId>com.yofish.platform</groupId>
             <artifactId>apollo-portal-biz</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

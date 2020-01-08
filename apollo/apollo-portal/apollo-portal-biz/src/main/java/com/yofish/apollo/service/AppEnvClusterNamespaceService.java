@@ -215,7 +215,7 @@ public class AppEnvClusterNamespaceService {
         //latest Release
         ReleaseDTO latestRelease;
         Map<String, String> releaseConfig = new HashMap<>(16);
-        Map<String, ItemDTO> deletedItemDTOs = new HashMap<>(16);
+        Map<String, ItemDTO> deletedItemDTOMap = new HashMap<>(16);
 
         // TODO: 2019-12-21 这个地方还要测试
         latestRelease = releaseService.loadLatestRelease(appEnvClusterNamespace);
@@ -239,9 +239,9 @@ public class AppEnvClusterNamespaceService {
         }
         //deleted items
         itemService.findDeletedItems(appEnvClusterNamespace.getId()).stream()
-                .forEach(item -> deletedItemDTOs.put(item.getKey(), item));
+                .forEach(item -> deletedItemDTOMap.put(item.getKey(), item));
 
-        List<ItemBO> deletedItems = parseDeletedItems(items, releaseConfig, deletedItemDTOs);
+        List<ItemBO> deletedItems = parseDeletedItems(items, releaseConfig, deletedItemDTOMap);
         itemBOs.addAll(deletedItems);
         modifiedItemCnt += deletedItems.size();
 
