@@ -29,7 +29,10 @@
 }
 :global {
   .react-codemirror2 .CodeMirror {
-    height: 150px;
+    height: auto;
+  }
+  .react-codemirror2 .CodeMirror-code {
+    min-height: 150px;
   }
 }
 .copyInput {
@@ -59,4 +62,9 @@
   padding: 10px 16px;
   text-align: right;
   background-color: #fff;
+}
+.textOverflow {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }

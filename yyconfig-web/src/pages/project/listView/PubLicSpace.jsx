@@ -51,7 +51,7 @@ class PublicSpace extends React.Component {
                 appNamespaces.map((vo, index) => (
                   <Col lg={6} md={8} sm={24} key={vo.id}>
                     <Card className={styles.listCard} onClick={() => { this.onRouteTo(vo) }}>
-                      <h2>{vo.name}</h2>
+                      <h2 className={styles.textOverflow} title={vo.name}>{vo.name}</h2>
                       <p>{vo.comment}</p>
                     </Card>
                   </Col>
