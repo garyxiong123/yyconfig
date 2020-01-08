@@ -17,4 +17,6 @@ public interface AppNamespace4ProtectRepository extends JpaRepository<AppNamespa
 
     List<AppNamespace4Protect> findAllByAuthorizedAppContains(App app);
 
+    AppNamespace4Protect findByName(String name);
+
 }

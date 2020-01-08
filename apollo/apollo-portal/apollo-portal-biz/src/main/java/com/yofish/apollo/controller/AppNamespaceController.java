@@ -107,12 +107,12 @@ public class AppNamespaceController {
     @ApiOperation("创建关联公开命名空间")
     @PostMapping("/apps/{appId:\\d+}/namespaces/{namespaceId:\\d+}/associate/{appEnvClusterIds:[0-9,]+}")
     public Result createRelationNamespace(@PathVariable Long appId, @PathVariable Long namespaceId, @PathVariable String appEnvClusterIds) {
-        AppNamespace4Public appPublicNamespace = this.appNamespaceService.findAppPublicNamespace(namespaceId);
-        YyAssert.paramCheck(ObjectUtils.isEmpty(appPublicNamespace), "关联的公共命名空间不存在！");
-        YyAssert.paramCheck(appId.equals(appPublicNamespace.getApp().getId()), "不能关联自己的公共命名空间！");
+        AppNamespace appNamespace = this.appNamespaceService.findAppNamespace(namespaceId);
+        YyAssert.paramCheck(ObjectUtils.isEmpty(appNamespace), "关联的公共命名空间不存在！");
+        YyAssert.paramCheck(appId.equals(appNamespace.getApp().getId()), "不能关联自己的公共命名空间！");
 
         Arrays.stream(appEnvClusterIds.split(",")).forEach(appEnvClusterId -> {
-            AppEnvClusterNamespace4Main appEnvClusterNamespace = new AppEnvClusterNamespace4Main(new AppEnvCluster(Long.valueOf(appEnvClusterId)), new AppNamespace4Public(namespaceId));
+            AppEnvClusterNamespace4Main appEnvClusterNamespace = new AppEnvClusterNamespace4Main(new AppEnvCluster(Long.valueOf(appEnvClusterId)), appNamespace);
             this.appEnvClusterNamespaceService.save(appEnvClusterNamespace);
         });
         return Result.ok();
@@ -274,7 +274,7 @@ public class AppNamespaceController {
 //  }
 //
 //  @RequestMapping(value = "/apps/{appCode}/appnamespaces/{namespaceName:.+}", method = RequestMethod.GET)
-//  public AppNamespaceDTO findAppPublicNamespace(@PathVariable String appCode, @PathVariable String namespaceName) {
+//  public AppNamespaceDTO findAppNamespace(@PathVariable String appCode, @PathVariable String namespaceName) {
 //    AppNamespace appNamespace = appNamespaceService.findByAppIdAndName(appCode, namespaceName);
 //
 //    if (appNamespace == null) {

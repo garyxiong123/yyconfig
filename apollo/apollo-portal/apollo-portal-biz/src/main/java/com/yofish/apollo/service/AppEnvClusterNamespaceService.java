@@ -106,7 +106,7 @@ public class AppEnvClusterNamespaceService {
     }
 
     public AppEnvClusterNamespace findPublicNamespaceForAssociatedNamespace(String env, String clusterName, String namespaceName) {
-        AppNamespace appNamespace = appNamespaceService.findPublicAppNamespace(namespaceName);
+        AppNamespace appNamespace = appNamespaceService.findAppNamespace(namespaceName);
         if (appNamespace == null) {
             throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "namespace not exist");
         }
@@ -262,7 +262,7 @@ public class AppEnvClusterNamespaceService {
 
         //再从公共的app namespace里面找,这里找到就是关联了公共命名空间
         if (appNamespace == null) {
-            appNamespace = appNamespaceService.findPublicAppNamespace(namespaceDTO.getNamespaceName());
+            appNamespace = appNamespaceService.findAppNamespace(namespaceDTO.getNamespaceName());
 
             namespace.setNamespaceType(NamespaceType.Associate);
         }
