@@ -151,7 +151,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
 //        if (isNotValidTopicOrNotInCache(message, channel)) {
 //            return;
 //        }
-
+  
         ApolloConfigNotification configNotification = buildConfigNotification(message);
 
         //create a new list to avoid ConcurrentModificationException
