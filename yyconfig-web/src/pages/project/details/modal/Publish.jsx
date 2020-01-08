@@ -9,11 +9,11 @@ const { TextArea } = Input;
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
-    sm: { span: 6 },
+    sm: { span: 3 },
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 16 },
+    sm: { span: 20 },
   },
 };
 
@@ -103,7 +103,7 @@ class Publish extends React.Component {
         columns={columns}
         dataSource={changeList || []}
         pagination={false}
-        rowKey={record => {
+        rowKey={(record) => {
           return record.item.id;
         }}
       />
