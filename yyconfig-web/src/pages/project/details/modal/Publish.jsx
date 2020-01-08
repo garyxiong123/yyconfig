@@ -104,7 +104,7 @@ class Publish extends React.Component {
         dataSource={changeList || []}
         pagination={false}
         rowKey={(record) => {
-          return record.item.id;
+          return record.item.key;
         }}
       />
     )

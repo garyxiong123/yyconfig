@@ -232,7 +232,7 @@ class TableList extends React.Component {
         // loading={loading}
         pagination={false}
         rowKey={record => {
-          return record.item.id;
+          return record.item.key;
         }}
         rowClassName={(record) => {
           if ((record.item.comment && !record.item.key) || (!record.item.key)) {

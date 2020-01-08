@@ -30,20 +30,43 @@ class SyncConfig extends React.Component {
       selectItems: [],
       checkList: [],
       syncToNamespaces: [],
-      syncItems: []
+      syncItems: [],
+      list: []//可选择的配置
     };
   }
   componentDidMount() {
     this.onFetchNameSpaceListWithApp();
+    this.onGetConfigList();
 
   }
   componentDidUpdate(prevProps, prevState) {
     const { nameSpaceListWithApp } = this.props;
-    if (nameSpaceListWithApp !== prevProps.nameSpaceListWithApp) {
+    if (nameSpaceListWithApp && nameSpaceListWithApp !== prevProps.nameSpaceListWithApp) {
       this.onSetDefaultCheckList(nameSpaceListWithApp)
     }
   }
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'project/clearData',
+      payload: {
+        nameSpaceListWithApp: []
+      }
+    })
+  }
 
+  onGetConfigList = () => {
+    const { info } = this.props;
+    let items = info.items || [], list=[];
+    items.map((vo)=>{
+      if(vo.item.key && !vo.deleted) {
+        list.push(vo)
+      }
+    })
+    this.setState({
+      list
+    })
+  }
   //获取默认全部集群Id
   onSetDefaultCheckList = (list) => {
     let checkList = [];
@@ -75,7 +98,7 @@ class SyncConfig extends React.Component {
       loading: true
     })
     let res = await project.syncConfig({ syncItems, syncToNamespaces });
-    if(res && res.code === '1') {
+    if (res && res.code === '1') {
       message.success('同步成功');
       onCancel();
     }
@@ -209,7 +232,7 @@ class SyncConfig extends React.Component {
           // onChange={this.onTableChange}
           pagination={false}
           rowKey={record => {
-            return record.item.id;
+            return record.item.key;
           }}
         />
       </FormItem>
@@ -217,7 +240,7 @@ class SyncConfig extends React.Component {
   }
   renderStep1() {
     const { info } = this.props;
-    let list = info.items || [];
+    const { list } = this.state;
     return (
       <Form {...formItemLayout}>
         {this.renderEnv()}
@@ -226,7 +249,7 @@ class SyncConfig extends React.Component {
     )
   }
   renderFooter() {
-    const { step,loading } = this.state;
+    const { step, loading } = this.state;
     return (
       <div className={styles.drawerBottom}>
         {
