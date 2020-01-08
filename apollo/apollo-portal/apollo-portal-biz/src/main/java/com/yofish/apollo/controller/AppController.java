@@ -1,12 +1,9 @@
 package com.yofish.apollo.controller;
 
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.yofish.apollo.component.AppPreAuthorize;
 import com.yofish.apollo.domain.App;
-import com.yofish.apollo.model.AppModel;
-import com.yofish.apollo.model.bo.NamespaceVO;
+import com.yofish.apollo.model.model.AppModel;
 import com.yofish.apollo.model.vo.EnvClusterInfo;
 import com.yofish.apollo.service.AppService;
 import com.yofish.apollo.service.ServerConfigService;
