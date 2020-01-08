@@ -217,14 +217,12 @@ public class AppEnvClusterNamespaceService {
         Map<String, String> releaseConfig = new HashMap<>(16);
         Map<String, ItemDTO> deletedItemDTOMap = new HashMap<>(16);
 
-        // TODO: 2019-12-21 这个地方还要测试
         latestRelease = releaseService.loadLatestRelease(appEnvClusterNamespace);
         if (latestRelease != null) {
             releaseConfig = gson.fromJson(latestRelease.getConfigurations(), GsonType.CONFIG);
         }
 
         //not Release config items
-        // TODO: 2019-12-21 not release config items
         List<ItemDTO> items = itemService.findItemsWithoutOrdered(appEnvClusterNamespace.getId()).stream().sorted(Comparator.comparing(Item::getLineNum)).map(item -> transformItemDTO(item)).collect(Collectors.toList());
         int modifiedItemCnt = 0;
         for (ItemDTO itemDTO : items) {
