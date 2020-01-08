@@ -9,7 +9,7 @@ const ProjectModel = {
     envList: [],
     currentEnv: {},
     nameSpaceList: [],
-    publicNamespaceList: [],
+    publicNamespaceList: {},
     releasesActiveInfo: [],
     releasesCompare: [],
     nameSpaceListWithApp: [],
@@ -157,7 +157,7 @@ const ProjectModel = {
     setPublicNamespaceList(state, { payload = {} }) {
       return {
         ...state,
-        publicNamespaceList: payload.data || []
+        publicNamespaceList: payload.data || {}
       }
     },
     setReleasesActive(state, { payload = {} }) {

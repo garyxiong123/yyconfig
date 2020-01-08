@@ -19,7 +19,7 @@ const project = {
     return requestGet(`/apps/${params.appId}/navtree`);
   },
   publicNamespaceList: async function (params = {}) {
-    return requestGet(`/app/namespaces/public`);
+    return requestGet(`/app/${params.appCode}/namespaces/publicAndProtect`, params);
   },
   nameSpaceList: async function (params = {}) {
     return requestGet(`/apps/${params.appCode}/envs/${params.env}/clusters/${params.clusterName}/namespaces`);

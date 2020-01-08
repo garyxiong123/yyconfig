@@ -5,7 +5,7 @@ import { project } from '@/services/project';
 import styles from '../../index.less';
 
 const FormItem = Form.Item;
-const { Option } = Select;
+const { Option, OptGroup } = Select;
 const { TextArea } = Input;
 const formItemLayout = {
   labelCol: {
@@ -108,10 +108,12 @@ class NamespaceAdd extends React.Component {
   }
   //获取公共命名空间列表
   onFetchPublicNamespaceList = () => {
-    const { dispatch } = this.props;
+    const { dispatch, appDetail } = this.props;
     dispatch({
       type: 'project/publicNamespaceList',
-      payload: {}
+      payload: {
+        appCode: appDetail.appCode
+      }
     })
   }
 
@@ -200,6 +202,8 @@ class NamespaceAdd extends React.Component {
   renderRelation() {
     const { getFieldDecorator, getFieldValue } = this.props.form;
     const { appDetail, publicNamespaceList } = this.props;
+    let protectNamespaces = publicNamespaceList.protectNamespaces || [];
+    let publicNamespaces = publicNamespaceList.publicNamespaces || [];
     return (
       <Form onSubmit={this.onRelationSubmit} {...formItemLayout}>
         <FormItem label="项目Code">
@@ -213,11 +217,21 @@ class NamespaceAdd extends React.Component {
             ]
           })(
             <Select placeholder="请选择namespace" showSearch optionFilterProp="children">
-              {
-                publicNamespaceList.map((item) => (
-                  this.renderNameSpaceOption(item)
-                ))
-              }
+              <OptGroup label="公共">
+                {
+                  publicNamespaces.map((item) => (
+                    this.renderNameSpaceOption(item)
+                  ))
+                }
+              </OptGroup>
+              <OptGroup label="受保护">
+                {
+                  protectNamespaces.map((item) => (
+                    this.renderNameSpaceOption(item)
+                  ))
+                }
+              </OptGroup>
+
             </Select>
           )}
         </FormItem>
@@ -227,8 +241,8 @@ class NamespaceAdd extends React.Component {
   }
   renderNameSpaceOption(item) {
     const { appDetail } = this.props;
-    if (appDetail.id !== item.app.id) {
-      return <Option value={item.id} key={item.id}>{item.name}</Option>
+    if (appDetail.appCode !== item.appCode) {
+      return <Option value={item.id} key={item.id}>{item.namespaceName}</Option>
     }
   }
   renderServiceItem() {
