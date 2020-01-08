@@ -8,9 +8,9 @@
         <artifactId>sword-parent</artifactId>
         <version>1.4.1.RELEASE</version>
     </parent>
-    <groupId>com.yofish.gary</groupId>
+    <groupId>com.yofish.platform</groupId>
     <artifactId>yyconfig</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0.RELEASE</version>
     <modules>
         <module>yy-common</module>
         <module>yyconfig-main</module>
@@ -19,7 +19,7 @@
     </modules>
     <packaging>pom</packaging>
     <properties>
-        <project-version>1.0.0-SNAPSHOT</project-version>
+        <project-version>1.0.0.RELEASE</project-version>
         <mybatis.version>3.4.6</mybatis.version>
     </properties>
 
@@ -65,32 +65,43 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.yofish.gary</groupId>
+                <groupId>com.yofish.platform</groupId>
                 <artifactId>upms-domain</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>1.0.0.RELEASE</version>
             </dependency>
             <dependency>
-                <groupId>com.yofish.gary</groupId>
+                <groupId>com.yofish.platform</groupId>
                 <artifactId>upms-domain-api</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>1.0.0.RELEASE</version>
             </dependency>
             <dependency>
-                <groupId>com.yofish.gary</groupId>
+                <groupId>com.yofish.platform</groupId>
                 <artifactId>upms-domain-biz</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>1.0.0.RELEASE</version>
             </dependency>
             <dependency>
-                <groupId>com.yofish.gary</groupId>
+                <groupId>com.yofish.platform</groupId>
                 <artifactId>yy-basic</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>1.0.0.RELEASE</version>
             </dependency>
             <dependency>
-                <groupId>com.yofish.gary</groupId>
+                <groupId>com.yofish.platform</groupId>
                 <artifactId>yy-dao</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>1.0.0.RELEASE</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
-
+    <distributionManagement>
+        <repository>
+            <id>nexus-releases</id>
+            <name>Nexus Release Repository</name>
+            <url>http://192.168.1.54:8081/nexus/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-snapshots</id>
+            <name>Nexus Snapshot Repository</name>
+            <url>http://192.168.1.54:8081/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
