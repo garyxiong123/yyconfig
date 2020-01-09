@@ -319,9 +319,7 @@ public class ItemService {
             entity.setLineNum(lineNum);
         }
 
-        Item item = itemRepository.save(entity);
-
-        return   itemRepository.save(item);
+        return itemRepository.save(entity);
     }
 
     public Item findOne(Long id){
