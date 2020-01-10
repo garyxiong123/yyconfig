@@ -1,7 +1,5 @@
 package com.yofish.apollo.domain;
 
-import com.yofish.apollo.dto.CreateItemReq;
-import com.yofish.apollo.dto.UpdateItemReq;
 import com.yofish.gary.dao.entity.BaseEntity;
 import lombok.*;
 
@@ -42,7 +40,4 @@ public class Item extends BaseEntity {
         this.lineNum=lineNum;
     }
 
-    public Item(UpdateItemReq updateItemReq) {
-
-    }
 }
