@@ -127,7 +127,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
         deferredResultWrapper.setResult(newServerNotifications);
     }
 
-    private void doAsyncCallbackMethodAndWactchedKeyRegistry(@RequestParam(value = "appCode") String appId, @RequestParam(value = "cluster") String cluster, @RequestParam(value = "dataCenter", required = false) String dataCenter, DeferredResultWrapper deferredResultWrapper, Set<String> namespaces, Set<String> clientWatchedKeys) {
+    private void doAsyncCallbackMethodAndWactchedKeyRegistry(String appId, String cluster,String dataCenter, DeferredResultWrapper deferredResultWrapper, Set<String> namespaces, Set<String> clientWatchedKeys) {
         deferredResultWrapper.onTimeout(() -> logWatchedKeys(clientWatchedKeys, "Apollo.LongPoll.TimeOutKeys"));
 
         deferredResultWrapper.onCompletion(() -> {

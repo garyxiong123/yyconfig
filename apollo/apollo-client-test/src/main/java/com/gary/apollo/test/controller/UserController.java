@@ -43,15 +43,17 @@ public class UserController implements ApplicationContextAware {
 
 //    @Autowired
 //    private UserService userService;
-    @Value("${test.name:gary}")
-    public String name1;
+    @Value("${dbName:gary}")
+    public String dbName;
+    @Value("${redis:redis}")
+    public String redis;
 
 
     @ApolloConfig("application")
     private Config config;
 
-    @ApolloConfig("testJson")
-    private Config testJsonConfig;
+//    @ApolloConfig("testJson")
+//    private Config testJsonConfig;
 
 
 
@@ -86,9 +88,11 @@ public class UserController implements ApplicationContextAware {
     @GetMapping("/getUserInfo1")
     public Result<String> getUserInfo1(String name, int age) {
 
-        System.out.println(name1);
+        System.out.println(dbName);
+        System.out.println("redis:" + redis);
 
         System.out.println(config);
+
 
 //        System.out.println(testJsonConfig);
 
@@ -102,7 +106,7 @@ public class UserController implements ApplicationContextAware {
 //        } finally {
 //            t.complete();
 //        }
-        return Result.ok(name1);
+        return Result.ok(dbName);
     }
 
     @Override

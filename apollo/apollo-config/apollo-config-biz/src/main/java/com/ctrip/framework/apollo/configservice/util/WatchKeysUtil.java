@@ -74,10 +74,9 @@ public class WatchKeysUtil {
         continue;
       }
 
-      String publicConfigAppId = String.valueOf(appNamespace.getApp().getId());
+      String publicAppCode = appNamespace.getApp().getAppCode();
 
-      watchedKeysMap.putAll(appNamespace.getName(),
-          assembleWatchKeys(publicConfigAppId, clusterName, env,appNamespace.getName(), dataCenter));
+      watchedKeysMap.putAll(appNamespace.getName(), assembleWatchKeys(publicAppCode, clusterName, env,appNamespace.getName(), dataCenter));
     }
 
     return watchedKeysMap;

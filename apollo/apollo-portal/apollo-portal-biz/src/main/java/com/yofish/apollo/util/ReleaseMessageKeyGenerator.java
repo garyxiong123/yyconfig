@@ -2,11 +2,13 @@ package com.yofish.apollo.util;
 
 
 import com.google.common.base.Joiner;
-import com.yofish.apollo.component.txtresolver.ConfigChangeContentBuilder;
 import com.yofish.apollo.domain.AppEnvClusterNamespace;
 import com.yofish.apollo.domain.AppEnvClusterNamespace4Branch;
 import framework.apollo.core.ConfigConsts;
 
+/**
+ *  releaseMessage 生成逻辑
+ */
 public class ReleaseMessageKeyGenerator {
 
     private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR);
@@ -23,6 +25,6 @@ public class ReleaseMessageKeyGenerator {
             messageCluster = namespace.getAppEnvCluster().getName();
         }
 
-        return generate(namespace.getAppNamespace().getApp().getAppCode(), messageCluster,  namespace.getAppEnvCluster().getEnv(),namespace.getAppNamespace().getName());
+        return generate(namespace.getAppNamespace().getApp().getAppCode(), messageCluster,  namespace.getAppEnvCluster().getEnv().toLowerCase() ,namespace.getAppNamespace().getName());
     }
 }
