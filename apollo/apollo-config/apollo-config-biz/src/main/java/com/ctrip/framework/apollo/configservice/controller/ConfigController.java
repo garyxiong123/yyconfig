@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.yofish.apollo.domain.AppEnvClusterNamespace;
 import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.domain.Release;
 import common.NamespaceBo;
@@ -66,26 +67,7 @@ public class ConfigController {
 
         ApolloNotificationMessages clientMessages = transformMessages(messagesAsString);
 
-        List<Release> releases = Lists.newLinkedList();
-
-        String appClusterNameLoaded = clusterName;
-        if (!NO_APPID_PLACEHOLDER.equalsIgnoreCase(appId)) {
-            Release currentRelease4ThisClient = configService.loadRelease4Client(appId, clientIp, appId, clusterName, env, namespace, dataCenter, clientMessages);
-
-            if (currentRelease4ThisClient != null) {
-                releases.add(currentRelease4ThisClient);
-                //we have cluster search process, so the cluster name might be overridden
-                appClusterNameLoaded = currentRelease4ThisClient.getAppEnvClusterNamespace().getAppNamespace().getName();
-            }
-        }
-
-        //if appNamespace does not belong to this appCode, should check if there is a public configuration
-        if (!namespaceBelongsToAppId(appId, namespace)) {
-            Release publicRelease = this.findPublicConfig(appId, clientIp, clusterName, env, namespace, dataCenter, clientMessages);
-            if (!Objects.isNull(publicRelease)) {
-                releases.add(publicRelease);
-            }
-        }
+        List<Release> releases = findReleases4Client(appId, clusterName, env, namespace, dataCenter, clientIp, clientMessages);
 
         if (releases.isEmpty()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, String.format(
@@ -101,15 +83,38 @@ public class ConfigController {
         if (mergedReleaseKey.equals(clientSideReleaseKey)) {
             // Client side configuration is the same with server side, return 304
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-            Tracer.logEvent("Apollo.Config.NotModified", assembleKey(appId, appClusterNameLoaded, originalNamespace, dataCenter));
+            Tracer.logEvent("Apollo.Config.NotModified", assembleKey(appId, clusterName, originalNamespace, dataCenter));
             return null;
         }
 
 
-        ApolloConfig apolloConfig = new ApolloConfig(appId, appClusterNameLoaded, originalNamespace, mergedReleaseKey);
+        ApolloConfig apolloConfig = new ApolloConfig(appId, clusterName, originalNamespace, mergedReleaseKey);
         apolloConfig.setConfigurations(mergeReleaseConfigurations(releases));
 
         return apolloConfig;
+    }
+
+    /**
+     *  查找该client 的所有的releases
+     */
+    private List<Release> findReleases4Client(@PathVariable String appId,  String clusterName, String env, String namespace, String dataCenter, String clientIp, ApolloNotificationMessages clientMessages) {
+        List<Release> releases = Lists.newLinkedList();
+
+        if (!NO_APPID_PLACEHOLDER.equalsIgnoreCase(appId)) {
+            Release release4Client = configService.loadRelease4Client(appId, clientIp, appId, clusterName, env, namespace, dataCenter, clientMessages);
+            if (release4Client != null) {
+                releases.add(release4Client);
+            }
+        }
+
+        //if appNamespace does not belong to this appCode, should check if there is a public configuration
+        if (isPublicNamespace(appId, namespace)) {
+            Release publicRelease = this.findPublicConfig(appId, clientIp, clusterName, env, namespace, dataCenter, clientMessages);
+            if (!Objects.isNull(publicRelease)) {
+                releases.add(publicRelease);
+            }
+        }
+        return releases;
     }
 
     private String filterAndNormalizeNamespace(@PathVariable String appId, @PathVariable String namespace) {
@@ -121,23 +126,26 @@ public class ConfigController {
     }
 
 
-    private boolean namespaceBelongsToAppId(String appId, String namespaceName) {
+    /**
+     *  该AppId 的命名空间中没有 appNamespace
+     */
+    private boolean isPublicNamespace(String appId, String namespaceName) {
         //Every app has an 'application' appNamespace
         if (Objects.equals(ConfigConsts.NAMESPACE_APPLICATION, namespaceName)) {
-            return true;
+            return false;
         }
 
         //if no appCode is present, then no other appNamespace belongs to it
         if (NO_APPID_PLACEHOLDER.equalsIgnoreCase(appId)) {
-            return false;
+            return true;
         }
 
         AppNamespace appNamespace = appNamespaceService.findByAppIdAndNamespace(appId, namespaceName);
 
-        return appNamespace != null;
+        return appNamespace == null;
     }
 
-    private Release findPublicConfig(String clientAppId, String clientIp, String clusterName,String env,
+    private Release findPublicConfig(String clientAppId, String clientIp, String clusterName, String env,
                                      String namespace, String dataCenter, ApolloNotificationMessages clientMessages) {
         AppNamespace appNamespace = appNamespaceService.findPublicNamespaceByName(namespace);
 
@@ -145,13 +153,15 @@ public class ConfigController {
         if (Objects.isNull(appNamespace) || Objects.equals(clientAppId, appNamespace.getApp().getId())) {
             return null;
         }
+        AppEnvClusterNamespace clusterNamespace = appNamespace.getNamespaceByEnv(env, clusterName, "main");
 
-        String publicConfigAppId = String.valueOf(appNamespace.getApp().getId());
-
-        return configService.loadRelease4Client(clientAppId, clientIp, publicConfigAppId, clusterName, env,namespace, dataCenter, clientMessages);
+        return clusterNamespace.findLatestActiveRelease();
     }
 
 
+    /**
+     * 生成发布配置：继承关系，需要多个Map进行合并
+     */
     Map<String, String> mergeReleaseConfigurations(List<Release> releases) {
         Map<String, String> result = Maps.newHashMap();
         for (Release release : Lists.reverse(releases)) {

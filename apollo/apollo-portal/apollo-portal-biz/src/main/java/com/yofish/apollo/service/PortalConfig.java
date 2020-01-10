@@ -46,11 +46,11 @@ public class PortalConfig extends RefreshableConfig {
 //    private static final Type ORGANIZATION = new TypeToken<List<Organization>>() {
 //    }.getType();
 
-//  @Autowired
+    //  @Autowired
 //  private PortalDBPropertySource portalDBPropertySource;
     private static final Type namespaceValueLengthOverrideTypeReference =
-        new TypeToken<Map<Long, Integer>>() {
-        }.getType();
+            new TypeToken<Map<Long, Integer>>() {
+            }.getType();
 
 
     public PortalConfig(String name, Map<String, Object> source) {
@@ -356,6 +356,7 @@ public class PortalConfig extends RefreshableConfig {
     public String hermesServerAddress() {
         return getValue("hermes.server.address");
     }
+
     public int itemKeyLengthLimit() {
         int limit = getIntProperty("item.key.length.limit", DEFAULT_ITEM_KEY_LENGTH);
         return checkInt(limit, 5, Integer.MAX_VALUE, DEFAULT_ITEM_KEY_LENGTH);
@@ -371,6 +372,7 @@ public class PortalConfig extends RefreshableConfig {
 
         return namespaceValueLengthOverride;
     }
+
     public int itemValueLengthLimit() {
         int limit = getIntProperty("item.value.length.limit", DEFAULT_ITEM_VALUE_LENGTH);
         return checkInt(limit, 5, Integer.MAX_VALUE, DEFAULT_ITEM_VALUE_LENGTH);
@@ -401,20 +403,20 @@ public class PortalConfig extends RefreshableConfig {
         return 0;
     }
 
-    public Object appNamespaceCacheRebuildInterval() {
-        return null;
+    public int appNamespaceCacheRebuildInterval() {
+        return 3;
     }
 
-    public Object appNamespaceCacheRebuildIntervalTimeUnit() {
-        return null;
+    public TimeUnit appNamespaceCacheRebuildIntervalTimeUnit() {
+        return TimeUnit.SECONDS;
     }
 
-    public Object appNamespaceCacheScanInterval() {
-        return null;
+    public int appNamespaceCacheScanInterval() {
+        return 3;
     }
 
-    public Object appNamespaceCacheScanIntervalTimeUnit() {
-            return null;
+    public TimeUnit appNamespaceCacheScanIntervalTimeUnit() {
+        return null;
     }
 
     public List<Env> getActiveEnvs() {

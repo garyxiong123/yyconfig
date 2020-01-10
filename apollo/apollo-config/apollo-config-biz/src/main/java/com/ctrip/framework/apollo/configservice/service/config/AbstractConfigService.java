@@ -18,7 +18,7 @@ public abstract class AbstractConfigService implements ConfigService {
   @Override
   public Release loadRelease4Client(String clientAppId, String clientIp, String configAppId, String configClusterName, String env,
                                     String configNamespace, String dataCenter, ApolloNotificationMessages clientMessages) {
-    // 特殊集群： 非默认
+    // 特殊集群： 非默认，
     if (!isDefaultCluster(configClusterName)) {
       Release clusterRelease = tryToLoadViaSpecifiedCluster(clientAppId, clientIp, configAppId, configClusterName,  env,configNamespace, clientMessages);
       if (!isNull(clusterRelease)) {return clusterRelease;}

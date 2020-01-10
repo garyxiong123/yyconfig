@@ -3,7 +3,8 @@ package com.ctrip.framework.apollo.configservice.wrapper;
 import java.util.Map;
 
 /**
- * @author Jason Song(song_s@ctrip.com)
+ *  大小写 不敏感的Map
+ * @param <T>
  */
 public class CaseInsensitiveMapWrapper<T> {
   private final Map<String, T> delegate;
