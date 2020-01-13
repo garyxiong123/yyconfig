@@ -1,3 +1,18 @@
+/*
+ *    Copyright 2019-2020 the original author or authors.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.gary.apollo.test.controller;
 
 import apollo.Config;
@@ -43,15 +58,17 @@ public class UserController implements ApplicationContextAware {
 
 //    @Autowired
 //    private UserService userService;
-    @Value("${test.name:gary}")
-    public String name1;
+    @Value("${dbName:gary}")
+    public String dbName;
+    @Value("${redis:redis}")
+    public String redis;
 
 
     @ApolloConfig("application")
     private Config config;
 
-    @ApolloConfig("testJson")
-    private Config testJsonConfig;
+//    @ApolloConfig("testJson")
+//    private Config testJsonConfig;
 
 
 
@@ -86,9 +103,11 @@ public class UserController implements ApplicationContextAware {
     @GetMapping("/getUserInfo1")
     public Result<String> getUserInfo1(String name, int age) {
 
-        System.out.println(name1);
+        System.out.println(dbName);
+        System.out.println("redis:" + redis);
 
         System.out.println(config);
+
 
 //        System.out.println(testJsonConfig);
 
@@ -102,7 +121,7 @@ public class UserController implements ApplicationContextAware {
 //        } finally {
 //            t.complete();
 //        }
-        return Result.ok(name1);
+        return Result.ok(dbName);
     }
 
     @Override

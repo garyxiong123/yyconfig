@@ -1,3 +1,18 @@
+/*
+ *    Copyright 2019-2020 the original author or authors.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.yofish.apollo.service;
 
 import com.google.common.base.Joiner;
@@ -85,13 +100,22 @@ public class AppNamespaceService {
                 .build();
     }
 
-    public AppNamespace4Public findAppPublicNamespace(long namespaceId) {
-        Optional<AppNamespace4Public> appNamespace4PublicOptional = this.appNamespace4PublicRepository.findById(namespaceId);
-        return appNamespace4PublicOptional.orElse(null);
+    public AppNamespace findAppNamespace(long namespaceId) {
+        Optional<AppNamespace> appNamespace = appNamespaceRepository.findById(namespaceId);
+        return appNamespace.orElse(null);
+    }
+
+    public AppNamespace findAppNamespace(String namespaceName) {
+        AppNamespace appNamespace = appNamespaceRepository.findByName(namespaceName);
+        return appNamespace;
     }
 
     public AppNamespace findPublicAppNamespace(String namespaceName) {
         return appNamespace4PublicRepository.findByName(namespaceName);
+    }
+
+    public AppNamespace findProtectAppNamespace(String namespaceName) {
+        return appNamespace4ProtectRepository.findByName(namespaceName);
     }
 
     private List<AppNamespace4Private> findAllPrivateAppNamespaces(String namespaceName) {
@@ -155,6 +179,10 @@ public class AppNamespaceService {
             throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("App already has application appNamespace. AppId = %s", appNamespace.getApp().getId()));
         }
 
+        if (appNamespace instanceof AppNamespace4Public || appNamespace instanceof AppNamespace4Protect) {
+            checkAppNamespaceGlobalUniqueness(appNamespace);
+        }
+
         appNamespaceRepository.save(appNamespace);
 
         appEnvClusterNamespaceService.createNamespaceForAppNamespaceInAllCluster(appNamespace);
@@ -169,6 +197,7 @@ public class AppNamespaceService {
 
     private void checkAppNamespaceGlobalUniqueness(AppNamespace appNamespace) {
         checkPublicAppNamespaceGlobalUniqueness(appNamespace);
+        checkProtectAppNamespaceGlobalUniqueness(appNamespace);
 
         List<AppNamespace4Private> privateAppNamespaces = findAllPrivateAppNamespaces(appNamespace.getName());
 
@@ -190,7 +219,14 @@ public class AppNamespaceService {
     private void checkPublicAppNamespaceGlobalUniqueness(AppNamespace appNamespace) {
         AppNamespace publicAppNamespace = findPublicAppNamespace(appNamespace.getName());
         if (publicAppNamespace != null) {
-            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "AppNamespace " + appNamespace.getName() + " already exists as public appNamespace in appCode: " + publicAppNamespace.getApp().getId() + "!");
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "AppNamespace " + appNamespace.getName() + " already exists as public appNamespace in appCode: " + publicAppNamespace.getApp().getAppCode() + "!");
+        }
+    }
+
+    private void checkProtectAppNamespaceGlobalUniqueness(AppNamespace appNamespace) {
+        AppNamespace publicAppNamespace = findProtectAppNamespace(appNamespace.getName());
+        if (publicAppNamespace != null) {
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "AppNamespace " + appNamespace.getName() + " already exists as protect appNamespace in appCode: " + publicAppNamespace.getApp().getAppCode() + "!");
         }
     }
 

@@ -1,3 +1,18 @@
+/*
+ *    Copyright 2019-2020 the original author or authors.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.ctrip.framework.apollo.configservice.service;
 
 import com.ctrip.framework.apollo.configservice.wrapper.CaseInsensitiveMapWrapper;
@@ -8,6 +23,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.yofish.apollo.domain.AppNamespace;
+import com.yofish.apollo.domain.AppNamespace4Protect;
 import com.yofish.apollo.domain.AppNamespace4Public;
 import com.yofish.apollo.repository.AppNamespaceRepository;
 import com.yofish.apollo.service.PortalConfig;
@@ -32,7 +48,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author Jason Song(song_s@ctrip.com)
+ * 存在的目的就是缓存同步
  */
 @Service
 public class AppNamespaceServiceWithCache implements InitializingBean {
@@ -43,7 +59,7 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
   private AppNamespaceRepository appNamespaceRepository;
 
   @Autowired
-  private PortalConfig bizConfig;
+  private PortalConfig portalConfig;
 
   private int scanInterval;
   private TimeUnit scanIntervalTimeUnit;
@@ -52,14 +68,23 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
   private ScheduledExecutorService scheduledExecutorService;
   private long maxIdScanned;
 
-  //store namespaceName -> AppNamespace
+  /** 三级缓存 设计
+   * client 并不知道 namespace 是 共有还是私有, 他应该
+   * 1：client根据 AppCode+Namespace =》 namespace，有=》私有
+   * 2：client根据         Namespace =》 namespace，有=》公有
+   *
+   * */
+
+  /** store id -> AppNamespace 全部的*/
+  private Map<Long, AppNamespace> appNamespaceIdCache;
+
+  /** store namespaceName-> AppNamespace   public + protect **/
   private CaseInsensitiveMapWrapper<AppNamespace> publicAppNamespaceCache;
 
-  //store appCode+namespaceName -> AppNamespace
+  /** store appCode+namespaceName -> AppNamespace  私有设计 **/
   private CaseInsensitiveMapWrapper<AppNamespace> appNamespaceCache;
 
-  //store id -> AppNamespace
-  private Map<Long, AppNamespace> appNamespaceIdCache;
+
 
   public AppNamespaceServiceWithCache() {
     initialize();
@@ -70,8 +95,7 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
     publicAppNamespaceCache = new CaseInsensitiveMapWrapper<>(Maps.newConcurrentMap());
     appNamespaceCache = new CaseInsensitiveMapWrapper<>(Maps.newConcurrentMap());
     appNamespaceIdCache = Maps.newConcurrentMap();
-    scheduledExecutorService = Executors.newScheduledThreadPool(1, ApolloThreadFactory
-        .create("AppNamespaceServiceWithCache", true));
+    scheduledExecutorService = Executors.newScheduledThreadPool(1, ApolloThreadFactory.create("AppNamespaceServiceWithCache", true));
   }
 
   public AppNamespace findByAppIdAndNamespace(String appId, String namespaceName) {
@@ -122,8 +146,7 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
     scanInterval = 3;
 
     scheduledExecutorService.scheduleAtFixedRate(() -> {
-      Transaction transaction = Tracer.newTransaction("Apollo.AppNamespaceServiceWithCache",
-          "rebuildCache");
+      Transaction transaction = Tracer.newTransaction("Apollo.AppNamespaceServiceWithCache", "rebuildCache");
       try {
         this.updateAndDeleteCache();
         transaction.setStatus(Transaction.SUCCESS);
@@ -218,14 +241,14 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
           appNamespaceCache.remove(oldKey);
         }
 
-        if (appNamespace instanceof AppNamespace4Public) {
+        if (appNamespace.isPublicOrProtect()) {
           publicAppNamespaceCache.put(appNamespace.getName(), appNamespace);
 
           //in case namespaceName changes
-          if (!appNamespace.getName().equals(thatInCache.getName()) && thatInCache instanceof AppNamespace4Public) {
+          if (!appNamespace.getName().equals(thatInCache.getName()) && thatInCache.isPublicOrProtect()) {
             publicAppNamespaceCache.remove(thatInCache.getName());
           }
-        } else if (thatInCache instanceof AppNamespace4Public) {
+        } else if (thatInCache.isPublicOrProtect()) {
           //just in case isPublic changes
           publicAppNamespaceCache.remove(thatInCache.getName());
         }
@@ -262,10 +285,10 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
   }
 
   private void populateDataBaseInterval() {
-//    scanInterval = bizConfig.appNamespaceCacheScanInterval();
-//    scanIntervalTimeUnit = bizConfig.appNamespaceCacheScanIntervalTimeUnit();
-//    rebuildInterval = bizConfig.appNamespaceCacheRebuildInterval();
-//    rebuildIntervalTimeUnit = bizConfig.appNamespaceCacheRebuildIntervalTimeUnit();
+    scanInterval = portalConfig.appNamespaceCacheScanInterval();
+    scanIntervalTimeUnit = portalConfig.appNamespaceCacheScanIntervalTimeUnit();
+    rebuildInterval = portalConfig.appNamespaceCacheRebuildInterval();
+    rebuildIntervalTimeUnit = portalConfig.appNamespaceCacheRebuildIntervalTimeUnit();
   }
 
   //only for test use

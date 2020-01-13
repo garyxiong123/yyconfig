@@ -1,3 +1,18 @@
+/*
+ *    Copyright 2019-2020 the original author or authors.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.yofish.apollo.service;
 
 import com.google.common.base.Strings;
@@ -46,11 +61,11 @@ public class PortalConfig extends RefreshableConfig {
 //    private static final Type ORGANIZATION = new TypeToken<List<Organization>>() {
 //    }.getType();
 
-//  @Autowired
+    //  @Autowired
 //  private PortalDBPropertySource portalDBPropertySource;
     private static final Type namespaceValueLengthOverrideTypeReference =
-        new TypeToken<Map<Long, Integer>>() {
-        }.getType();
+            new TypeToken<Map<Long, Integer>>() {
+            }.getType();
 
 
     public PortalConfig(String name, Map<String, Object> source) {
@@ -356,6 +371,7 @@ public class PortalConfig extends RefreshableConfig {
     public String hermesServerAddress() {
         return getValue("hermes.server.address");
     }
+
     public int itemKeyLengthLimit() {
         int limit = getIntProperty("item.key.length.limit", DEFAULT_ITEM_KEY_LENGTH);
         return checkInt(limit, 5, Integer.MAX_VALUE, DEFAULT_ITEM_KEY_LENGTH);
@@ -371,6 +387,7 @@ public class PortalConfig extends RefreshableConfig {
 
         return namespaceValueLengthOverride;
     }
+
     public int itemValueLengthLimit() {
         int limit = getIntProperty("item.value.length.limit", DEFAULT_ITEM_VALUE_LENGTH);
         return checkInt(limit, 5, Integer.MAX_VALUE, DEFAULT_ITEM_VALUE_LENGTH);
@@ -401,20 +418,20 @@ public class PortalConfig extends RefreshableConfig {
         return 0;
     }
 
-    public Object appNamespaceCacheRebuildInterval() {
-        return null;
+    public int appNamespaceCacheRebuildInterval() {
+        return 3;
     }
 
-    public Object appNamespaceCacheRebuildIntervalTimeUnit() {
-        return null;
+    public TimeUnit appNamespaceCacheRebuildIntervalTimeUnit() {
+        return TimeUnit.SECONDS;
     }
 
-    public Object appNamespaceCacheScanInterval() {
-        return null;
+    public int appNamespaceCacheScanInterval() {
+        return 3;
     }
 
-    public Object appNamespaceCacheScanIntervalTimeUnit() {
-            return null;
+    public TimeUnit appNamespaceCacheScanIntervalTimeUnit() {
+        return null;
     }
 
     public List<Env> getActiveEnvs() {

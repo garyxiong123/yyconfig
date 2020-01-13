@@ -1,3 +1,18 @@
+/*
+ *    Copyright 2019-2020 the original author or authors.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.yofish.apollo.controller;
 
 import com.yofish.apollo.domain.*;
@@ -107,12 +122,12 @@ public class AppNamespaceController {
     @ApiOperation("创建关联公开命名空间")
     @PostMapping("/apps/{appId:\\d+}/namespaces/{namespaceId:\\d+}/associate/{appEnvClusterIds:[0-9,]+}")
     public Result createRelationNamespace(@PathVariable Long appId, @PathVariable Long namespaceId, @PathVariable String appEnvClusterIds) {
-        AppNamespace4Public appPublicNamespace = this.appNamespaceService.findAppPublicNamespace(namespaceId);
-        YyAssert.paramCheck(ObjectUtils.isEmpty(appPublicNamespace), "关联的公共命名空间不存在！");
-        YyAssert.paramCheck(appId.equals(appPublicNamespace.getApp().getId()), "不能关联自己的公共命名空间！");
+        AppNamespace appNamespace = this.appNamespaceService.findAppNamespace(namespaceId);
+        YyAssert.paramCheck(ObjectUtils.isEmpty(appNamespace), "关联的公共命名空间不存在！");
+        YyAssert.paramCheck(appId.equals(appNamespace.getApp().getId()), "不能关联自己的公共命名空间！");
 
         Arrays.stream(appEnvClusterIds.split(",")).forEach(appEnvClusterId -> {
-            AppEnvClusterNamespace4Main appEnvClusterNamespace = new AppEnvClusterNamespace4Main(new AppEnvCluster(Long.valueOf(appEnvClusterId)), new AppNamespace4Public(namespaceId));
+            AppEnvClusterNamespace4Main appEnvClusterNamespace = new AppEnvClusterNamespace4Main(new AppEnvCluster(Long.valueOf(appEnvClusterId)), appNamespace);
             this.appEnvClusterNamespaceService.save(appEnvClusterNamespace);
         });
         return Result.ok();
@@ -274,7 +289,7 @@ public class AppNamespaceController {
 //  }
 //
 //  @RequestMapping(value = "/apps/{appCode}/appnamespaces/{namespaceName:.+}", method = RequestMethod.GET)
-//  public AppNamespaceDTO findAppPublicNamespace(@PathVariable String appCode, @PathVariable String namespaceName) {
+//  public AppNamespaceDTO findAppNamespace(@PathVariable String appCode, @PathVariable String namespaceName) {
 //    AppNamespace appNamespace = appNamespaceService.findByAppIdAndName(appCode, namespaceName);
 //
 //    if (appNamespace == null) {
