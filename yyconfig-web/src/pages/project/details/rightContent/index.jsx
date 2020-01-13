@@ -39,6 +39,7 @@ class RightContent extends React.Component {
     }
   }
   //------------------------事件------------------------------------
+  //发布
   onPublish = (e, item) => {
     e && e.stopPropagation();
     this.setState({
@@ -46,6 +47,7 @@ class RightContent extends React.Component {
       currentItem: item
     })
   }
+  //回滚
   onRollBack = (e, item) => {
     e && e.stopPropagation();
     this.onFetchRollBackReleasesActive(item);
@@ -54,6 +56,7 @@ class RightContent extends React.Component {
       currentItem: item
     })
   }
+  //命名空间管理
   onProtectEdit = (e, item) => {
     e && e.stopPropagation();
     this.setState({
@@ -65,6 +68,21 @@ class RightContent extends React.Component {
     this.setState({
       showRollBack: true
     })
+  }
+  //发布历史
+  onPubHistory = (e) => {
+    e && e.stopPropagation();
+    message.info('即将上线...')
+  }
+  //灰度操作
+  onGary = (e, item) => {
+    e && e.domEvent && e.domEvent.stopPropagation();
+    message.info('即将上线...')
+  }
+  //删除
+  onDelete = (e, item) => {
+    e && e.domEvent && e.domEvent.stopPropagation();
+    message.info('即将上线...')
   }
   onFetchRollBackReleasesActive = (item) => {
     const { dispatch } = this.props;
@@ -85,6 +103,7 @@ class RightContent extends React.Component {
   onSaveSuccess = () => {
     this.onFetchNamespaceList();
   }
+
 
   onFetchNamespaceList = () => {
     const { dispatch, appDetail, currentEnv } = this.props;
@@ -127,7 +146,7 @@ class RightContent extends React.Component {
               <Button size="small" onClick={(e) => this.onRollBack(e, item)}>回滚</Button>
             </Col>
             <Col>
-              <Button size="small">发布历史</Button>
+              <Button size="small" onClick={(e) => { this.onPubHistory(e, item) }}>发布历史</Button>
             </Col>
             {/* <Col>
               <Button size="small">灰度</Button>
@@ -135,10 +154,10 @@ class RightContent extends React.Component {
             <Col>
               <Dropdown overlay={
                 <Menu>
-                  <Menu.Item key="1">
+                  <Menu.Item key="1" onClick={(e) => { this.onGary(e, item) }}>
                     灰度
                   </Menu.Item>
-                  <Menu.Item key="2">
+                  <Menu.Item key="2" onClick={(e) => { this.onDelete(e, item) }}>
                     删除
                   </Menu.Item>
                 </Menu>
@@ -146,7 +165,6 @@ class RightContent extends React.Component {
                 <Button size="small">
                   <Icon type="ellipsis" />
                 </Button>
-
               </Dropdown>
             </Col>
           </Row>
