@@ -15,25 +15,34 @@
  */
 package com.yofish.apollo.controller;
 
+import com.yofish.apollo.domain.App;
 import com.yofish.apollo.service.FavoriteService;
 import com.youyu.common.api.Result;
+import com.youyu.common.helper.YyRequestInfoHelper;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class FavoriteController {
 
-  @Autowired
-  private FavoriteService favoriteService;
+    @Autowired
+    private FavoriteService favoriteService;
 
 
-  @RequestMapping(value = "/favorites", method = RequestMethod.GET)
-  public Result addOrCancelFavorite(@RequestParam String appCode) {
-    return favoriteService.addOrCancelFavorite(appCode);
-  }
+    @RequestMapping(value = "/favorites", method = RequestMethod.GET)
+    public Result addOrCancelFavorite(@RequestParam String appCode) {
+        return favoriteService.addOrCancelFavorite(appCode);
+    }
 
 
+    @ApiOperation("用户收藏的项目")
+    @GetMapping("favorites/app")
+    public Result<List<App>> getUserFavoriteApps() {
+        Long currentUserId = YyRequestInfoHelper.getCurrentUserId();
+        List<App> favoriteAppByUser = favoriteService.findFavoriteAppByUser(currentUserId);
+        return Result.ok(favoriteAppByUser);
+    }
 }

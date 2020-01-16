@@ -28,7 +28,15 @@ import java.util.List;
  * description:
  */
 @Component
-public interface FavoriteRepository extends JpaRepository<Favorites,Long> {
+public interface FavoriteRepository extends JpaRepository<Favorites, Long> {
 
     Favorites findByUserAndApp(User user, App app);
+
+    /**
+     * 查找用户收藏的所有项目
+     *
+     * @param userId
+     * @return
+     */
+    List<Favorites> findAllByUserId(long userId);
 }
