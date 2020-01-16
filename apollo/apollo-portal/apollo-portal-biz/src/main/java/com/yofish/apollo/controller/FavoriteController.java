@@ -15,14 +15,13 @@
  */
 package com.yofish.apollo.controller;
 
-import com.yofish.apollo.domain.Favorites;
 import com.yofish.apollo.service.FavoriteService;
 import com.youyu.common.api.Result;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class FavoriteController {
@@ -36,24 +35,5 @@ public class FavoriteController {
     return favoriteService.addOrCancelFavorite(appCode);
   }
 
-
-//  @RequestMapping(value = "/favorites", method = RequestMethod.GET)
-//  public List<Favorite> findFavorites(@RequestParam(value = "userId", required = false) String userId,
-//                                      @RequestParam(value = "appCode", required = false) String appCode,
-//                                      Pageable page) {
-//    return favoriteService.search(userId, appCode, page);
-//  }
-//
-//
-//  @RequestMapping(value = "/favorites/{favoriteId}", method = RequestMethod.DELETE)
-//  public void deleteFavorite(@PathVariable long favoriteId) {
-//    favoriteService.deleteFavorite(favoriteId);
-//  }
-//
-//
-//  @RequestMapping(value = "/favorites/{favoriteId}", method = RequestMethod.PUT)
-//  public void toTop(@PathVariable long favoriteId) {
-//    favoriteService.adjustFavoriteToFirst(favoriteId);
-//  }
 
 }
