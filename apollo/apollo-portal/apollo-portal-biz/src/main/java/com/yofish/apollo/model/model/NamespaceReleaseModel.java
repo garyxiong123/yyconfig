@@ -16,7 +16,6 @@
 package com.yofish.apollo.model.model;
 
 
-import framework.apollo.core.enums.Env;
 import common.utils.YyStringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
