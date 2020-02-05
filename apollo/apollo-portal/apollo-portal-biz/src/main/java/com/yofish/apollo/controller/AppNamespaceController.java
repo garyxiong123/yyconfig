@@ -24,6 +24,7 @@ import com.yofish.apollo.model.bo.NamespaceVO;
 import com.yofish.apollo.model.model.AppNamespaceModel;
 import com.yofish.apollo.service.AppEnvClusterNamespaceService;
 import com.yofish.apollo.service.AppNamespaceService;
+import com.yofish.apollo.service.AppService;
 import com.youyu.common.api.Result;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
@@ -39,12 +40,16 @@ import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
+/**
+ * @author WangSongJun
+ * @date 2019-12-02
+ */
 @Slf4j
 @RestController
 @Api(description = "项目命名空间")
 public class AppNamespaceController {
-
+    @Autowired
+    private AppService appService;
     @Autowired
     private AppNamespaceService appNamespaceService;
     @Autowired
@@ -71,7 +76,7 @@ public class AppNamespaceController {
     public Result<AppNamespace4Protect> createAppProtectNamespace(@PathVariable long appId, @Valid @RequestBody AppNamespaceModel model) {
         AppNamespace4Protect appNamespace4Protect = AppNamespace4Protect.builder()
                 .app(new App(appId))
-                .name(model.getName())
+                .name(this.appendDepartmentCodePrefix(appId, model.getName()))
                 .authorizedApp(model.getAuthorizedApp())
                 .format(model.getFormat())
                 .comment(model.getComment())
@@ -88,7 +93,7 @@ public class AppNamespaceController {
     public Result<AppNamespace4Public> createAppPublicNamespace(@PathVariable long appId, @Valid @RequestBody AppNamespaceModel model) {
         AppNamespace4Public appNamespace4Public = AppNamespace4Public.builder()
                 .app(new App(appId))
-                .name(model.getName())
+                .name(this.appendDepartmentCodePrefix(appId, model.getName()))
                 .format(model.getFormat())
                 .comment(model.getComment())
                 .openNamespaceType(ObjectUtils.isEmpty(model.getOpenNamespaceTypeId()) ? null : new OpenNamespaceType(model.getOpenNamespaceTypeId()))
@@ -97,6 +102,22 @@ public class AppNamespaceController {
         appNamespace4Public = appNamespaceService.createAppNamespace(appNamespace4Public);
 
         return Result.ok(appNamespace4Public);
+    }
+
+    /**
+     * 设置部门名称作为前缀
+     *
+     * @param appId
+     * @param namespaceName
+     * @return
+     */
+    private String appendDepartmentCodePrefix(long appId, String namespaceName) {
+        String departmentCodePrefix = appService.getApp(appId).getDepartment().getCode() + ".";
+        if (!namespaceName.startsWith(departmentCodePrefix)) {
+            return departmentCodePrefix + namespaceName;
+        } else {
+            return namespaceName;
+        }
     }
 
     @ApiOperation("查询项目的命名空间")
