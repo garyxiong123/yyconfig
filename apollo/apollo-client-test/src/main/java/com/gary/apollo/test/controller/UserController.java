@@ -21,6 +21,9 @@ import apollo.model.ConfigChangeEvent;
 import apollo.spring.annotation.ApolloConfig;
 import apollo.spring.annotation.ApolloConfigChangeListener;
 import apollo.spring.annotation.EnableApolloConfig;
+import com.gary.apollo.test.model.Permission;
+import com.gary.apollo.test.model.Permission4Data;
+import com.gary.apollo.test.model.Permission4Menu;
 import com.youyu.common.api.Result;
 import com.youyu.common.constant.ApplicationInfo;
 import io.swagger.annotations.Api;
@@ -56,7 +59,7 @@ public class UserController implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
-//    @Autowired
+    //    @Autowired
 //    private UserService userService;
     @Value("${dbName:gary}")
     public String dbName;
@@ -69,7 +72,6 @@ public class UserController implements ApplicationContextAware {
 
 //    @ApolloConfig("testJson")
 //    private Config testJsonConfig;
-
 
 
 // @Value("${request.timeout:200}")
@@ -129,4 +131,26 @@ public class UserController implements ApplicationContextAware {
         this.applicationContext = applicationContext;
 
     }
+
+
+    @GetMapping("/getUserInfo2")
+    public Result<Permission> getUserInfo2(int kind) {
+        if(kind == 1){
+            return Result.ok(Permission4Data.builder().table_name("tableddd").build());
+        }
+        if(kind == 2){
+            return Result.ok(Permission4Menu.builder().menu_name("menu_sss").build());
+        }
+        return null;
+    }
+
+
+
+
+    @PostMapping("/getUserInfo3")
+    public Result<Permission> getUserInfo3(@RequestBody Permission permission) {
+
+        return Result.ok(permission);
+    }
+
 }

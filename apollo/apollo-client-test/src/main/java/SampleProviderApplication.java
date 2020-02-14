@@ -19,8 +19,8 @@ public class SampleProviderApplication {
 //        System.setProperty("spring.profiles.active", "dev");
 //        System.setProperty("env", "DEV");
 //        System.setProperty("apollo.meta", "http://10.0.33.18:7243");
-//        System.setProperty("apollo.meta", "http://test.lb.gs.youyuwo.com:60008/");
-        System.setProperty("apollo.meta", "http://localhost:8080");
+        System.setProperty("apollo.meta", "http://test.lb.gs.youyuwo.com:60008/");
+//        System.setProperty("apollo.meta", "http://localhost:8080");
 
         ConfigurableApplicationContext run = SpringApplication.run(SampleProviderApplication.class, args);
         System.out.println(run);
