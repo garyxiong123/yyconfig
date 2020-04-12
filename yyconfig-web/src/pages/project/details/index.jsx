@@ -35,7 +35,7 @@ class ProjectDetail extends React.Component {
     if (prevProps.currentEnv !== currentEnv) {
       this.onFetchNamespaceList();
     }
-    if(prevProps.location.query.appId !== location.query.appId) {
+    if (prevProps.location.query.appId !== location.query.appId) {
       this.onGetBaseInfo()
     }
   }
@@ -52,7 +52,7 @@ class ProjectDetail extends React.Component {
   }
 
   //------------------------事件------------------------------------
-  onGetBaseInfo=()=>{
+  onGetBaseInfo = () => {
     const { location } = this.props;
     let query = location.query ? location.query : {};
     this.setState({
@@ -136,7 +136,7 @@ class ProjectDetail extends React.Component {
     this.onFetchNamespaceList();
   }
   //添加集群成功
-  onClusterAddSave=()=>{
+  onClusterAddSave = () => {
     this.onFetchEnvList();
   }
   //------------------------渲染------------------------------------
@@ -203,7 +203,7 @@ class ProjectDetail extends React.Component {
           <Button block className={styles.marginTop20} type="dashed">命名空间管理</Button>
         </Card>
         {
-          showClusterModal && <ClusterAdd onCancel={() => this.onCancel('showClusterModal')} onSave={this.onClusterAddSave}/>
+          showClusterModal && <ClusterAdd onCancel={() => this.onCancel('showClusterModal')} onSave={this.onClusterAddSave} />
         }
         {
           showNamespace && <NamespaceAdd onCancel={() => this.onCancel('showNamespace')} onSave={this.onNamespaceAddSave} />
@@ -218,11 +218,11 @@ class ProjectDetail extends React.Component {
     return (
       <PageHeaderWrapper title="项目信息" content={this.renderBaseInfo()} extra={this.renderEdit()}>
         <Row type="flex" gutter={24}>
-          <Col span={4}>
+          <Col style={{ width: 230 }}>
             {this.renderEnv()}
             {this.renderOpe()}
           </Col>
-          <Col span={20}>
+          <Col style={{ flex: 1 }}>
             <RightContent />
           </Col>
         </Row>

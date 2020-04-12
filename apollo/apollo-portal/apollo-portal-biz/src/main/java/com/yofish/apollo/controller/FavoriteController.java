@@ -15,11 +15,12 @@
  */
 package com.yofish.apollo.controller;
 
-import com.yofish.apollo.domain.Favorites;
+import com.yofish.apollo.domain.App;
 import com.yofish.apollo.service.FavoriteService;
 import com.youyu.common.api.Result;
+import com.youyu.common.helper.YyRequestInfoHelper;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,33 +28,21 @@ import java.util.List;
 @RestController
 public class FavoriteController {
 
-  @Autowired
-  private FavoriteService favoriteService;
+    @Autowired
+    private FavoriteService favoriteService;
 
 
-  @RequestMapping(value = "/favorites", method = RequestMethod.GET)
-  public Result addOrCancelFavorite(@RequestParam String appCode) {
-    return favoriteService.addOrCancelFavorite(appCode);
-  }
+    @RequestMapping(value = "/favorites", method = RequestMethod.GET)
+    public Result addOrCancelFavorite(@RequestParam String appCode) {
+        return favoriteService.addOrCancelFavorite(appCode);
+    }
 
 
-//  @RequestMapping(value = "/favorites", method = RequestMethod.GET)
-//  public List<Favorite> findFavorites(@RequestParam(value = "userId", required = false) String userId,
-//                                      @RequestParam(value = "appCode", required = false) String appCode,
-//                                      Pageable page) {
-//    return favoriteService.search(userId, appCode, page);
-//  }
-//
-//
-//  @RequestMapping(value = "/favorites/{favoriteId}", method = RequestMethod.DELETE)
-//  public void deleteFavorite(@PathVariable long favoriteId) {
-//    favoriteService.deleteFavorite(favoriteId);
-//  }
-//
-//
-//  @RequestMapping(value = "/favorites/{favoriteId}", method = RequestMethod.PUT)
-//  public void toTop(@PathVariable long favoriteId) {
-//    favoriteService.adjustFavoriteToFirst(favoriteId);
-//  }
-
+    @ApiOperation("用户收藏的项目")
+    @GetMapping("favorites/app")
+    public Result<List<App>> getUserFavoriteApps() {
+        Long currentUserId = YyRequestInfoHelper.getCurrentUserId();
+        List<App> favoriteAppByUser = favoriteService.findFavoriteAppByUser(currentUserId);
+        return Result.ok(favoriteAppByUser);
+    }
 }

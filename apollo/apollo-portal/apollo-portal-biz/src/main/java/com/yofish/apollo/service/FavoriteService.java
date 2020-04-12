@@ -21,14 +21,16 @@ import com.yofish.apollo.repository.AppRepository;
 import com.yofish.apollo.repository.FavoriteRepository;
 import com.yofish.gary.biz.domain.User;
 import com.youyu.common.api.Result;
-import com.youyu.common.helper.YyRequestInfoHelper;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
+import com.youyu.common.helper.YyRequestInfoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author: xiongchengwei
@@ -41,10 +43,6 @@ public class FavoriteService {
 
     @Autowired
     private AppRepository appRepository;
-
-//    public List<Favorite> search(String userId, String appCode, Pageable page) {
-//        return null;
-//    }
 
     public Result addOrCancelFavorite(String appCode) {
 
@@ -75,12 +73,14 @@ public class FavoriteService {
             return Result.okDesc("cancel favorite success");
         }
     }
-//
-//    public void deleteFavorite(long favoriteId) {
-//
-//    }
-//
-//    public void adjustFavoriteToFirst(long favoriteId) {
-//
-//    }
+
+    public List<App> findFavoriteAppByUser(Long userId) {
+        List<Favorites> allByUserId = favoriteRepository.findAllByUserId(userId);
+        if (ObjectUtils.isEmpty(allByUserId)) {
+            return Collections.emptyList();
+        } else {
+            return allByUserId.stream().map(favorites -> favorites.getApp()).collect(Collectors.toList());
+        }
+    }
+
 }

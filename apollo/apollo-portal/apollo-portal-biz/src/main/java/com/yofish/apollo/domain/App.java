@@ -66,12 +66,4 @@ public class App extends BaseEntity {
     public App(Long id) {
         super(id);
     }
-    public static App creatApp(String appCode) {
-        AppRepository appRepository = getBeanInstance(AppRepository.class);
-        return appRepository.findByAppCode(appCode);
-    }
-    public AppEnvCluster createAppEnvCluster(String co){
-        return new AppEnvCluster();
-    }
-
 }
