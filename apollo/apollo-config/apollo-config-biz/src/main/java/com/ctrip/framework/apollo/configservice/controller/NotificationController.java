@@ -15,19 +15,19 @@
  */
 package com.ctrip.framework.apollo.configservice.controller;
 
-import com.ctrip.framework.apollo.configservice.service.ReleaseMessageServiceWithCache;
+import com.ctrip.framework.apollo.configservice.repo.ReleaseMessageServiceWithCache;
 import com.ctrip.framework.apollo.configservice.util.NamespaceUtil;
 import com.ctrip.framework.apollo.configservice.util.WatchKeysUtil;
-import com.ctrip.framework.apollo.configservice.utils.EntityManagerUtil;
+import com.ctrip.framework.apollo.configservice.util.EntityManagerUtil;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import com.yofish.apollo.component.constant.PermissionType;
 import com.yofish.apollo.domain.ReleaseMessage;
-import com.yofish.apollo.message.ReleaseMessageListener;
-import com.yofish.apollo.message.Topics;
+import com.yofish.apollo.pattern.listener.releasemessage.ReleaseMessageListener;
 import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.dto.ApolloConfigNotification;
 import framework.apollo.tracer.Tracer;
@@ -94,7 +94,7 @@ public class NotificationController implements ReleaseMessageListener {
       @RequestParam(value = "notificationId", defaultValue = "-1") long notificationId,
       @RequestParam(value = "ip", required = false) String clientIp) {
     //strip out .properties suffix
-    namespace = namespaceUtil.filterNamespaceName(namespace);
+    namespace = namespaceUtil.subSuffix4Properties(namespace);
 
     Set<String> watchedKeys = watchKeysUtil.assembleAllWatchKeys(appId, cluster, env,namespace, dataCenter);
 
@@ -141,12 +141,12 @@ public class NotificationController implements ReleaseMessageListener {
   }
 
   @Override
-  public void handleReleaseMessage(ReleaseMessage message, String channel) {
+  public void onReceiveReleaseMessage(ReleaseMessage message, String channel) {
     logger.info("message received - channel: {}, message: {}", channel, message);
 
     String content = message.getMessage();
     Tracer.logEvent("Apollo.LongPoll.Messages", content);
-    if (!Topics.APOLLO_RELEASE_TOPIC.equals(channel) || Strings.isNullOrEmpty(content)) {
+    if (!PermissionType.Topics.APOLLO_RELEASE_TOPIC.equals(channel) || Strings.isNullOrEmpty(content)) {
       return;
     }
     List<String> keys = STRING_SPLITTER.splitToList(content);

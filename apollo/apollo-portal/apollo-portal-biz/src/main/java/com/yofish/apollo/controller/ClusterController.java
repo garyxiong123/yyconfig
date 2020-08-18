@@ -17,6 +17,7 @@ package com.yofish.apollo.controller;
 
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppEnvCluster;
+import com.yofish.apollo.model.dto.Req.CreateClusterReqDTO;
 import com.yofish.apollo.service.AppEnvClusterService;
 import com.youyu.common.api.Result;
 import com.youyu.common.enums.BaseResultCode;
@@ -42,17 +43,12 @@ public class ClusterController {
     @ApiOperation("创建集群")
     @PostMapping("/apps/{appId:\\d+}/envs/{envs}/clusters/{clusterName}")
     public Result<List<AppEnvCluster>> createCluster(@PathVariable Long appId, @PathVariable String envs, @PathVariable String clusterName) {
+        CreateClusterReqDTO createClusterReqDTO = CreateClusterReqDTO.builder().appId(appId).envs(envs).clusterName(clusterName).build();
+        createClusterReqDTO.paramCheck();
+        List<AppEnvCluster> appEnvClusterList = this.appEnvClusterService.createAppEnvCluster(createClusterReqDTO);
 
-        if (!InputValidator.isValidClusterNamespace(clusterName)) {
-            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("Cluster格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
-        }
 
-        List<AppEnvCluster> appEnvClusterList = new ArrayList<>();
-        Arrays.stream(envs.split(",")).forEach(env -> {
-            AppEnvCluster appEnvCluster = AppEnvCluster.builder().app(new App(appId)).env(env).name(clusterName).build();
-            this.appEnvClusterService.createAppEnvCluster(appEnvCluster);
-            appEnvClusterList.add(appEnvCluster);
-        });
+//
 
         return Result.ok(appEnvClusterList);
     }

@@ -16,7 +16,7 @@
 package controller;
 
 import com.yofish.apollo.controller.CommitController;
-import com.yofish.apollo.dto.CommitDto;
+import com.yofish.apollo.api.dto.CommitDto;
 import com.youyu.common.api.Result;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -22,6 +22,11 @@
             <version>${shiro.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-spring</artifactId>
+            <version>${shiro.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.yofish.platform</groupId>
             <artifactId>upms-domain-api</artifactId>
         </dependency>
@@ -29,11 +34,7 @@
             <groupId>com.yofish.platform</groupId>
             <artifactId>upms-domain-biz</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-spring</artifactId>
-            <version>${shiro.version}</version>
-        </dependency>
+
     </dependencies>
 
 

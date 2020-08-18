@@ -15,16 +15,25 @@
  */
 package com.yofish.apollo.domain;
 
+import com.yofish.apollo.model.AppModel;
+import com.yofish.apollo.pattern.strategy.CheckOwnerAndAdminsAndDepartmentStrategy;
 import com.yofish.apollo.repository.AppRepository;
 import com.yofish.gary.biz.domain.Department;
 import com.yofish.gary.biz.domain.User;
 import com.yofish.gary.dao.entity.BaseEntity;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
+import common.utils.InputValidator;
+import common.utils.RequestPrecondition;
 import lombok.*;
+import org.springframework.util.ObjectUtils;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass;
 import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
 
 /**
@@ -66,4 +75,29 @@ public class App extends BaseEntity {
     public App(Long id) {
         super(id);
     }
+
+    public App(AppModel appModel) {
+        String appCode = appModel.getAppCode();
+        String appName = appModel.getName();
+        Long ownerId = appModel.getOwnerId();
+        Long orgId = appModel.getOrgId();
+        Set<Long> admins = appModel.getAdmins();
+        RequestPrecondition.checkArgumentsNotEmpty(appCode, appName, ownerId, orgId);
+
+        if (!InputValidator.isValidClusterNamespace(appModel.getAppCode())) {
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG,
+                    String.format("AppCode格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
+        }
+
+        department = new Department(orgId);
+        appOwner = new User(ownerId);
+        appAdmins = ObjectUtils.isEmpty(admins) ? null : admins.stream().map(userId -> new User(userId)).collect(Collectors.toSet());
+        checkOwnerAndAdminsAndDepartmentIsExist();
+    }
+
+    public void checkOwnerAndAdminsAndDepartmentIsExist() {
+        getBeanByClass(CheckOwnerAndAdminsAndDepartmentStrategy.class).check(this);
+    }
+
 }
+

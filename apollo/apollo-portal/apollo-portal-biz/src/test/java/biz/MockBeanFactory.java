@@ -16,7 +16,7 @@
 package biz;
 
 
-import com.yofish.apollo.config.ServerConfigKey;
+import com.yofish.apollo.component.config.ServerConfigKey;
 import com.yofish.apollo.domain.AppEnvClusterNamespace;
 import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.domain.Release;

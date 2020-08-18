@@ -39,7 +39,7 @@ import java.util.Set;
  * @Date: 2019/11/12 下午2:44
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {com.yofish.apollo.JpaApplication.class})
+@SpringBootTest(classes = {com.yofish.apollo.PortalApplication.class})
 public class AppRepositoryTest {
     @Autowired
     private AppRepository appRepository;

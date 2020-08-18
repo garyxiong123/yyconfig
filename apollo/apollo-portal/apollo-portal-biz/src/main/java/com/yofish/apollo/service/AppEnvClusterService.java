@@ -14,51 +14,29 @@
  *    limitations under the License.
  */
 package com.yofish.apollo.service;
-//
-//import com.google.common.base.Strings;
-//import com.yofish.apollo.repository.ClusterRepository;
-//import common.exception.BadRequestException;
-//import common.utils.BeanUtils;
-//import framework.apollo.core.ConfigConsts;
-//import framework.apollo.core.enums.Env;
 
-import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppEnvCluster;
+import com.yofish.apollo.model.dto.Req.CreateClusterReqDTO;
+import com.yofish.apollo.pattern.factory.AppEnvClusterFactory;
+import com.yofish.apollo.pattern.util.ServerConfigUtil;
 import com.yofish.apollo.repository.AppEnvClusterRepository;
-import com.youyu.common.enums.BaseResultCode;
-import com.youyu.common.exception.BizException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 
 import java.util.List;
-import java.util.Objects;
 
-//import org.springframework.transaction.annotation.Transactional;
-//import org.springframework.util.ObjectUtils;
-//
-//import java.util.Collections;
-//import java.util.List;
-//import java.util.Objects;
-//
-////import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 //
 @Service
 public class AppEnvClusterService {
-
+    @Autowired
+    private AppEnvClusterFactory appEnvClusterFactory;
 
     @Autowired
     private AppEnvClusterRepository appEnvClusterRepository;
     @Autowired
-    private ServerConfigService serverConfigService;
+    private ServerConfigUtil serverConfigUtil;
     @Autowired
     private AppEnvClusterNamespaceService appEnvClusterNamespaceService;
-//    @Autowired
-//    private NamespaceService namespaceService;
-//
-//    @Autowired
-//    private PortalSettings portalSettings;
 
 
     public List<AppEnvCluster> findClusters(String env, long appId) {
@@ -70,16 +48,6 @@ public class AppEnvClusterService {
     }
 
 
-    public AppEnvCluster createAppEnvCluster(AppEnvCluster appEnvCluster) {
-        if (!isClusterNameUnique(appEnvCluster.getApp().getId(), appEnvCluster.getEnv(), appEnvCluster.getName())) {
-            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "集群名称不能重复！");
-        }
-        AppEnvCluster cluster = appEnvClusterRepository.save(appEnvCluster);
-        // create linked namespace
-        this.appEnvClusterNamespaceService.instanceOfAppNamespaces(appEnvCluster);
-        return cluster;
-    }
-
     public AppEnvCluster getAppEnvCluster(long appId, String env, String clusterName) {
         return appEnvClusterRepository.findClusterByAppIdAndEnvAndName(appId, env, clusterName);
     }
@@ -87,6 +55,10 @@ public class AppEnvClusterService {
     public void deleteAppEnvCluster(AppEnvCluster appEnvCluster) {
         appEnvClusterRepository.delete(appEnvCluster);
         // TODO: 2019-12-20 delete linked namespaces
+    }
+
+    public List<AppEnvCluster> createAppEnvCluster(CreateClusterReqDTO createClusterReqDTO) {
+        return appEnvClusterFactory.createAppEnvClusters(createClusterReqDTO);
     }
 
 
@@ -105,11 +77,6 @@ public class AppEnvClusterService {
 //    }
 //
 //
-    public boolean isClusterNameUnique(Long appId, String env, String clusterName) {
-        Objects.requireNonNull(appId, "AppId must not be null");
-        Objects.requireNonNull(clusterName, "ClusterName must not be null");
-        return ObjectUtils.isEmpty((appEnvClusterRepository.findClusterByAppIdAndEnvAndName(appId, env, clusterName)));
-    }
 //
 //    public ClusterEntity findOne(String appCode, String name, String env) {
 //        //TODO fix env
@@ -191,23 +158,8 @@ public class AppEnvClusterService {
 //        return managedClusterEntity;
 //    }
 
-    @Transactional
-    public void createClusterInEachActiveEnv(long appId, String clusterName) {
-        List<String> envs = serverConfigService.getActiveEnvs();
-        //每次遍历，都要new，防止覆盖
-        envs.forEach((env -> {
-                    if (isClusterNameUnique(appId, env, clusterName)) {
-                        AppEnvCluster appEnvCluster = AppEnvCluster.builder()
-                                .app(new App(appId))
-                                .env(env)
-                                .name(clusterName)
-                                .build();
-                        appEnvClusterRepository.save(appEnvCluster);
-                    }
-                })
-        );
 
-    }
+}
 
 //    public List<ClusterEntity> findChildClusters(String appCode, String parentClusterName, String env) {
 //        //TODO fix
@@ -233,4 +185,3 @@ public class AppEnvClusterService {
 //    }
 //
 //
-}

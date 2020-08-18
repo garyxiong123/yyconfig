@@ -23,9 +23,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass;
 
@@ -36,14 +34,15 @@ import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass;
 @AllArgsConstructor
 @Data
 @Entity
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"app_env_cluster_id", "ip"})})
+//@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"app_env_cluster_id", "dataCenter", "ip"})})
 public class Instance extends BaseEntity {
     @ManyToOne
     private AppEnvCluster appEnvCluster;
 
-    @Column(name = "DataCenter", nullable = false)
     private String dataCenter;
 
-    @Column(name = "Ip", nullable = false)
+    @Column(nullable = false)
     private String ip;
 
 
@@ -54,10 +53,10 @@ public class Instance extends BaseEntity {
 
     Instance findInstance() {
 
-        return getBeanByClass(InstanceRepository.class).findByAppEnvClusterAndDataCenterAndIp(this.appEnvCluster,this.dataCenter, this.ip);
+        return getBeanByClass(InstanceRepository.class).findByAppEnvClusterAndDataCenterAndIp(this.appEnvCluster, this.dataCenter, this.ip);
     }
 
-    public void setDataCenter(String dataCenter){
+    public void setDataCenter(String dataCenter) {
         this.dataCenter = Strings.isNullOrEmpty(dataCenter) ? "" : dataCenter;
     }
 }

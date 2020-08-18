@@ -17,6 +17,8 @@ package com.yofish.apollo.repository;
 
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppNamespace;
+import com.yofish.apollo.enums.AppNamespaceType;
+import com.yofish.apollo.enums.NamespaceType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -31,18 +33,27 @@ public interface AppNamespaceRepository extends JpaRepository<AppNamespace, Long
 
     AppNamespace findByAppAndName(App app, String namespaceName);
 
+    AppNamespace findByAppAndNameAndAppNamespaceType(App app, String namespaceName, AppNamespaceType appNamespaceType);
+
     AppNamespace findByAppAppCodeAndName(String appCode, String namespaceName);
 
     AppNamespace findByName(String namespaceName);
 
-//    List<AppNamespace> findByNameAndType(String namespaceName, NamespaceType type);
+    AppNamespace findByNameAndAppNamespaceType(String namespaceName, AppNamespaceType appNamespaceType);
 
-//    List<AppNamespace> findByType(NamespaceType type);
+    List<AppNamespace> findAllByNameAndAppNamespaceType(String namespaceName, AppNamespaceType appNamespaceType);
 
 
     List<AppNamespace> findByAppId(Long appId);
 
     List<AppNamespace> findFirst500ByIdGreaterThanOrderByIdAsc(long maxIdScanned);
 
-//    AppNamespace findByNameAndIsPublicTrue(String name);
+    AppNamespace findByApp_IdAndNameAndAppNamespaceType(Long appId, String namespaceName, NamespaceType namespaceType);
+
+
+    List<AppNamespace> findAllByAppNamespaceType(AppNamespaceType namespaceType);
+
+    List<AppNamespace> findAllByAppNamespaceTypeAndAuthorizedAppContains(AppNamespaceType namespaceType, App app);
+
+
 }

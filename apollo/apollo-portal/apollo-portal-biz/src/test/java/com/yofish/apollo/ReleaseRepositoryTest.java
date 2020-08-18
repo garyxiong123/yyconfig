@@ -35,7 +35,7 @@ import java.util.*;
  */
 @Transactional
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {JpaApplication.class})
+@SpringBootTest(classes = {PortalApplication.class})
 public class ReleaseRepositoryTest {
     @Autowired
     private AppRepository appRepository;

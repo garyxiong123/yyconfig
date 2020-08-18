@@ -18,9 +18,9 @@ package com.yofish.apollo.service;
 import com.google.common.base.Splitter;
 import com.google.common.collect.*;
 import com.yofish.apollo.domain.*;
-import com.yofish.apollo.dto.InstanceConfigDTO;
-import com.yofish.apollo.dto.InstanceDTO;
-import com.yofish.apollo.dto.ReleaseDTO;
+import com.yofish.apollo.api.dto.InstanceConfigDTO;
+import com.yofish.apollo.api.dto.InstanceDTO;
+import com.yofish.apollo.api.dto.ReleaseDTO;
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.repository.AppEnvClusterRepository;
 import com.yofish.apollo.repository.InstanceConfigRepository;
@@ -68,12 +68,12 @@ public class InstanceService {
         return instanceRepository.findByAppEnvClusterAndDataCenterAndIp(appEnvCluster, dataCenter, ip);
     }
 
-    @Transactional
-    public Instance createInstance(Instance instance) {
-        instance.setId(0L); //protection
-
-        return instanceRepository.save(instance);
-    }
+//    @Transactional
+//    public Instance createInstance(Instance instance) {
+//        instance.setId(0L); //protection
+//
+//        return instanceRepository.save(instance);
+//    }
 
     /**
      * 获取【使用最新配置】的 实例列表：
@@ -264,18 +264,18 @@ public class InstanceService {
         return instanceConfigRepository.save(instanceConfig);
     }
 
-    @Transactional
-    public InstanceConfig updateInstanceConfig(InstanceConfig instanceConfig) {
-        InstanceConfig existedInstanceConfig = instanceConfigRepository.findById(instanceConfig.getId()).orElseGet(() -> {
-            throw new BizException(String.format("instanceId %d doesn't exist", instanceConfig.getId()));
-        });
-
-        existedInstanceConfig.setCluster(instanceConfig.getCluster());
-        existedInstanceConfig.setReleaseKey(instanceConfig.getReleaseKey());
-        existedInstanceConfig.setReleaseDeliveryTime(instanceConfig.getReleaseDeliveryTime());
-
-        return instanceConfigRepository.save(existedInstanceConfig);
-    }
+//    @Transactional
+//    public InstanceConfig updateInstanceConfig(InstanceConfig instanceConfig) {
+//        InstanceConfig existedInstanceConfig = instanceConfigRepository.findById(instanceConfig.getId()).orElseGet(() -> {
+//            throw new BizException(String.format("instanceId %d doesn't exist", instanceConfig.getId()));
+//        });
+//
+//        existedInstanceConfig.setCluster(instanceConfig.getCluster());
+//        existedInstanceConfig.setReleaseKey(instanceConfig.getReleaseKey());
+//        existedInstanceConfig.setReleaseDeliveryTime(instanceConfig.getReleaseDeliveryTime());
+//
+//        return instanceConfigRepository.save(existedInstanceConfig);
+//    }
 
     public int getInstanceCountByNamepsace(Long namespaceId, Pageable pageable) {
         PageDTO<InstanceDTO> instances = findInstancesByNamespace(namespaceId, pageable);
@@ -303,9 +303,5 @@ public class InstanceService {
         return namespace.calcInstanceConfigsCount();
     }
 
-//    @Transactional
-//    public int batchDeleteInstanceConfig(String configAppCode, String configClusterName, String configNamespaceName){
-//        return instanceConfigRepository.batchDelete(configAppCode, configClusterName, configNamespaceName);
-//    }
 
 }

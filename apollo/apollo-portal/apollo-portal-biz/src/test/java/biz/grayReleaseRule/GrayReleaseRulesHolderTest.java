@@ -16,16 +16,12 @@
 package biz.grayReleaseRule;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.yofish.apollo.domain.GrayReleaseRule;
 import com.yofish.apollo.domain.ReleaseMessage;
-import com.yofish.apollo.grayReleaseRule.GrayReleaseRulesHolder;
-import com.yofish.apollo.message.Topics;
+import com.yofish.apollo.pattern.listener.releasemessage.GrayReleaseRulesHolder;
 import com.yofish.apollo.repository.GrayReleaseRuleRepository;
 import com.yofish.apollo.service.PortalConfig;
-import common.constants.NamespaceBranchStatus;
 import common.dto.GrayReleaseRuleItemDTO;
 import framework.apollo.core.ConfigConsts;
 import org.junit.Before;
@@ -39,9 +35,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -121,7 +115,7 @@ public class GrayReleaseRulesHolderTest {
         someClusterName, someNamespaceName)).thenReturn(Lists.newArrayList(anotherRule));
 
     //send message
-    grayReleaseRulesHolder.handleReleaseMessage(assembleReleaseMessage(someAppId, someClusterName,
+    grayReleaseRulesHolder.onReceiveReleaseMessage(assembleReleaseMessage(someAppId, someClusterName,
         someNamespaceName), Topics.APOLLO_RELEASE_TOPIC);
 
     assertNull(grayReleaseRulesHolder.findReleaseIdFromGrayReleaseRule

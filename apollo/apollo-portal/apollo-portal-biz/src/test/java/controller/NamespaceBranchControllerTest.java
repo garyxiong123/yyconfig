@@ -17,9 +17,7 @@ package controller;
 
 import com.yofish.apollo.DomainCreate;
 import com.yofish.apollo.controller.NamespaceBranchController;
-import com.yofish.apollo.controller.ReleaseController;
 import com.yofish.apollo.domain.AppEnvClusterNamespace4Main;
-import com.yofish.apollo.model.model.NamespaceReleaseModel;
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.repository.ReleaseRepository;
 import org.junit.Before;

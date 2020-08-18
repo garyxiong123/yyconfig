@@ -15,7 +15,7 @@
  */
 package com.ctrip.framework.apollo.configservice.util;
 
-import com.ctrip.framework.apollo.configservice.service.AppNamespaceServiceWithCache;
+import com.ctrip.framework.apollo.configservice.controller.timer.AppNamespaceCache;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
@@ -41,7 +41,7 @@ import static common.utils.YyStringUtils.notEqual;
 public class WatchKeysUtil {
   private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR);
   @Autowired
-  private AppNamespaceServiceWithCache appNamespaceService;
+  private AppNamespaceCache appNamespaceCache;
 
   /**
    * Assemble watch keys for the given appCode, appEnvCluster, appNamespace, dataCenter combination
@@ -81,7 +81,7 @@ public class WatchKeysUtil {
                                                              Set<String> namespaces,
                                                              String dataCenter) {
     Multimap<String, String> watchedKeysMap = HashMultimap.create();
-    List<AppNamespace> appNamespaces = appNamespaceService.findPublicNamespacesByNames(namespaces);
+    List<AppNamespace> appNamespaces = appNamespaceCache.findPublicNamespacesByNames(namespaces);
 
     for (AppNamespace appNamespace : appNamespaces) {
       //check whether the appNamespace's appCode equals to current one
@@ -139,7 +139,7 @@ public class WatchKeysUtil {
       return Collections.emptySet();
     }
     List<AppNamespace> appNamespaces =
-        appNamespaceService.findByAppIdAndNamespaces(appId, namespaces);
+        appNamespaceCache.findByAppIdAndNamespaces(appId, namespaces);
 
     if (appNamespaces == null || appNamespaces.isEmpty()) {
       return Collections.emptySet();

@@ -3,35 +3,35 @@
     {
       "name": "apollo.initConfig.OPEN_NAMESPACE_TYPES",
       "type": "java.lang.String",
-      "sourceType": "com.yofish.apollo.config.ServerConfigProperties",
+      "sourceType": "com.yofish.apollo.component.config.ServerConfigProperties",
       "description": "公开的命名空间的默认类型.",
       "defaultValue": "DataSource,Feign,Network,Other"
     },
     {
       "name": "apollo.initConfig.DEFAULT_APP_CODE",
       "type": "java.lang.String",
-      "sourceType": "com.yofish.apollo.config.ServerConfigProperties",
+      "sourceType": "com.yofish.apollo.component.config.ServerConfigProperties",
       "description": "初始化默认项目CODE.",
       "defaultValue": "apollo-mini"
     },
     {
       "name": "apollo.initConfig.DEFAULT_APP_NAME",
       "type": "java.lang.String",
-      "sourceType": "com.yofish.apollo.config.ServerConfigProperties",
+      "sourceType": "com.yofish.apollo.component.config.ServerConfigProperties",
       "description": "初始化默认项目名称.",
       "defaultValue": "阿波罗迷你版"
     },
     {
       "name": "apollo.initConfig.DEFAULT_CLUSTER_NAME",
       "type": "java.lang.String",
-      "sourceType": "com.yofish.apollo.config.ServerConfigProperties",
+      "sourceType": "com.yofish.apollo.component.config.ServerConfigProperties",
       "description": "默认集群名称.",
       "defaultValue": "default"
     },
     {
       "name": "apollo.initConfig.DEFAULT_NAMESPACE_NAME",
       "type": "java.lang.String",
-      "sourceType": "com.yofish.apollo.config.ServerConfigProperties",
+      "sourceType": "com.yofish.apollo.component.config.ServerConfigProperties",
       "description": "默认命名空间名称.",
       "defaultValue": "application"
     },
@@ -39,7 +39,7 @@
     {
       "name": "apollo.serverConfig.APOLLO_PORTAL_ENVS",
       "type": "java.lang.String",
-      "sourceType": "com.yofish.apollo.config.ServerConfigProperties",
+      "sourceType": "com.yofish.apollo.component.config.ServerConfigProperties",
       "description": "可支持的环境列表.",
       "defaultValue": "DEV,TEST,PRE,PROD"
     },

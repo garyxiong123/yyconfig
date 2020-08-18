@@ -16,12 +16,12 @@
 package com.yofish.apollo.controller;
 
 
+import com.yofish.apollo.model.bo.ItemChangeSetDto;
 import com.yofish.apollo.domain.Item;
-import com.yofish.apollo.dto.*;
+import com.yofish.apollo.api.dto.*;
+import com.yofish.apollo.model.NamespaceSyncModel;
+import com.yofish.apollo.model.bo.ItemDiffs;
 import com.yofish.apollo.model.NamespaceTextModel;
-import com.yofish.apollo.model.model.NamespaceSyncModel;
-import com.yofish.apollo.model.vo.ItemDiffs;
-import com.yofish.apollo.model.vo.NamespaceIdentifier;
 import com.yofish.apollo.service.ItemService;
 import com.youyu.common.api.Result;
 import com.youyu.common.enums.BaseResultCode;
@@ -31,7 +31,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -126,7 +125,7 @@ public class ItemController {
     }
 
     // only support yaml syntax check
-    if (model.getFormat() != ConfigFileFormat.YAML && model.getFormat() != ConfigFileFormat.YML) {
+    if (model.getFormat() != ConfigFileFormat.YAML.getValue() && model.getFormat() != ConfigFileFormat.YML.getValue()) {
       return;
     }
 

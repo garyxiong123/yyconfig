@@ -15,7 +15,7 @@
  */
 package com.yofish.apollo.repository;
 
-import com.yofish.apollo.config.ServerConfigKey;
+import com.yofish.apollo.component.config.ServerConfigKey;
 import com.yofish.apollo.domain.ServerConfig;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -41,18 +41,18 @@ public class DefaultMetaServerProvider implements MetaServerProvider {
 
   private String initMetaServerAddress() {
     // 1. Get from System Property
-    String metaAddress = System.getProperty(ConfigConsts.APOLLO_META_KEY);
+    String metaAddress = System.getProperty(ConfigConsts.YYCONFIG_META_KEY);
     if (Strings.isNullOrEmpty(metaAddress)) {
       // 2. Get from OS environment variable, which could not contain dot and is normally in UPPER case
       metaAddress = System.getenv("APOLLO_META");
     }
     if (Strings.isNullOrEmpty(metaAddress)) {
       // 3. Get from server.properties
-      metaAddress = Foundation.server().getProperty(ConfigConsts.APOLLO_META_KEY, null);
+      metaAddress = Foundation.server().getProperty(ConfigConsts.YYCONFIG_META_KEY, null);
     }
     if (Strings.isNullOrEmpty(metaAddress)) {
       // 4. Get from app.properties
-      metaAddress = Foundation.app().getProperty(ConfigConsts.APOLLO_META_KEY, null);
+      metaAddress = Foundation.app().getProperty(ConfigConsts.YYCONFIG_META_KEY, null);
     }
 
     if (Strings.isNullOrEmpty(metaAddress)) {

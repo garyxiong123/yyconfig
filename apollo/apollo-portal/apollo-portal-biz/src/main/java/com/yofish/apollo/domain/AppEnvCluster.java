@@ -15,10 +15,17 @@
  */
 package com.yofish.apollo.domain;
 
+import com.yofish.apollo.repository.AppEnvClusterRepository;
 import com.yofish.gary.dao.entity.BaseEntity;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
 import lombok.*;
+import org.springframework.util.ObjectUtils;
 
 import javax.persistence.*;
+import java.util.Objects;
+
+import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass;
 
 /**
  * @Author: xiongchengwei
@@ -52,5 +59,15 @@ public class AppEnvCluster extends BaseEntity {
         this.name = name;
         this.env = env;
         this.app = app;
+        isClusterNameUnique();
+    }
+
+    public void isClusterNameUnique() {
+        Objects.requireNonNull(app.getId(), "AppId must not be null");
+        Objects.requireNonNull(name, "ClusterName must not be null");
+        if (ObjectUtils.isEmpty((getBeanByClass(AppEnvClusterRepository.class).findClusterByAppIdAndEnvAndName(app.getId(), env, name)))) {
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "clusterEntity not unique");
+
+        }
     }
 }

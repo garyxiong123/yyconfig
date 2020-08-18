@@ -15,7 +15,7 @@
  */
 package com.yofish.apollo.domain;
 
-import com.yofish.apollo.util.ReleaseMessageKeyGenerator;
+import com.yofish.apollo.component.util.ReleaseMessageKeyGenerator;
 import com.yofish.gary.dao.entity.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

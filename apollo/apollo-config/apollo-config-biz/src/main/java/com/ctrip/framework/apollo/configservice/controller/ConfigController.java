@@ -15,9 +15,9 @@
  */
 package com.ctrip.framework.apollo.configservice.controller;
 
-import com.ctrip.framework.apollo.configservice.service.AppNamespaceServiceWithCache;
-import com.ctrip.framework.apollo.configservice.service.config.ConfigService;
-import com.ctrip.framework.apollo.configservice.util.InstanceConfigHeartBeatUtil;
+import com.ctrip.framework.apollo.configservice.controller.timer.AppNamespaceCache;
+import com.ctrip.framework.apollo.configservice.pattern.strategy.loadRelease.ClientLoadReleaseStrategy4Normal;
+import com.ctrip.framework.apollo.configservice.pattern.pool.HeartBeatPool;
 import com.ctrip.framework.apollo.configservice.util.NamespaceUtil;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
@@ -52,17 +52,18 @@ import static framework.apollo.core.ConfigConsts.NO_APPID_PLACEHOLDER;
 public class ConfigController {
     private static final Splitter X_FORWARDED_FOR_SPLITTER = Splitter.on(",").omitEmptyStrings().trimResults();
     @Autowired
-    private ConfigService configService;
+    private ClientLoadReleaseStrategy4Normal clientLoadReleaseStrategy;
     @Autowired
-    private AppNamespaceServiceWithCache appNamespaceService;
+    private AppNamespaceCache appNamespaceCache;
     @Autowired
     private NamespaceUtil namespaceUtil;
     @Autowired
-    private InstanceConfigHeartBeatUtil instanceConfigAuditUtil;
+    private HeartBeatPool heartBeatPool;
     @Autowired
     private Gson gson;
 
-    private static final Type configurationTypeReference = new TypeToken<Map<String, String>>() {}.getType();
+    private static final Type configurationTypeReference = new TypeToken<Map<String, String>>() {
+    }.getType();
 
     @RequestMapping(value = "/{appId}/{env}/{clusterName}/{namespace:.+}", method = RequestMethod.GET)
     public ApolloConfig queryConfig4Client(@PathVariable String appId, @PathVariable String clusterName, @PathVariable String env,
@@ -80,13 +81,13 @@ public class ConfigController {
             clientIp = tryToGetClientIp(request);
         }
 
-        ApolloNotificationMessages clientMessages = transformMessages(messagesAsString);
+        ApolloNotificationMessages clientMessages = ApolloNotificationMessages.buildMessages(messagesAsString);
 
         List<Release> releases = findReleases4Client(appId, clusterName, env, namespace, dataCenter, clientIp, clientMessages);
 
         if (releases.isEmpty()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, String.format(
-                            "Could not load configurations with appCode: %s, clusterName: %s, appNamespace: %s", appId, clusterName, originalNamespace));
+                    "Could not load configurations with appCode: %s, clusterName: %s, appNamespace: %s", appId, clusterName, originalNamespace));
             return null;
         }
         NamespaceBo namespaceBo = NamespaceBo.builder().appCode(appId).env(env).clusterName(clusterName).namespaceName(namespace).build();
@@ -110,13 +111,13 @@ public class ConfigController {
     }
 
     /**
-     *  查找该client 的所有的releases
+     * 查找该client 的所有的releases
      */
-    private List<Release> findReleases4Client(@PathVariable String appId,  String clusterName, String env, String namespace, String dataCenter, String clientIp, ApolloNotificationMessages clientMessages) {
+    private List<Release> findReleases4Client(@PathVariable String appId, String clusterName, String env, String namespace, String dataCenter, String clientIp, ApolloNotificationMessages clientMessages) {
         List<Release> releases = Lists.newLinkedList();
 
         if (!NO_APPID_PLACEHOLDER.equalsIgnoreCase(appId)) {
-            Release release4Client = configService.loadRelease4Client(appId, clientIp, appId, clusterName, env, namespace, dataCenter, clientMessages);
+            Release release4Client = clientLoadReleaseStrategy.loadRelease4Client(appId, clientIp, appId, clusterName, env, namespace, dataCenter, clientMessages);
             if (release4Client != null) {
                 releases.add(release4Client);
             }
@@ -134,15 +135,15 @@ public class ConfigController {
 
     private String filterAndNormalizeNamespace(@PathVariable String appId, @PathVariable String namespace) {
         //strip out .properties suffix
-        namespace = namespaceUtil.filterNamespaceName(namespace);
+        namespace = namespaceUtil.subSuffix4Properties(namespace);
         //fix the character case issue, such as FX.apollo <-> fx.apollo
-        namespace = namespaceUtil.normalizeNamespace(appId, namespace);
+        namespace = namespaceUtil.fixCapsLook4NamespaceName(appId, namespace);
         return namespace;
     }
 
 
     /**
-     *  该AppId 的命名空间中没有 appNamespace
+     * 该AppId 的命名空间中没有 appNamespace
      */
     private boolean isPublicNamespace(String appId, String namespaceName) {
         //Every app has an 'application' appNamespace
@@ -155,14 +156,14 @@ public class ConfigController {
             return true;
         }
 
-        AppNamespace appNamespace = appNamespaceService.findByAppIdAndNamespace(appId, namespaceName);
+        AppNamespace appNamespace = appNamespaceCache.findByAppIdAndNamespace(appId, namespaceName);
 
         return appNamespace == null;
     }
 
     private Release findPublicConfig(String clientAppId, String clientIp, String clusterName, String env,
                                      String namespace, String dataCenter, ApolloNotificationMessages clientMessages) {
-        AppNamespace appNamespace = appNamespaceService.findPublicNamespaceByName(namespace);
+        AppNamespace appNamespace = appNamespaceCache.findPublicNamespaceByName(namespace);
 
         //check whether the appNamespace's appCode equals to current one
         if (Objects.isNull(appNamespace) || Objects.equals(clientAppId, appNamespace.getApp().getId())) {
@@ -200,7 +201,7 @@ public class ConfigController {
             return;
         }
         for (Release release : releases) {
-            instanceConfigAuditUtil.offerHeartBeat(namespaceBo, clientIp, release.getReleaseKey());
+            heartBeatPool.offerHeartBeat(namespaceBo, clientIp, release.getReleaseKey());
         }
     }
 
@@ -212,16 +213,4 @@ public class ConfigController {
         return request.getRemoteAddr();
     }
 
-    ApolloNotificationMessages transformMessages(String messagesAsString) {
-        ApolloNotificationMessages notificationMessages = null;
-        if (!isNullOrEmpty(messagesAsString)) {
-            try {
-                notificationMessages = gson.fromJson(messagesAsString, ApolloNotificationMessages.class);
-            } catch (Throwable ex) {
-                Tracer.logError(ex);
-            }
-        }
-
-        return notificationMessages;
-    }
 }

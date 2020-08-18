@@ -17,10 +17,9 @@ package com.yofish.apollo.controller;
 
 import com.yofish.apollo.component.PermissionValidator;
 import com.yofish.apollo.domain.Release;
-import com.yofish.apollo.domain.ReleaseMessage;
-import com.yofish.apollo.listener.ConfigPublishEvent;
+import com.yofish.apollo.pattern.listener.config.ConfigPublishEvent;
 import com.yofish.apollo.model.bo.NamespaceVO;
-import com.yofish.apollo.model.model.NamespaceReleaseModel;
+import com.yofish.apollo.model.NamespaceReleaseModel;
 import com.yofish.apollo.service.NamespaceBranchService;
 import com.yofish.apollo.service.PortalConfig;
 import com.yofish.apollo.service.ReleaseService;

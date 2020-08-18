@@ -16,11 +16,10 @@
 package com.yofish.apollo.service;
 
 import com.google.gson.Gson;
+import com.yofish.apollo.api.model.bo.ItemBO;
+import com.yofish.apollo.model.bo.NamespaceVO;
 import com.yofish.apollo.domain.*;
 import com.yofish.apollo.enums.NamespaceType;
-import com.yofish.apollo.model.bo.ItemBO;
-import com.yofish.apollo.model.bo.NamespaceVO;
-import com.yofish.apollo.repository.AppEnvClusterNamespace4BranchRepository;
 import com.yofish.apollo.repository.AppEnvClusterNamespace4MainRepository;
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.repository.AppEnvClusterRepository;
@@ -60,10 +59,6 @@ public class AppEnvClusterNamespaceService {
     private ItemService itemService;
     @Autowired
     private ReleaseService releaseService;
-    @Autowired
-    private ServerConfigService serverConfigService;
-    @Autowired
-    private AppEnvClusterNamespace4BranchRepository branchRepository;
     private Gson gson = new Gson();
 
     public AppEnvClusterNamespace findOne(Long namespaceId) {
@@ -74,11 +69,6 @@ public class AppEnvClusterNamespaceService {
         return appEnvClusterNamespaceRepository.findAppEnvClusterNamespace(appCode, env, namespaceName, clusterName, type.getValue());
     }
 
-    public boolean isNamespaceUnique(AppEnvCluster appEnvCluster, AppNamespace appNamespace) {
-        Objects.requireNonNull(appEnvCluster, "appEnvCluster must not be null");
-        Objects.requireNonNull(appNamespace, "appNamespace must not be null");
-        return Objects.isNull(appEnvClusterNamespaceRepository.findByAppEnvClusterAndAppNamespace(appEnvCluster, appNamespace));
-    }
 
     @Transactional
     public void instanceOfAppNamespaces(AppEnvCluster appEnvCluster) {
@@ -89,28 +79,6 @@ public class AppEnvClusterNamespaceService {
             appEnvClusterNamespaceRepository.save(ns);
         }
 
-    }
-
-    public AppEnvClusterNamespace save(AppEnvClusterNamespace appEnvClusterNamespace) {
-        if (this.isNamespaceUnique(appEnvClusterNamespace.getAppEnvCluster(), appEnvClusterNamespace.getAppNamespace())) {
-            this.appEnvClusterNamespaceRepository.save(appEnvClusterNamespace);
-            return appEnvClusterNamespace;
-        } else {
-            return null;
-        }
-    }
-
-    public void createNamespaceForAppNamespaceInAllCluster(AppNamespace appNamespace) {
-        List<AppEnvCluster> appEnvClusters = this.appEnvClusterRepository.findByApp(appNamespace.getApp());
-        for (AppEnvCluster appEnvCluster : appEnvClusters) {
-            // in case there is some dirty data, e.g. public appNamespace deleted in other app and now created in this app
-            if (!this.isNamespaceUnique(appEnvCluster, appNamespace)) {
-                continue;
-            }
-
-            AppEnvClusterNamespace4Main appEnvClusterNamespace = new AppEnvClusterNamespace4Main(appEnvCluster, appNamespace);
-            appEnvClusterNamespaceRepository.save(appEnvClusterNamespace);
-        }
     }
 
 
@@ -353,5 +321,9 @@ public class AppEnvClusterNamespaceService {
 
     public List<AppEnvClusterNamespace> findbyAppAndEnvAndNamespace(String app, String namespace) {
         return appEnvClusterNamespaceRepository.findbyAppAndEnvAndNamespace(app, namespace);
+    }
+
+    public void save(AppEnvClusterNamespace4Main appEnvClusterNamespace) {
+        appEnvClusterNamespaceRepository.save(appEnvClusterNamespace);
     }
 }

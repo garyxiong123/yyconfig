@@ -18,7 +18,6 @@ package com.yofish.apollo.repository;
 import com.yofish.apollo.domain.AppEnvCluster;
 import com.yofish.apollo.domain.AppEnvClusterNamespace;
 import com.yofish.apollo.domain.AppNamespace;
-import com.yofish.apollo.dto.NamespaceListResp;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

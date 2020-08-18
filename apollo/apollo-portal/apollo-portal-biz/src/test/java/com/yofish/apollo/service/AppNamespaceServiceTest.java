@@ -15,8 +15,7 @@
  */
 package com.yofish.apollo.service;
 
-import com.yofish.apollo.domain.AppNamespace4Protect;
-import com.yofish.apollo.domain.AppNamespace4Public;
+import com.yofish.apollo.domain.AppNamespace;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,21 +31,21 @@ import java.util.List;
  * @date 2020-01-08
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {com.yofish.apollo.JpaApplication.class})
+@SpringBootTest(classes = {com.yofish.apollo.PortalApplication.class})
 public class AppNamespaceServiceTest {
     @Autowired
     private AppNamespaceService appNamespaceService;
 
     @Test
     public void findAllPublicAppNamespace() {
-        List<AppNamespace4Public> allPublicAppNamespace = appNamespaceService.findAllPublicAppNamespace();
+        List<AppNamespace> allPublicAppNamespace = appNamespaceService.findAllPublicAppNamespace();
         Assert.assertTrue(!ObjectUtils.isEmpty(allPublicAppNamespace));
     }
 
     @Test
     public void findAllProtectAppNamespaceByAuthorized() {
         String appCode = "apollo-mini";
-        List<AppNamespace4Protect> allProtectAppNamespaceByAuthorized = appNamespaceService.findAllProtectAppNamespaceByAuthorized(appCode);
+        List<AppNamespace> allProtectAppNamespaceByAuthorized = appNamespaceService.findAllProtectAppNamespaceByAuthorized(appCode);
 
         Assert.assertTrue(!ObjectUtils.isEmpty(allProtectAppNamespaceByAuthorized));
     }

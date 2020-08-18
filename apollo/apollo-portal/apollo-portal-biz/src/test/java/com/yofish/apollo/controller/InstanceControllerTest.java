@@ -15,18 +15,16 @@
  */
 package com.yofish.apollo.controller;
 
-import com.yofish.apollo.dto.InstanceDTO;
-import com.yofish.apollo.dto.InstanceNamespaceReq;
+import com.yofish.apollo.api.dto.InstanceDTO;
+import com.yofish.apollo.api.dto.InstanceNamespaceReq;
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
-import com.yofish.apollo.util.PageQuery;
+import com.yofish.apollo.component.util.PageQuery;
 import com.youyu.common.api.Result;
 import common.dto.PageDTO;
 import controller.AbstractControllerTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static org.junit.Assert.*;
 
 /**
  * @Author: xiongchengwei

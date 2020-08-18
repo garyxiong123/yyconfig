@@ -15,14 +15,13 @@
  */
 package com.yofish.apollo.service;
 
-import com.yofish.apollo.bo.ItemChangeSets;
-import com.yofish.apollo.component.txtresolver.ConfigChangeContentBuilder;
-import com.yofish.apollo.component.txtresolver.ConfigTextResolver;
+import com.yofish.apollo.model.bo.ItemChangeSets;
+import com.yofish.apollo.pattern.algorithm.txtresolver.ConfigChangeContentBuilder;
+import com.yofish.apollo.pattern.algorithm.txtresolver.ConfigTextResolver;
 import com.yofish.apollo.domain.*;
-import com.yofish.apollo.dto.*;
-import com.yofish.apollo.model.vo.ItemDiffs;
-import com.yofish.apollo.model.vo.NamespaceIdentifier;
-import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
+import com.yofish.apollo.api.dto.*;
+import com.yofish.apollo.model.bo.ItemDiffs;
+import com.yofish.apollo.api.model.vo.NamespaceIdentifier;
 import com.yofish.apollo.repository.CommitRepository;
 import com.yofish.apollo.repository.ItemRepository;
 import com.youyu.common.exception.BizException;
@@ -32,13 +31,10 @@ import common.utils.BeanUtils;
 import framework.apollo.core.enums.ConfigFileFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.client.HttpClientErrorException;
 
 import javax.persistence.EntityManager;
 import java.util.*;

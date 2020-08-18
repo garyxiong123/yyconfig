@@ -15,14 +15,13 @@
  */
 package controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.yofish.apollo.DomainCreate;
+import com.yofish.apollo.model.bo.ItemChangeSetDto;
 import com.yofish.apollo.controller.ItemController;
 import com.yofish.apollo.domain.Item;
-import com.yofish.apollo.dto.*;
+import com.yofish.apollo.api.dto.*;
+import com.yofish.apollo.model.NamespaceSyncModel;
 import com.yofish.apollo.model.NamespaceTextModel;
-import com.yofish.apollo.model.model.NamespaceSyncModel;
-import com.yofish.apollo.model.vo.ItemDiffs;
 import com.youyu.common.api.Result;
 import framework.apollo.core.enums.ConfigFileFormat;
 import org.junit.Test;

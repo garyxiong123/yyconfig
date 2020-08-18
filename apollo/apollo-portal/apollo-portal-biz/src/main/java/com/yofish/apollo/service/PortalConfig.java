@@ -22,8 +22,8 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yofish.apollo.domain.ServerConfig;
-//import com.yofish.apollo.model.vo.Organization;
-import com.yofish.apollo.config.ServerConfigKey;
+//import com.yofish.apollo.api.model.vo.Organization;
+import com.yofish.apollo.component.config.ServerConfigKey;
 import com.yofish.apollo.repository.ServerConfigRepository;
 import common.config.RefreshableConfig;
 import common.config.RefreshablePropertySource;
@@ -419,7 +419,7 @@ public class PortalConfig extends RefreshableConfig {
     }
 
     public int appNamespaceCacheRebuildInterval() {
-        return 3;
+        return 30;
     }
 
     public TimeUnit appNamespaceCacheRebuildIntervalTimeUnit() {

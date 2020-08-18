@@ -16,9 +16,6 @@
 package com.yofish.apollo.enums;
 
 import com.yofish.apollo.domain.AppNamespace;
-import com.yofish.apollo.domain.AppNamespace4Private;
-import com.yofish.apollo.domain.AppNamespace4Protect;
-import com.yofish.apollo.domain.AppNamespace4Public;
 
 /**
  * @author WangSongJun
@@ -46,14 +43,16 @@ public enum NamespaceType {
     Associate;
 
     public static <T extends AppNamespace> NamespaceType getNamespaceTypeByInstance(T t) {
-        if (t instanceof AppNamespace4Private) {
-            return Private;
-        } else if (t instanceof AppNamespace4Protect) {
-            return Protect;
-        } else if (t instanceof AppNamespace4Public) {
-            return Public;
-        } else {
-            return null;
-        }
+//        if (t instanceof AppNamespace4Private) {
+//            return Private;
+//        } else if (t instanceof AppNamespace4Protect) {
+//            return Protect;
+//        } else if (t instanceof AppNamespace4Public) {
+//            return Public;
+//        } else {
+//            return null;
+//        }
+        return null;
+
     }
 }

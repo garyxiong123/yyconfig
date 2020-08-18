@@ -15,11 +15,14 @@
  */
 package com.yofish.apollo.domain;
 
+import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.repository.InstanceConfigRepository;
 import com.yofish.apollo.repository.ReleaseRepository;
 import com.yofish.apollo.service.AppNamespaceService;
 import com.yofish.apollo.service.ItemService;
 import com.yofish.gary.dao.entity.BaseEntity;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
 import lombok.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,9 +32,9 @@ import javax.persistence.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass;
-import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
+import static com.yofish.gary.bean.StrategyNumBean.*;
 
 /**
  * @Author: xiongchengwei
@@ -39,7 +42,6 @@ import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
  */
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Builder
 @Setter
 @Getter
@@ -53,6 +55,15 @@ public class AppEnvClusterNamespace extends BaseEntity {
 
     @ManyToOne(cascade = CascadeType.DETACH)
     private AppNamespace appNamespace;
+
+    public AppEnvClusterNamespace(AppEnvCluster appEnvCluster, AppNamespace appNamespace) {
+        if (isNamespaceUnique(appEnvCluster, appNamespace)) {
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "集群名称不能重复！");
+        }
+        this.appEnvCluster = appEnvCluster;
+        this.appNamespace = appNamespace;
+
+    }
 
 
     public Release findLatestActiveRelease() {
@@ -78,6 +89,14 @@ public class AppEnvClusterNamespace extends BaseEntity {
 
         return getBeanByClass(InstanceConfigRepository.class).countByNamespaceId(this.getId());
     }
+
+
+    public boolean isNamespaceUnique(AppEnvCluster appEnvCluster, AppNamespace appNamespace) {
+        Objects.requireNonNull(appEnvCluster, "appEnvCluster must not be null");
+        Objects.requireNonNull(appNamespace, "appNamespace must not be null");
+        return Objects.isNull(getBeanByClass4Context(AppEnvClusterNamespaceRepository.class).findByAppEnvClusterAndAppNamespace(appEnvCluster, appNamespace));
+    }
+
 
     @Getter
     @AllArgsConstructor

@@ -12,5 +12,13 @@
     <artifactId>apollo-config-api</artifactId>
 
 
+    <dependencies>
+        <dependency>
+            <groupId>com.yofish.platform</groupId>
+            <artifactId>apollo-common</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
 
 </project>

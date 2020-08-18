@@ -17,13 +17,25 @@ package com.yofish.apollo.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.yofish.apollo.enums.AppNamespaceType;
+import com.yofish.apollo.model.AppNamespaceModel;
+import com.yofish.apollo.pattern.strategy.CheckAppNamespaceGlobalUniquenessStrategy;
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
+import com.yofish.apollo.repository.AppNamespaceRepository;
 import com.yofish.gary.dao.entity.BaseEntity;
+import com.youyu.common.enums.BaseResultCode;
+import com.youyu.common.exception.BizException;
+import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.enums.ConfigFileFormat;
 import lombok.*;
 import org.springframework.util.ObjectUtils;
 
 import javax.persistence.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass;
 
@@ -37,7 +49,7 @@ import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass;
 @NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 30)
+//@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 30)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class AppNamespace extends BaseEntity {
 
@@ -46,9 +58,20 @@ public class AppNamespace extends BaseEntity {
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.REMOVE})
     private App app;
 
+    @Enumerated(EnumType.STRING)
     private ConfigFileFormat format;
 
     private String comment;
+
+    @Enumerated(EnumType.STRING)
+    private AppNamespaceType appNamespaceType;
+
+    @ManyToMany(cascade = CascadeType.DETACH)
+    private Set<App> authorizedApp;
+
+    @ManyToOne(cascade = CascadeType.DETACH)
+    @JoinColumn(name = "namespaceTypeId")
+    private OpenNamespaceType openNamespaceType;
 
     public AppNamespace(Long id) {
         super(id);
@@ -62,12 +85,58 @@ public class AppNamespace extends BaseEntity {
         this.comment = comment;
     }
 
-    public boolean isPublicOrProtect() {
-        return this instanceof AppNamespace4Public || this instanceof AppNamespace4Protect;
+    public AppNamespace(AppNamespaceModel appNamespaceModel) {
+        super(appNamespaceModel.getAppId());
+        this.app = app;
+        this.format = ObjectUtils.isEmpty(appNamespaceModel.getFormat()) ? ConfigFileFormat.Properties : format;
+        this.comment = appNamespaceModel.getComment();
+        appNamespaceType.doBuildAppNamespace(this, appNamespaceModel);
     }
 
-    public AppEnvClusterNamespace getNamespaceByEnv(String env, String cluster,String type) {
+    public void buildDefaultAppNamespace(Long appId) {
+        app = App.builder().id(appId).build();
+        name = ConfigConsts.NAMESPACE_APPLICATION;
+        comment = "default app appNamespace";
+        format = ConfigFileFormat.Properties;
+        appNamespaceType = AppNamespaceType.Private;
+        if (!isAppNamespaceNameUnique(appId, ConfigConsts.NAMESPACE_APPLICATION)) {
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("App already has application appNamespace. AppId = %s", appId));
+        }
+    }
 
-        return getBeanByClass(AppEnvClusterNamespaceRepository.class).findAppEnvClusterNamespace(this.getApp().getAppCode(),env, this.name, cluster, type );
+    public boolean isPublicOrProtect() {
+        return appNamespaceType.equals(AppNamespaceType.Protect) || appNamespaceType.equals(AppNamespaceType.Public);
+    }
+
+    public AppEnvClusterNamespace getNamespaceByEnv(String env, String cluster, String type) {
+
+        return getBeanByClass(AppEnvClusterNamespaceRepository.class).findAppEnvClusterNamespace(this.getApp().getAppCode(), env, this.name, cluster, type);
+    }
+
+
+    public boolean isAppNamespaceNameUnique() {
+        Objects.requireNonNull(this, "AppNamespace must not be null");
+        Objects.requireNonNull(this.getApp(), "App must not be null");
+        return isAppNamespaceNameUnique(this.getApp().getId(), this.getName());
+    }
+
+    public boolean isAppNamespaceNameUnique(Long appId, String namespaceName) {
+        Objects.requireNonNull(appId, "AppId must not be null");
+        Objects.requireNonNull(namespaceName, "Namespace must not be null");
+        return Objects.isNull(getBeanByClass(AppNamespaceRepository.class).findByAppAndName(new App(appId), namespaceName));
+    }
+
+    public void checkAppNamespaceGlobalUniqueness() {
+
+        getBeanByClass(CheckAppNamespaceGlobalUniquenessStrategy.class).checkAppNamespaceGlobalUniqueness(this);
+    }
+
+    public boolean isPublic() {
+        return appNamespaceType.equals(AppNamespaceType.Public);
+    }
+
+
+    public boolean hasChange(LocalDateTime updateTime) {
+        return !this.getUpdateTime().isEqual(updateTime) ;
     }
 }

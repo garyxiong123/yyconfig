@@ -17,9 +17,9 @@ package com.yofish.apollo.controller;
 
 
 import com.yofish.apollo.component.AppPreAuthorize;
-import com.yofish.apollo.config.ServerConfigKey;
+import com.yofish.apollo.component.config.ServerConfigKey;
 import com.yofish.apollo.domain.ServerConfig;
-import com.yofish.apollo.model.model.ServerConfigModel;
+import com.yofish.apollo.model.ServerConfigModel;
 import com.yofish.apollo.repository.ServerConfigRepository;
 import com.youyu.common.api.Result;
 import common.utils.BeanUtils;

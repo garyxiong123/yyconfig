@@ -17,63 +17,86 @@ package framework.apollo.core.dto;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
+import framework.apollo.tracer.Tracer;
+import lombok.Data;
 
 import java.util.Map;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 /**
  * @author Jason Song(song_s@ctrip.com)
+ * @Description: 客户端 通知的消息
  */
+@Data
 public class ApolloNotificationMessages {
-  private Map<String, Long> details;
+    public static Gson gson = new Gson();
 
-  public ApolloNotificationMessages() {
-    this(Maps.<String, Long>newHashMap());
-  }
+    private Map<String, Long> details;
 
-  private ApolloNotificationMessages(Map<String, Long> details) {
-    this.details = details;
-  }
-
-  public void put(String key, long notificationId) {
-    details.put(key, notificationId);
-  }
-
-  public Long get(String key) {
-    return this.details.get(key);
-  }
-
-  public boolean has(String key) {
-    return this.details.containsKey(key);
-  }
-
-  public boolean isEmpty() {
-    return this.details.isEmpty();
-  }
-
-  public Map<String, Long> getDetails() {
-    return details;
-  }
-
-  public void setDetails(Map<String, Long> details) {
-    this.details = details;
-  }
-
-  public void mergeFrom(ApolloNotificationMessages source) {
-    if (source == null) {
-      return;
+    public ApolloNotificationMessages() {
+        this(Maps.<String, Long>newHashMap());
     }
 
-    for (Map.Entry<String, Long> entry : source.getDetails().entrySet()) {
-      //to make sure the notification id always grows bigger
-      if (this.has(entry.getKey()) &&
-          this.get(entry.getKey()) >= entry.getValue()) {
-        continue;
-      }
-      this.put(entry.getKey(), entry.getValue());
+    private ApolloNotificationMessages(Map<String, Long> details) {
+        this.details = details;
     }
-  }
 
-  public ApolloNotificationMessages clone() {
-    return new ApolloNotificationMessages(ImmutableMap.copyOf(this.details));
-  }
+    public static ApolloNotificationMessages buildMessages(String messagesAsString) {
+        Gson gson = new Gson();
+        ApolloNotificationMessages notificationMessages = null;
+        if (!isNullOrEmpty(messagesAsString)) {
+            try {
+                notificationMessages = gson.fromJson(messagesAsString, ApolloNotificationMessages.class);
+            } catch (Throwable ex) {
+                Tracer.logError(ex);
+            }
+        }
+
+        return notificationMessages;
+    }
+
+    /**
+     * 消息合并
+     *
+     * @param source
+     */
+
+    public void mergeFrom(ApolloNotificationMessages source) {
+        if (source == null) {
+            return;
+        }
+
+        for (Map.Entry<String, Long> entry : source.getDetails().entrySet()) {
+            //to make sure the notification id always grows bigger
+            if (this.has(entry.getKey()) &&
+                    this.get(entry.getKey()) >= entry.getValue()) {
+                continue;
+            }
+            this.put(entry.getKey(), entry.getValue());
+        }
+    }
+
+
+    public void put(String key, long notificationId) {
+        details.put(key, notificationId);
+    }
+
+    public Long get(String key) {
+        return this.details.get(key);
+    }
+
+    public boolean has(String key) {
+        return this.details.containsKey(key);
+    }
+
+    public boolean isEmpty() {
+        return this.details.isEmpty();
+    }
+
+
+    public ApolloNotificationMessages clone() {
+        return new ApolloNotificationMessages(ImmutableMap.copyOf(this.details));
+    }
 }

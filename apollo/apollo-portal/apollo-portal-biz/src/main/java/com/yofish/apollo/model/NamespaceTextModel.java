@@ -16,27 +16,23 @@
 package com.yofish.apollo.model;
 
 
-import com.yofish.apollo.enums.Envs;
-import framework.apollo.core.enums.ConfigFileFormat;
+import common.utils.YyStringUtils;
 import lombok.Data;
 
 @Data
-public class NamespaceTextModel {
+public class NamespaceTextModel implements Verifiable {
 
-    private String appId;
-    private Envs envs;
-    private String clusterName;
-    private String namespaceName;
-    private int namespaceId;
-    private String format;
-    private String configText;
+  private String appId;
+  private String env;
+  private String clusterName;
+  private String namespaceName;
+  private long namespaceId;
+  private String format;
+  private String configText;
 
 
-    public ConfigFileFormat getFormat() {
-        return ConfigFileFormat.fromString(this.format);
-    }
-
-    public void setFormat(String format) {
-        this.format = format;
-    }
+  @Override
+  public boolean isInvalid() {
+    return YyStringUtils.isContainEmpty(appId, env, clusterName, namespaceName) || namespaceId <= 0;
+  }
 }

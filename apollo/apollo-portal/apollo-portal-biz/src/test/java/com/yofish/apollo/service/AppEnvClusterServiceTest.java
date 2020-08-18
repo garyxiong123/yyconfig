@@ -25,14 +25,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
-
 /**
  * @author WangSongJun
  * @date 2019-12-20
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {com.yofish.apollo.JpaApplication.class})
+@SpringBootTest(classes = {com.yofish.apollo.PortalApplication.class})
 public class AppEnvClusterServiceTest {
     @Autowired
     private AppEnvClusterService appEnvClusterService;
@@ -51,7 +49,7 @@ public class AppEnvClusterServiceTest {
         App app = new App(35L);
         AppEnvCluster appEnvCluster = new AppEnvCluster(clusterName, env, app);
 
-        appEnvCluster = appEnvClusterService.createAppEnvCluster(appEnvCluster);
+//        appEnvCluster = appEnvClusterService.createAppEnvCluster(appEnvCluster);
 
     }
 

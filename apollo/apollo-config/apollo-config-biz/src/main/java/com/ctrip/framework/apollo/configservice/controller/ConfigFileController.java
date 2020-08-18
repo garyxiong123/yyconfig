@@ -15,24 +15,27 @@
  */
 package com.ctrip.framework.apollo.configservice.controller;
 
+import com.ctrip.framework.apollo.configservice.api.dto.ConfigReqDto;
+import com.ctrip.framework.apollo.configservice.api.dto.ConfigReqDto4Json;
+import com.ctrip.framework.apollo.configservice.api.dto.ConfigReqDto4Properties;
 import com.ctrip.framework.apollo.configservice.util.NamespaceUtil;
 import com.ctrip.framework.apollo.configservice.util.WatchKeysUtil;
 import com.google.common.cache.*;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import com.yofish.apollo.component.constant.PermissionType;
 import com.yofish.apollo.domain.ReleaseMessage;
-import com.yofish.apollo.message.ReleaseMessageListener;
-import com.yofish.apollo.message.Topics;
+import com.yofish.apollo.pattern.listener.releasemessage.ReleaseMessageListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -45,7 +48,7 @@ import static common.utils.YyHttpUtils.tryToGetClientIp;
  * @author Jason Song(song_s@ctrip.com)
  */
 @Slf4j
-@RestController
+@Controller
 @RequestMapping("/configfiles")
 public class ConfigFileController implements ReleaseMessageListener {
     private static final long MAX_CACHE_SIZE = 50 * 1024 * 1024;
@@ -57,17 +60,10 @@ public class ConfigFileController implements ReleaseMessageListener {
     private final Multimap<String, String> watchedKeys2CacheKey = Multimaps.synchronizedSetMultimap(HashMultimap.create());
     private final Multimap<String, String> cacheKey2WatchedKeys = Multimaps.synchronizedSetMultimap(HashMultimap.create());
 
-
-    @Autowired
-    private ConfigController configController;
     @Autowired
     private NamespaceUtil namespaceUtil;
     @Autowired
     private WatchKeysUtil watchKeysUtil;
-//    @Autowired
-//    private GrayReleaseRulesHolder grayReleaseRulesHolder;
-    @Autowired
-    private HttpServletResponse response;
     @Autowired
     private HttpServletRequest request;
 
@@ -105,48 +101,14 @@ public class ConfigFileController implements ReleaseMessageListener {
         jsonResponseHeaders.add("Content-Type", "application/json;charset=UTF-8");
         NOT_FOUND_RESPONSE = new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-/*
-    @RequestMapping(value = "/{appCode}/{clusterName}/{namespace:.+}", method = RequestMethod.GET)
-    public ResponseEntity<String> queryConfigAsProperties(@PathVariable String appCode,
-                                                          @PathVariable String clusterName,
-                                                          @PathVariable String namespace,
-                                                          @RequestParam(value = "dataCenter", required = false) String dataCenter,
-                                                          @RequestParam(value = "ip", required = false) String clientIp) throws IOException {
-
-        ConfigReqDto configReqDto4Properties = createConfigReqDto4Properties(appCode, clusterName, namespace, dataCenter, clientIp);
-        String result = queryConfig(configReqDto4Properties);
-
-        if (result == null) {
-            return NOT_FOUND_RESPONSE;
-        }
-
-        return new ResponseEntity<>(result, propertiesResponseHeaders, HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/json/{appCode}/{clusterName}/{namespace:.+}", method = RequestMethod.GET)
-    public ResponseEntity<String> queryConfigAsJson(@PathVariable String appCode,
-                                                    @PathVariable String clusterName,
-                                                    @PathVariable String namespace,
-                                                    @RequestParam(value = "dataCenter", required = false) String dataCenter,
-                                                    @RequestParam(value = "ip", required = false) String clientIp) throws IOException {
-        ConfigReqDto configReqDto = createConfigReqDto4Json(appCode, clusterName, namespace, dataCenter, clientIp);
-        String result = queryConfig(configReqDto);
-
-        if (result == null) {
-            return NOT_FOUND_RESPONSE;
-        }
-
-        return new ResponseEntity<>(result, jsonResponseHeaders, HttpStatus.OK);
-    }*/
-
 
 
     @Override
-    public void handleReleaseMessage(ReleaseMessage message, String channel) {
+    public void onReceiveReleaseMessage(ReleaseMessage message, String channel) {
         log.info("message received - channel: {}, message: {}", channel, message);
 
         String content = message.getMessage();
-        if (!Topics.APOLLO_RELEASE_TOPIC.equals(channel) || isNullOrEmpty(content)) {
+        if (!PermissionType.Topics.APOLLO_RELEASE_TOPIC.equals(channel) || isNullOrEmpty(content)) {
             return;
         }
 
@@ -163,41 +125,6 @@ public class ConfigFileController implements ReleaseMessageListener {
         }
     }
 
-/*
-    private String queryConfig(ConfigReqDto configReqDto) throws IOException {
-
-        String queryConfigRs = null;
-        String cacheKey = paramsCheckAndFilter(configReqDto);
-
-        boolean hasGrayReleaseRule4CurrenClient = hasGrayRule4CurrentClient(configReqDto);
-        if (hasGrayReleaseRule4CurrenClient) {
-            return loadConfigByGrayRule(configReqDto);
-        }
-
-        if (cacheExistsThenLoad(cacheKey, queryConfigRs)) {
-            return queryConfigRs;
-        }
-
-        if (isNullOrEmpty(queryConfigRs)) {
-
-            queryConfigRs = loadConfigFromConfigController(configReqDto);
-
-            if (queryConfigRs == null) {
-                return null;
-            }
-            //5. Double check if this client needs to load gray release, if yes, load from db again
-            //This step is mainly to avoid cache pollution
-            if (grayReleaseRulesHolder.hasGrayReleaseRule(configReqDto.getAppCode(), configReqDto.getClientIp(), configReqDto.getNamespace())) {
-
-                Tracer.logEvent("ConfigFile.Cache.GrayReleaseConflict", cacheKey);
-                return loadConfigFromConfigController(configReqDto);
-            }
-
-            updateCache(configReqDto, queryConfigRs, cacheKey);
-        }
-
-        return queryConfigRs;
-    }*/
 
     private String paramsCheckAndFilter(ConfigReqDto configReqDto) {
         namespaceUtil.filterAndNormalizeNamespace(configReqDto.getAppId(), configReqDto.getNamespace());
@@ -214,7 +141,7 @@ public class ConfigFileController implements ReleaseMessageListener {
         localCache.put(cacheKey, queryConfigRs);
         log.debug("adding cache for key: {}", cacheKey);
 
-        Set<String> watchedKeys = watchKeysUtil.assembleAllWatchKeys(configReqDto.getAppId(), configReqDto.getClusterName(), configReqDto.getAppId(),configReqDto.getNamespace(), configReqDto.getDataCenter());
+        Set<String> watchedKeys = watchKeysUtil.assembleAllWatchKeys(configReqDto.getAppId(), configReqDto.getClusterName(), configReqDto.getAppId(), configReqDto.getNamespace(), configReqDto.getDataCenter());
 
         for (String watchedKey : watchedKeys) {
             watchedKeys2CacheKey.put(watchedKey, cacheKey);
@@ -247,27 +174,12 @@ public class ConfigFileController implements ReleaseMessageListener {
         return result;
     }*/
 
-    private ConfigReqDto createConfigReqDto4Json( String appId, String clusterName, String namespace, String dataCenter, String clientIp) {
+    private ConfigReqDto createConfigReqDto4Json(String appId, String clusterName, String namespace, String dataCenter, String clientIp) {
         return ConfigReqDto4Json.builder().appId(appId).clusterName(clusterName).namespace(namespace).dataCenter(dataCenter).clientIp(clientIp).build();
     }
-    private ConfigReqDto createConfigReqDto4Properties( String appId, String clusterName, String namespace, String dataCenter, String clientIp) {
+
+    private ConfigReqDto createConfigReqDto4Properties(String appId, String clusterName, String namespace, String dataCenter, String clientIp) {
         return ConfigReqDto4Properties.builder().appId(appId).clusterName(clusterName).namespace(namespace).dataCenter(dataCenter).clientIp(clientIp).build();
-    }
-
-
-
-    enum ConfigFileOutputFormat {
-        PROPERTIES("properties"), JSON("json");
-
-        private String value;
-
-        ConfigFileOutputFormat(String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return value;
-        }
     }
 
 

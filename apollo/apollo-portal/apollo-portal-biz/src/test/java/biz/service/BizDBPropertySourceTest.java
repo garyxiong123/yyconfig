@@ -20,7 +20,7 @@ import biz.MockBeanFactory;
 import com.google.common.collect.Lists;
 import com.yofish.apollo.domain.ServerConfig;
 import com.yofish.apollo.repository.ServerConfigRepository;
-import com.yofish.apollo.service.BizDBPropertySource;
+import com.yofish.apollo.controller.timer.BizDBPropertySource;
 import framework.apollo.core.ConfigConsts;
 import org.junit.After;
 import org.junit.Before;

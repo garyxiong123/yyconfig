@@ -16,9 +16,9 @@
 package biz.message;
 
 import biz.AbstractUnitTest;
+import com.yofish.apollo.component.constant.PermissionType;
 import com.yofish.apollo.domain.ReleaseMessage;
-import com.yofish.apollo.message.ReleaseMessageSender4Database;
-import com.yofish.apollo.message.Topics;
+import com.yofish.apollo.pattern.listener.releasemessage.ReleaseMessageSender4Database;
 import com.yofish.apollo.repository.ReleaseMessageRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +54,7 @@ public class DatabaseMessageSenderTest extends AbstractUnitTest {
 
     ArgumentCaptor<ReleaseMessage> captor = ArgumentCaptor.forClass(ReleaseMessage.class);
 
-    messageSender.sendMessage(someMessage, Topics.APOLLO_RELEASE_TOPIC);
+    messageSender.sendMessage(someMessage, PermissionType.Topics.APOLLO_RELEASE_TOPIC);
 
     verify(releaseMessageRepository, times(1)).save(captor.capture());
     assertEquals(someMessage, captor.getValue().getMessage());
@@ -75,6 +75,6 @@ public class DatabaseMessageSenderTest extends AbstractUnitTest {
     String someMessage = "some-message";
     when(releaseMessageRepository.save(Matchers.any(ReleaseMessage.class))).thenThrow(new RuntimeException());
 
-    messageSender.sendMessage(someMessage, Topics.APOLLO_RELEASE_TOPIC);
+    messageSender.sendMessage(someMessage, PermissionType.Topics.APOLLO_RELEASE_TOPIC);
   }
 }

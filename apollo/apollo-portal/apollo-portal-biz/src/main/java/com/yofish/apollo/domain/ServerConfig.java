@@ -15,7 +15,7 @@
  */
 package com.yofish.apollo.domain;
 
-import com.yofish.apollo.config.ServerConfigKey;
+import com.yofish.apollo.component.config.ServerConfigKey;
 import com.yofish.gary.dao.entity.BaseEntity;
 import lombok.*;
 

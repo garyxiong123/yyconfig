@@ -17,20 +17,17 @@ package com.yofish.apollo.domain;
 
 import com.yofish.apollo.repository.ReleaseRepository;
 import com.yofish.apollo.service.ReleaseHistoryService;
-import com.yofish.apollo.service.ReleaseService;
-import com.yofish.apollo.strategy.PublishStrategy4Main;
-import com.yofish.apollo.util.ReleaseKeyGenerator;
+import com.yofish.apollo.pattern.strategy.publish.PublishStrategy4Main;
+import com.yofish.apollo.component.util.ReleaseKeyGenerator;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
 import common.constants.ReleaseOperation;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import java.util.List;
@@ -66,7 +63,11 @@ public class Release4Main extends Release {
         return release;
     }
 
-
+    /**
+     * 获取灰度分支
+     *
+     * @return
+     */
     public Release4Branch getBranchRelease() {
         AppEnvClusterNamespace4Branch branchNamespace = ((AppEnvClusterNamespace4Main) this.getAppEnvClusterNamespace()).getBranchNamespace();
         if (branchNamespace == null) {
@@ -75,13 +76,18 @@ public class Release4Main extends Release {
         return (Release4Branch) branchNamespace.findLatestActiveRelease();
     }
 
+    /**
+     * 主发布回滚
+     *
+     * @return
+     */
     @Transactional
     public Release rollback() {
 
-        if (isAbandoned()) {
+        if (abandoned) {
             throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "release is not active");
         }
-        AppEnvClusterNamespace4Main namepsace = (AppEnvClusterNamespace4Main) this.getAppEnvClusterNamespace();
+        AppEnvClusterNamespace4Main namepsace = (AppEnvClusterNamespace4Main) appEnvClusterNamespace;
 
         List<Release> twoLatestActiveReleases = releaseCheck(namepsace);
 

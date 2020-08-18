@@ -18,8 +18,7 @@ package com.yofish.apollo.service;
 import com.google.gson.Gson;
 import com.yofish.apollo.domain.Release;
 import com.yofish.apollo.domain.ReleaseHistory;
-import com.yofish.apollo.dto.ReleaseHistoryDTO;
-import com.yofish.apollo.model.bo.ReleaseHistoryBO;
+import com.yofish.apollo.api.dto.ReleaseHistoryDTO;
 import com.yofish.apollo.repository.ReleaseHistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,8 +27,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**

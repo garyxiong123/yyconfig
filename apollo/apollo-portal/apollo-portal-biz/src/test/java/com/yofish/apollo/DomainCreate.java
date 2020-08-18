@@ -16,8 +16,8 @@
 package com.yofish.apollo;
 
 import com.yofish.apollo.domain.*;
-import com.yofish.apollo.dto.CreateItemReq;
-import com.yofish.apollo.model.vo.NamespaceIdentifier;
+import com.yofish.apollo.api.dto.CreateItemReq;
+import com.yofish.apollo.api.model.vo.NamespaceIdentifier;
 import framework.apollo.core.enums.Env;
 
 import java.util.ArrayList;

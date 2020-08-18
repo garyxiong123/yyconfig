@@ -16,8 +16,8 @@
 package com.yofish.apollo.controller;
 
 import com.yofish.apollo.domain.App;
-import com.yofish.apollo.model.model.AppModel;
-import com.yofish.apollo.model.vo.EnvClusterInfo;
+import com.yofish.apollo.model.AppModel;
+import com.yofish.apollo.model.bo.EnvClusterInfo;
 import com.yofish.apollo.repository.AppRepository;
 import com.yofish.gary.biz.domain.User;
 import com.yofish.gary.biz.repository.UserRepository;

@@ -22,12 +22,12 @@ import apollo.util.http.HttpRequest;
 import apollo.util.http.HttpResponse;
 import apollo.util.http.HttpUtil;
 import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.escape.Escaper;
 import com.google.common.net.UrlEscapers;
 import com.google.gson.reflect.TypeToken;
+import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.ServiceNameConsts;
 import framework.apollo.core.dto.ServiceDTO;
 import framework.apollo.core.utils.ApolloThreadFactory;
@@ -42,6 +42,8 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class ConfigServiceLocator {
     private static final Logger logger = LoggerFactory.getLogger(ConfigServiceLocator.class);
@@ -70,40 +72,35 @@ public class ConfigServiceLocator {
 
     private void initConfigServices() {
         // get from run time configurations 从配置中读取configService，  从分布式，改成单机配置，
-        List<ServiceDTO> customizedConfigServices = getCustomizedConfigService();
-
-        if (customizedConfigServices != null) {
-            setConfigServices(customizedConfigServices);
+        if (hasLocalConfig()) {
+            buildConfigService4Local();
             return;
         }
 
-        // update from meta service
+        buildConfigService4Remote();
+    }
+
+    private void buildConfigService4Remote() {
         this.tryUpdateConfigServices();
         this.schedulePeriodicRefresh();
     }
 
-    //获取配置服务的地址， 配置到一个server中
-    private List<ServiceDTO> getCustomizedConfigService() {
-        // 1. Get from System Property
-        String configServices = System.getProperty("apollo.meta");
-//        configServices = "http://10.0.33.18:7243";
-        if (Strings.isNullOrEmpty(configServices)) {
-            // 2. Get from OS environment variable
-            configServices = System.getenv("apollo_meta");
-        }
-        if (Strings.isNullOrEmpty(configServices)) {
-            // 3. Get from server.properties
-            configServices = Foundation.server().getProperty("apollo.meta", null);
-        }
+    private boolean hasLocalConfig() {
+        String appolo_meta = getApolloMeta();
+        return appolo_meta != null;
+    }
 
-        if (Strings.isNullOrEmpty(configServices)) {
-            return null;
-        }
+    private List<ServiceDTO> buildConfigService4Local() {
+        String appolo_meta = getApolloMeta();
+        logger.info("Located config services from apollo.configService configuration: {}, will not refresh config services from remote meta service!", appolo_meta);
 
-        logger.warn("Located config services from apollo.configService configuration: {}, will not refresh config services from remote meta service!", configServices);
+        List<ServiceDTO> serviceDTOS = buildConfigServiceDTO(appolo_meta);
+        setConfigServices(serviceDTOS);
+        return serviceDTOS;
+    }
 
-        // mock service dto list
-        String[] configServiceUrls = configServices.split(",");
+    private List<ServiceDTO> buildConfigServiceDTO(String appolo_meta) {
+        String[] configServiceUrls = appolo_meta.split(",");
         List<ServiceDTO> serviceDTOS = Lists.newArrayList();
 
         for (String configServiceUrl : configServiceUrls) {
@@ -114,8 +111,22 @@ public class ConfigServiceLocator {
             serviceDTO.setInstanceId(configServiceUrl);
             serviceDTOS.add(serviceDTO);
         }
-
         return serviceDTOS;
+    }
+
+    private String getApolloMeta() {
+
+        String configServices = System.getProperty(ConfigConsts.YYCONFIG_META_KEY);
+//        configServices = "http://10.0.33.18:7243";
+        if (isNullOrEmpty(configServices)) {
+            // 2. Get from OS environment variable
+            configServices = System.getenv(ConfigConsts.YYCONFIG_META_KEY);
+        }
+        if (isNullOrEmpty(configServices)) {
+            // 3. Get from server.properties
+            configServices = Foundation.server().getProperty(ConfigConsts.YYCONFIG_META_KEY, null);
+        }
+        return configServices;
     }
 
     /**
@@ -190,7 +201,7 @@ public class ConfigServiceLocator {
 
         Map<String, String> queryParams = Maps.newHashMap();
         queryParams.put("appId", queryParamEscaper.escape(appId));
-        if (!Strings.isNullOrEmpty(localIp)) {
+        if (!isNullOrEmpty(localIp)) {
             queryParams.put("ip", queryParamEscaper.escape(localIp));
         }
 

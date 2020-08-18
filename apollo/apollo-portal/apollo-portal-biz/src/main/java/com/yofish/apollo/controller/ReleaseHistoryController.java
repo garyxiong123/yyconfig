@@ -16,9 +16,9 @@
 package com.yofish.apollo.controller;
 
 
-//import com.yofish.apollo.model.bo.ReleaseHistoryBO;
+//import com.yofish.apollo.api.model.bo.ReleaseHistoryBO;
 import com.yofish.apollo.component.PermissionValidator;
-import com.yofish.apollo.dto.ReleaseHistoryDTO;
+import com.yofish.apollo.api.dto.ReleaseHistoryDTO;
 import com.yofish.apollo.service.ReleaseHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

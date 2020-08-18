@@ -16,29 +16,22 @@
 package com.yofish.apollo.service;
 
 import com.google.gson.Gson;
-import com.yofish.apollo.bo.ItemChangeSets;
+import com.yofish.apollo.model.bo.ItemChangeSets;
 import com.yofish.apollo.domain.*;
-import com.yofish.apollo.dto.ReleaseDTO;
-import com.yofish.apollo.model.bo.ItemBO;
+import com.yofish.apollo.api.dto.ReleaseDTO;
 import com.yofish.apollo.model.bo.NamespaceVO;
 import com.yofish.apollo.repository.AppEnvClusterNamespace4BranchRepository;
 import com.yofish.apollo.repository.AppEnvClusterNamespace4MainRepository;
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.repository.GrayReleaseRuleRepository;
-import common.constants.GsonType;
 import common.dto.GrayReleaseRuleDTO;
-import common.dto.ItemDTO;
 import common.dto.NamespaceDTO;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
-import common.utils.BeanUtils;
-import framework.apollo.core.enums.ConfigFileFormat;
 import framework.apollo.core.enums.Env;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
 
 @Service
 public class NamespaceBranchService {

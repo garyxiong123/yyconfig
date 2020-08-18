@@ -15,7 +15,7 @@
  */
 package com.yofish.apollo.controller;
 
-//import com.yofish.apollo.model.vo.LockInfo;
+//import com.yofish.apollo.api.model.vo.LockInfo;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController

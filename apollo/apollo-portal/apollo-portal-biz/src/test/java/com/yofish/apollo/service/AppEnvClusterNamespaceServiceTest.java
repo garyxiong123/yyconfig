@@ -16,8 +16,6 @@
 package com.yofish.apollo.service;
 
 import com.yofish.apollo.model.bo.NamespaceVO;
-import common.dto.NamespaceDTO;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +29,7 @@ import java.util.List;
  * @date 2019-12-11
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {com.yofish.apollo.JpaApplication.class})
+@SpringBootTest(classes = {com.yofish.apollo.PortalApplication.class})
 public class AppEnvClusterNamespaceServiceTest {
 
     @Autowired

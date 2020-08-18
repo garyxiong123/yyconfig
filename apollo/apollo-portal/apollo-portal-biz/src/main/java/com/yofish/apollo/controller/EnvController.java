@@ -15,7 +15,7 @@
  */
 package com.yofish.apollo.controller;
 
-import com.yofish.apollo.service.ServerConfigService;
+import com.yofish.apollo.pattern.util.ServerConfigUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,11 +28,11 @@ import java.util.List;
 public class EnvController {
 
     @Autowired
-    private ServerConfigService serverConfigService;
+    private ServerConfigUtil serverConfigUtil;
 
     @GetMapping
     public List<String> envs() {
-        return this.serverConfigService.getActiveEnvs();
+        return this.serverConfigUtil.getActiveEnvs();
     }
 
 }

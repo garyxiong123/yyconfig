@@ -15,8 +15,11 @@
  */
 package framework.apollo.core.dto;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -60,4 +63,5 @@ public class ApolloConfig {
     sb.append('}');
     return sb.toString();
   }
+
 }

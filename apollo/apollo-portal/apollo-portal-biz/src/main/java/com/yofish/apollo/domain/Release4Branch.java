@@ -15,21 +15,19 @@
  */
 package com.yofish.apollo.domain;
 
-import com.yofish.apollo.strategy.PublishStrategy4Branch;
-import com.yofish.apollo.strategy.PublishStrategy4Main;
-import com.yofish.apollo.util.ReleaseKeyGenerator;
+import com.yofish.apollo.pattern.strategy.publish.PublishStrategy4Branch;
+import com.yofish.apollo.component.util.ReleaseKeyGenerator;
 import common.constants.GsonType;
 import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.springframework.util.CollectionUtils;
 
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import java.util.*;
 
-import static com.yofish.apollo.strategy.CalculateUtil.mergeConfiguration;
+import static com.yofish.apollo.pattern.algorithm.CalculateUtil.mergeConfiguration;
 import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass;
 
 /**
@@ -61,24 +59,19 @@ public class Release4Branch extends Release {
 
 
     public Release4Main getMainRelease() {
-       return (Release4Main)((AppEnvClusterNamespace4Branch)this.getAppEnvClusterNamespace()).getMainNamespace().findLatestActiveRelease();
+        return (Release4Main) ((AppEnvClusterNamespace4Branch) this.getAppEnvClusterNamespace()).getMainNamespace().findLatestActiveRelease();
     }
 
     public void rollback(Release4Main release4Main, List<Release> twoLatestActiveReleases) {
 
 
-
         FastDateFormat TIMESTAMP_FORMAT = FastDateFormat.getInstance("yyyyMMddHHmmss");
-        this.setName( TIMESTAMP_FORMAT.format(new Date()) + "-master-rollback-merge-to-gray");
+        this.setName(TIMESTAMP_FORMAT.format(new Date()) + "-master-rollback-merge-to-gray");
 
         this.publish();
 
-        //        branchRelease(parentNamespace, childNamespace, TIMESTAMP_FORMAT.format(new Date()) + "-master-rollback-merge-to-gray", "",
-//                childNamespaceNewConfiguration, parentNamespaceNewLatestRelease.getId(), operator,
-//                ReleaseOperation.MATER_ROLLBACK_MERGE_TO_GRAY, false);
 
     }
-
 
 
     private Map<String, String> calculateBranchConfigToPublish(Map<String, String> mainNamespaceOldConfiguration, Map<String, String> mainNamespaceNewConfiguration,

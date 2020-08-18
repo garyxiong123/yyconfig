@@ -16,23 +16,17 @@
 package com.yofish.apollo.domain;
 
 import com.google.gson.Gson;
-import com.yofish.apollo.repository.ReleaseRepository;
-import com.yofish.apollo.service.ReleaseHistoryService;
-import com.yofish.apollo.service.ReleaseService;
-import com.yofish.apollo.strategy.PublishStrategy;
-import com.yofish.gary.dao.StrategyConverter;
+import com.yofish.apollo.api.model.vo.ReleaseCompareResult;
+import com.yofish.apollo.enums.ReleaseType;
+import com.yofish.apollo.pattern.algorithm.ReleaseCompareAlgorithm;
+import com.yofish.apollo.pattern.strategy.publish.PublishStrategy;
 import com.yofish.gary.dao.entity.BaseEntity;
-import common.constants.ReleaseOperation;
-import common.exception.NotFoundException;
 import lombok.*;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Map;
 
-import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
+import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass4Context;
 
 /**
  * @Author: xiongchengwei
@@ -52,28 +46,31 @@ public class Release extends BaseEntity {
     public Gson gson = new Gson();
 
     @Column(nullable = false)
-    private String releaseKey;
+    protected String releaseKey;
 
     @Column(nullable = false)
-    private String name;
+    protected String name;
 
     @ManyToOne(cascade = CascadeType.DETACH)
-    private AppEnvClusterNamespace appEnvClusterNamespace;
+    protected AppEnvClusterNamespace appEnvClusterNamespace;
 
     @Column(name = "Configurations")
     @Lob
-    private String configurations;
+    protected String configurations;
 
-    private boolean isEmergencyPublish;
+    protected boolean isEmergencyPublish;
 
     @Transient
     protected PublishStrategy publishStrategy;
 
     @Column(nullable = false)
-    private boolean abandoned;
+    protected boolean abandoned;
 
     @Column(name = "comment")
-    private String comment;
+    protected String comment;
+
+    @Enumerated(EnumType.STRING)
+    protected ReleaseType releaseType;
 
 
     public Release(AppEnvClusterNamespace namespace, String name, String comment, Map<String, String> configurations, boolean isEmergencyPublish) {
@@ -84,9 +81,13 @@ public class Release extends BaseEntity {
         this.comment = comment;
     }
 
-
+    /**
+     * 发布
+     *
+     * @return
+     */
     public Release publish() {
-
+        releaseType.publish(this);
         return null;
     }
 
@@ -98,5 +99,10 @@ public class Release extends BaseEntity {
 
     public String getAppCode() {
         return getAppEnvClusterNamespace().getAppNamespace().getApp().getAppCode();
+    }
+
+    public ReleaseCompareResult releaseCompare(Release toCompareRelease) {
+
+        return getBeanByClass4Context(ReleaseCompareAlgorithm.class).releaseCompare(this, toCompareRelease);
     }
 }

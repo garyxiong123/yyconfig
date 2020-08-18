@@ -27,7 +27,7 @@ public class DefaultMetaServerProviderTest {
 
   @After
   public void tearDown() throws Exception {
-    System.clearProperty(ConfigConsts.APOLLO_META_KEY);
+    System.clearProperty(ConfigConsts.YYCONFIG_META_KEY);
   }
 
   @Test
@@ -35,7 +35,7 @@ public class DefaultMetaServerProviderTest {
     String someMetaAddress = "someMetaAddress";
     Env someEnv = Env.DEV;
 
-    System.setProperty(ConfigConsts.APOLLO_META_KEY, " " + someMetaAddress + " ");
+    System.setProperty(ConfigConsts.YYCONFIG_META_KEY, " " + someMetaAddress + " ");
 
     DefaultMetaServerProvider defaultMetaServerProvider = new DefaultMetaServerProvider();
 

@@ -18,18 +18,16 @@ package com.yofish.apollo.service;
 
 import com.yofish.apollo.component.PermissionValidator;
 import com.yofish.apollo.domain.App;
-import com.yofish.apollo.domain.AppNamespace;
-import com.yofish.apollo.model.vo.EnvClusterInfo;
+import com.yofish.apollo.model.bo.EnvClusterInfo;
+import com.yofish.apollo.model.AppModel;
+import com.yofish.apollo.pattern.factory.AppFactory;
 import com.yofish.apollo.repository.AppRepository;
-import com.yofish.gary.biz.domain.Department;
-import com.yofish.gary.biz.domain.User;
 import com.yofish.gary.biz.repository.DepartmentRepository;
 import com.yofish.gary.biz.service.UserService;
 import com.youyu.common.api.PageData;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
 import common.utils.PageDataAdapter;
-import framework.apollo.core.ConfigConsts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,9 +35,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,69 +47,24 @@ public class AppService {
     private AppRepository appRepository;
     @Autowired
     private UserService userService;
-    @Autowired
-    private AppNamespaceService appNamespaceService;
-    @Autowired
-    private AppEnvClusterNamespaceService appEnvClusterNamespaceService;
-    @Autowired
-    private AppEnvClusterService appEnvClusterService;
+
     @Autowired
     private DepartmentRepository departmentRepository;
     @Autowired
     private AppEnvClusterService clusterService;
     @Autowired
     private PermissionValidator permissionValidator;
+    @Autowired
+    private AppFactory appFactory;
 
 
     @Transactional(rollbackFor = Exception.class)
-    public App createApp(App app) {
-        String appCode = app.getAppCode();
+    public App createApp(@Valid AppModel appModel) {
+        App app = appFactory.createApp(appModel);
 
-        App managedApp = appRepository.findByAppCode(appCode);
-
-        if (managedApp != null) {
-            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("App already exists. AppCode = %s", appCode));
-        }
-        this.checkOwnerAndAdminsAndDepartmentIsExist(app);
-
-        App createdApp = appRepository.save(app);
-
-        AppNamespace defaultAppNamespace = appNamespaceService.createDefaultAppNamespace(createdApp.getId());
-
-        appEnvClusterService.createClusterInEachActiveEnv(createdApp.getId(), ConfigConsts.CLUSTER_NAME_DEFAULT);
-
-        appEnvClusterNamespaceService.createNamespaceForAppNamespaceInAllCluster(defaultAppNamespace);
-
-        return createdApp;
+        return app;
     }
 
-    private void checkOwnerAndAdminsAndDepartmentIsExist(App app) {
-        //owner
-        com.yofish.gary.api.dto.rsp.UserDetailRspDTO userDetail = userService.getUserDetail(app.getAppOwner().getId());
-        if (userDetail == null) {
-            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "Application's owner not exist.");
-        }
-
-        //admins
-        this.checkAppAdminsIsExist(app.getAppAdmins());
-
-        //department
-        Department department = departmentRepository.findById(app.getDepartment().getId()).orElse(null);
-        if (department == null) {
-            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "Application's department not exist.");
-        }
-    }
-
-    private void checkAppAdminsIsExist(Set<User> appAdmins) {
-        if (!ObjectUtils.isEmpty(appAdmins)) {
-            for (User appAdmin : appAdmins) {
-                com.yofish.gary.api.dto.rsp.UserDetailRspDTO userDetailRspDTO = userService.getUserDetail(appAdmin.getId());
-                if (userDetailRspDTO == null) {
-                    throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "Application's admin [" + appAdmin.getId() + "] not exist.");
-                }
-            }
-        }
-    }
 
     private List<App> filterWithAuthorize(List<App> all) {
         if (ObjectUtils.isEmpty(all)) {
@@ -151,7 +104,7 @@ public class AppService {
             return PageDataAdapter.toPageData(apps);
         } else {
             List<App> allWithAuthorize = findAllWithAuthorize();
-            List<App> appsByPage = allWithAuthorize.subList(Long.valueOf(pageable.getOffset()).intValue(), allWithAuthorize.size()>pageable.getPageSize()?pageable.getPageSize():allWithAuthorize.size());
+            List<App> appsByPage = allWithAuthorize.subList(Long.valueOf(pageable.getOffset()).intValue(), allWithAuthorize.size() > pageable.getPageSize() ? pageable.getPageSize() : allWithAuthorize.size());
             return PageDataAdapter.toPageData(pageable, appsByPage, allWithAuthorize.size());
         }
     }
@@ -192,20 +145,19 @@ public class AppService {
 
         managedApp.setName(app.getName());
         managedApp.setDepartment(app.getDepartment());
-
-        this.checkOwnerAndAdminsAndDepartmentIsExist(app);
+        app.checkOwnerAndAdminsAndDepartmentIsExist();
 
         managedApp.setAppAdmins(app.getAppAdmins());
 
         return appRepository.save(app);
     }
 
-    public App getApp(long appId) {
+    public App getAppById(long appId) {
         App app = appRepository.findById(appId).orElse(null);
         return app;
     }
 
-    public App getApp(String appCode) {
+    public App getAppByCode(String appCode) {
         App app = appRepository.findByAppCode(appCode);
         return app;
     }

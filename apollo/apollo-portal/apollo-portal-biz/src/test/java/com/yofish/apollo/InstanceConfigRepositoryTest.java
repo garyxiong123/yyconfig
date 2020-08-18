@@ -15,10 +15,8 @@
  */
 package com.yofish.apollo;
 
-import com.google.common.collect.Sets;
 import com.yofish.apollo.domain.*;
 import com.yofish.apollo.repository.*;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,18 +27,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * @Author: xiongchengwei
  * @Date: 2019/11/12 下午2:44
  */
 @Transactional
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {JpaApplication.class})
+@SpringBootTest(classes = {PortalApplication.class})
 public class InstanceConfigRepositoryTest {
     @Autowired
     private InstanceConfigRepository instanceConfigRepository;

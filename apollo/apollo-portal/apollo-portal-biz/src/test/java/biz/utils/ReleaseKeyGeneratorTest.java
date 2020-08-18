@@ -18,7 +18,7 @@ package biz.utils;
 import biz.MockBeanFactory;
 import com.google.common.collect.Sets;
 import com.yofish.apollo.domain.AppEnvClusterNamespace;
-import com.yofish.apollo.util.ReleaseKeyGenerator;
+import com.yofish.apollo.component.util.ReleaseKeyGenerator;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

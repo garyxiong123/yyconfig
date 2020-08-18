@@ -20,6 +20,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
+ * @Description: apollo配置通知
  * @author Jason Song(song_s@ctrip.com)
  */
 @Data

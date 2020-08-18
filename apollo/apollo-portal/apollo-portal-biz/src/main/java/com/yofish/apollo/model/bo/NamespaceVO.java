@@ -16,6 +16,7 @@
 package com.yofish.apollo.model.bo;
 
 
+import com.yofish.apollo.api.model.bo.ItemBO;
 import com.yofish.apollo.enums.NamespaceType;
 import common.dto.NamespaceDTO;
 import lombok.Data;

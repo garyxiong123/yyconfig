@@ -15,7 +15,7 @@
  */
 package com.ctrip.framework.apollo.configservice.util;
 
-import com.ctrip.framework.apollo.configservice.service.AppNamespaceServiceWithCache;
+import com.ctrip.framework.apollo.configservice.controller.timer.AppNamespaceCache;
 import com.yofish.apollo.domain.AppNamespace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,9 +27,16 @@ import org.springframework.stereotype.Component;
 public class NamespaceUtil {
 
     @Autowired
-    private AppNamespaceServiceWithCache appNamespaceServiceWithCache;
+    private AppNamespaceCache appNamespaceCache;
 
-    public String filterNamespaceName(String namespaceName) {
+
+    /**
+     * //strip out .properties suffix 去除 .properties 尾缀
+     *
+     * @param namespaceName
+     * @return
+     */
+    public String subSuffix4Properties(String namespaceName) {
         if (namespaceName.toLowerCase().endsWith(".properties")) {
             int dotIndex = namespaceName.lastIndexOf(".");
             return namespaceName.substring(0, dotIndex);
@@ -38,13 +45,21 @@ public class NamespaceUtil {
         return namespaceName;
     }
 
-    public String normalizeNamespace(String appId, String namespaceName) {
-        AppNamespace appNamespace = appNamespaceServiceWithCache.findByAppIdAndNamespace(appId, namespaceName);
+
+    /**
+     * //fix the character case issue, such as FX.apollo <-> fx.apollo: 处理 命名空间名称的 大小写 问题
+     *
+     * @param appId
+     * @param namespaceName
+     * @return
+     */
+    public String fixCapsLook4NamespaceName(String appId, String namespaceName) {
+        AppNamespace appNamespace = appNamespaceCache.findByAppIdAndNamespace(appId, namespaceName);
         if (appNamespace != null) {
             return appNamespace.getName();
         }
 
-        appNamespace = appNamespaceServiceWithCache.findPublicNamespaceByName(namespaceName);
+        appNamespace = appNamespaceCache.findPublicNamespaceByName(namespaceName);
         if (appNamespace != null) {
             return appNamespace.getName();
         }
@@ -53,10 +68,10 @@ public class NamespaceUtil {
     }
 
     public String filterAndNormalizeNamespace(String appId, String namespaceName) {
-        //strip out .properties suffix
-        namespaceName = filterNamespaceName(namespaceName);
-        //fix the character case issue, such as FX.apollo <-> fx.apollo
-        normalizeNamespace(appId, namespaceName);
+
+        namespaceName = subSuffix4Properties(namespaceName);
+
+        fixCapsLook4NamespaceName(appId, namespaceName);
         return namespaceName;
 
     }
