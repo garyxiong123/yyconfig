@@ -103,8 +103,12 @@ public class AppNamespaceCache {
         return result;
     }
 
-
-    public void mergeCacheAppNamespaces(List<AppNamespace> appNamespaces) {
+    /**
+     * 添加新增Appnamespace到缓存
+     *
+     * @param appNamespaces
+     */
+    public void addNewAppNamespacesToCache(List<AppNamespace> appNamespaces) {
         for (AppNamespace appNamespace : appNamespaces) {
             appNamespaceCache4Private.put(assembleAppNamespaceKey(appNamespace), appNamespace);
             appNamespaceIdCache.put(appNamespace.getId(), appNamespace);

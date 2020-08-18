@@ -35,7 +35,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 存在的目的就是缓存同步
+ * 存在的目的就是缓存同步， 通过推拉结合的方式，来同步数据库的变更到缓存
  */
 @Getter
 @Component
@@ -65,39 +65,40 @@ public class TimerTask4SyncAppNamespaceCache implements InitializingBean {
 
     private void initialize() {
         maxIdScanned = 0;
-//        appNamespaceCache = new AppNamespaceCache();
         scheduledExecutorService = Executors.newScheduledThreadPool(1, ApolloThreadFactory.create("AppNamespaceServiceWithCache", true));
     }
 
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         populateDataBaseInterval();
-        scanNewAppNamespaces(); //block the startup process until load finished
         scanIntervalTimeUnit = TimeUnit.SECONDS;
         scanInterval = 30;
 
+        //1：扫描新增
+        scanNewAppNamespaces(); //block the startup process until load finished
+
+
+        //2：同步 修改和删除
         scheduledExecutorService.scheduleAtFixedRate(() -> {
             appNamespaceCache.updateAndDeleteCache();
         }, rebuildInterval, rebuildInterval, rebuildIntervalTimeUnit);
 
+        //3：扫描新增
         scheduledExecutorService.scheduleWithFixedDelay(this::scanNewAppNamespaces, scanInterval,
                 scanInterval, scanIntervalTimeUnit);
     }
 
-    private void scanNewAppNamespaces() {
-        this.loadNewAppNamespacesAndMergeCache();
-    }
 
     //for those new app namespaces
-    private void loadNewAppNamespacesAndMergeCache() {
+    private void scanNewAppNamespaces() {
         boolean hasMore = true;
         while (hasMore && !Thread.currentThread().isInterrupted()) {
             //current batch is 500
             if (hasNewAppNamespace()) {
                 List<AppNamespace> newAppNamespaces = appNamespaceRepository.findFirst500ByIdGreaterThanOrderByIdAsc(maxIdScanned);
 
-                appNamespaceCache.mergeCacheAppNamespaces(newAppNamespaces);
+                appNamespaceCache.addNewAppNamespacesToCache(newAppNamespaces);
 
                 hasMore = updateMaxIdScannedAndCalcHasMore(newAppNamespaces);
 
@@ -116,6 +117,7 @@ public class TimerTask4SyncAppNamespaceCache implements InitializingBean {
         return hasMore;
     }
 
+
     private boolean hasNewAppNamespace() {
         List<AppNamespace> appNamespaces = appNamespaceRepository.findFirst500ByIdGreaterThanOrderByIdAsc(maxIdScanned);
         return !CollectionUtils.isEmpty(appNamespaces);
@@ -130,12 +132,5 @@ public class TimerTask4SyncAppNamespaceCache implements InitializingBean {
         scanIntervalTimeUnit = portalConfig.appNamespaceCacheScanIntervalTimeUnit();
         rebuildInterval = portalConfig.appNamespaceCacheRebuildInterval();
         rebuildIntervalTimeUnit = portalConfig.appNamespaceCacheRebuildIntervalTimeUnit();
-    }
-
-    //only for test use
-    private void reset() throws Exception {
-        scheduledExecutorService.shutdownNow();
-        initialize();
-        afterPropertiesSet();
     }
 }
