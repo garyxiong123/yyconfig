@@ -49,7 +49,6 @@ import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass;
 @NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-//@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 30)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class AppNamespace extends BaseEntity {
 
@@ -137,6 +136,6 @@ public class AppNamespace extends BaseEntity {
 
 
     public boolean hasChange(LocalDateTime updateTime) {
-        return !this.getUpdateTime().isEqual(updateTime) ;
+        return !this.getUpdateTime().isEqual(updateTime);
     }
 }
