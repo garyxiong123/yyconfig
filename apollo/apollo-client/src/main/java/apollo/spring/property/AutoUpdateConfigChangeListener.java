@@ -15,11 +15,11 @@
  */
 package apollo.spring.property;
 
-import apollo.ConfigChangeListener;
+import apollo.pattern.listener.ConfigChangeListener;
 import apollo.enums.PropertyChangeType;
 import apollo.model.ConfigChange;
 import apollo.model.ConfigChangeEvent;
-import apollo.spring.util.SpringInjector;
+import apollo.component.inject.SpringInjector;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

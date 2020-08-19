@@ -4,6 +4,7 @@ import com.ctrip.framework.apollo.configservice.wrapper.CaseInsensitiveMapWrappe
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -36,7 +37,7 @@ public class AppNamespaceCache {
 
     @Autowired
     private AppNamespaceRepository appNamespaceRepository;
-    private static final Logger logger = LoggerFactory.getLogger(TimerTask4SyncAppNamespaceCache.class);
+    private static final Logger logger = LoggerFactory.getLogger(TimerTask4SyncAppNamespaceDB2Cache.class);
 
 
     private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).skipNulls();
@@ -119,8 +120,8 @@ public class AppNamespaceCache {
     }
 
 
-    //for those updated or deleted app namespaces
-    public void updateAndDeleteCache() {
+    //for those updated or deleted app namespaces  == pull
+    public void pollUpdateAndDelete2Cache() {
         List<Long> ids = Lists.newArrayList(appNamespaceIdCache.keySet());
         if (CollectionUtils.isEmpty(ids)) {
             return;
@@ -132,7 +133,6 @@ public class AppNamespaceCache {
             if (appNamespaces == null) {
                 continue;
             }
-
             //handle updated
             Set<Long> foundIds = handleUpdatedAppNamespaces(appNamespaces);
 
@@ -202,4 +202,27 @@ public class AppNamespaceCache {
     private String assembleAppNamespaceKey(AppNamespace appNamespace) {
         return STRING_JOINER.join(appNamespace.getApp().getAppCode(), appNamespace.getName());
     }
+
+
+    /**
+     * 命名空间所属namespeace
+     * @param appId
+     * @param namespaces
+     * @return
+     */
+    public Set<String> namespacesBelongToAppId(String appId, Set<String> namespaces) {
+        if (ConfigConsts.NO_APPID_PLACEHOLDER.equalsIgnoreCase(appId)) {
+            return Collections.emptySet();
+        }
+        List<AppNamespace> appNamespaces =
+                this.findByAppIdAndNamespaces(appId, namespaces);
+
+        if (appNamespaces == null || appNamespaces.isEmpty()) {
+            return Collections.emptySet();
+        }
+
+        return FluentIterable.from(appNamespaces).transform(AppNamespace::getName).toSet();
+    }
+
+
 }

@@ -57,7 +57,7 @@ public class DatabaseMessageSenderTest extends AbstractUnitTest {
     messageSender.sendMessage(someMessage, PermissionType.Topics.APOLLO_RELEASE_TOPIC);
 
     verify(releaseMessageRepository, times(1)).save(captor.capture());
-    assertEquals(someMessage, captor.getValue().getMessage());
+    assertEquals(someMessage, captor.getValue().getNamespaceKey());
   }
 
   @Test

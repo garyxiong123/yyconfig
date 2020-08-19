@@ -16,7 +16,7 @@
 //
 //  @Test
 //  public void testFindByNameAndIsPublicTrue() throws Exception {
-//    AppNamespace appNamespace = repository.findByNameAndIsPublicTrue("fx.apollo.config");
+//    AppNamespace appNamespace = repository.findByNameAndIsPublicTrue("fx.apollo.component.config");
 //
 //    assertEquals("100003171", appNamespace.getApp().getAppId());
 //  }

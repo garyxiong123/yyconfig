@@ -17,8 +17,8 @@ package com.ctrip.framework.apollo.configservice.config;
 
 import com.ctrip.framework.apollo.configservice.controller.ConfigFileController;
 import com.ctrip.framework.apollo.configservice.controller.ClientWatchRegisterController;
-import com.ctrip.framework.apollo.configservice.controller.listener.WatchedKeyResultRepo;
-import com.ctrip.framework.apollo.configservice.repo.ReleaseMessageServiceWithCache;
+import com.ctrip.framework.apollo.configservice.controller.listener.ReleaseMessageListener4Registry;
+import com.ctrip.framework.apollo.configservice.controller.timer.ReleaseMessageServiceWithCache;
 import com.ctrip.framework.apollo.configservice.pattern.strategy.loadRelease.ClientLoadReleaseStrategy;
 import com.ctrip.framework.apollo.configservice.repo.ReleaseRepo4Cache;
 import com.yofish.apollo.controller.timer.ReleaseMessageScanner;
@@ -45,7 +45,7 @@ public class MessageScannerConfiguration {
     @Autowired
     private ClientLoadReleaseStrategy clientLoadReleaseStrategy;
     @Autowired
-    private WatchedKeyResultRepo watchedKeyResultRepo;
+    private ReleaseMessageListener4Registry releaseMessageListener4Registry;
     @Autowired
     private ReleaseRepo4Cache releaseRepo4Cache;
 
@@ -66,7 +66,7 @@ public class MessageScannerConfiguration {
 
 
         //3. notify clients
-        releaseMessageScanner.addMessageListener(watchedKeyResultRepo);
+        releaseMessageScanner.addMessageListener(releaseMessageListener4Registry);
 //            releaseMessageScanner.addMessageListener(notificationController);
         return releaseMessageScanner;
     }

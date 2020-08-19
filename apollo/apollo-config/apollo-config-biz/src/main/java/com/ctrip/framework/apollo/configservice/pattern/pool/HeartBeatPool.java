@@ -43,7 +43,7 @@ public class HeartBeatPool implements InitializingBean {
     private BlockingQueue<InstanceConfigRefreshModel> audits = Queues.newLinkedBlockingQueue(INSTANCE_CONFIG_AUDIT_MAX_SIZE);
 
     @Autowired
-    private HeartBeatExecutor heartBeatExecutor;
+    private InstanceConfigRepo instanceConfigRepo;
 
 
     public HeartBeatPool() {
@@ -67,7 +67,7 @@ public class HeartBeatPool implements InitializingBean {
                         TimeUnit.SECONDS.sleep(1);
                         continue;
                     }
-                    heartBeatExecutor.doHeartBeat(instanceConfigRefreshModel);
+                    instanceConfigRepo.doInstanceRefresh(instanceConfigRefreshModel);
                 } catch (Throwable ex) {
                     Tracer.logError(ex);
                 }

@@ -16,8 +16,8 @@
 package apollo.internals;
 
 
-import apollo.Config;
-import apollo.ConfigFile;
+import apollo.domain.config.Config;
+import apollo.pattern.listener.ConfigFile;
 import framework.apollo.core.enums.ConfigFileFormat;
 
 /**

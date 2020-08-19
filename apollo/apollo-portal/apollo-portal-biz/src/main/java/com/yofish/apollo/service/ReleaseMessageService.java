@@ -39,7 +39,7 @@ public class ReleaseMessageService {
     if (CollectionUtils.isEmpty(messages)) {
       return null;
     }
-    return releaseMessageRepository.findTopByMessageInOrderByIdDesc(messages);
+    return releaseMessageRepository.findTopByNamespaceKeyInOrderByIdDesc(messages);
   }
 
   public List<ReleaseMessage> findLatestReleaseMessagesGroupByMessages(Collection<String> messages) {

@@ -15,8 +15,9 @@
  */
 package com.yofish.apollo.domain;
 
-import com.yofish.apollo.component.util.ReleaseMessageKeyGenerator;
+import com.yofish.apollo.component.util.NamespaceKeyGenerator;
 import com.yofish.gary.dao.entity.BaseEntity;
+import framework.apollo.core.dto.NamespaceChangeNotification;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,6 +26,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
+/**
+ * 作用就是  通知 config端有新的发布
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -32,11 +36,24 @@ import javax.persistence.Entity;
 @Entity
 public class ReleaseMessage extends BaseEntity {
 
-    @Column(name = "Message", nullable = false)
-    private String message;
+    /**
+     * apollo-mini+default+dev+application = app + cluster + env + application
+     */
+    @Column(name = "namespace_key", nullable = false)
+    private String namespaceKey;
 
     public ReleaseMessage(AppEnvClusterNamespace namespace) {
-        this.message = ReleaseMessageKeyGenerator.generate(namespace);
+        this.namespaceKey = namespace.generateNamespaceKey();
+    }
+
+
+
+    public NamespaceChangeNotification buildConfigNotification() {
+
+        String changedNamespace = NamespaceKeyGenerator.getNamespaceName(namespaceKey);
+        NamespaceChangeNotification configNotification = new NamespaceChangeNotification(changedNamespace, this.getId());
+        configNotification.addMessage(namespaceKey, this.getId());
+        return configNotification;
     }
 }
 

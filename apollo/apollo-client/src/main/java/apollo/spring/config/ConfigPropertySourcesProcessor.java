@@ -15,11 +15,11 @@
  */
 package apollo.spring.config;
 
-import apollo.spring.annotation.ApolloAnnotationProcessor;
-import apollo.spring.annotation.ApolloJsonValueProcessor;
-import apollo.spring.annotation.SpringValueProcessor;
+import apollo.component.annotation.ApolloAnnotationProcessor;
+import apollo.component.annotation.ApolloJsonValueProcessor;
+import apollo.component.annotation.SpringValueProcessor;
 import apollo.spring.property.SpringValueDefinitionProcessor;
-import apollo.spring.util.BeanRegistrationUtil;
+import apollo.component.inject.BeanRegistrationUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;

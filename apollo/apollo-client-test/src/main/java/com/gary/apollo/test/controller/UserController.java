@@ -15,17 +15,16 @@
  */
 package com.gary.apollo.test.controller;
 
-import apollo.Config;
+import apollo.domain.config.Config;
 import apollo.model.ConfigChange;
 import apollo.model.ConfigChangeEvent;
-import apollo.spring.annotation.ApolloConfig;
-import apollo.spring.annotation.ApolloConfigChangeListener;
-import apollo.spring.annotation.EnableApolloConfig;
+import apollo.component.annotation.ApolloConfig;
+import apollo.component.annotation.ApolloConfigChangeListener;
+import apollo.component.annotation.EnableApolloConfig;
 import com.gary.apollo.test.model.Permission;
 import com.gary.apollo.test.model.Permission4Data;
 import com.gary.apollo.test.model.Permission4Menu;
 import com.youyu.common.api.Result;
-import com.youyu.common.constant.ApplicationInfo;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;

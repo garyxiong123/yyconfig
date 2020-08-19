@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
+ * @Description: 实例配置刷新模型
  * @Author: xiongchengwei
  * @Date: 2019/12/30 下午3:25
  */

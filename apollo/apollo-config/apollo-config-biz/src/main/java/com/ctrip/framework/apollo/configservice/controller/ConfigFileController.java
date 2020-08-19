@@ -107,17 +107,17 @@ public class ConfigFileController implements ReleaseMessageListener {
     public void onReceiveReleaseMessage(ReleaseMessage message, String channel) {
         log.info("message received - channel: {}, message: {}", channel, message);
 
-        String content = message.getMessage();
-        if (!PermissionType.Topics.APOLLO_RELEASE_TOPIC.equals(channel) || isNullOrEmpty(content)) {
+        String namespaceKey = message.getNamespaceKey();
+        if (!PermissionType.Topics.APOLLO_RELEASE_TOPIC.equals(channel) || isNullOrEmpty(namespaceKey)) {
             return;
         }
 
-        if (!watchedKeys2CacheKey.containsKey(content)) {
+        if (!watchedKeys2CacheKey.containsKey(namespaceKey)) {
             return;
         }
 
         //create a new list to avoid ConcurrentModificationException
-        List<String> cacheKeys = new ArrayList<>(watchedKeys2CacheKey.get(content));
+        List<String> cacheKeys = new ArrayList<>(watchedKeys2CacheKey.get(namespaceKey));
 
         for (String cacheKey : cacheKeys) {
             log.debug("invalidate cache key: {}", cacheKey);

@@ -15,23 +15,23 @@
  */
 package com.yofish.apollo.domain;
 
+import com.google.common.base.Joiner;
+import com.yofish.apollo.component.util.NamespaceKeyGenerator;
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.repository.InstanceConfigRepository;
 import com.yofish.apollo.repository.ReleaseRepository;
-import com.yofish.apollo.service.AppNamespaceService;
 import com.yofish.apollo.service.ItemService;
 import com.yofish.gary.dao.entity.BaseEntity;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
+import framework.apollo.core.ConfigConsts;
 import lombok.*;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import javax.persistence.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import static com.yofish.gary.bean.StrategyNumBean.*;
@@ -95,6 +95,10 @@ public class AppEnvClusterNamespace extends BaseEntity {
         Objects.requireNonNull(appEnvCluster, "appEnvCluster must not be null");
         Objects.requireNonNull(appNamespace, "appNamespace must not be null");
         return Objects.isNull(getBeanByClass4Context(AppEnvClusterNamespaceRepository.class).findByAppEnvClusterAndAppNamespace(appEnvCluster, appNamespace));
+    }
+
+    public String generateNamespaceKey() {
+        return NamespaceKeyGenerator.generate(this);
     }
 
 

@@ -33,6 +33,9 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public class ApolloNotificationMessages {
     public static Gson gson = new Gson();
 
+    /**
+     * key = 项目+集群+环境+namespace，   value id
+     */
     private Map<String, Long> details;
 
     public ApolloNotificationMessages() {

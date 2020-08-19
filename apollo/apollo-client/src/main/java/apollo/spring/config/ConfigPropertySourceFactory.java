@@ -15,11 +15,13 @@
  */
 package apollo.spring.config;
 
-import apollo.Config;
+import apollo.domain.config.Config;
 import com.google.common.collect.Lists;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class ConfigPropertySourceFactory {
 
   private final List<ConfigPropertySource> configPropertySources = Lists.newLinkedList();

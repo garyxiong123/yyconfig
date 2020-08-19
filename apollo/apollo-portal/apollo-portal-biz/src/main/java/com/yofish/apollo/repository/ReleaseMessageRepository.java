@@ -31,10 +31,10 @@ public interface ReleaseMessageRepository extends PagingAndSortingRepository<Rel
 
   ReleaseMessage findTopByOrderByIdDesc();
 
-  ReleaseMessage findTopByMessageInOrderByIdDesc(Collection<String> messages);
+  ReleaseMessage findTopByNamespaceKeyInOrderByIdDesc(Collection<String> namespaceKeys);
 
-  List<ReleaseMessage> findFirst100ByMessageAndIdLessThanOrderByIdAsc(String message, Long id);
+  List<ReleaseMessage> findFirst100ByNamespaceKeyAndIdLessThanOrderByIdAsc(String namespaceKey, Long id);
 
-  @Query("select message, max(id) as id from ReleaseMessage where message in :messages group by message")
+  @Query("select namespaceKey, max(id) as id from ReleaseMessage where namespaceKey in :messages group by namespaceKey")
   List<Object[]> findLatestReleaseMessagesGroupByMessages(@Param("messages") Collection<String> messages);
 }

@@ -15,12 +15,11 @@
  */
 package apollo.internals;
 
-import apollo.build.ApolloInjector;
-import apollo.exceptions.ApolloConfigException;
-import apollo.util.ConfigUtil;
-import apollo.util.http.HttpRequest;
-import apollo.util.http.HttpResponse;
-import apollo.util.http.HttpUtil;
+import apollo.component.exceptions.ApolloConfigException;
+import apollo.domain.ClientConfig;
+import apollo.component.util.http.HttpRequest;
+import apollo.component.util.http.HttpResponse;
+import apollo.component.util.http.HttpUtil;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -35,6 +34,8 @@ import framework.apollo.tracer.Tracer;
 import framework.foundation.Foundation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -45,10 +46,13 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
+@Component
 public class ConfigServiceLocator {
     private static final Logger logger = LoggerFactory.getLogger(ConfigServiceLocator.class);
+    @Autowired
     private HttpUtil m_httpUtil;
-    private ConfigUtil m_configUtil;
+    @Autowired
+    private ClientConfig m_Client_config;
     private AtomicReference<List<ServiceDTO>> m_configServices;
     private Type m_responseType;
     private ScheduledExecutorService m_executorService;
@@ -63,8 +67,6 @@ public class ConfigServiceLocator {
         m_configServices = new AtomicReference<>(initial);
         m_responseType = new TypeToken<List<ServiceDTO>>() {
         }.getType();
-        m_httpUtil = ApolloInjector.getInstance(HttpUtil.class);
-        m_configUtil = ApolloInjector.getInstance(ConfigUtil.class);
         this.m_executorService = Executors.newScheduledThreadPool(1,
                 ApolloThreadFactory.create("ConfigServiceLocator", true));
         initConfigServices();
@@ -161,8 +163,8 @@ public class ConfigServiceLocator {
                         Tracer.logEvent("Apollo.MetaService", "periodicRefresh");
                         tryUpdateConfigServices();
                     }
-                }, m_configUtil.getRefreshInterval(), m_configUtil.getRefreshInterval(),
-                m_configUtil.getRefreshIntervalTimeUnit());
+                }, m_Client_config.getRefreshInterval(), m_Client_config.getRefreshInterval(),
+                m_Client_config.getRefreshIntervalTimeUnit());
     }
 
     private synchronized void updateConfigServices() {
@@ -195,9 +197,9 @@ public class ConfigServiceLocator {
     }
 
     private String assembleMetaServiceUrl() {
-        String domainName = m_configUtil.getMetaServerDomainName();
-        String appId = m_configUtil.getAppId();
-        String localIp = m_configUtil.getLocalIp();
+        String domainName = m_Client_config.getMetaServerDomainName();
+        String appId = m_Client_config.getAppId();
+        String localIp = m_Client_config.getLocalIp();
 
         Map<String, String> queryParams = Maps.newHashMap();
         queryParams.put("appId", queryParamEscaper.escape(appId));

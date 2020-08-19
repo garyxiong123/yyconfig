@@ -16,8 +16,8 @@
 package apollo.spring.config;
 
 
-import apollo.Config;
-import apollo.ConfigChangeListener;
+import apollo.domain.config.Config;
+import apollo.pattern.listener.ConfigChangeListener;
 import org.springframework.core.env.EnumerablePropertySource;
 
 import java.util.Set;

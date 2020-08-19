@@ -15,22 +15,16 @@
  */
 package com.ctrip.framework.apollo.configservice.controller;
 
-import com.ctrip.framework.apollo.configservice.controller.timer.AppNamespaceCache;
-import com.ctrip.framework.apollo.configservice.pattern.strategy.loadRelease.ClientLoadReleaseStrategy4Normal;
 import com.ctrip.framework.apollo.configservice.pattern.pool.HeartBeatPool;
 import com.ctrip.framework.apollo.configservice.util.NamespaceUtil;
-import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.yofish.apollo.domain.AppEnvClusterNamespace;
-import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.domain.Release;
 import common.NamespaceBo;
 import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.dto.ApolloConfig;
-import framework.apollo.core.dto.ApolloNotificationMessages;
 import framework.apollo.tracer.Tracer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -41,20 +35,14 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.ctrip.framework.apollo.configservice.util.IpUtils.tryToGetClientIp;
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static framework.apollo.core.ConfigConsts.NO_APPID_PLACEHOLDER;
 
 @RestController
 @RequestMapping("/configs")
 public class ConfigController {
-    @Autowired
-    private ClientLoadReleaseStrategy4Normal clientLoadReleaseStrategy;
-    @Autowired
-    private AppNamespaceCache appNamespaceCache;
     @Autowired
     private NamespaceUtil namespaceUtil;
     @Autowired
@@ -81,9 +69,10 @@ public class ConfigController {
             clientIp = tryToGetClientIp(request);
         }
 
-        ApolloNotificationMessages clientMessages = ApolloNotificationMessages.buildMessages(messagesAsString);
 
-        List<Release> releases = findReleases4Client(appId, clusterName, env, namespace, dataCenter, clientIp, clientMessages);
+        ConfigClient configClient = new ConfigClient(appId, clusterName, env, namespace, dataCenter, clientIp, messagesAsString);
+
+        List<Release> releases = configClient.findReleases4Client();
 
         if (releases.isEmpty()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, String.format(
@@ -110,28 +99,6 @@ public class ConfigController {
         return apolloConfig;
     }
 
-    /**
-     * 查找该client 的所有的releases
-     */
-    private List<Release> findReleases4Client(@PathVariable String appId, String clusterName, String env, String namespace, String dataCenter, String clientIp, ApolloNotificationMessages clientMessages) {
-        List<Release> releases = Lists.newLinkedList();
-
-        if (!NO_APPID_PLACEHOLDER.equalsIgnoreCase(appId)) {
-            Release release4Client = clientLoadReleaseStrategy.loadRelease4Client(appId, clientIp, appId, clusterName, env, namespace, dataCenter, clientMessages);
-            if (release4Client != null) {
-                releases.add(release4Client);
-            }
-        }
-
-        //if appNamespace does not belong to this appCode, should check if there is a public configuration
-        if (isPublicNamespace(appId, namespace)) {
-            Release publicRelease = this.findPublicConfig(appId, clientIp, clusterName, env, namespace, dataCenter, clientMessages);
-            if (!Objects.isNull(publicRelease)) {
-                releases.add(publicRelease);
-            }
-        }
-        return releases;
-    }
 
     private String filterAndNormalizeNamespace(@PathVariable String appId, @PathVariable String namespace) {
         //strip out .properties suffix
@@ -139,39 +106,6 @@ public class ConfigController {
         //fix the character case issue, such as FX.apollo <-> fx.apollo
         namespace = namespaceUtil.fixCapsLook4NamespaceName(appId, namespace);
         return namespace;
-    }
-
-
-    /**
-     * 该AppId 的命名空间中没有 appNamespace
-     */
-    private boolean isPublicNamespace(String appId, String namespaceName) {
-        //Every app has an 'application' appNamespace
-        if (Objects.equals(ConfigConsts.NAMESPACE_APPLICATION, namespaceName)) {
-            return false;
-        }
-
-        //if no appCode is present, then no other appNamespace belongs to it
-        if (NO_APPID_PLACEHOLDER.equalsIgnoreCase(appId)) {
-            return true;
-        }
-
-        AppNamespace appNamespace = appNamespaceCache.findByAppIdAndNamespace(appId, namespaceName);
-
-        return appNamespace == null;
-    }
-
-    private Release findPublicConfig(String clientAppId, String clientIp, String clusterName, String env,
-                                     String namespace, String dataCenter, ApolloNotificationMessages clientMessages) {
-        AppNamespace appNamespace = appNamespaceCache.findPublicNamespaceByName(namespace);
-
-        //check whether the appNamespace's appCode equals to current one
-        if (Objects.isNull(appNamespace) || Objects.equals(clientAppId, appNamespace.getApp().getId())) {
-            return null;
-        }
-        AppEnvClusterNamespace clusterNamespace = appNamespace.getNamespaceByEnv(env, clusterName, "main");
-
-        return clusterNamespace.findLatestActiveRelease();
     }
 
 
@@ -194,6 +128,12 @@ public class ConfigController {
         return keyParts.stream().collect(Collectors.joining(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR));
     }
 
+    /**
+     * 发送心跳，刷新心跳实例
+     * @param namespaceBo
+     * @param clientIp
+     * @param releases
+     */
     private void heartBeatReleases(NamespaceBo namespaceBo, String clientIp,
                                    List<Release> releases) {
         if (isNullOrEmpty(clientIp)) {

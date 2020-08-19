@@ -11,7 +11,7 @@ import com.yofish.apollo.domain.Release;
 import com.yofish.apollo.domain.ReleaseMessage;
 import com.yofish.apollo.service.ReleaseMessageService;
 import com.yofish.apollo.service.ReleaseService;
-import com.yofish.apollo.component.util.ReleaseMessageKeyGenerator;
+import com.yofish.apollo.component.util.NamespaceKeyGenerator;
 import framework.apollo.core.ConfigConsts;
 import framework.apollo.core.dto.ApolloNotificationMessages;
 import framework.apollo.tracer.Tracer;
@@ -126,7 +126,7 @@ public class ReleaseRepo4Cache implements ReleaseRepo {
     @Override
     public Release findLatestActiveRelease(String appId, String clusterName, String env, String namespaceName,
                                               ApolloNotificationMessages clientMessages) {
-        String key = ReleaseMessageKeyGenerator.generate(appId, clusterName, env, namespaceName);
+        String key = NamespaceKeyGenerator.generate(appId, clusterName, env, namespaceName);
 
         Tracer.logEvent(TRACER_EVENT_CACHE_GET, key);
 
@@ -151,15 +151,15 @@ public class ReleaseRepo4Cache implements ReleaseRepo {
     @Override
     public void onReceiveReleaseMessage(ReleaseMessage message, String channel) {
         logger.info("message received - channel: {}, message: {}", channel, message);
-        if (!PermissionType.Topics.APOLLO_RELEASE_TOPIC.equals(channel) || Strings.isNullOrEmpty(message.getMessage())) {
+        if (!PermissionType.Topics.APOLLO_RELEASE_TOPIC.equals(channel) || Strings.isNullOrEmpty(message.getNamespaceKey())) {
             return;
         }
 
         try {
-            invalidate(message.getMessage());
+            invalidate(message.getNamespaceKey());
 
             //warm up the cache
-            configCache.getUnchecked(message.getMessage());
+            configCache.getUnchecked(message.getNamespaceKey());
         } catch (Throwable ex) {
             //ignore
         }

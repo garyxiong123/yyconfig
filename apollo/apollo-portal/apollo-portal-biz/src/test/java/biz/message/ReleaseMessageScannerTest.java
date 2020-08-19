@@ -71,7 +71,7 @@ public class ReleaseMessageScannerTest extends AbstractUnitTest {
         ReleaseMessage someListenerMessage =
                 someListenerFuture.get(5000, TimeUnit.MILLISECONDS);
 
-        assertEquals(someMessage, someListenerMessage.getMessage());
+        assertEquals(someMessage, someListenerMessage.getNamespaceKey());
 //    assertEquals(someId, someListenerMessage.getId());
 
         SettableFuture<ReleaseMessage> anotherListenerFuture = SettableFuture.create();
@@ -88,7 +88,7 @@ public class ReleaseMessageScannerTest extends AbstractUnitTest {
         ReleaseMessage anotherListenerMessage =
                 anotherListenerFuture.get(5000, TimeUnit.MILLISECONDS);
 
-        assertEquals(anotherMessage, anotherListenerMessage.getMessage());
+        assertEquals(anotherMessage, anotherListenerMessage.getNamespaceKey());
 //    assertEquals(anotherId, anotherListenerMessage.getId());
 
     }
@@ -96,7 +96,7 @@ public class ReleaseMessageScannerTest extends AbstractUnitTest {
     private ReleaseMessage assembleReleaseMessage(long id, String message) {
         ReleaseMessage releaseMessage = new ReleaseMessage();
         releaseMessage.setId(id);
-        releaseMessage.setMessage(message);
+        releaseMessage.setNamespaceKey(message);
         return releaseMessage;
     }
 }
