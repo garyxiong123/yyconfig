@@ -25,15 +25,14 @@ import com.yofish.apollo.repository.AppNamespaceRepository;
 import com.yofish.gary.dao.entity.BaseEntity;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
-import framework.apollo.core.ConfigConsts;
-import framework.apollo.core.enums.ConfigFileFormat;
+import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
+import com.yofish.yyconfig.common.framework.apollo.core.enums.ConfigFileFormat;
 import lombok.*;
 import org.springframework.util.ObjectUtils;
 
 import javax.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -89,6 +88,7 @@ public class AppNamespace extends BaseEntity {
         this.app = app;
         this.format = ObjectUtils.isEmpty(appNamespaceModel.getFormat()) ? ConfigFileFormat.Properties : format;
         this.comment = appNamespaceModel.getComment();
+        appNamespaceType = appNamespaceModel.getAppNamespaceType();
         appNamespaceType.doBuildAppNamespace(this, appNamespaceModel);
     }
 

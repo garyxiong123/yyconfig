@@ -22,10 +22,10 @@ import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yofish.apollo.domain.Release;
-import common.NamespaceBo;
-import framework.apollo.core.ConfigConsts;
-import framework.apollo.core.dto.ApolloConfig;
-import framework.apollo.tracer.Tracer;
+import com.yofish.yyconfig.common.common.NamespaceBo;
+import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
+import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceConfig;
+import com.yofish.yyconfig.common.framework.apollo.tracer.Tracer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,16 +54,16 @@ public class ConfigController {
     }.getType();
 
     @RequestMapping(value = "/{appId}/{env}/{clusterName}/{namespace:.+}", method = RequestMethod.GET)
-    public ApolloConfig queryConfig4Client(@PathVariable String appId, @PathVariable String clusterName, @PathVariable String env,
-                                           @PathVariable String namespace,
-                                           @RequestParam(value = "dataCenter", required = false) String dataCenter,
-                                           @RequestParam(value = "releaseKey", defaultValue = "-1") String clientSideReleaseKey,
-                                           @RequestParam(value = "ip", required = false) String clientIp,
-                                           @RequestParam(value = "messages", required = false) String messagesAsString,
-                                           HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public NamespaceConfig queryConfig4Client(@PathVariable String appId, @PathVariable String clusterName, @PathVariable String env,
+                                              @PathVariable String namespace,
+                                              @RequestParam(value = "dataCenter", required = false) String dataCenter,
+                                              @RequestParam(value = "releaseKey", defaultValue = "-1") String clientSideReleaseKey,
+                                              @RequestParam(value = "ip", required = false) String clientIp,
+                                              @RequestParam(value = "messages", required = false) String messagesAsString,
+                                              HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         String originalNamespace = namespace;
-        namespace = filterAndNormalizeNamespace(appId, namespace);
+        namespace = normalizeNamespaceName(appId, namespace);
 
         if (isNullOrEmpty(clientIp)) {
             clientIp = tryToGetClientIp(request);
@@ -93,14 +93,14 @@ public class ConfigController {
         }
 
 
-        ApolloConfig apolloConfig = new ApolloConfig(appId, clusterName, originalNamespace, mergedReleaseKey);
-        apolloConfig.setConfigurations(mergeReleaseConfigurations(releases));
+        NamespaceConfig namespaceConfig = new NamespaceConfig(appId, clusterName, originalNamespace, mergedReleaseKey);
+        namespaceConfig.setConfigurations(mergeReleaseConfigurations(releases));
 
-        return apolloConfig;
+        return namespaceConfig;
     }
 
 
-    private String filterAndNormalizeNamespace(@PathVariable String appId, @PathVariable String namespace) {
+    private String normalizeNamespaceName(@PathVariable String appId, @PathVariable String namespace) {
         //strip out .properties suffix
         namespace = namespaceUtil.subSuffix4Properties(namespace);
         //fix the character case issue, such as FX.apollo <-> fx.apollo

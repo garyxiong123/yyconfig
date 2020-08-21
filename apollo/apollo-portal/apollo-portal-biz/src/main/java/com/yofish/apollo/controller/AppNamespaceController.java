@@ -20,6 +20,7 @@ import com.yofish.apollo.api.dto.NamespaceEnvTree;
 import com.yofish.apollo.api.dto.NamespaceListReq;
 import com.yofish.apollo.api.dto.NamespaceListResp;
 import com.yofish.apollo.api.dto.PublicProtectNamespaceDto;
+import com.yofish.apollo.enums.AppNamespaceType;
 import com.yofish.apollo.model.bo.NamespaceVO;
 import com.yofish.apollo.model.AppNamespaceModel;
 import com.yofish.apollo.service.AppEnvClusterNamespaceService;
@@ -60,6 +61,7 @@ public class AppNamespaceController {
     public Result<AppNamespace> createAppPrivateNamespace(@PathVariable long appId, @Valid @RequestBody AppNamespaceModel model) {
 
         model.setAppId(appId);
+        model.setAppNamespaceType(AppNamespaceType.Private);
         AppNamespace appNamespace4Private = appNamespaceService.createAppNamespace(model);
 
         return Result.ok(appNamespace4Private);
@@ -69,6 +71,7 @@ public class AppNamespaceController {
     @PostMapping("/apps/{appId:\\d+}/namespaces/protect")
     public Result<AppNamespace> createAppProtectNamespace(@PathVariable long appId, @Valid @RequestBody AppNamespaceModel model) {
         model.setAppId(appId);
+        model.setAppNamespaceType(AppNamespaceType.Protect);
         AppNamespace appNamespace4Protect = appNamespaceService.createAppNamespace(model);
         return Result.ok(appNamespace4Protect);
     }
@@ -77,6 +80,7 @@ public class AppNamespaceController {
     @PostMapping("/apps/{appId:\\d+}/namespaces/public")
     public Result<AppNamespace> createAppPublicNamespace(@PathVariable long appId, @Valid @RequestBody AppNamespaceModel model) {
         model.setAppId(appId);
+        model.setAppNamespaceType(AppNamespaceType.Public);
         AppNamespace appNamespace4Public = appNamespaceService.createAppNamespace(model);
 
         return Result.ok(appNamespace4Public);

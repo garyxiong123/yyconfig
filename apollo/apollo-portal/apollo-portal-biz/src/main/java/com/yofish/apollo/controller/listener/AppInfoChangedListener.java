@@ -17,9 +17,9 @@ package com.yofish.apollo.controller.listener;
 
 import com.yofish.apollo.pattern.listener.app.AppInfoChangedEvent;
 import com.yofish.apollo.service.PortalConfig;
-import common.dto.AppDTO;
-import framework.apollo.core.enums.Env;
-import framework.apollo.tracer.Tracer;
+import com.yofish.yyconfig.common.common.dto.AppDTO;
+import com.yofish.yyconfig.common.framework.apollo.core.enums.Env;
+import com.yofish.yyconfig.common.framework.apollo.tracer.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

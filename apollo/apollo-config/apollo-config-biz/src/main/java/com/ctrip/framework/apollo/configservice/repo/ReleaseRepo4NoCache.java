@@ -3,7 +3,7 @@ package com.ctrip.framework.apollo.configservice.repo;
 import com.yofish.apollo.domain.Release;
 import com.yofish.apollo.domain.ReleaseMessage;
 import com.yofish.apollo.service.ReleaseService;
-import framework.apollo.core.dto.ApolloNotificationMessages;
+import com.yofish.yyconfig.common.framework.apollo.core.dto.ApolloNotificationMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

@@ -12,7 +12,7 @@ import com.yofish.apollo.repository.AppEnvClusterRepository;
 import com.yofish.apollo.repository.InstanceConfigRepository;
 import com.yofish.apollo.repository.InstanceRepository;
 import com.yofish.apollo.service.InstanceService;
-import common.NamespaceBo;
+import com.yofish.yyconfig.common.common.NamespaceBo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;

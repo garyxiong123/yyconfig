@@ -2,7 +2,7 @@ package com.ctrip.framework.apollo.configservice.repo;
 
 import com.yofish.apollo.domain.Release;
 import com.yofish.apollo.pattern.listener.releasemessage.ReleaseMessageListener;
-import framework.apollo.core.dto.ApolloNotificationMessages;
+import com.yofish.yyconfig.common.framework.apollo.core.dto.ApolloNotificationMessages;
 
 /**
  * @Author: xiongchengwei

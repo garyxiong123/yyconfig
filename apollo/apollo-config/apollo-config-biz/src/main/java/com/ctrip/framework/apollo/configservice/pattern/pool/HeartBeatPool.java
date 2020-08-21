@@ -17,9 +17,9 @@ package com.ctrip.framework.apollo.configservice.pattern.pool;
 
 import com.ctrip.framework.apollo.configservice.config.InstanceConfigRefreshModel;
 import com.google.common.collect.Queues;
-import common.NamespaceBo;
-import framework.apollo.core.utils.ApolloThreadFactory;
-import framework.apollo.tracer.Tracer;
+import com.yofish.yyconfig.common.common.NamespaceBo;
+import com.yofish.yyconfig.common.framework.apollo.core.utils.ApolloThreadFactory;
+import com.yofish.yyconfig.common.framework.apollo.tracer.Tracer;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,7 +47,7 @@ public class HeartBeatPool implements InitializingBean {
 
 
     public HeartBeatPool() {
-        auditExecutorService = Executors.newSingleThreadExecutor(ApolloThreadFactory.create("InstanceConfigAuditUtil", true));
+        auditExecutorService = Executors.newSingleThreadExecutor(ApolloThreadFactory.create("HeartBeatPool", true));
         auditStopped = new AtomicBoolean(false);
 
     }

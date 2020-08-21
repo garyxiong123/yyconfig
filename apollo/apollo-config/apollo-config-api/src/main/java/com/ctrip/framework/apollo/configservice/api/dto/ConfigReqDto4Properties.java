@@ -16,7 +16,7 @@
 package com.ctrip.framework.apollo.configservice.api.dto;
 
 import com.ctrip.framework.apollo.configservice.api.enums.ConfigFileOutputFormat;
-import framework.apollo.core.utils.PropertiesUtil;
+import com.yofish.yyconfig.common.framework.apollo.core.utils.PropertiesUtil;
 
 import java.io.IOException;
 import java.util.Map;

@@ -35,10 +35,10 @@ import com.yofish.apollo.service.CommitService;
 import com.yofish.apollo.service.ReleaseHistoryService;
 import com.youyu.common.api.Result;
 import com.youyu.common.exception.BizException;
-import common.dto.AppDTO;
-import common.dto.ClusterDTO;
-import common.dto.ItemDTO;
-import common.dto.NamespaceDTO;
+import com.yofish.yyconfig.common.common.dto.AppDTO;
+import com.yofish.yyconfig.common.common.dto.ClusterDTO;
+import com.yofish.yyconfig.common.common.dto.ItemDTO;
+import com.yofish.yyconfig.common.common.dto.NamespaceDTO;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -107,7 +107,7 @@ public class ReleaseControllerTest extends AbstractControllerTest {
         itemController.createItem(req);
 
         NamespaceReleaseModel namespaceReleaseModel = NamespaceReleaseModel.builder().releaseTitle("测试发布标题").releaseComment("测试发布").AppEnvClusterNamespaceId(namespace.getId()).build();
-        common.dto.ReleaseDTO release = releaseController.createRelease(namespaceReleaseModel).data;
+        com.yofish.yyconfig.common.common.dto.ReleaseDTO release = releaseController.createRelease(namespaceReleaseModel).data;
 
         Iterable<ReleaseHistory> releaseHistoryRepositories = releaseHistoryRepository.findAll();
         Page<ReleaseHistoryDTO> namespaceReleaseHistory = releaseHistoryService.findNamespaceReleaseHistory(namespace.getId(), 0, 10);
@@ -128,7 +128,7 @@ public class ReleaseControllerTest extends AbstractControllerTest {
     @Test
     public void testRelease4Branch() {
         NamespaceReleaseModel releaseModel4Main = NamespaceReleaseModel.builder().releaseTitle("测试发布标题").releaseComment("测试发布").AppEnvClusterNamespaceId(namespace.getId()).build();
-        common.dto.ReleaseDTO release = releaseController.createRelease(releaseModel4Main).data;
+        com.yofish.yyconfig.common.common.dto.ReleaseDTO release = releaseController.createRelease(releaseModel4Main).data;
 
         AppEnvClusterNamespace4Branch namespace4Branch = namespace.getBranchNamespace();
         NamespaceReleaseModel releaseModel4Branch = NamespaceReleaseModel.builder().releaseTitle("测试发布标题").releaseComment("分支测试发布").AppEnvClusterNamespaceId(namespace4Branch.getId()).build();
@@ -163,7 +163,7 @@ public class ReleaseControllerTest extends AbstractControllerTest {
     @Test
     public void testFindActiveRelease() throws AccessDeniedException {
         Pageable page = PageRequest.of(0,2);
-        Result<List<common.dto.ReleaseDTO>> allReleases = releaseController.findActiveReleases(namespace.getId(), 0, 2);
+        Result<List<com.yofish.yyconfig.common.common.dto.ReleaseDTO>> allReleases = releaseController.findActiveReleases(namespace.getId(), 0, 2);
 
         Assert.assertNotNull(allReleases.getData());
     }
@@ -172,7 +172,7 @@ public class ReleaseControllerTest extends AbstractControllerTest {
     @Test
     public void testCompareRelease() throws AccessDeniedException {
         Pageable page = PageRequest.of(0,2);
-        List<common.dto.ReleaseDTO> allReleases = releaseController.findActiveReleases(namespace.getId(), 0, 2).data;
+        List<com.yofish.yyconfig.common.common.dto.ReleaseDTO> allReleases = releaseController.findActiveReleases(namespace.getId(), 0, 2).data;
 
         Result<ReleaseCompareResult> releaseCompareResultResult = releaseController.compareRelease( allReleases.get(1).getId(), allReleases.get(0).getId());
 

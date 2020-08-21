@@ -18,7 +18,7 @@ package com.yofish.apollo.service;
 import com.google.common.collect.Lists;
 import com.yofish.apollo.domain.ReleaseMessage;
 import com.yofish.apollo.repository.ReleaseMessageRepository;
-import framework.apollo.tracer.Tracer;
+import com.yofish.yyconfig.common.framework.apollo.tracer.Tracer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;

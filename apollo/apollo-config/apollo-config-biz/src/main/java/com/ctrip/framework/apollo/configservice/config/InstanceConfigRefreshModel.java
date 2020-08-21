@@ -18,13 +18,12 @@ package com.ctrip.framework.apollo.configservice.config;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import common.NamespaceBo;
-import framework.apollo.core.ConfigConsts;
+import com.yofish.yyconfig.common.common.NamespaceBo;
+import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @Description: 实例配置刷新模型

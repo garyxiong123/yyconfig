@@ -19,7 +19,7 @@ import com.yofish.apollo.domain.Commit;
 import com.yofish.apollo.api.dto.CommitDto;
 import com.yofish.apollo.service.CommitService;
 import com.youyu.common.api.Result;
-import common.utils.BeanUtils;
+import com.yofish.yyconfig.common.common.utils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

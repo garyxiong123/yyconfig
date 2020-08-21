@@ -18,7 +18,7 @@ package com.yofish.apollo.api.model.vo;
 
 import com.yofish.apollo.api.enums.ChangeType;
 import com.yofish.apollo.api.model.bo.KVEntity;
-import common.entity.EntityPair;
+import com.yofish.yyconfig.common.common.entity.EntityPair;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

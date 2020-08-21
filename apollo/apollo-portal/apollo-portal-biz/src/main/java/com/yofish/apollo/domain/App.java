@@ -17,14 +17,13 @@ package com.yofish.apollo.domain;
 
 import com.yofish.apollo.model.AppModel;
 import com.yofish.apollo.pattern.strategy.CheckOwnerAndAdminsAndDepartmentStrategy;
-import com.yofish.apollo.repository.AppRepository;
 import com.yofish.gary.biz.domain.Department;
 import com.yofish.gary.biz.domain.User;
 import com.yofish.gary.dao.entity.BaseEntity;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
-import common.utils.InputValidator;
-import common.utils.RequestPrecondition;
+import com.yofish.yyconfig.common.common.utils.InputValidator;
+import com.yofish.yyconfig.common.common.utils.RequestPrecondition;
 import lombok.*;
 import org.springframework.util.ObjectUtils;
 
@@ -34,7 +33,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass;
-import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
 
 /**
  * @Author: xiongchengwei

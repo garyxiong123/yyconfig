@@ -1,6 +1,6 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-apollo.component.boot.ApolloAutoConfiguration
+com.yofish.yyconfig.client.lifecycle.boot.ApolloAutoConfiguration
 org.springframework.context.ApplicationContextInitializer=\
-apollo.component.boot.ApolloApplicationContextInitializer
+com.yofish.yyconfig.client.lifecycle.boot.ApolloApplicationContextInitializer
 org.springframework.boot.env.EnvironmentPostProcessor=\
-apollo.component.boot.ApolloApplicationContextInitializer
+com.yofish.yyconfig.client.lifecycle.boot.ApolloApplicationContextInitializer

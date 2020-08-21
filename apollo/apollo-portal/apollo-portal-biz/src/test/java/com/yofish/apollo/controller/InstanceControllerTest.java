@@ -20,7 +20,7 @@ import com.yofish.apollo.api.dto.InstanceNamespaceReq;
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.component.util.PageQuery;
 import com.youyu.common.api.Result;
-import common.dto.PageDTO;
+import com.yofish.yyconfig.common.common.dto.PageDTO;
 import controller.AbstractControllerTest;
 import org.junit.Before;
 import org.junit.Test;

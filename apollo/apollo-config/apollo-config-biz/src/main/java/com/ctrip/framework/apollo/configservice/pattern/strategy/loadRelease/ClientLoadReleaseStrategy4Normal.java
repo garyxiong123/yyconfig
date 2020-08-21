@@ -18,8 +18,8 @@ package com.ctrip.framework.apollo.configservice.pattern.strategy.loadRelease;
 import com.ctrip.framework.apollo.configservice.repo.ReleaseRepo;
 import com.yofish.apollo.domain.Release;
 import com.yofish.apollo.pattern.listener.releasemessage.GrayReleaseRulesHolder;
-import framework.apollo.core.ConfigConsts;
-import framework.apollo.core.dto.ApolloNotificationMessages;
+import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
+import com.yofish.yyconfig.common.framework.apollo.core.dto.ApolloNotificationMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

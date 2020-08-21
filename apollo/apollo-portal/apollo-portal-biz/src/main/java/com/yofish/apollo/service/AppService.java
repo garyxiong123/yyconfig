@@ -27,7 +27,7 @@ import com.yofish.gary.biz.service.UserService;
 import com.youyu.common.api.PageData;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
-import common.utils.PageDataAdapter;
+import com.yofish.yyconfig.common.common.utils.PageDataAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

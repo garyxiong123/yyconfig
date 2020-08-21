@@ -12,7 +12,7 @@ import com.yofish.apollo.repository.AppRepository;
 import com.yofish.apollo.pattern.util.ServerConfigUtil;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
-import framework.apollo.core.ConfigConsts;
+import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

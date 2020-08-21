@@ -17,7 +17,7 @@ package com.yofish.apollo.domain;
 
 import com.yofish.apollo.pattern.strategy.publish.PublishStrategy4Branch;
 import com.yofish.apollo.component.util.ReleaseKeyGenerator;
-import common.constants.GsonType;
+import com.yofish.yyconfig.common.common.constants.GsonType;
 import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.lang.time.FastDateFormat;

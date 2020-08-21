@@ -6,17 +6,16 @@ import com.google.common.collect.Lists;
 import com.yofish.apollo.domain.AppEnvClusterNamespace;
 import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.domain.Release;
-import framework.apollo.core.ConfigConsts;
-import framework.apollo.core.dto.ApolloNotificationMessages;
+import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
+import com.yofish.yyconfig.common.framework.apollo.core.dto.ApolloNotificationMessages;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Objects;
 
 import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass4Context;
-import static framework.apollo.core.ConfigConsts.NO_APPID_PLACEHOLDER;
+import static com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts.NO_APPID_PLACEHOLDER;
 
 /**
  * @Author: xiongchengwei

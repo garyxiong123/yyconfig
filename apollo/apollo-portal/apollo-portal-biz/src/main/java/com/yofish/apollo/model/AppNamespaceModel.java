@@ -17,9 +17,8 @@ package com.yofish.apollo.model;
 
 import com.yofish.apollo.domain.App;
 import com.yofish.apollo.enums.AppNamespaceType;
-import com.yofish.apollo.enums.NamespaceType;
-import common.utils.InputValidator;
-import framework.apollo.core.enums.ConfigFileFormat;
+import com.yofish.yyconfig.common.common.utils.InputValidator;
+import com.yofish.yyconfig.common.framework.apollo.core.enums.ConfigFileFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

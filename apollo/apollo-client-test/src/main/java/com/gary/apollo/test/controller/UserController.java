@@ -15,12 +15,12 @@
  */
 package com.gary.apollo.test.controller;
 
-import apollo.domain.config.Config;
-import apollo.model.ConfigChange;
-import apollo.model.ConfigChangeEvent;
-import apollo.component.annotation.ApolloConfig;
-import apollo.component.annotation.ApolloConfigChangeListener;
-import apollo.component.annotation.EnableApolloConfig;
+import com.yofish.yyconfig.client.domain.config.Config;
+import com.yofish.yyconfig.client.pattern.listener.config.ConfigChange;
+import com.yofish.yyconfig.client.pattern.listener.config.ConfigChangeEvent;
+import com.yofish.yyconfig.client.component.annotation.ApolloConfig;
+import com.yofish.yyconfig.client.component.annotation.ApolloConfigChangeListener;
+import com.yofish.yyconfig.client.component.annotation.EnableApolloConfig;
 import com.gary.apollo.test.model.Permission;
 import com.gary.apollo.test.model.Permission4Data;
 import com.gary.apollo.test.model.Permission4Menu;

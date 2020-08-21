@@ -17,7 +17,7 @@ package com.ctrip.framework.apollo.configservice.pattern.strategy.loadRelease;
 
 
 import com.yofish.apollo.domain.Release;
-import framework.apollo.core.dto.ApolloNotificationMessages;
+import com.yofish.yyconfig.common.framework.apollo.core.dto.ApolloNotificationMessages;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

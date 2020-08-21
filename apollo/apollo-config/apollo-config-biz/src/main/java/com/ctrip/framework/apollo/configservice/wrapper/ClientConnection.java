@@ -17,7 +17,7 @@ package com.ctrip.framework.apollo.configservice.wrapper;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import framework.apollo.core.dto.NamespaceChangeNotification;
+import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceChangeNotification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.async.DeferredResult;

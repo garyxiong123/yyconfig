@@ -22,7 +22,7 @@ import com.yofish.gary.biz.domain.Department;
 import com.yofish.gary.biz.domain.User;
 import com.yofish.gary.biz.repository.DepartmentRepository;
 import com.yofish.gary.biz.repository.UserRepository;
-import framework.apollo.core.enums.Env;
+import com.yofish.yyconfig.common.framework.apollo.core.enums.Env;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

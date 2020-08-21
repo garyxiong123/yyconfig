@@ -16,7 +16,7 @@
 package com.yofish.apollo.api.model.bo;
 
 
-import common.entity.EntityPair;
+import com.yofish.yyconfig.common.common.entity.EntityPair;
 import lombok.Data;
 
 import java.util.Date;

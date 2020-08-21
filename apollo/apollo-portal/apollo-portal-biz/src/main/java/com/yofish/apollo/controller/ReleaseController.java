@@ -31,9 +31,9 @@ import com.yofish.apollo.service.ReleaseService;
 import com.youyu.common.api.Result;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
-import common.dto.ReleaseDTO;
-import common.utils.RequestPrecondition;
-import framework.apollo.core.enums.Env;
+import com.yofish.yyconfig.common.common.dto.ReleaseDTO;
+import com.yofish.yyconfig.common.common.utils.RequestPrecondition;
+import com.yofish.yyconfig.common.framework.apollo.core.enums.Env;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -44,7 +44,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Objects;
 
-import static common.utils.RequestPrecondition.checkModel;
+import static com.yofish.yyconfig.common.common.utils.RequestPrecondition.checkModel;
 
 
 @RestController(value = "/release")
@@ -66,7 +66,9 @@ public class ReleaseController {
     public Result<ReleaseDTO> createRelease(@RequestBody NamespaceReleaseModel namespaceReleaseModel) {
 
         checkModel(Objects.nonNull(namespaceReleaseModel));
-        AppEnvClusterNamespace namespace = appEnvClusterNamespaceRepository.findById(namespaceReleaseModel.getAppEnvClusterNamespaceId()).orElseGet(() -> {throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG,"项目id不存在");} );
+        AppEnvClusterNamespace namespace = appEnvClusterNamespaceRepository.findById(namespaceReleaseModel.getAppEnvClusterNamespaceId()).orElseGet(() -> {
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "项目id不存在");
+        });
         if (namespaceReleaseModel.isEmergencyPublish() && !portalConfig.isEmergencyPublishAllowed(Env.valueOf(namespace.getAppEnvCluster().getEnv()))) {
             throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, String.format("Env: %s is not supported emergency publish now", null));
         }
@@ -74,12 +76,6 @@ public class ReleaseController {
         Release publish = releaseService.publish(namespace, namespaceReleaseModel.getReleaseTitle(), namespaceReleaseModel.getReleaseComment(), null, namespaceReleaseModel.isEmergencyPublish());
         ReleaseDTO createdRelease = transformRelease2Dto(publish);
         ConfigPublishEvent event = ConfigPublishEvent.instance();
-//        event.withAppId(appCode)
-//                .withCluster(clusterName)
-//                .withNamespace(namespaceName)
-//                .withReleaseId(createdRelease.getId())
-//                .setNormalPublishEvent(true)
-//                .setEnv(Env.valueOf(env));
 
         publisher.publishEvent(event);
 
@@ -93,7 +89,7 @@ public class ReleaseController {
         return null;
     }
 
-//    @PreAuthorize(value = "@permissionValidator.hasReleaseNamespacePermission(#appCode, #namespaceName, #env)")
+    //    @PreAuthorize(value = "@permissionValidator.hasReleaseNamespacePermission(#appCode, #namespaceName, #env)")
     @RequestMapping(value = "/createGrayRelease", method = RequestMethod.POST)
     public Result<ReleaseDTO> createGrayRelease(@RequestBody NamespaceReleaseModel model) {
 
@@ -124,8 +120,10 @@ public class ReleaseController {
 
     @AppPreAuthorize(AppPreAuthorize.Authorize.AppOwner)
     @RequestMapping(path = "/releases/{releaseId}/rollback", method = RequestMethod.PUT)
-    public Result rollback(@PathVariable long releaseId)  {
-        Release release = releaseService.findReleaseById(releaseId).orElseGet(() -> {throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG,"releaseId不存在");} );
+    public Result rollback(@PathVariable long releaseId) {
+        Release release = releaseService.findReleaseById(releaseId).orElseGet(() -> {
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "releaseId不存在");
+        });
 
         releaseService.rollback(releaseId);
 
@@ -147,7 +145,7 @@ public class ReleaseController {
     @ApiOperation(value = "查询最新的releaseId")
     @RequestMapping(value = "/namespaceId/{namespaceId}/releases/active", method = RequestMethod.GET)
     public Result<List<ReleaseDTO>> findActiveReleases(@PathVariable Long namespaceId, @RequestParam(defaultValue = "0") int page,
-                                               @RequestParam(defaultValue = "5") int size) {
+                                                       @RequestParam(defaultValue = "5") int size) {
 
         RequestPrecondition.checkNumberPositive(size);
         RequestPrecondition.checkNumberNotNegative(page);
@@ -160,7 +158,7 @@ public class ReleaseController {
     @RequestMapping(value = "/releases/compare", method = RequestMethod.GET)
     public Result<ReleaseCompareResult> compareRelease(@RequestParam long baseReleaseId, @RequestParam long toCompareReleaseId) {
 
-        return Result.ok(releaseService.compare( baseReleaseId, toCompareReleaseId));
+        return Result.ok(releaseService.compare(baseReleaseId, toCompareReleaseId));
     }
 
 

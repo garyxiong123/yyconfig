@@ -17,8 +17,8 @@ package com.yofish.apollo.controller.timer;
 
 import com.google.common.collect.Maps;
 import com.yofish.apollo.repository.ServerConfigRepository;
-import common.config.RefreshablePropertySource;
-import framework.foundation.Foundation;
+import com.yofish.yyconfig.common.common.config.RefreshablePropertySource;
+import com.yofish.yyconfig.common.framework.foundation.Foundation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -18,12 +18,11 @@ package com.ctrip.framework.apollo.configservice.util;
 import com.ctrip.framework.apollo.configservice.controller.timer.AppNamespaceCache;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.yofish.apollo.domain.AppNamespace;
-import framework.apollo.core.ConfigConsts;
+import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +31,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import static common.utils.YyStringUtils.notEqual;
+import static com.yofish.yyconfig.common.common.utils.YyStringUtils.notEqual;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

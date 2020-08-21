@@ -16,7 +16,7 @@
 package com.yofish.apollo.api.model.vo;
 
 
-import framework.apollo.core.enums.Env;
+import com.yofish.yyconfig.common.framework.apollo.core.enums.Env;
 import lombok.Data;
 
 @Data

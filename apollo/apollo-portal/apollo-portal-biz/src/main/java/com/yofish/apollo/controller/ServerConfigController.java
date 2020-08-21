@@ -22,7 +22,7 @@ import com.yofish.apollo.domain.ServerConfig;
 import com.yofish.apollo.model.ServerConfigModel;
 import com.yofish.apollo.repository.ServerConfigRepository;
 import com.youyu.common.api.Result;
-import common.utils.BeanUtils;
+import com.yofish.yyconfig.common.common.utils.BeanUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

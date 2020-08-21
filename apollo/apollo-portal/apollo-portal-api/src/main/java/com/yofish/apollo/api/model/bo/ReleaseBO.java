@@ -16,7 +16,7 @@
 package com.yofish.apollo.api.model.bo;
 
 
-import common.dto.ReleaseDTO;
+import com.yofish.yyconfig.common.common.dto.ReleaseDTO;
 import lombok.Data;
 
 import java.util.Set;

@@ -21,7 +21,7 @@ import com.google.common.collect.Lists;
 import com.yofish.apollo.domain.ServerConfig;
 import com.yofish.apollo.repository.ServerConfigRepository;
 import com.yofish.apollo.controller.timer.BizDBPropertySource;
-import framework.apollo.core.ConfigConsts;
+import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

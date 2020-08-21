@@ -18,7 +18,7 @@ package com.yofish.apollo.pattern.algorithm.txtresolver;
 import com.yofish.apollo.model.bo.ItemChangeSets;
 import com.yofish.apollo.domain.AppEnvClusterNamespace;
 import com.yofish.apollo.domain.Item;
-import framework.apollo.core.ConfigConsts;
+import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

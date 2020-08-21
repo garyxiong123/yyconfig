@@ -21,7 +21,7 @@ import com.yofish.apollo.pattern.strategy.publish.PublishStrategy4Main;
 import com.yofish.apollo.component.util.ReleaseKeyGenerator;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
-import common.constants.ReleaseOperation;
+import com.yofish.yyconfig.common.common.constants.ReleaseOperation;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.domain.PageRequest;

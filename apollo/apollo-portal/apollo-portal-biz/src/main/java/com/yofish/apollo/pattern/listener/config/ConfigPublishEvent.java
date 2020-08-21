@@ -15,7 +15,7 @@
  */
 package com.yofish.apollo.pattern.listener.config;
 
-import framework.apollo.core.enums.Env;
+import com.yofish.yyconfig.common.framework.apollo.core.enums.Env;
 import org.springframework.context.ApplicationEvent;
 
 public class ConfigPublishEvent extends ApplicationEvent {

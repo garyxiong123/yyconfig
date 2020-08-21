@@ -31,7 +31,7 @@ import com.yofish.gary.biz.domain.Department;
 import com.yofish.gary.biz.domain.User;
 import com.yofish.gary.biz.repository.DepartmentRepository;
 import com.yofish.gary.biz.repository.UserRepository;
-import common.dto.NamespaceDTO;
+import com.yofish.yyconfig.common.common.dto.NamespaceDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;

@@ -26,8 +26,8 @@ import com.google.gson.reflect.TypeToken;
 import com.yofish.apollo.domain.ReleaseMessage;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
-import framework.apollo.core.ConfigConsts;
-import framework.apollo.core.dto.NamespaceChangeNotification;
+import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
+import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceChangeNotification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -43,7 +43,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static common.utils.YyStringUtils.notEqual;
+import static com.yofish.yyconfig.common.common.utils.YyStringUtils.notEqual;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.springframework.util.StringUtils.isEmpty;
 

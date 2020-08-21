@@ -16,7 +16,7 @@
 package com.yofish.apollo.model;
 
 
-import common.dto.NamespaceDTO;
+import com.yofish.yyconfig.common.common.dto.NamespaceDTO;
 import lombok.Data;
 
 @Data

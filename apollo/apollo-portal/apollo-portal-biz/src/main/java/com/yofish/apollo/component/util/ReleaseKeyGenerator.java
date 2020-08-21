@@ -17,7 +17,7 @@ package com.yofish.apollo.component.util;
 
 
 import com.yofish.apollo.domain.AppEnvClusterNamespace;
-import common.utils.UniqueKeyGenerator;
+import com.yofish.yyconfig.common.common.utils.UniqueKeyGenerator;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

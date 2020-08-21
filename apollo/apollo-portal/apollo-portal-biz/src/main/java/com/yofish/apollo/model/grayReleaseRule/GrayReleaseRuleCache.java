@@ -16,7 +16,7 @@
 package com.yofish.apollo.model.grayReleaseRule;
 
 
-import common.dto.GrayReleaseRuleItemDTO;
+import com.yofish.yyconfig.common.common.dto.GrayReleaseRuleItemDTO;
 import lombok.Data;
 
 import java.util.Set;

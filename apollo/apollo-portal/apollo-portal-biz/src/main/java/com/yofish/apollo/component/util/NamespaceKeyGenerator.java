@@ -21,7 +21,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.yofish.apollo.domain.AppEnvClusterNamespace;
 import com.yofish.apollo.domain.AppEnvClusterNamespace4Branch;
-import framework.apollo.core.ConfigConsts;
+import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
 
 import java.util.List;
 

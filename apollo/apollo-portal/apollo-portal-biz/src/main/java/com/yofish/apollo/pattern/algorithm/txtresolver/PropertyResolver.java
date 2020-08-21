@@ -20,7 +20,7 @@ import com.yofish.apollo.domain.AppEnvClusterNamespace;
 import com.yofish.apollo.domain.Item;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
-import common.utils.BeanUtils;
+import com.yofish.yyconfig.common.common.utils.BeanUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.*;

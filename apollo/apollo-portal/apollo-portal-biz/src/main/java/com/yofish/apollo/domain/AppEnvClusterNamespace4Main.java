@@ -15,19 +15,11 @@
  */
 package com.yofish.apollo.domain;
 
-import com.google.common.collect.Maps;
 import com.yofish.apollo.repository.AppEnvClusterNamespace4BranchRepository;
-import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
-import com.yofish.apollo.service.AppNamespaceService;
-import common.constants.ReleaseOperation;
-import common.constants.ReleaseOperationContext;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import java.util.Map;
 
 import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
 

@@ -26,7 +26,7 @@ import com.yofish.apollo.service.ItemService;
 import com.youyu.common.api.Result;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
-import framework.apollo.core.enums.ConfigFileFormat;
+import com.yofish.yyconfig.common.framework.apollo.core.enums.ConfigFileFormat;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 
-import static common.utils.RequestPrecondition.checkModel;
+import static com.yofish.yyconfig.common.common.utils.RequestPrecondition.checkModel;
 
 
 @RestController

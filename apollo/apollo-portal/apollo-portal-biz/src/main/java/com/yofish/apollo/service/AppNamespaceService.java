@@ -23,11 +23,10 @@ import com.yofish.apollo.model.AppNamespaceModel;
 import com.yofish.apollo.pattern.factory.AppNamespaceFactory;
 import com.yofish.apollo.repository.*;
 import com.youyu.common.utils.YyAssert;
-import common.dto.NamespaceDTO;
+import com.yofish.yyconfig.common.common.dto.NamespaceDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;

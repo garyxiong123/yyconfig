@@ -19,7 +19,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.yofish.apollo.domain.Item;
 import com.yofish.apollo.api.dto.ItemPair;
-import common.dto.ItemDTO;
+import com.yofish.yyconfig.common.common.dto.ItemDTO;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.StringUtils;

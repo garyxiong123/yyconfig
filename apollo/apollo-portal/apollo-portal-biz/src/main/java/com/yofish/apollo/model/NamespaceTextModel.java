@@ -16,7 +16,7 @@
 package com.yofish.apollo.model;
 
 
-import common.utils.YyStringUtils;
+import com.yofish.yyconfig.common.common.utils.YyStringUtils;
 import lombok.Data;
 
 @Data

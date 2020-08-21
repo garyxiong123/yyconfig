@@ -23,7 +23,7 @@ import com.yofish.apollo.api.dto.*;
 import com.yofish.apollo.model.NamespaceSyncModel;
 import com.yofish.apollo.model.NamespaceTextModel;
 import com.youyu.common.api.Result;
-import framework.apollo.core.enums.ConfigFileFormat;
+import com.yofish.yyconfig.common.framework.apollo.core.enums.ConfigFileFormat;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

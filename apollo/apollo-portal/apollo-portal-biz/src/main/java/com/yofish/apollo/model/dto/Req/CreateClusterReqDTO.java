@@ -2,12 +2,11 @@ package com.yofish.apollo.model.dto.Req;
 
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
-import common.utils.InputValidator;
+import com.yofish.yyconfig.common.common.utils.InputValidator;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * @Author: xiongchengwei

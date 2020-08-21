@@ -42,7 +42,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static common.utils.YyHttpUtils.tryToGetClientIp;
+import static com.yofish.yyconfig.common.common.utils.YyHttpUtils.tryToGetClientIp;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

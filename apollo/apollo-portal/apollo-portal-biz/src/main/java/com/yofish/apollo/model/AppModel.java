@@ -16,7 +16,7 @@
 package com.yofish.apollo.model;
 
 
-import common.utils.InputValidator;
+import com.yofish.yyconfig.common.common.utils.InputValidator;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

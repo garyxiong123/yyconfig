@@ -16,7 +16,7 @@
 package com.yofish.apollo.api.model.bo;
 
 
-import common.dto.ItemDTO;
+import com.yofish.yyconfig.common.common.dto.ItemDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

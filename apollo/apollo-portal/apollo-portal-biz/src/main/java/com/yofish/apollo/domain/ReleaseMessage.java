@@ -17,7 +17,7 @@ package com.yofish.apollo.domain;
 
 import com.yofish.apollo.component.util.NamespaceKeyGenerator;
 import com.yofish.gary.dao.entity.BaseEntity;
-import framework.apollo.core.dto.NamespaceChangeNotification;
+import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceChangeNotification;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -39,7 +39,7 @@ public class ReleaseMessage extends BaseEntity {
     /**
      * apollo-mini+default+dev+application = app + cluster + env + application
      */
-    @Column(name = "namespace_key", nullable = false)
+    @Column(nullable = false)
     private String namespaceKey;
 
     public ReleaseMessage(AppEnvClusterNamespace namespace) {

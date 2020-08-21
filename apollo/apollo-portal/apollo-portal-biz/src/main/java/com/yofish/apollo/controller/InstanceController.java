@@ -24,7 +24,7 @@ import com.yofish.apollo.component.util.PageQuery;
 import com.youyu.common.api.Result;
 
 import com.youyu.common.exception.BizException;
-import common.dto.PageDTO;
+import com.yofish.yyconfig.common.common.dto.PageDTO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;

@@ -18,7 +18,6 @@ package com.yofish.apollo.model.bo;
 
 import com.yofish.apollo.domain.Item;
 import com.yofish.gary.dao.entity.BaseEntity;
-import common.dto.BaseDTO;
 import lombok.Data;
 
 import java.util.LinkedList;

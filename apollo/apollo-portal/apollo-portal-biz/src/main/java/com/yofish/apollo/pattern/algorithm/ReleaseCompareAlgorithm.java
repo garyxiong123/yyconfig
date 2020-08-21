@@ -5,7 +5,7 @@ import com.yofish.apollo.api.enums.ChangeType;
 import com.yofish.apollo.api.model.bo.KVEntity;
 import com.yofish.apollo.api.model.vo.ReleaseCompareResult;
 import com.yofish.apollo.domain.Release;
-import common.constants.GsonType;
+import com.yofish.yyconfig.common.common.constants.GsonType;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
