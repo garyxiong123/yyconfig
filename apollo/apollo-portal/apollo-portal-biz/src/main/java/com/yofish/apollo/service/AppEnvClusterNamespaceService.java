@@ -75,7 +75,7 @@ public class AppEnvClusterNamespaceService {
         List<AppNamespace> appNamespaces = appNamespaceService.findByAppId(appEnvCluster.getApp().getId());
 
         for (AppNamespace appNamespace : appNamespaces) {
-            AppEnvClusterNamespace4Main ns = new AppEnvClusterNamespace4Main(appEnvCluster, appNamespace);
+            AppEnvClusterNamespace4Main ns = new AppEnvClusterNamespace4Main(appEnvCluster, appNamespace, null);
             appEnvClusterNamespaceRepository.save(ns);
         }
 

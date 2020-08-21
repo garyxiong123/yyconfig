@@ -75,8 +75,7 @@ public class NamespaceBranchService {
     }
 
     private AppEnvClusterNamespace creteBranchNamespace(AppEnvClusterNamespace namespace, String branchName) {
-        AppEnvClusterNamespace4Branch namespace4Branch = new AppEnvClusterNamespace4Branch(namespace.getAppEnvCluster(), namespace.getAppNamespace());
-        namespace4Branch.setBranchName(branchName);
+        AppEnvClusterNamespace4Branch namespace4Branch = new AppEnvClusterNamespace4Branch(namespace.getAppEnvCluster(), namespace.getAppNamespace(), branchName);
         namespace4Branch.setParentId(namespace.getId());
         return namespace4Branch;
     }

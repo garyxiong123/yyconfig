@@ -29,6 +29,7 @@ import java.util.List;
 public class AppFactory {
     @Autowired
     private AppNamespaceRepository appNamespaceRepository;
+    @Autowired
     private ServerConfigUtil serverConfigUtil;
     @Autowired
     private AppRepository appRepository;
@@ -39,6 +40,7 @@ public class AppFactory {
 
     /**
      * 创建App
+     *
      * @param createAppModel
      * @return
      */
@@ -83,7 +85,7 @@ public class AppFactory {
         List<AppEnvCluster> appEnvClusters = this.appEnvClusterRepository.findByApp(appNamespace.getApp());
         for (AppEnvCluster appEnvCluster : appEnvClusters) {
 
-            AppEnvClusterNamespace4Main appEnvClusterNamespace = new AppEnvClusterNamespace4Main(appEnvCluster, appNamespace);
+            AppEnvClusterNamespace4Main appEnvClusterNamespace = new AppEnvClusterNamespace4Main(appEnvCluster, appNamespace, null);
             appEnvClusterNamespaceRepository.save(appEnvClusterNamespace);
         }
     }
@@ -94,7 +96,7 @@ public class AppFactory {
         List<String> envs = serverConfigUtil.getActiveEnvs();
         //每次遍历，都要new，防止覆盖
         envs.forEach((env -> {
-                    AppEnvCluster appEnvCluster = new AppEnvCluster(null, env, clusterName, new App(appId));
+                    AppEnvCluster appEnvCluster = new AppEnvCluster(null, clusterName, env, new App(appId));
                     appEnvClusterRepository.save(appEnvCluster);
                 })
         );

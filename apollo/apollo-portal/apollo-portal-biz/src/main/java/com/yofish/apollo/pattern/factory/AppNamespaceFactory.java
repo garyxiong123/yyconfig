@@ -59,7 +59,7 @@ public class AppNamespaceFactory {
     public void createNamespaceForAllCluster(AppNamespace appNamespace) {
         List<AppEnvCluster> appEnvClusters = this.appEnvClusterRepository.findByApp(appNamespace.getApp());
         for (AppEnvCluster appEnvCluster : appEnvClusters) {
-            AppEnvClusterNamespace4Main appEnvClusterNamespace = new AppEnvClusterNamespace4Main(appEnvCluster, appNamespace);
+            AppEnvClusterNamespace4Main appEnvClusterNamespace = new AppEnvClusterNamespace4Main(appEnvCluster, appNamespace, null);
             appEnvClusterNamespaceRepository.save(appEnvClusterNamespace);
         }
     }

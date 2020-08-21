@@ -115,7 +115,7 @@ public class AppNamespaceController {
         YyAssert.paramCheck(appId.equals(appNamespace.getApp().getId()), "不能关联自己的公共命名空间！");
 
         Arrays.stream(appEnvClusterIds.split(",")).forEach(appEnvClusterId -> {
-            AppEnvClusterNamespace4Main appEnvClusterNamespace = new AppEnvClusterNamespace4Main(new AppEnvCluster(Long.valueOf(appEnvClusterId)), appNamespace);
+            AppEnvClusterNamespace4Main appEnvClusterNamespace = new AppEnvClusterNamespace4Main(new AppEnvCluster(Long.valueOf(appEnvClusterId)), appNamespace, null);
             this.appEnvClusterNamespaceService.save(appEnvClusterNamespace);
         });
         return Result.ok();

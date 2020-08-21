@@ -23,6 +23,7 @@ import com.yofish.apollo.pattern.strategy.CheckAppNamespaceGlobalUniquenessStrat
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.repository.AppNamespaceRepository;
 import com.yofish.apollo.repository.AppRepository;
+import com.yofish.apollo.repository.OpenNamespaceTypeRepository;
 import com.yofish.gary.dao.entity.BaseEntity;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;

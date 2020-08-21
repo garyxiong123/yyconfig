@@ -49,17 +49,21 @@ import static com.yofish.gary.bean.StrategyNumBean.*;
 public class AppEnvClusterNamespace extends BaseEntity {
 
     @ManyToOne(cascade = CascadeType.DETACH)
-    private AppEnvCluster appEnvCluster;
+    protected AppEnvCluster appEnvCluster;
 
     @ManyToOne(cascade = CascadeType.DETACH)
-    private AppNamespace appNamespace;
+    protected AppNamespace appNamespace;
 
-    public AppEnvClusterNamespace(AppEnvCluster appEnvCluster, AppNamespace appNamespace) {
-        if (isNamespaceUnique(appEnvCluster, appNamespace)) {
+    protected String branchName;
+
+
+    public AppEnvClusterNamespace(AppEnvCluster appEnvCluster, AppNamespace appNamespace, String branchName) {
+        if (!isNamespaceUnique(appEnvCluster, appNamespace, branchName)) {
             throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "集群名称不能重复！");
         }
         this.appEnvCluster = appEnvCluster;
         this.appNamespace = appNamespace;
+        this.branchName = branchName;
 
     }
 
@@ -89,10 +93,10 @@ public class AppEnvClusterNamespace extends BaseEntity {
     }
 
 
-    public boolean isNamespaceUnique(AppEnvCluster appEnvCluster, AppNamespace appNamespace) {
+    public boolean isNamespaceUnique(AppEnvCluster appEnvCluster, AppNamespace appNamespace, String branchName) {
         Objects.requireNonNull(appEnvCluster, "appEnvCluster must not be null");
         Objects.requireNonNull(appNamespace, "appNamespace must not be null");
-        return Objects.isNull(getBeanByClass4Context(AppEnvClusterNamespaceRepository.class).findByAppEnvClusterAndAppNamespace(appEnvCluster, appNamespace));
+        return Objects.isNull(getBeanByClass4Context(AppEnvClusterNamespaceRepository.class).findByAppEnvClusterAndAppNamespaceAndBranchName(appEnvCluster, appNamespace, branchName));
     }
 
     public String generateNamespaceKey() {

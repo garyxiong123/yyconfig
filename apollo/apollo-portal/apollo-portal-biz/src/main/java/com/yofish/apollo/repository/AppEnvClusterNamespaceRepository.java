@@ -25,7 +25,7 @@ import java.util.List;
 
 public interface AppEnvClusterNamespaceRepository extends JpaRepository<AppEnvClusterNamespace, Long> {
 
-    AppEnvClusterNamespace findByAppEnvClusterAndAppNamespace(AppEnvCluster appEnvCluster, AppNamespace appNamespace);
+    AppEnvClusterNamespace findByAppEnvClusterAndAppNamespaceAndBranchName(AppEnvCluster appEnvCluster, AppNamespace appNamespace, String branchName);
 
 
     @Query(nativeQuery = true, value = "select aecn.*\n" +

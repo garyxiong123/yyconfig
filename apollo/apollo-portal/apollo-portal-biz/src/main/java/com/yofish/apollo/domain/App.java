@@ -75,22 +75,26 @@ public class App extends BaseEntity {
     }
 
     public App(AppModel appModel) {
-        String appCode = appModel.getAppCode();
-        String appName = appModel.getName();
+        paramCheck(appModel);
+        this.appCode = appModel.getAppCode();
+        this.name = appModel.getName();
         Long ownerId = appModel.getOwnerId();
         Long orgId = appModel.getOrgId();
         Set<Long> admins = appModel.getAdmins();
-        RequestPrecondition.checkArgumentsNotEmpty(appCode, appName, ownerId, orgId);
+        department = new Department(orgId);
+        appOwner = new User(ownerId);
 
+
+        appAdmins = ObjectUtils.isEmpty(admins) ? null : admins.stream().map(userId -> new User(userId)).collect(Collectors.toSet());
+        checkOwnerAndAdminsAndDepartmentIsExist();
+    }
+
+    private void paramCheck(AppModel appModel) {
+        RequestPrecondition.checkArgumentsNotEmpty(appModel.getAppCode(), appModel.getName(), appModel.getOwnerId(), appModel.getOrgId());
         if (!InputValidator.isValidClusterNamespace(appModel.getAppCode())) {
             throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG,
                     String.format("AppCode格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
         }
-
-        department = new Department(orgId);
-        appOwner = new User(ownerId);
-        appAdmins = ObjectUtils.isEmpty(admins) ? null : admins.stream().map(userId -> new User(userId)).collect(Collectors.toSet());
-        checkOwnerAndAdminsAndDepartmentIsExist();
     }
 
     public void checkOwnerAndAdminsAndDepartmentIsExist() {

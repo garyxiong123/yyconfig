@@ -17,10 +17,12 @@ package com.yofish.apollo.enums;
 
 import com.yofish.apollo.domain.*;
 import com.yofish.apollo.model.AppNamespaceModel;
+import com.yofish.apollo.repository.OpenNamespaceTypeRepository;
 import com.yofish.apollo.service.AppService;
 import org.springframework.util.ObjectUtils;
 
 import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass;
+import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass4Context;
 
 /**
  * @author WangSongJun
@@ -34,7 +36,7 @@ public enum AppNamespaceType {
         @Override
         public void doBuildAppNamespace(AppNamespace appNamespace, AppNamespaceModel appNamespaceModel) {
             appNamespace.setName(this.appendDepartmentCodePrefix(appNamespaceModel.getAppId(), appNamespaceModel.getName()));
-            appNamespace.setOpenNamespaceType(ObjectUtils.isEmpty(appNamespaceModel.getOpenNamespaceTypeId()) ? null : new OpenNamespaceType(appNamespaceModel.getOpenNamespaceTypeId()));
+            appNamespace.setOpenNamespaceType(ObjectUtils.isEmpty(appNamespaceModel.getOpenNamespaceTypeId()) ? null :  getBeanByClass4Context(OpenNamespaceTypeRepository.class).findById(appNamespaceModel.getOpenNamespaceTypeId()).get());
         }
     },
 

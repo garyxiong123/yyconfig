@@ -65,7 +65,7 @@ public class AppEnvCluster extends BaseEntity {
     public void isClusterNameUnique() {
         Objects.requireNonNull(app.getId(), "AppId must not be null");
         Objects.requireNonNull(name, "ClusterName must not be null");
-        if (ObjectUtils.isEmpty((getBeanByClass(AppEnvClusterRepository.class).findClusterByAppIdAndEnvAndName(app.getId(), env, name)))) {
+        if (!ObjectUtils.isEmpty((getBeanByClass(AppEnvClusterRepository.class).findClusterByAppIdAndEnvAndName(app.getId(), env, name)))) {
             throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "clusterEntity not unique");
 
         }

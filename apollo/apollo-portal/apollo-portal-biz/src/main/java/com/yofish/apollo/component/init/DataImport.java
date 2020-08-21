@@ -208,7 +208,7 @@ public class DataImport {
         List<User> users = userRepository.findAll();
 //        app.setAppOwner(users.get(0));
 //        app.setAppAdmins(Sets.newHashSet(users));
-        AppModel appModel = AppModel.builder().admins(Sets.newHashSet(users.get(0).getId())).name(configProperties.get(SystemInitConfigKey.DEFAULT_APP_NAME)).appCode(configProperties.get(SystemInitConfigKey.DEFAULT_APP_CODE)).ownerId(users.get(0).getId()).build();
+        AppModel appModel = AppModel.builder().orgId(departmentList.get(0).getId()).admins(Sets.newHashSet(users.get(0).getId())).name(configProperties.get(SystemInitConfigKey.DEFAULT_APP_NAME)).appCode(configProperties.get(SystemInitConfigKey.DEFAULT_APP_CODE)).ownerId(users.get(0).getId()).build();
         appService.createApp(appModel);
         return app;
     }

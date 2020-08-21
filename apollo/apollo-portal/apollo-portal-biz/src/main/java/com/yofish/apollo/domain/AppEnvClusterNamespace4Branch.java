@@ -42,7 +42,6 @@ public class AppEnvClusterNamespace4Branch extends AppEnvClusterNamespace {
     @ManyToOne(cascade = CascadeType.DETACH)
     private GrayReleaseRule grayReleaseRule;
 
-    private String branchName;
 
     public AppEnvClusterNamespace4Branch() {
     }
@@ -52,8 +51,8 @@ public class AppEnvClusterNamespace4Branch extends AppEnvClusterNamespace {
     }
 
 
-    public AppEnvClusterNamespace4Branch(AppEnvCluster appEnvCluster, AppNamespace appNamespace) {
-        super(appEnvCluster, appNamespace);
+    public AppEnvClusterNamespace4Branch(AppEnvCluster appEnvCluster, AppNamespace appNamespace, String branchName) {
+        super(appEnvCluster, appNamespace, branchName);
     }
 
 

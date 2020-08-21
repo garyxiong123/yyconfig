@@ -32,8 +32,8 @@ import static com.yofish.gary.bean.StrategyNumBean.getBeanInstance;
 @DiscriminatorValue("main")
 public class AppEnvClusterNamespace4Main extends AppEnvClusterNamespace {
 
-    public AppEnvClusterNamespace4Main(AppEnvCluster appEnvCluster, AppNamespace appNamespace) {
-        super(appEnvCluster, appNamespace);
+    public AppEnvClusterNamespace4Main(AppEnvCluster appEnvCluster, AppNamespace appNamespace, String branchName) {
+        super(appEnvCluster, appNamespace, branchName);
     }
 
     public AppEnvClusterNamespace4Main() {
