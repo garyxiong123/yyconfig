@@ -29,8 +29,6 @@ public class AppNamespaceFactory {
     private AppEnvClusterNamespaceRepository appEnvClusterNamespaceRepository;
     @Autowired
     private AppEnvClusterRepository appEnvClusterRepository;
-    @Autowired
-    private AppEnvClusterNamespaceService appEnvClusterNamespaceService;
 
     public AppNamespace createAppNamespace(AppNamespaceModel appNamespaceModel) {
 

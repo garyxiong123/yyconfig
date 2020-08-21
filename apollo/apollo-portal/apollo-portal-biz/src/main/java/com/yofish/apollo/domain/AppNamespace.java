@@ -86,7 +86,6 @@ public class AppNamespace extends BaseEntity {
     }
 
     public AppNamespace(AppNamespaceModel appNamespaceModel) {
-        super(appNamespaceModel.getAppId());
         this.name = appNamespaceModel.getName();
         this.app = getBeanByClass(AppRepository.class).findById(appNamespaceModel.getAppId()).get();
         this.format = ObjectUtils.isEmpty(appNamespaceModel.getFormat()) ? ConfigFileFormat.Properties : appNamespaceModel.getFormat();

@@ -44,6 +44,7 @@ public class AppNamespaceService {
 
     @Autowired
     private AppNamespaceRepository appNamespaceRepository;
+    @Autowired
     private AppRepository appRepository;
     @Autowired
     private AppEnvClusterNamespaceService appEnvClusterNamespaceService;
