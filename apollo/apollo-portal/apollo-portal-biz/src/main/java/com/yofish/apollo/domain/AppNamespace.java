@@ -22,6 +22,7 @@ import com.yofish.apollo.model.AppNamespaceModel;
 import com.yofish.apollo.pattern.strategy.CheckAppNamespaceGlobalUniquenessStrategy;
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.repository.AppNamespaceRepository;
+import com.yofish.apollo.repository.AppRepository;
 import com.yofish.gary.dao.entity.BaseEntity;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
@@ -85,7 +86,8 @@ public class AppNamespace extends BaseEntity {
 
     public AppNamespace(AppNamespaceModel appNamespaceModel) {
         super(appNamespaceModel.getAppId());
-        this.app = app;
+        this.name = appNamespaceModel.getName();
+        this.app = getBeanByClass(AppRepository.class).findById(appNamespaceModel.getAppId()).get();
         this.format = ObjectUtils.isEmpty(appNamespaceModel.getFormat()) ? ConfigFileFormat.Properties : format;
         this.comment = appNamespaceModel.getComment();
         appNamespaceType = appNamespaceModel.getAppNamespaceType();
