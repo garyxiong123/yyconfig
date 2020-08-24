@@ -9,6 +9,7 @@ import com.yofish.apollo.service.PortalConfig;
 import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceVersion;
 import com.yofish.yyconfig.common.framework.apollo.core.utils.ApolloThreadFactory;
 import com.yofish.yyconfig.common.framework.apollo.tracer.Tracer;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,13 +26,14 @@ import java.util.concurrent.TimeUnit;
  * @Description: 注册中心
  * @Date: 2020/8/19 上午9:30
  */
+@Data
 @Slf4j
 @Component
 public class RegistryCenter {
     /**
      * 核心数据结构： key 是什么 LongNsName 命名空间名称
      */
-    public final Multimap<String, ClientConnection> longNsNameAndConnectionMap = Multimaps.synchronizedSetMultimap(HashMultimap.create());
+    private final Multimap<String, ClientConnection> longNsNameAndConnectionMap = Multimaps.synchronizedSetMultimap(HashMultimap.create());
 
     private final ExecutorService largeNotificationBatchExecutorService;
 

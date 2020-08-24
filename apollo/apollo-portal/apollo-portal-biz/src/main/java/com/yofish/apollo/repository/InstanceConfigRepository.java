@@ -56,6 +56,9 @@ Page<Instance> findbyNamespace(Long appEnvClusterNamespaceId,String releaseKey);
 
     int countByNamespaceId(Long namespaceId);
 
+    List<InstanceConfig> findAllByInstanceIn(List<Instance> instances);
+
+
 
 
 }

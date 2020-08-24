@@ -22,6 +22,7 @@ import com.yofish.apollo.domain.Instance;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -46,5 +47,6 @@ public interface InstanceRepository extends JpaRepository<Instance, Long> {
 
     Instance findByAppEnvClusterAndDataCenterAndIp(AppEnvCluster appEnvCluster, String dataCenter, String ip);
 
+    List<Instance> findByUpdateTimeBefore(LocalDateTime outOfDateTime);
 
 }

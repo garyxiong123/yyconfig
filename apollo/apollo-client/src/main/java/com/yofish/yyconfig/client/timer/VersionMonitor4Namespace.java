@@ -1,18 +1,3 @@
-/*
- *    Copyright 2019-2020 the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- */
 package com.yofish.yyconfig.client.timer;
 
 import com.google.common.util.concurrent.RateLimiter;
@@ -34,11 +19,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 定时任务： 客户端 建立config端的长连接
+ * 定时任务： 客户端 建立config端的长连接:  b
  */
 @Slf4j
-public class TimerTask4LongPollRemoteConfig {
-    private static final Logger logger = LoggerFactory.getLogger(TimerTask4LongPollRemoteConfig.class);
+public class VersionMonitor4Namespace {
+    private static final Logger logger = LoggerFactory.getLogger(VersionMonitor4Namespace.class);
     //90 seconds, should be longer than server side's long polling timeout, which is now 60 seconds
 
     private final ExecutorService m_longPollingService;
@@ -55,21 +40,27 @@ public class TimerTask4LongPollRemoteConfig {
     /**
      * Constructor.
      */
-    public TimerTask4LongPollRemoteConfig() {
+    public VersionMonitor4Namespace() {
         m_longPollingStopped = new AtomicBoolean(false);
-        m_longPollingService = Executors.newSingleThreadExecutor(ApolloThreadFactory.create("TimerTask4LongPollRemoteConfig", true));
+        m_longPollingService = Executors.newSingleThreadExecutor(ApolloThreadFactory.create("TimerTask4LongPollNewNamespaceVersions", true));
         m_longPollStarted = new AtomicBoolean(false);
 
         clientConfig = ApolloInjector.getInstance(ClientConfig.class);
 
         m_serviceLocator = ApolloInjector.getInstance(ConfigServiceLocator.class);
         m_longPollRateLimiter = RateLimiter.create(clientConfig.getLongPollQPS());
-//        client = ApolloInjector.getInstance(Client.class);
         client = clientConfig.getOrCreateClient();
 
     }
 
-    public boolean submit(String namespace, RemoteConfigRepository remoteConfigRepository) {
+    /**
+     * 添加到版本变更控制
+     *
+     * @param namespace
+     * @param remoteConfigRepository
+     * @return
+     */
+    public boolean add2VersionControl(String namespace, RemoteConfigRepository remoteConfigRepository) {
         boolean added = client.addConfigRepository(namespace, remoteConfigRepository);
 
         if (!m_longPollStarted.get()) {

@@ -50,7 +50,7 @@ public class Client {
     private SchedulePolicy m_longPollFailSchedulePolicyInSecond;
     private static final Joiner.MapJoiner MAP_JOINER = Joiner.on("&").withKeyValueSeparator("=");
     private static final Escaper queryParamEscaper = UrlEscapers.urlFormParameterEscaper();
-    private static final Logger logger = LoggerFactory.getLogger(TimerTask4LongPollRemoteConfig.class);
+    private static final Logger logger = LoggerFactory.getLogger(VersionMonitor4Namespace.class);
     private static final int LONG_POLLING_READ_TIMEOUT = 90 * 1000;
     private final Map<String, LongNamespaceVersion> longNamespaceVersionMap;//namespaceName -> watchedKey -> notificationId
     private Type m_responseType;

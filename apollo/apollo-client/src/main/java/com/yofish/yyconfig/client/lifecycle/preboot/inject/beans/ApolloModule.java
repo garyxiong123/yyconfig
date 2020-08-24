@@ -11,7 +11,7 @@ import com.yofish.yyconfig.client.lifecycle.preboot.internals.factory.ConfigFact
 import com.yofish.yyconfig.client.lifecycle.preboot.internals.factory.ConfigFactoryManager;
 import com.yofish.yyconfig.client.lifecycle.preboot.internals.factory.DefaultConfigFactory;
 import com.yofish.yyconfig.client.lifecycle.preboot.internals.factory.DefaultConfigFactoryManager;
-import com.yofish.yyconfig.client.timer.TimerTask4LongPollRemoteConfig;
+import com.yofish.yyconfig.client.timer.VersionMonitor4Namespace;
 
 /**
  * @Author: xiongchengwei
@@ -28,6 +28,6 @@ public class ApolloModule extends AbstractModule {
         bind(ClientConfig.class).in(Singleton.class);
         bind(HttpUtil.class).in(Singleton.class);
         bind(ConfigServiceLocator.class).in(Singleton.class);
-        bind(TimerTask4LongPollRemoteConfig.class).in(Singleton.class);
+        bind(VersionMonitor4Namespace.class).in(Singleton.class);
     }
 }

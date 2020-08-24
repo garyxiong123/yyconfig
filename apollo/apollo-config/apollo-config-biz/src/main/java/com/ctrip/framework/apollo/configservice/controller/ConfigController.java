@@ -121,7 +121,7 @@ public class ConfigController {
     }
 
     /**
-     * 发送心跳，刷新心跳实例
+     * 发送心跳，刷新心跳实例, 和 实例配置
      *
      * @param namespaceBo
      * @param clientIp

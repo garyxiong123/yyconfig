@@ -20,7 +20,7 @@ import com.yofish.yyconfig.client.component.exceptions.ApolloConfigException;
 import com.yofish.yyconfig.client.lifecycle.preboot.inject.ApolloInjector;
 import com.yofish.yyconfig.client.lifecycle.preboot.internals.ClientConfig;
 import com.yofish.yyconfig.client.lifecycle.preboot.internals.ConfigServiceLocator;
-import com.yofish.yyconfig.client.timer.TimerTask4LongPollRemoteConfig;
+import com.yofish.yyconfig.client.timer.VersionMonitor4Namespace;
 import com.yofish.yyconfig.client.component.util.http.HttpRequest;
 import com.yofish.yyconfig.client.component.util.http.HttpResponse;
 import com.yofish.yyconfig.client.component.util.http.HttpUtil;
@@ -74,7 +74,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
     @Autowired
     private ClientConfig m_Client_config;
     @Autowired
-    private TimerTask4LongPollRemoteConfig timerTask4LongPollRemoteConfig;
+    private VersionMonitor4Namespace versionMonitor;
     private volatile AtomicReference<NamespaceConfig> namespaceConfigCache;
     private final String namespaceName;
     private final static ScheduledExecutorService m_executorService;
@@ -100,7 +100,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
         m_Client_config = ApolloInjector.getInstance(ClientConfig.class);
         m_httpUtil = ApolloInjector.getInstance(HttpUtil.class);
         m_serviceLocator = ApolloInjector.getInstance(ConfigServiceLocator.class);//通过Feign请求去处理
-        timerTask4LongPollRemoteConfig = ApolloInjector.getInstance(TimerTask4LongPollRemoteConfig.class);
+        versionMonitor = ApolloInjector.getInstance(VersionMonitor4Namespace.class);
         m_longPollServiceDto = new AtomicReference<>();
         longNamespaceVersion = new AtomicReference<>();
         m_loadConfigRateLimiter = RateLimiter.create(m_Client_config.getLoadConfigQPS());
@@ -109,7 +109,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
         gson = new Gson();
         this.trySync();//从config拉去namespace配置到本地
         this.schedulePeriodicRefresh();//定时 从config拉去namespace配置到本地
-        this.scheduleLongPollingRefresh(); //提交给 长连接版本控制
+        this.add2VersionControl(); //提交给 长连接版本控制
     }
 
     @Override
@@ -285,8 +285,8 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
     /**
      * 提交给 长连接版本控制
      */
-    private void scheduleLongPollingRefresh() {
-        timerTask4LongPollRemoteConfig.submit(namespaceName, this);
+    private void add2VersionControl() {
+        versionMonitor.add2VersionControl(namespaceName, this);
     }
 
     /**
