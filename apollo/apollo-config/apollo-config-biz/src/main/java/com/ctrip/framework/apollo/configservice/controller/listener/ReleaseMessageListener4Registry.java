@@ -1,6 +1,6 @@
 package com.ctrip.framework.apollo.configservice.controller.listener;
 
-import com.ctrip.framework.apollo.configservice.controller.RegistryCenter;
+import com.ctrip.framework.apollo.configservice.domain.RegistryCenter;
 import com.yofish.apollo.domain.ReleaseMessage;
 import com.yofish.apollo.pattern.listener.releasemessage.ReleaseMessageListener;
 import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceVersion;
@@ -25,13 +25,13 @@ public class ReleaseMessageListener4Registry implements ReleaseMessageListener {
 
 
     @Override
-    public void onReceiveReleaseMessage(ReleaseMessage message, String channel) {
-        String namespaceKey = message.getNamespaceKey();
-        handleMessageLog(message, channel, namespaceKey);
+    public void onReceiveReleaseMessage(ReleaseMessage releaseMessage, String channel) {
+        String longNsName = releaseMessage.getNamespaceKey();
+        handleMessageLog(releaseMessage, channel, longNsName);
 
-        NamespaceVersion configNotification = message.buildConfigNotification();
+        NamespaceVersion nsVersion4Server = releaseMessage.buildNsVersion();
 
-        registryCenter.publishNamespaceChange(configNotification, namespaceKey);
+        registryCenter.publishNewNsVersion(nsVersion4Server, longNsName);
 
     }
 

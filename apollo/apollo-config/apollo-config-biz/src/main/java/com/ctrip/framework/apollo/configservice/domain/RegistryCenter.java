@@ -1,4 +1,4 @@
-package com.ctrip.framework.apollo.configservice.controller;
+package com.ctrip.framework.apollo.configservice.domain;
 
 import com.ctrip.framework.apollo.configservice.wrapper.ClientConnection;
 import com.google.common.collect.HashMultimap;
@@ -29,9 +29,9 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RegistryCenter {
     /**
-     * 核心数据结构： key 是什么
+     * 核心数据结构： key 是什么 LongNsName 命名空间名称
      */
-    public final Multimap<String, ClientConnection> watchedKeyAndClientConnectionMap = Multimaps.synchronizedSetMultimap(HashMultimap.create());
+    public final Multimap<String, ClientConnection> longNsNameAndConnectionMap = Multimaps.synchronizedSetMultimap(HashMultimap.create());
 
     private final ExecutorService largeNotificationBatchExecutorService;
 
@@ -39,20 +39,40 @@ public class RegistryCenter {
     private PortalConfig bizConfig;
 
     public RegistryCenter() {
-        largeNotificationBatchExecutorService = Executors.newSingleThreadExecutor(ApolloThreadFactory.create
-                ("NotificationControllerV2", true));
+        largeNotificationBatchExecutorService = Executors.newSingleThreadExecutor(ApolloThreadFactory.create("RegistryCenter", true));
     }
 
-    public void publishNamespaceChange(NamespaceVersion changeNotification, String key) {
+    /**
+     * 发布新的 版本变更通知
+     *
+     * @param newNsVersion
+     * @param longNsName
+     */
+    public void publishNewNsVersion(NamespaceVersion newNsVersion, String longNsName) {
         //create a new list to avoid ConcurrentModificationException
-        List<ClientConnection> clientConnections = Lists.newArrayList(watchedKeyAndClientConnectionMap.get(key));
+        List<ClientConnection> clientConnections = Lists.newArrayList(longNsNameAndConnectionMap.get(longNsName));
 
         if (tooManyClientsConnection(clientConnections)) {
-            doAsyncNotification(key, clientConnections, changeNotification);
+            doAsyncNotification(longNsName, clientConnections, newNsVersion);
             return;
         }
 
-        doSyncNotification(key, clientConnections, changeNotification);
+        doSyncNotification(longNsName, clientConnections, newNsVersion);
+    }
+
+    /**
+     * 注册监听  命名空间 名称， 和相应的连接
+     *
+     * @param clientConnection
+     * @param longNsNames
+     */
+    public void registerWatchedLongNsNames(ClientConnection clientConnection, Set<String> longNsNames) {
+        //register all keys
+        for (String longNsName : longNsNames) {
+            this.put(longNsName, clientConnection);
+        }
+
+        logWatchedKeys(longNsNames, "Apollo.LongPoll.RegisteredKeys");
     }
 
 
@@ -97,33 +117,19 @@ public class RegistryCenter {
     }
 
 
-    public void remove(String clientWatchedKey, ClientConnection clientConnection) {
-        watchedKeyAndClientConnectionMap.remove(clientWatchedKey, clientConnection);
+    public void remove(String longNsName, ClientConnection clientConnection) {
+        longNsNameAndConnectionMap.remove(longNsName, clientConnection);
 
     }
 
-    public void put(String clientWatchedKey, ClientConnection clientConnection) {
-        watchedKeyAndClientConnectionMap.put(clientWatchedKey, clientConnection);
+    public void put(String longNsName, ClientConnection clientConnection) {
+        longNsNameAndConnectionMap.put(longNsName, clientConnection);
 
     }
 
-    /**
-     * 注册监听key， 和相应的连接
-     *
-     * @param clientConnection
-     * @param watchedKeys
-     */
-    public void registerWatchedKeys(ClientConnection clientConnection, Set<String> watchedKeys) {
-        //register all keys
-        for (String key : watchedKeys) {
-            this.put(key, clientConnection);
-        }
 
-        logWatchedKeys(watchedKeys, "Apollo.LongPoll.RegisteredKeys");
-    }
-
-    public static void logWatchedKeys(Set<String> watchedKeys, String eventName) {
-        for (String watchedKey : watchedKeys) {
+    public static void logWatchedKeys(Set<String> longNsNames, String eventName) {
+        for (String watchedKey : longNsNames) {
             Tracer.logEvent(eventName, watchedKey);
         }
     }

@@ -32,7 +32,10 @@ public class ClientConnection {
     private static final long TIMEOUT = 60 * 1000;
     private static final ResponseEntity<List<NamespaceVersion>> NOT_MODIFIED_RESPONSE_LIST = new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
 
-    private Map<String, String> normalizedNamespaceName2OriginalNamespaceNameMap;
+    /**
+     * 客户端和服务器 ns名称的映射关系
+     */
+    private Map<String, String> normalizedNsName2OriginalNsNameMap;
 
     private DeferredResult<ResponseEntity<List<NamespaceVersion>>> response;//客户端的响应
 
@@ -41,11 +44,17 @@ public class ClientConnection {
         response = new DeferredResult<>(TIMEOUT, NOT_MODIFIED_RESPONSE_LIST);
     }
 
-    public void fillNormalizedNamespaceName2OriginalNamespaceNameMap(String originalNamespaceName, String normalizedNamespaceName) {
-        if (normalizedNamespaceName2OriginalNamespaceNameMap == null) {
-            normalizedNamespaceName2OriginalNamespaceNameMap = Maps.newHashMap();
+    /**
+     * 更新命名空间的映射关系
+     *
+     * @param originalNsName
+     * @param normalizedNsName
+     */
+    public void updateNsNameMapping(String originalNsName, String normalizedNsName) {
+        if (normalizedNsName2OriginalNsNameMap == null) {
+            normalizedNsName2OriginalNsNameMap = Maps.newHashMap();
         }
-        normalizedNamespaceName2OriginalNamespaceNameMap.put(normalizedNamespaceName, originalNamespaceName);
+        normalizedNsName2OriginalNsNameMap.put(normalizedNsName, originalNsName);
     }
 
 
@@ -70,10 +79,10 @@ public class ClientConnection {
      * The appNamespace name is used as a key in client side, so we have to return the original one instead of the correct one
      */
     public void setResult(List<NamespaceVersion> notifications) {
-        if (normalizedNamespaceName2OriginalNamespaceNameMap != null) {
-            notifications.stream().filter(notification -> normalizedNamespaceName2OriginalNamespaceNameMap.containsKey
+        if (normalizedNsName2OriginalNsNameMap != null) {
+            notifications.stream().filter(notification -> normalizedNsName2OriginalNsNameMap.containsKey
                     (notification.getNamespaceName())).forEach(notification -> notification.setNamespaceName(
-                    normalizedNamespaceName2OriginalNamespaceNameMap.get(notification.getNamespaceName())));
+                    normalizedNsName2OriginalNsNameMap.get(notification.getNamespaceName())));
         }
 
         response.setResult(new ResponseEntity<>(notifications, HttpStatus.OK));

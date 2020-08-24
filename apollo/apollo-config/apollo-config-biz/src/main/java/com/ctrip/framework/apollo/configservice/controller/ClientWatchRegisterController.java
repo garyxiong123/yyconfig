@@ -16,6 +16,7 @@
 package com.ctrip.framework.apollo.configservice.controller;
 
 import com.ctrip.framework.apollo.configservice.domain.ConfigClient4Version;
+import com.ctrip.framework.apollo.configservice.domain.RegistryCenter;
 import com.ctrip.framework.apollo.configservice.util.EntityManagerUtil;
 import com.ctrip.framework.apollo.configservice.wrapper.ClientConnection;
 import com.google.common.collect.*;
@@ -32,7 +33,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 
 import java.util.*;
 
-import static com.ctrip.framework.apollo.configservice.controller.RegistryCenter.logWatchedKeys;
+import static com.ctrip.framework.apollo.configservice.domain.RegistryCenter.logWatchedKeys;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 /**
@@ -70,7 +71,7 @@ public class ClientWatchRegisterController {
         ClientConnection clientConnection = new ClientConnection();
         Set<String> namespaces4Client = Sets.newHashSet();
 
-        entityManagerUtil.closeEntityManager();
+//        entityManagerUtil.closeEntityManager(); ？？为什么要关闭
 
         List<NamespaceVersion> newNsVersions = client4Version.calcNewNsVersions();
 
@@ -99,7 +100,7 @@ public class ClientWatchRegisterController {
             logWatchedKeys(clientWatchedKeys, "Apollo.LongPoll.CompletedKeys");
         });
 
-        this.registryCenter.registerWatchedKeys(clientConnection, clientWatchedKeys);
+        this.registryCenter.registerWatchedLongNsNames(clientConnection, clientWatchedKeys);
 
         log.debug("Listening {} from appCode: {}, cluster: {}, appNamespace: {}, datacenter: {}", clientWatchedKeys, appId, cluster, namespaces, dataCenter);
     }

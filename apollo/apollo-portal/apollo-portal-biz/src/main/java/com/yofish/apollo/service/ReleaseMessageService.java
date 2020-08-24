@@ -46,8 +46,7 @@ public class ReleaseMessageService {
     if (CollectionUtils.isEmpty(messages)) {
       return Collections.emptyList();
     }
-    List<Object[]> result =
-        releaseMessageRepository.findLatestReleaseMessagesGroupByMessages(messages);
+    List<Object[]> result = releaseMessageRepository.findLatestReleaseMessagesGroupByNamespaceKeys(messages);
     List<ReleaseMessage> releaseMessages = Lists.newArrayList();
     for (Object[] o : result) {
       try {

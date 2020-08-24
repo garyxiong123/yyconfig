@@ -124,7 +124,7 @@ public class ReleaseRepo4Cache implements ReleaseRepo {
     }
 
     @Override
-    public Release findLatestActiveRelease(String appId, String clusterName, String env, String namespaceName,
+    public Release findLatestActiveRelease(String appId, String env,String clusterName, String namespaceName,
                                               LongNamespaceVersion clientMessages) {
         String key = NamespaceKeyGenerator.generate(appId, clusterName, env, namespaceName);
 

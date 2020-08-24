@@ -1,6 +1,5 @@
 package com.ctrip.framework.apollo.configservice.domain;
 
-import com.ctrip.framework.apollo.configservice.controller.timer.ReleaseMessageServiceWithCache;
 import com.ctrip.framework.apollo.configservice.util.LongNamespaceNameUtil;
 import com.ctrip.framework.apollo.configservice.util.NamespaceNormalizer;
 import com.ctrip.framework.apollo.configservice.wrapper.ClientConnection;
@@ -17,15 +16,10 @@ import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceVersion;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass4Context;
 import static com.yofish.yyconfig.common.common.utils.YyStringUtils.notEqual;
 import static org.springframework.util.StringUtils.isEmpty;
@@ -42,17 +36,17 @@ public class ConfigClient4Version extends ConfigClient {
     private static final Type notificationsTypeReference = new TypeToken<List<NamespaceVersion>>() {
     }.getType();
     private ClientConnection clientConnection;
-    private Map<String, NamespaceVersion> clientNsVersionMap;
-    private Set<String> namespaces4Client;
+    private Map<String, NamespaceVersion> normalizedNsVersionMap;
+    private Set<String> namespaces4Client = new HashSet<>();
     private Multimap<String, String> clientWatchedKeysMap;
     private Set<String> clientWatchedKeys;
-    private Map<String, Long> namespaceVersionMap;
+    private Map<String, Long> namespaceVersionMap = new HashMap<>();
 
     public ConfigClient4Version(String appId, String cluster, String env, String dataCenter, String clientIp, String clientNsVersionMapString) {
         super(appId, cluster, env, dataCenter, clientIp);
         this.clientNsVersionMapString = clientNsVersionMapString;
         clientConnection = new ClientConnection();
-        buildAndFilterClientNsVersionMap();
+        buildNormalizedNsVersionMap();
 
         buildNsVersionIdMap();
 
@@ -60,26 +54,26 @@ public class ConfigClient4Version extends ConfigClient {
 
     }
 
-    public void buildAndFilterClientNsVersionMap() {
+    public void buildNormalizedNsVersionMap() {
         List<NamespaceVersion> clientNsVersions = getBeanByClass4Context(Gson.class).fromJson(clientNsVersionMapString, notificationsTypeReference);
         if (isEmpty(clientNsVersions)) {
 //      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "Invalid format of notifications: " + notificationsAsString);
         }
-        clientNsVersionMap = filterNsVersions(appId, clientNsVersions);
+        normalizedNsVersionMap = getBeanByClass4Context(NamespaceNormalizer.class).normalizeNsVersions2Map(appId, clientNsVersions);
 
     }
 
 
     public Map<String, Long> buildNsVersionIdMap() {
         Map<String, Long> clientSideNotifications = Maps.newHashMap();
-        for (Map.Entry<String, NamespaceVersion> namespaceVersionEntry : clientNsVersionMap.entrySet()) {
+        for (Map.Entry<String, NamespaceVersion> namespaceVersionEntry : normalizedNsVersionMap.entrySet()) {
             String namespaceName = namespaceVersionEntry.getKey();
             NamespaceVersion clientNsVersion = namespaceVersionEntry.getValue();
             namespaces4Client.add(namespaceName);
             clientSideNotifications.put(namespaceName, clientNsVersion.getReleaseMessageId());
             if (notEqual(clientNsVersion.getNamespaceName(), namespaceName)) {
                 String originalNamespaceName = clientNsVersion.getNamespaceName();
-                clientConnection.fillNormalizedNamespaceName2OriginalNamespaceNameMap(originalNamespaceName, namespaceName);
+                clientConnection.updateNsNameMapping(originalNamespaceName, namespaceName);
             }
         }
 
@@ -89,32 +83,6 @@ public class ConfigClient4Version extends ConfigClient {
 
         namespaceVersionMap = clientSideNotifications;
         return clientSideNotifications;
-    }
-
-
-    private Map<String, NamespaceVersion> filterNsVersions(String appId, List<NamespaceVersion> namespaceVersions) {
-        Map<String, NamespaceVersion> filteredNotifications = Maps.newHashMap();
-        for (NamespaceVersion notification : namespaceVersions) {
-            if (isNullOrEmpty(notification.getNamespaceName())) {
-                continue;
-            }
-            //strip out .properties suffix
-
-            String originalNamespace = getBeanByClass4Context(NamespaceNormalizer.class).subSuffix4Properties(notification.getNamespaceName());
-            notification.setNamespaceName(originalNamespace);
-            //fix the character case issue, such as FX.apollo <-> fx.apollo
-            String normalizedNamespace = getBeanByClass4Context(NamespaceNormalizer.class).fixCapsLook4NamespaceName(appId, originalNamespace);
-
-            // in case client side appNamespace name has character case issue and has difference notification ids
-            // such as FX.apollo = 1 but fx.apollo = 2, we should let FX.apollo have the chance to update its notification id
-            // which means we should record FX.apollo = 1 here and ignore fx.apollo = 2
-            if (filteredNotifications.containsKey(normalizedNamespace) && filteredNotifications.get(normalizedNamespace).getReleaseMessageId() < notification.getReleaseMessageId()) {
-                continue;
-            }
-
-            filteredNotifications.put(normalizedNamespace, notification);
-        }
-        return filteredNotifications;
     }
 
 

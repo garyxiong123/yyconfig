@@ -16,13 +16,21 @@
 package com.ctrip.framework.apollo.configservice.util;
 
 import com.ctrip.framework.apollo.configservice.controller.timer.AppNamespaceCache;
+import com.google.common.collect.Maps;
 import com.yofish.apollo.domain.AppNamespace;
+import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceVersion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Map;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass4Context;
+
 /**
  * @author Jason Song(song_s@ctrip.com)
- * 命名空间名称 标准化对象
+ * 命名空间名称 标准化对象 所有关于 后缀处理和 大小写的 标准处理 计算
  */
 @Component
 public class NamespaceNormalizer {
@@ -82,6 +90,32 @@ public class NamespaceNormalizer {
         fixCapsLook4NamespaceName(appId, namespaceName);
         return namespaceName;
 
+    }
+
+
+    public Map<String, NamespaceVersion> normalizeNsVersions2Map(String appId, List<NamespaceVersion> namespaceVersions) {
+        Map<String, NamespaceVersion> normalizedNsVersionMap = Maps.newHashMap();
+        for (NamespaceVersion nsVersion4Client : namespaceVersions) {
+            if (isNullOrEmpty(nsVersion4Client.getNamespaceName())) {
+                continue;
+            }
+            //strip out .properties suffix
+
+            String originalNamespace = getBeanByClass4Context(NamespaceNormalizer.class).subSuffix4Properties(nsVersion4Client.getNamespaceName());
+            nsVersion4Client.setNamespaceName(originalNamespace);
+            //fix the character case issue, such as FX.apollo <-> fx.apollo
+            String normalizedNamespace = getBeanByClass4Context(NamespaceNormalizer.class).fixCapsLook4NamespaceName(appId, originalNamespace);
+
+            // in case client side appNamespace name has character case issue and has difference notification ids
+            // such as FX.apollo = 1 but fx.apollo = 2, we should let FX.apollo have the chance to update its notification id
+            // which means we should record FX.apollo = 1 here and ignore fx.apollo = 2
+            if (normalizedNsVersionMap.containsKey(normalizedNamespace) && normalizedNsVersionMap.get(normalizedNamespace).getReleaseMessageId() < nsVersion4Client.getReleaseMessageId()) {
+                continue;
+            }
+
+            normalizedNsVersionMap.put(normalizedNamespace, nsVersion4Client);
+        }
+        return normalizedNsVersionMap;
     }
 
 }

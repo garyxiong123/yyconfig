@@ -61,8 +61,7 @@ public class ClientLoadReleaseStrategy4Normal implements ClientLoadReleaseStrate
     }
 
     private Release loadReleaseViaDefaultCluster(String clientAppId, String clientIp, String configAppId, String env, String configNamespace, LongNamespaceVersion clientMessages, String clusterNameDefault) {
-        return findRelease(clientAppId, clientIp, configAppId, env, clusterNameDefault, configNamespace,
-                clientMessages);
+        return findRelease(clientAppId, clientIp, configAppId, env, clusterNameDefault, configNamespace, clientMessages);
     }
 
     private boolean isDataCenterValid(String configClusterName, String dataCenter) {
@@ -74,7 +73,7 @@ public class ClientLoadReleaseStrategy4Normal implements ClientLoadReleaseStrate
     }
 
     private Release tryToLoadViaSpecifiedCluster(String clientAppId, String clientIp, String configAppId, String configClusterName, String env, String configNamespace, LongNamespaceVersion clientMessages) {
-        return findRelease(clientAppId, clientIp, configAppId, configClusterName, env, configNamespace, clientMessages);
+        return findRelease(clientAppId, clientIp, configAppId, env,configClusterName,  configNamespace, clientMessages);
     }
 
     private boolean isDefaultCluster(String configClusterName) {
@@ -104,7 +103,7 @@ public class ClientLoadReleaseStrategy4Normal implements ClientLoadReleaseStrate
         }
 
         if (release == null) {
-            release = releaseRepo.findLatestActiveRelease(configAppId, configClusterName, env, configNamespace, clientMessages);
+            release = releaseRepo.findLatestActiveRelease(configAppId, env, configClusterName, configNamespace, clientMessages);
         }
 
         return release;

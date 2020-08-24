@@ -55,7 +55,7 @@ public class NamespaceVersion implements Serializable {
 
     @Override
     public String toString() {
-        return "ApolloConfigNotification{" +
+        return "NamespaceVersion{" +
                 "namespaceName='" + namespaceName + '\'' +
                 ", notificationId=" + releaseMessageId +
                 '}';

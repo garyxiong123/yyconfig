@@ -151,7 +151,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
 
     @Override
     protected synchronized void sync() {
-        NamespaceConfig previous = namespaceConfigCache.get();
+        NamespaceConfig previous = namespaceConfigCache.get() == null ? new NamespaceConfig() : namespaceConfigCache.get();
         NamespaceConfig current = loadNamespaceConfig();
 
         //reference equals means HTTP 304
@@ -162,8 +162,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
         }
 
         if (current != null) {
-            Tracer.logEvent(String.format("Apollo.Client.Configs.%s", current.getNamespaceName()),
-                    current.getReleaseKey());
+            Tracer.logEvent(String.format("Apollo.Client.Configs.%s", current.getNamespaceName()), current.getReleaseKey());
         }
 
     }
@@ -252,9 +251,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
                                   String dataCenter, LongNamespaceVersion remoteMessages, NamespaceConfig previousConfig) {
 
         String path = "configs/%s/%s/%s/%s";
-        List<String> pathParams =
-                Lists.newArrayList(pathEscaper.escape(appId), pathEscaper.escape(cluster), pathEscaper.escape(env),
-                        pathEscaper.escape(namespace));
+        List<String> pathParams = Lists.newArrayList(pathEscaper.escape(appId), pathEscaper.escape(cluster), pathEscaper.escape(env), pathEscaper.escape(namespace));
         Map<String, String> queryParams = Maps.newHashMap();
 
         if (previousConfig != null) {

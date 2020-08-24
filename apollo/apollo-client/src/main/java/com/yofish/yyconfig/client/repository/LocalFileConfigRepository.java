@@ -289,8 +289,9 @@ public class LocalFileConfigRepository extends AbstractConfigRepository implemen
     File assembleLocalCacheFile(File baseDir, String namespace) {
         String fileName = String.format("%s.properties", Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).join(clientConfig.getAppId(), clientConfig.getCluster(), namespace));
         File file = new File(baseDir, fileName);
-        file.setReadable(true);//设置可读权限
-        file.setWritable(true);//设置可写权限
+//        file.setReadable(true);//设置可读权限
+//        file.setWritable(true);//设置可写权限
+//        file.createNewFile();
         return file;
     }
 }

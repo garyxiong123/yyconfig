@@ -48,7 +48,7 @@ public class ReleaseMessage extends BaseEntity {
 
 
 
-    public NamespaceVersion buildConfigNotification() {
+    public NamespaceVersion buildNsVersion() {
 
         String changedNamespace = NamespaceKeyGenerator.getNamespaceName(namespaceKey);
         NamespaceVersion configNotification = new NamespaceVersion(changedNamespace, this.getId());

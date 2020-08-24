@@ -36,5 +36,5 @@ public interface ReleaseMessageRepository extends PagingAndSortingRepository<Rel
   List<ReleaseMessage> findFirst100ByNamespaceKeyAndIdLessThanOrderByIdAsc(String namespaceKey, Long id);
 
   @Query("select namespaceKey, max(id) as id from ReleaseMessage where namespaceKey in :messages group by namespaceKey")
-  List<Object[]> findLatestReleaseMessagesGroupByMessages(@Param("messages") Collection<String> messages);
+  List<Object[]> findLatestReleaseMessagesGroupByNamespaceKeys(@Param("messages") Collection<String> messages);
 }
