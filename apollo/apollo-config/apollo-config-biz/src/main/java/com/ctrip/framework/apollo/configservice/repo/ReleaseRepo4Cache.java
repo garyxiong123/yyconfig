@@ -13,7 +13,7 @@ import com.yofish.apollo.service.ReleaseMessageService;
 import com.yofish.apollo.service.ReleaseService;
 import com.yofish.apollo.component.util.NamespaceKeyGenerator;
 import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
-import com.yofish.yyconfig.common.framework.apollo.core.dto.ApolloNotificationMessages;
+import com.yofish.yyconfig.common.framework.apollo.core.dto.LongNamespaceVersion;
 import com.yofish.yyconfig.common.framework.apollo.tracer.Tracer;
 import com.yofish.yyconfig.common.framework.apollo.tracer.spi.Transaction;
 import org.slf4j.Logger;
@@ -118,14 +118,14 @@ public class ReleaseRepo4Cache implements ReleaseRepo {
     }
 
     @Override
-    public Release findActiveOne(long id, ApolloNotificationMessages clientMessages) {
+    public Release findActiveOne(long id, LongNamespaceVersion clientMessages) {
         Tracer.logEvent(TRACER_EVENT_CACHE_GET_ID, String.valueOf(id));
         return configIdCache.getUnchecked(id).orElse(null);
     }
 
     @Override
     public Release findLatestActiveRelease(String appId, String clusterName, String env, String namespaceName,
-                                              ApolloNotificationMessages clientMessages) {
+                                              LongNamespaceVersion clientMessages) {
         String key = NamespaceKeyGenerator.generate(appId, clusterName, env, namespaceName);
 
         Tracer.logEvent(TRACER_EVENT_CACHE_GET, key);

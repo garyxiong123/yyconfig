@@ -58,6 +58,7 @@ public class ClientConfig implements EnvironmentAware {
     private boolean autoUpdateInjectedSpringProperties = true;
     private String configServerUrl;
     private Environment environment;
+    private Client client;
 
     public ClientConfig() {
         initRefreshInterval();
@@ -345,5 +346,12 @@ public class ClientConfig implements EnvironmentAware {
 
     public ServiceDTO buildServiceDTO() {
         return ServiceDTO.builder().appName(this.getAppId()).homepageUrl(this.getConfigServerUrl()).instanceId(this.getAppId()).build();
+    }
+
+    public Client getOrCreateClient() {
+        if(client == null){
+            client =  buildClient();
+        }
+        return client;
     }
 }

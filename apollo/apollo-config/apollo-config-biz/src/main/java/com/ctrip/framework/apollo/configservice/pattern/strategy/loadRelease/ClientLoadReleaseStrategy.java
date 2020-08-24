@@ -17,7 +17,7 @@ package com.ctrip.framework.apollo.configservice.pattern.strategy.loadRelease;
 
 
 import com.yofish.apollo.domain.Release;
-import com.yofish.yyconfig.common.framework.apollo.core.dto.ApolloNotificationMessages;
+import com.yofish.yyconfig.common.framework.apollo.core.dto.LongNamespaceVersion;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -38,5 +38,5 @@ public interface ClientLoadReleaseStrategy {
      * @return the Release
      */
     Release loadRelease4Client(String clientAppId, String clientIp, String configAppId, String
-            configClusterName, String env, String configNamespace, String dataCenter, ApolloNotificationMessages clientMessages);
+            configClusterName, String env, String configNamespace, String dataCenter, LongNamespaceVersion clientMessages);
 }

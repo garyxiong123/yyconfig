@@ -16,8 +16,8 @@
 package com.ctrip.framework.apollo.configservice.controller;
 
 import com.ctrip.framework.apollo.configservice.controller.timer.ReleaseMessageServiceWithCache;
-import com.ctrip.framework.apollo.configservice.util.NamespaceUtil;
-import com.ctrip.framework.apollo.configservice.util.WatchKeysUtil;
+import com.ctrip.framework.apollo.configservice.util.NamespaceNormalizer;
+import com.ctrip.framework.apollo.configservice.util.LongNamespaceNameUtil;
 import com.ctrip.framework.apollo.configservice.util.EntityManagerUtil;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -29,7 +29,7 @@ import com.yofish.apollo.component.constant.PermissionType;
 import com.yofish.apollo.domain.ReleaseMessage;
 import com.yofish.apollo.pattern.listener.releasemessage.ReleaseMessageListener;
 import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
-import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceChangeNotification;
+import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceVersion;
 import com.yofish.yyconfig.common.framework.apollo.tracer.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,15 +51,15 @@ import java.util.Set;
 public class NotificationController implements ReleaseMessageListener {
     private static final Logger logger = LoggerFactory.getLogger(NotificationController.class);
     private static final long TIMEOUT = 30 * 1000;//30 seconds
-    private final Multimap<String, DeferredResult<ResponseEntity<NamespaceChangeNotification>>>
+    private final Multimap<String, DeferredResult<ResponseEntity<NamespaceVersion>>>
             deferredResults = Multimaps.synchronizedSetMultimap(HashMultimap.create());
-    private static final ResponseEntity<NamespaceChangeNotification>
+    private static final ResponseEntity<NamespaceVersion>
             NOT_MODIFIED_RESPONSE = new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     private static final Splitter STRING_SPLITTER =
             Splitter.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).omitEmptyStrings();
 
     @Autowired
-    private WatchKeysUtil watchKeysUtil;
+    private LongNamespaceNameUtil longNamespaceNameUtil;
 
     @Autowired
     private ReleaseMessageServiceWithCache releaseMessageService;
@@ -68,7 +68,7 @@ public class NotificationController implements ReleaseMessageListener {
     private EntityManagerUtil entityManagerUtil;
 
     @Autowired
-    private NamespaceUtil namespaceUtil;
+    private NamespaceNormalizer namespaceNormalizer;
 
     /**
      * For single appNamespace notification, reserved for older version of apollo clients
@@ -82,7 +82,7 @@ public class NotificationController implements ReleaseMessageListener {
      * @return a deferred result
      */
     @RequestMapping(method = RequestMethod.GET)
-    public DeferredResult<ResponseEntity<NamespaceChangeNotification>> pollNotification(
+    public DeferredResult<ResponseEntity<NamespaceVersion>> pollNotification(
             @RequestParam(value = "appCode") String appId,
             @RequestParam(value = "appEnvCluster") String cluster,
             @RequestParam(value = "env") String env,
@@ -91,11 +91,11 @@ public class NotificationController implements ReleaseMessageListener {
             @RequestParam(value = "notificationId", defaultValue = "-1") long notificationId,
             @RequestParam(value = "ip", required = false) String clientIp) {
         //strip out .properties suffix
-        namespace = namespaceUtil.subSuffix4Properties(namespace);
+        namespace = namespaceNormalizer.subSuffix4Properties(namespace);
 
-        Set<String> watchedKeys = watchKeysUtil.assembleAllWatchKeys(appId, cluster, env, namespace, dataCenter);
+        Set<String> watchedKeys = longNamespaceNameUtil.assembleLongNamespaceNameSet(appId, cluster, env, namespace, dataCenter);
 
-        DeferredResult<ResponseEntity<NamespaceChangeNotification>> deferredResult =
+        DeferredResult<ResponseEntity<NamespaceVersion>> deferredResult =
                 new DeferredResult<>(TIMEOUT, NOT_MODIFIED_RESPONSE);
 
         //check whether client is out-dated
@@ -111,7 +111,7 @@ public class NotificationController implements ReleaseMessageListener {
 
         if (latest != null && latest.getId() != notificationId) {
             deferredResult.setResult(new ResponseEntity<>(
-                    new NamespaceChangeNotification(namespace, latest.getId()), HttpStatus.OK));
+                    new NamespaceVersion(namespace, latest.getId()), HttpStatus.OK));
         } else {
             //register all keys
             for (String key : watchedKeys) {
@@ -153,19 +153,19 @@ public class NotificationController implements ReleaseMessageListener {
             return;
         }
 
-        ResponseEntity<NamespaceChangeNotification> notification =
+        ResponseEntity<NamespaceVersion> notification =
                 new ResponseEntity<>(
-                        new NamespaceChangeNotification(keys.get(2), message.getId()), HttpStatus.OK);
+                        new NamespaceVersion(keys.get(2), message.getId()), HttpStatus.OK);
 
         if (!deferredResults.containsKey(namespaceKey)) {
             return;
         }
         //create a new list to avoid ConcurrentModificationException
-        List<DeferredResult<ResponseEntity<NamespaceChangeNotification>>> results =
+        List<DeferredResult<ResponseEntity<NamespaceVersion>>> results =
                 Lists.newArrayList(deferredResults.get(namespaceKey));
         logger.debug("Notify {} clients for key {}", results.size(), namespaceKey);
 
-        for (DeferredResult<ResponseEntity<NamespaceChangeNotification>> result : results) {
+        for (DeferredResult<ResponseEntity<NamespaceVersion>> result : results) {
             result.setResult(notification);
         }
         logger.debug("Notification completed");

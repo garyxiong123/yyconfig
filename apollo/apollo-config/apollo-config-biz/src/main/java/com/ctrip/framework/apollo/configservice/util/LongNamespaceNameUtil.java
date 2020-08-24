@@ -34,10 +34,12 @@ import java.util.Set;
 import static com.yofish.yyconfig.common.common.utils.YyStringUtils.notEqual;
 
 /**
+ * Namespace的 全名 组合
+ *
  * @author Jason Song(song_s@ctrip.com)
  */
 @Component
-public class WatchKeysUtil {
+public class LongNamespaceNameUtil {
     private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR);
     @Autowired
     private AppNamespaceCache appNamespaceCache;
@@ -45,9 +47,9 @@ public class WatchKeysUtil {
     /**
      * Assemble watch keys for the given appCode, appEnvCluster, appNamespace, dataCenter combination
      */
-    public Set<String> assembleAllWatchKeys(String appId, String clusterName, String env, String namespace,
-                                            String dataCenter) {
-        Multimap<String, String> watchedKeysMap = assembleAllWatchKeys(appId, clusterName, env, Sets.newHashSet(namespace), dataCenter);
+    public Set<String> assembleLongNamespaceNameSet(String appId, String clusterName, String env, String namespace,
+                                                    String dataCenter) {
+        Multimap<String, String> watchedKeysMap = assembleLongNamespaceNameMap(appId, clusterName, env, Sets.newHashSet(namespace), dataCenter);
         return Sets.newHashSet(watchedKeysMap.get(namespace));
     }
 
@@ -56,9 +58,9 @@ public class WatchKeysUtil {
      *
      * @return a multimap with appNamespace as the key and watch keys as the value
      */
-    public Multimap<String, String> assembleAllWatchKeys(String appId, String clusterName, String env,
-                                                         Set<String> namespaces,
-                                                         String dataCenter) {
+    public Multimap<String, String> assembleLongNamespaceNameMap(String appId, String clusterName, String env,
+                                                                 Set<String> namespaces,
+                                                                 String dataCenter) {
         Multimap<String, String> watchedKeysMap = assembleWatchKeys(appId, clusterName, env, namespaces, dataCenter);
 
         //Every app has an 'application' appNamespace

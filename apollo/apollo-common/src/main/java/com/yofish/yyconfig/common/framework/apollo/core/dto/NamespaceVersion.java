@@ -20,10 +20,10 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * namespace 变更通知
+ * namespace 版本 变更通知
  */
 @Data
-public class NamespaceChangeNotification implements Serializable {
+public class NamespaceVersion implements Serializable {
 
     private String namespaceName;
     /**
@@ -31,26 +31,26 @@ public class NamespaceChangeNotification implements Serializable {
      */
     private long releaseMessageId;
 
-    private volatile ApolloNotificationMessages messages;
+    private volatile LongNamespaceVersion longNamespaceVersion;
 
     //for json converter
-    public NamespaceChangeNotification() {
+    public NamespaceVersion() {
     }
 
-    public NamespaceChangeNotification(String namespaceName, long releaseMessageId) {
+    public NamespaceVersion(String namespaceName, long releaseMessageId) {
         this.namespaceName = namespaceName;
         this.releaseMessageId = releaseMessageId;
     }
 
     public void addMessage(String key, long notificationId) {
-        if (this.messages == null) {
+        if (this.longNamespaceVersion == null) {
             synchronized (this) {
-                if (this.messages == null) {
-                    this.messages = new ApolloNotificationMessages();
+                if (this.longNamespaceVersion == null) {
+                    this.longNamespaceVersion = new LongNamespaceVersion();
                 }
             }
         }
-        this.messages.put(key, notificationId);
+        this.longNamespaceVersion.put(key, notificationId);
     }
 
     @Override

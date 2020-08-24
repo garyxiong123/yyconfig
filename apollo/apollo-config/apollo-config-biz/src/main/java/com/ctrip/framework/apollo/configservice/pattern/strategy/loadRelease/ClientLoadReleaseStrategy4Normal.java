@@ -19,7 +19,7 @@ import com.ctrip.framework.apollo.configservice.repo.ReleaseRepo;
 import com.yofish.apollo.domain.Release;
 import com.yofish.apollo.pattern.listener.releasemessage.GrayReleaseRulesHolder;
 import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
-import com.yofish.yyconfig.common.framework.apollo.core.dto.ApolloNotificationMessages;
+import com.yofish.yyconfig.common.framework.apollo.core.dto.LongNamespaceVersion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -40,7 +40,7 @@ public class ClientLoadReleaseStrategy4Normal implements ClientLoadReleaseStrate
 
     @Override
     public Release loadRelease4Client(String clientAppId, String clientIp, String configAppId, String configClusterName, String env,
-                                      String configNamespace, String dataCenter, ApolloNotificationMessages clientMessages) {
+                                      String configNamespace, String dataCenter, LongNamespaceVersion clientMessages) {
         // 特殊集群： 非默认，
         if (!isDefaultCluster(configClusterName)) {
             Release clusterRelease = tryToLoadViaSpecifiedCluster(clientAppId, clientIp, configAppId, configClusterName, env, configNamespace, clientMessages);
@@ -60,7 +60,7 @@ public class ClientLoadReleaseStrategy4Normal implements ClientLoadReleaseStrate
         return loadReleaseViaDefaultCluster(clientAppId, clientIp, configAppId, env, configNamespace, clientMessages, ConfigConsts.CLUSTER_NAME_DEFAULT);
     }
 
-    private Release loadReleaseViaDefaultCluster(String clientAppId, String clientIp, String configAppId, String env, String configNamespace, ApolloNotificationMessages clientMessages, String clusterNameDefault) {
+    private Release loadReleaseViaDefaultCluster(String clientAppId, String clientIp, String configAppId, String env, String configNamespace, LongNamespaceVersion clientMessages, String clusterNameDefault) {
         return findRelease(clientAppId, clientIp, configAppId, env, clusterNameDefault, configNamespace,
                 clientMessages);
     }
@@ -69,11 +69,11 @@ public class ClientLoadReleaseStrategy4Normal implements ClientLoadReleaseStrate
         return !isNullOrEmpty(dataCenter) && !Objects.equals(dataCenter, configClusterName);
     }
 
-    private Release tryToLoadViaDataCenter(String clientAppId, String clientIp, String configAppId, String configNamespace, String env, String dataCenter, ApolloNotificationMessages clientMessages) {
+    private Release tryToLoadViaDataCenter(String clientAppId, String clientIp, String configAppId, String configNamespace, String env, String dataCenter, LongNamespaceVersion clientMessages) {
         return findRelease(clientAppId, clientIp, configAppId, dataCenter, configNamespace, env, clientMessages);
     }
 
-    private Release tryToLoadViaSpecifiedCluster(String clientAppId, String clientIp, String configAppId, String configClusterName, String env, String configNamespace, ApolloNotificationMessages clientMessages) {
+    private Release tryToLoadViaSpecifiedCluster(String clientAppId, String clientIp, String configAppId, String configClusterName, String env, String configNamespace, LongNamespaceVersion clientMessages) {
         return findRelease(clientAppId, clientIp, configAppId, configClusterName, env, configNamespace, clientMessages);
     }
 
@@ -93,7 +93,7 @@ public class ClientLoadReleaseStrategy4Normal implements ClientLoadReleaseStrate
      * @return the release
      */
     private Release findRelease(String clientAppId, String clientIp, String configAppId, String env, String configClusterName,
-                                String configNamespace, ApolloNotificationMessages clientMessages) {
+                                String configNamespace, LongNamespaceVersion clientMessages) {
         Long grayReleaseId = grayReleaseRulesHolder.findReleaseIdFromGrayReleaseRule(clientAppId, clientIp, configAppId,
                 configClusterName, configNamespace);
 

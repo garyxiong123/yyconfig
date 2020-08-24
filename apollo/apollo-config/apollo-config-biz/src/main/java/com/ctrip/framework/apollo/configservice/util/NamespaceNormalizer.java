@@ -22,9 +22,10 @@ import org.springframework.stereotype.Component;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
+ * 命名空间名称 标准化对象
  */
 @Component
-public class NamespaceUtil {
+public class NamespaceNormalizer {
 
     @Autowired
     private AppNamespaceCache appNamespaceCache;
@@ -67,7 +68,14 @@ public class NamespaceUtil {
         return namespaceName;
     }
 
-    public String filterAndNormalizeNamespace(String appId, String namespaceName) {
+    /**
+     * 标准化命名空间的名称： 统一去掉后缀， 然后处理名称大小写
+     *
+     * @param appId
+     * @param namespaceName
+     * @return
+     */
+    public String normalizeNamespaceName(String appId, String namespaceName) {
 
         namespaceName = subSuffix4Properties(namespaceName);
 

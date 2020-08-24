@@ -3,7 +3,7 @@ package com.ctrip.framework.apollo.configservice.repo;
 import com.yofish.apollo.domain.Release;
 import com.yofish.apollo.domain.ReleaseMessage;
 import com.yofish.apollo.service.ReleaseService;
-import com.yofish.yyconfig.common.framework.apollo.core.dto.ApolloNotificationMessages;
+import com.yofish.yyconfig.common.framework.apollo.core.dto.LongNamespaceVersion;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -19,13 +19,13 @@ public class ReleaseRepo4NoCache implements ReleaseRepo {
     private ReleaseService releaseService;
 
     @Override
-    public Release findActiveOne(long id, ApolloNotificationMessages clientMessages) {
+    public Release findActiveOne(long id, LongNamespaceVersion clientMessages) {
         return releaseService.findActiveOne(id);
     }
 
     @Override
     public Release findLatestActiveRelease(String configAppId, String configClusterName, String env, String configNamespace,
-                                           ApolloNotificationMessages clientMessages) {
+                                           LongNamespaceVersion clientMessages) {
         return releaseService.findLatestActiveRelease(configAppId, configClusterName, env, configNamespace);
     }
 

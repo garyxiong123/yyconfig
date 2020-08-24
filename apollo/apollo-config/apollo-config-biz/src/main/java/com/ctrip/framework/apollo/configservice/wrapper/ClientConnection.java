@@ -17,7 +17,7 @@ package com.ctrip.framework.apollo.configservice.wrapper;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceChangeNotification;
+import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceVersion;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -30,11 +30,11 @@ import java.util.Map;
  */
 public class ClientConnection {
     private static final long TIMEOUT = 60 * 1000;
-    private static final ResponseEntity<List<NamespaceChangeNotification>> NOT_MODIFIED_RESPONSE_LIST = new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    private static final ResponseEntity<List<NamespaceVersion>> NOT_MODIFIED_RESPONSE_LIST = new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
 
     private Map<String, String> normalizedNamespaceName2OriginalNamespaceNameMap;
 
-    private DeferredResult<ResponseEntity<List<NamespaceChangeNotification>>> response;//客户端的响应
+    private DeferredResult<ResponseEntity<List<NamespaceVersion>>> response;//客户端的响应
 
 
     public ClientConnection() {
@@ -62,14 +62,14 @@ public class ClientConnection {
      *
      * @param notification
      */
-    public void setResponse(NamespaceChangeNotification notification) {
+    public void setResponse(NamespaceVersion notification) {
         setResult(Lists.newArrayList(notification));
     }
 
     /**
      * The appNamespace name is used as a key in client side, so we have to return the original one instead of the correct one
      */
-    public void setResult(List<NamespaceChangeNotification> notifications) {
+    public void setResult(List<NamespaceVersion> notifications) {
         if (normalizedNamespaceName2OriginalNamespaceNameMap != null) {
             notifications.stream().filter(notification -> normalizedNamespaceName2OriginalNamespaceNameMap.containsKey
                     (notification.getNamespaceName())).forEach(notification -> notification.setNamespaceName(
@@ -79,7 +79,7 @@ public class ClientConnection {
         response.setResult(new ResponseEntity<>(notifications, HttpStatus.OK));
     }
 
-    public DeferredResult<ResponseEntity<List<NamespaceChangeNotification>>> getResponse() {
+    public DeferredResult<ResponseEntity<List<NamespaceVersion>>> getResponse() {
         return response;
     }
 }

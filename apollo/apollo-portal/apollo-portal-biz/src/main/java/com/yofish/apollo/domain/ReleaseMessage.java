@@ -17,7 +17,7 @@ package com.yofish.apollo.domain;
 
 import com.yofish.apollo.component.util.NamespaceKeyGenerator;
 import com.yofish.gary.dao.entity.BaseEntity;
-import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceChangeNotification;
+import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceVersion;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -48,10 +48,10 @@ public class ReleaseMessage extends BaseEntity {
 
 
 
-    public NamespaceChangeNotification buildConfigNotification() {
+    public NamespaceVersion buildConfigNotification() {
 
         String changedNamespace = NamespaceKeyGenerator.getNamespaceName(namespaceKey);
-        NamespaceChangeNotification configNotification = new NamespaceChangeNotification(changedNamespace, this.getId());
+        NamespaceVersion configNotification = new NamespaceVersion(changedNamespace, this.getId());
         configNotification.addMessage(namespaceKey, this.getId());
         return configNotification;
     }

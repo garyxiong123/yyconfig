@@ -35,7 +35,7 @@ import com.google.gson.Gson;
 import com.yofish.yyconfig.common.framework.apollo.Apollo;
 import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
 import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceConfig;
-import com.yofish.yyconfig.common.framework.apollo.core.dto.ApolloNotificationMessages;
+import com.yofish.yyconfig.common.framework.apollo.core.dto.LongNamespaceVersion;
 import com.yofish.yyconfig.common.framework.apollo.core.dto.ServiceDTO;
 import com.yofish.yyconfig.common.framework.apollo.core.schedule.ExponentialSchedulePolicy;
 import com.yofish.yyconfig.common.framework.apollo.core.schedule.SchedulePolicy;
@@ -76,10 +76,10 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
     @Autowired
     private TimerTask4LongPollRemoteConfig timerTask4LongPollRemoteConfig;
     private volatile AtomicReference<NamespaceConfig> namespaceConfigCache;
-    private final String m_namespace;
+    private final String namespaceName;
     private final static ScheduledExecutorService m_executorService;
     private final AtomicReference<ServiceDTO> m_longPollServiceDto;
-    private final AtomicReference<ApolloNotificationMessages> m_remoteMessages;
+    private final AtomicReference<LongNamespaceVersion> longNamespaceVersion;
     private final RateLimiter m_loadConfigRateLimiter;
     private final AtomicBoolean m_configNeedForceRefresh;
     private final SchedulePolicy m_loadConfigFailSchedulePolicy;
@@ -95,14 +95,14 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
      * @param namespace the appNamespace
      */
     public RemoteConfigRepository(String namespace) {
-        m_namespace = namespace;
+        namespaceName = namespace;
         namespaceConfigCache = new AtomicReference<>();
         m_Client_config = ApolloInjector.getInstance(ClientConfig.class);
         m_httpUtil = ApolloInjector.getInstance(HttpUtil.class);
         m_serviceLocator = ApolloInjector.getInstance(ConfigServiceLocator.class);//通过Feign请求去处理
         timerTask4LongPollRemoteConfig = ApolloInjector.getInstance(TimerTask4LongPollRemoteConfig.class);
         m_longPollServiceDto = new AtomicReference<>();
-        m_remoteMessages = new AtomicReference<>();
+        longNamespaceVersion = new AtomicReference<>();
         m_loadConfigRateLimiter = RateLimiter.create(m_Client_config.getLoadConfigQPS());
         m_configNeedForceRefresh = new AtomicBoolean(true);
         m_loadConfigFailSchedulePolicy = new ExponentialSchedulePolicy(m_Client_config.getOnErrorRetryInterval(), m_Client_config.getOnErrorRetryInterval() * 8);
@@ -140,8 +140,8 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
                 new Runnable() {
                     @Override
                     public void run() {
-                        Tracer.logEvent("Apollo.ConfigService", String.format("periodicRefresh: %s", m_namespace));
-                        logger.debug("refresh config for appNamespace: {}", m_namespace);
+                        Tracer.logEvent("Apollo.ConfigService", String.format("periodicRefresh: %s", namespaceName));
+                        logger.debug("refresh config for appNamespace: {}", namespaceName);
                         trySync();
                         Tracer.logEvent("Apollo.Client.Version", Apollo.VERSION);
                     }
@@ -158,7 +158,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
         if (previous.getReleaseKey() != current.getReleaseKey()) {
             logger.debug("Remote Config refreshed!");
             namespaceConfigCache.set(current);
-            this.fireRepositoryChange(m_namespace, this.getConfig());
+            this.fireRepositoryChange(namespaceName, this.getConfig());
         }
 
         if (current != null) {
@@ -187,7 +187,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
         String appId = m_Client_config.getAppId();
         String cluster = m_Client_config.getCluster();
         String dataCenter = m_Client_config.getDataCenter();
-        Tracer.logEvent("Apollo.Client.ConfigMeta", STRING_JOINER.join(appId, cluster, m_namespace));
+        Tracer.logEvent("Apollo.Client.ConfigMeta", STRING_JOINER.join(appId, cluster, namespaceName));
         int maxRetries = m_configNeedForceRefresh.get() ? 2 : 1;
         long onErrorSleepTime = 0; // 0 means no sleep
         Throwable exception = null;
@@ -206,7 +206,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
                 if (onErrorSleepTime > 0) {
                     logger.warn(
                             "Load config failed, will retry in {} {}. appCode: {}, appEnvCluster: {}, namespaces: {}",
-                            onErrorSleepTime, m_Client_config.getOnErrorRetryIntervalTimeUnit(), appId, cluster, m_namespace);
+                            onErrorSleepTime, m_Client_config.getOnErrorRetryIntervalTimeUnit(), appId, cluster, namespaceName);
 
                     try {
                         m_Client_config.getOnErrorRetryIntervalTimeUnit().sleep(onErrorSleepTime);
@@ -215,8 +215,8 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
                     }
                 }
 
-                url = assembleQueryConfigUrl(configService.getHomepageUrl(), appId, System.getenv("ENV").toLowerCase(), cluster, m_namespace,
-                        dataCenter, m_remoteMessages.get(), namespaceConfigCache.get());
+                url = assembleQueryConfigUrl(configService.getHomepageUrl(), appId, System.getenv("ENV").toLowerCase(), cluster, namespaceName,
+                        dataCenter, longNamespaceVersion.get(), namespaceConfigCache.get());
 
                 logger.debug("Loading config from {}", url);
                 HttpRequest request = new HttpRequest(url);
@@ -234,7 +234,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
 
                 NamespaceConfig namespaceConfig = response.getBody();
 
-                logger.debug("Loaded config for {}: {}", m_namespace, namespaceConfig);
+                logger.debug("Loaded config for {}: {}", namespaceName, namespaceConfig);
 
                 return namespaceConfig;
 
@@ -244,12 +244,12 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
             }
 
         }
-        String message = String.format("Load Apollo Config failed - appCode: %s, appEnvCluster: %s, appNamespace: %s, url: %s", appId, cluster, m_namespace, url);
+        String message = String.format("Load Apollo Config failed - appCode: %s, appEnvCluster: %s, appNamespace: %s, url: %s", appId, cluster, namespaceName, url);
         throw new ApolloConfigException(message, exception);
     }
 
     String assembleQueryConfigUrl(String uri, String appId, String cluster, String env, String namespace,
-                                  String dataCenter, ApolloNotificationMessages remoteMessages, NamespaceConfig previousConfig) {
+                                  String dataCenter, LongNamespaceVersion remoteMessages, NamespaceConfig previousConfig) {
 
         String path = "configs/%s/%s/%s/%s";
         List<String> pathParams =
@@ -289,18 +289,18 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
      * 提交给 长连接版本控制
      */
     private void scheduleLongPollingRefresh() {
-        timerTask4LongPollRemoteConfig.submit(m_namespace, this);
+        timerTask4LongPollRemoteConfig.submit(namespaceName, this);
     }
 
     /**
      * 拉取 config端的 版本变更通知， 然后再 拉取 最新的配置
      *
      * @param longPollNotifiedServiceDto
-     * @param remoteMessages
+     * @param longNamespaceVersion
      */
-    public void onLongPollNotified(ServiceDTO longPollNotifiedServiceDto, ApolloNotificationMessages remoteMessages) {
+    public void onLongPollNotified(ServiceDTO longPollNotifiedServiceDto, LongNamespaceVersion longNamespaceVersion) {
         m_longPollServiceDto.set(longPollNotifiedServiceDto);
-        m_remoteMessages.set(remoteMessages);
+        this.longNamespaceVersion.set(longNamespaceVersion);
         m_executorService.submit(new Runnable() {
             @Override
             public void run() {

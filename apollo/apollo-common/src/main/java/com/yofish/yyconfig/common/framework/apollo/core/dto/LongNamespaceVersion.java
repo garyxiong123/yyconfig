@@ -27,54 +27,53 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
- * @Description: 客户端 通知的消息
+ * @Description: 客户端 通知的消息  namespaces的版本 集合
  */
 @Data
-public class ApolloNotificationMessages {
+public class LongNamespaceVersion {
     public static Gson gson = new Gson();
 
     /**
      * key = 项目+集群+环境+namespace，   value id
      */
-    private Map<String, Long> details;
+    private Map<String, Long> longNsVersionMap;
 
-    public ApolloNotificationMessages() {
+    public LongNamespaceVersion() {
         this(Maps.<String, Long>newHashMap());
     }
 
-    private ApolloNotificationMessages(Map<String, Long> details) {
-        this.details = details;
+    private LongNamespaceVersion(Map<String, Long> longNsVersionMap) {
+        this.longNsVersionMap = longNsVersionMap;
     }
 
-    public static ApolloNotificationMessages buildMessages(String messagesAsString) {
+    public static LongNamespaceVersion buildLongNamespaceVersion(String longNsVersionMapString) {
         Gson gson = new Gson();
-        ApolloNotificationMessages notificationMessages = null;
-        if (!isNullOrEmpty(messagesAsString)) {
+        LongNamespaceVersion longNamespaceVersion = null;
+        if (!isNullOrEmpty(longNsVersionMapString)) {
             try {
-                notificationMessages = gson.fromJson(messagesAsString, ApolloNotificationMessages.class);
+                longNamespaceVersion = gson.fromJson(longNsVersionMapString, LongNamespaceVersion.class);
             } catch (Throwable ex) {
                 Tracer.logError(ex);
             }
         }
 
-        return notificationMessages;
+        return longNamespaceVersion;
     }
 
     /**
      * 消息合并
      *
-     * @param source
+     * @param longNamespaceVersion
      */
 
-    public void mergeFrom(ApolloNotificationMessages source) {
-        if (source == null) {
+    public void mergeFrom(LongNamespaceVersion longNamespaceVersion) {
+        if (longNamespaceVersion == null) {
             return;
         }
 
-        for (Map.Entry<String, Long> entry : source.getDetails().entrySet()) {
+        for (Map.Entry<String, Long> entry : longNamespaceVersion.getLongNsVersionMap().entrySet()) {
             //to make sure the notification id always grows bigger
-            if (this.has(entry.getKey()) &&
-                    this.get(entry.getKey()) >= entry.getValue()) {
+            if (this.has(entry.getKey()) && this.get(entry.getKey()) >= entry.getValue()) {
                 continue;
             }
             this.put(entry.getKey(), entry.getValue());
@@ -83,23 +82,23 @@ public class ApolloNotificationMessages {
 
 
     public void put(String key, long notificationId) {
-        details.put(key, notificationId);
+        longNsVersionMap.put(key, notificationId);
     }
 
     public Long get(String key) {
-        return this.details.get(key);
+        return this.longNsVersionMap.get(key);
     }
 
     public boolean has(String key) {
-        return this.details.containsKey(key);
+        return this.longNsVersionMap.containsKey(key);
     }
 
     public boolean isEmpty() {
-        return this.details.isEmpty();
+        return this.longNsVersionMap.isEmpty();
     }
 
 
-    public ApolloNotificationMessages clone() {
-        return new ApolloNotificationMessages(ImmutableMap.copyOf(this.details));
+    public LongNamespaceVersion clone() {
+        return new LongNamespaceVersion(ImmutableMap.copyOf(this.longNsVersionMap));
     }
 }

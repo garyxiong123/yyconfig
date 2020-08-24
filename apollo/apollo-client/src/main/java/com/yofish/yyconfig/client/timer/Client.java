@@ -15,8 +15,8 @@ import com.yofish.yyconfig.client.lifecycle.preboot.inject.ApolloInjector;
 import com.yofish.yyconfig.client.lifecycle.preboot.internals.ClientConfig;
 import com.yofish.yyconfig.client.repository.RemoteConfigRepository;
 import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
-import com.yofish.yyconfig.common.framework.apollo.core.dto.ApolloNotificationMessages;
-import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceChangeNotification;
+import com.yofish.yyconfig.common.framework.apollo.core.dto.LongNamespaceVersion;
+import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceVersion;
 import com.yofish.yyconfig.common.framework.apollo.core.dto.ServiceDTO;
 import com.yofish.yyconfig.common.framework.apollo.core.enums.ConfigFileFormat;
 import com.yofish.yyconfig.common.framework.apollo.core.schedule.ExponentialSchedulePolicy;
@@ -52,9 +52,9 @@ public class Client {
     private static final Escaper queryParamEscaper = UrlEscapers.urlFormParameterEscaper();
     private static final Logger logger = LoggerFactory.getLogger(TimerTask4LongPollRemoteConfig.class);
     private static final int LONG_POLLING_READ_TIMEOUT = 90 * 1000;
-    private final Map<String, ApolloNotificationMessages> m_remoteNotificationMessages;//namespaceName -> watchedKey -> notificationId
+    private final Map<String, LongNamespaceVersion> longNamespaceVersionMap;//namespaceName -> watchedKey -> notificationId
     private Type m_responseType;
-    private final Multimap<String, RemoteConfigRepository> m_longPollNamespaces;
+    private final Multimap<String, RemoteConfigRepository> remoteConfigRepositoryMap;
     private final ConcurrentMap<String, Long> namespaceVersionMap;
     private HttpUtil m_httpUtil;
     private Gson gson;
@@ -69,9 +69,9 @@ public class Client {
     public Client() {
         m_longPollFailSchedulePolicyInSecond = new ExponentialSchedulePolicy(1, 120); //in second
 
-        m_remoteNotificationMessages = Maps.newConcurrentMap();
-        m_responseType = new TypeToken<List<NamespaceChangeNotification>>() {}.getType();
-        m_longPollNamespaces = Multimaps.synchronizedSetMultimap(HashMultimap.<String, RemoteConfigRepository>create());
+        longNamespaceVersionMap = Maps.newConcurrentMap();
+        m_responseType = new TypeToken<List<NamespaceVersion>>() {}.getType();
+        remoteConfigRepositoryMap = Multimaps.synchronizedSetMultimap(HashMultimap.<String, RemoteConfigRepository>create());
         namespaceVersionMap = Maps.newConcurrentMap();
 
         clientConfig = ApolloInjector.getInstance(ClientConfig.class);
@@ -81,7 +81,7 @@ public class Client {
     }
 
 
-    public void doLongPollingRefresh() {
+    public void nsVersionCompareAndSyncConfig() {
         final Random random = new Random();
 
         String url = null;
@@ -90,7 +90,7 @@ public class Client {
 
             lastServiceDto = clientConfig.buildServiceDTO();
 
-            url = assembleLongPollRefreshUrl(clientConfig.getConfigServerUrl(), appId, cluster, env, dataCenter, namespaceVersionMap);
+            url = assembleLongPollRefreshUrl();
 
             logger.debug("Long polling from {}", url);
             HttpRequest request = new HttpRequest(url);
@@ -99,17 +99,17 @@ public class Client {
             /**
              * 获取 变更的版本
              */
-            final HttpResponse<List<NamespaceChangeNotification>> response = m_httpUtil.doGet(request, m_responseType);
+            final HttpResponse<List<NamespaceVersion>> response = m_httpUtil.doGet(request, m_responseType);
 
             logger.debug("Long polling response: {}, url: {}", response.getStatusCode(), url);
             if (response.getStatusCode() == 200 && response.getBody() != null) {
                 //如果有版本变更 ，
-                List<NamespaceChangeNotification> namespaceChanges = response.getBody();
+                List<NamespaceVersion> newNamespaceVersions = response.getBody();
 
-                updateNamespaceVersionMap(namespaceChanges);
-                updateRemoteNotifications(namespaceChanges);
+                updateNamespaceVersionMap(newNamespaceVersions);
+                updateRemoteNotifications(newNamespaceVersions);
 
-                notify(lastServiceDto, namespaceChanges);
+                notify(lastServiceDto, newNamespaceVersions);
             }
 
             //try to load balance
@@ -136,19 +136,19 @@ public class Client {
     }
 
 
-    private void notify(ServiceDTO lastServiceDto, List<NamespaceChangeNotification> notifications) {
-        if (notifications == null || notifications.isEmpty()) {
+    private void notify(ServiceDTO lastServiceDto, List<NamespaceVersion> newNamespaceVersions) {
+        if (newNamespaceVersions == null || newNamespaceVersions.isEmpty()) {
             return;
         }
-        for (NamespaceChangeNotification notification : notifications) {
-            String namespaceName = notification.getNamespaceName();
+        for (NamespaceVersion newNamespaceVersion : newNamespaceVersions) {
+            String namespaceName = newNamespaceVersion.getNamespaceName();
             //create a new list to avoid ConcurrentModificationException
-            List<RemoteConfigRepository> toBeNotified = Lists.newArrayList(m_longPollNamespaces.get(namespaceName));
+            List<RemoteConfigRepository> toBeNotified = Lists.newArrayList(remoteConfigRepositoryMap.get(namespaceName));
 
-            ApolloNotificationMessages originalMessages = m_remoteNotificationMessages.get(namespaceName);
-            ApolloNotificationMessages remoteMessages = originalMessages == null ? null : originalMessages.clone();
+            LongNamespaceVersion longNamespaceVersion = longNamespaceVersionMap.get(namespaceName);
+            LongNamespaceVersion remoteMessages = longNamespaceVersion == null ? null : longNamespaceVersion.clone();
             //since .properties are filtered out by default, so we need to check if there is any listener for it
-            toBeNotified.addAll(m_longPollNamespaces.get(String.format("%s.%s", namespaceName, ConfigFileFormat.Properties.getValue())));
+            toBeNotified.addAll(remoteConfigRepositoryMap.get(String.format("%s.%s", namespaceName, ConfigFileFormat.Properties.getValue())));
 
             for (RemoteConfigRepository remoteConfigRepository : toBeNotified) {
                 try {
@@ -163,10 +163,10 @@ public class Client {
     /**
      * 更新本地 版本管理的缓存
      *
-     * @param namespaceChangeNotifications
+     * @param namespaceVersions
      */
-    private void updateNamespaceVersionMap(List<NamespaceChangeNotification> namespaceChangeNotifications) {
-        for (NamespaceChangeNotification namespaceChange : namespaceChangeNotifications) {
+    private void updateNamespaceVersionMap(List<NamespaceVersion> namespaceVersions) {
+        for (NamespaceVersion namespaceChange : namespaceVersions) {
             if (Strings.isNullOrEmpty(namespaceChange.getNamespaceName())) {
                 continue;
             }
@@ -183,35 +183,34 @@ public class Client {
         }
     }
 
-    private void updateRemoteNotifications(List<NamespaceChangeNotification> namespaceChangeNotifications) {
-        for (NamespaceChangeNotification namespaceChange : namespaceChangeNotifications) {
-            if (Strings.isNullOrEmpty(namespaceChange.getNamespaceName())) {
+    private void updateRemoteNotifications(List<NamespaceVersion> namespaceVersions) {
+        for (NamespaceVersion newNamespaceVersion : namespaceVersions) {
+            if (Strings.isNullOrEmpty(newNamespaceVersion.getNamespaceName())) {
                 continue;
             }
 
-            if (namespaceChange.getMessages() == null || namespaceChange.getMessages().isEmpty()) {
+            if (newNamespaceVersion.getLongNamespaceVersion() == null || newNamespaceVersion.getLongNamespaceVersion().isEmpty()) {
                 continue;
             }
 
-            ApolloNotificationMessages localRemoteMessages = m_remoteNotificationMessages.get(namespaceChange.getNamespaceName());
+            LongNamespaceVersion localRemoteMessages = longNamespaceVersionMap.get(newNamespaceVersion.getNamespaceName());
 
             if (localRemoteMessages == null) {
-                localRemoteMessages = new ApolloNotificationMessages();
-                m_remoteNotificationMessages.put(namespaceChange.getNamespaceName(), localRemoteMessages);
+                localRemoteMessages = new LongNamespaceVersion();
+                longNamespaceVersionMap.put(newNamespaceVersion.getNamespaceName(), localRemoteMessages);
             }
 
-            localRemoteMessages.mergeFrom(namespaceChange.getMessages());
+            localRemoteMessages.mergeFrom(newNamespaceVersion.getLongNamespaceVersion());
         }
     }
 
 
-    String assembleLongPollRefreshUrl(String uri, String appId, String cluster, String env, String dataCenter,
-                                      Map<String, Long> notificationsMap) {
+    String assembleLongPollRefreshUrl() {
         Map<String, String> queryParams = Maps.newHashMap();
         queryParams.put("appId", queryParamEscaper.escape(appId));
         queryParams.put("cluster", queryParamEscaper.escape(cluster));
         queryParams.put("env", queryParamEscaper.escape(env));
-        queryParams.put("notifications", queryParamEscaper.escape(assembleNotifications(notificationsMap)));
+        queryParams.put("notifications", queryParamEscaper.escape(assembleNsVersionsMapString()));
 
         if (!Strings.isNullOrEmpty(dataCenter)) {
             queryParams.put("dataCenter", queryParamEscaper.escape(dataCenter));
@@ -222,7 +221,8 @@ public class Client {
         }
 
         String params = MAP_JOINER.join(queryParams);
-        if (!uri.endsWith("/")) {
+        String uri = clientConfig.getConfigServerUrl();
+        if (!clientConfig.getConfigServerUrl().endsWith("/")) {
             uri += "/";
         }
 
@@ -231,22 +231,22 @@ public class Client {
 
 
     private String assembleNamespaces() {
-        return STRING_JOINER.join(m_longPollNamespaces.keySet());
+        return STRING_JOINER.join(remoteConfigRepositoryMap.keySet());
     }
 
 
-    String assembleNotifications(Map<String, Long> notificationsMap) {
-        List<NamespaceChangeNotification> notifications = Lists.newArrayList();
-        for (Map.Entry<String, Long> entry : notificationsMap.entrySet()) {
-            NamespaceChangeNotification notification = new NamespaceChangeNotification(entry.getKey(), entry.getValue());
-            notifications.add(notification);
+    String assembleNsVersionsMapString() {
+        List<NamespaceVersion> namespaceVersions = Lists.newArrayList();
+        for (Map.Entry<String, Long> entry : namespaceVersionMap.entrySet()) {
+            NamespaceVersion nsVersion = new NamespaceVersion(entry.getKey(), entry.getValue());
+            namespaceVersions.add(nsVersion);
         }
-        return gson.toJson(notifications);
+        return gson.toJson(namespaceVersions);
     }
 
 
-    public boolean submit(String namespace, RemoteConfigRepository remoteConfigRepository) {
-        boolean added = m_longPollNamespaces.put(namespace, remoteConfigRepository);
+    public boolean addConfigRepository(String namespace, RemoteConfigRepository remoteConfigRepository) {
+        boolean added = remoteConfigRepositoryMap.put(namespace, remoteConfigRepository);
         namespaceVersionMap.putIfAbsent(namespace, INIT_NOTIFICATION_ID);
         return added;
     }

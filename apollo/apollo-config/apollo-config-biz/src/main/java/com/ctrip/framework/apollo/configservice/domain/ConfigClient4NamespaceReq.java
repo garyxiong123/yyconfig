@@ -1,4 +1,4 @@
-package com.ctrip.framework.apollo.configservice.controller;
+package com.ctrip.framework.apollo.configservice.domain;
 
 import com.ctrip.framework.apollo.configservice.controller.timer.AppNamespaceCache;
 import com.ctrip.framework.apollo.configservice.pattern.strategy.loadRelease.ClientLoadReleaseStrategy;
@@ -7,9 +7,7 @@ import com.yofish.apollo.domain.AppEnvClusterNamespace;
 import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.domain.Release;
 import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
-import com.yofish.yyconfig.common.framework.apollo.core.dto.ApolloNotificationMessages;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.yofish.yyconfig.common.framework.apollo.core.dto.LongNamespaceVersion;
 
 import java.util.List;
 import java.util.Objects;
@@ -20,30 +18,22 @@ import static com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts.NO_A
 /**
  * @Author: xiongchengwei
  * @version:
- * @Description: config 端的 Client 配置抽象
- * @Date: 2020/8/18 下午4:04
+ * @Description: 类的主要职责说明
+ * @Date: 2020/8/22 下午11:04
  */
-@Data
-@NoArgsConstructor
-public class ConfigClient {
-    public String appId;
-    public String clusterName;
-    public String env;
-    public String namespace;
-    public String dataCenter;
-    public String clientIp;
-    public ApolloNotificationMessages clientMessages;
+public class ConfigClient4NamespaceReq extends ConfigClient {
 
-    public ConfigClient(String appId, String clusterName, String env, String namespace, String dataCenter, String clientIp, String clientMessage) {
-        this.appId = appId;
-        this.clusterName = clusterName;
-        this.env = env;
-        this.namespace = namespace;
-        this.dataCenter = dataCenter;
-        this.clientIp = clientIp;
-        this.clientMessages = ApolloNotificationMessages.buildMessages(clientMessage);
+    public String namespace;
+    public LongNamespaceVersion clientMessages;
+
+    public ConfigClient4NamespaceReq() {
     }
 
+    public ConfigClient4NamespaceReq(String appId, String clusterName, String env, String namespace, String dataCenter, String clientIp, String longNsVersionMapString) {
+        super(appId, clusterName, env, dataCenter, clientIp);
+        this.namespace = namespace;
+        this.clientMessages = LongNamespaceVersion.buildLongNamespaceVersion(longNsVersionMapString);
+    }
 
     /**
      * 查找该client 的所有的releases
@@ -89,7 +79,7 @@ public class ConfigClient {
     }
 
     private Release findPublicConfig(String clientAppId, String clientIp, String clusterName, String env,
-                                     String namespace, String dataCenter, ApolloNotificationMessages clientMessages) {
+                                     String namespace, String dataCenter, LongNamespaceVersion clientMessages) {
         AppNamespace appNamespace = getBeanByClass4Context(AppNamespaceCache.class).findPublicNamespaceByName(namespace);
 
         //check whether the appNamespace's appCode equals to current one
@@ -100,6 +90,5 @@ public class ConfigClient {
 
         return clusterNamespace.findLatestActiveRelease();
     }
-
 
 }

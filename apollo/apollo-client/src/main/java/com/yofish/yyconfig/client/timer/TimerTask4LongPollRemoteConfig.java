@@ -64,26 +64,27 @@ public class TimerTask4LongPollRemoteConfig {
 
         m_serviceLocator = ApolloInjector.getInstance(ConfigServiceLocator.class);
         m_longPollRateLimiter = RateLimiter.create(clientConfig.getLongPollQPS());
-        client = ApolloInjector.getInstance(Client.class);
+//        client = ApolloInjector.getInstance(Client.class);
+        client = clientConfig.getOrCreateClient();
+
     }
 
     public boolean submit(String namespace, RemoteConfigRepository remoteConfigRepository) {
-        boolean added = client.submit(namespace, remoteConfigRepository);
+        boolean added = client.addConfigRepository(namespace, remoteConfigRepository);
 
         if (!m_longPollStarted.get()) {
-            startLongPolling();
+            startLongPollRemoteConfig();
         }
         return added;
     }
 
-    private void startLongPolling() {
+    private void startLongPollRemoteConfig() {
         if (!m_longPollStarted.compareAndSet(false, true)) {
             //already started
             return;
         }
         try {
 
-            Client client = clientConfig.buildClient();
 
             final long longPollingInitialDelayInMills = clientConfig.getLongPollingInitialDelayInMills();
             m_longPollingService.submit(() -> {
@@ -102,7 +103,7 @@ public class TimerTask4LongPollRemoteConfig {
                         } catch (InterruptedException e) {
                         }
                     }
-                    client.doLongPollingRefresh();
+                    client.nsVersionCompareAndSyncConfig();
                 }
             });
         } catch (Throwable ex) {

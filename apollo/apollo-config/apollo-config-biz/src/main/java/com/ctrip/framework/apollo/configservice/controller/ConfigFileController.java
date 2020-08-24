@@ -18,8 +18,8 @@ package com.ctrip.framework.apollo.configservice.controller;
 import com.ctrip.framework.apollo.configservice.api.dto.ConfigReqDto;
 import com.ctrip.framework.apollo.configservice.api.dto.ConfigReqDto4Json;
 import com.ctrip.framework.apollo.configservice.api.dto.ConfigReqDto4Properties;
-import com.ctrip.framework.apollo.configservice.util.NamespaceUtil;
-import com.ctrip.framework.apollo.configservice.util.WatchKeysUtil;
+import com.ctrip.framework.apollo.configservice.util.NamespaceNormalizer;
+import com.ctrip.framework.apollo.configservice.util.LongNamespaceNameUtil;
 import com.google.common.cache.*;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -61,9 +61,9 @@ public class ConfigFileController implements ReleaseMessageListener {
     private final Multimap<String, String> cacheKey2WatchedKeys = Multimaps.synchronizedSetMultimap(HashMultimap.create());
 
     @Autowired
-    private NamespaceUtil namespaceUtil;
+    private NamespaceNormalizer namespaceNormalizer;
     @Autowired
-    private WatchKeysUtil watchKeysUtil;
+    private LongNamespaceNameUtil longNamespaceNameUtil;
     @Autowired
     private HttpServletRequest request;
 
@@ -127,7 +127,7 @@ public class ConfigFileController implements ReleaseMessageListener {
 
 
     private String paramsCheckAndFilter(ConfigReqDto configReqDto) {
-        namespaceUtil.filterAndNormalizeNamespace(configReqDto.getAppId(), configReqDto.getNamespace());
+        namespaceNormalizer.normalizeNamespaceName(configReqDto.getAppId(), configReqDto.getNamespace());
         String cacheKey = configReqDto.assembleCacheKey();
 
         if (isNullOrEmpty(configReqDto.getClientIp())) {
@@ -141,7 +141,7 @@ public class ConfigFileController implements ReleaseMessageListener {
         localCache.put(cacheKey, queryConfigRs);
         log.debug("adding cache for key: {}", cacheKey);
 
-        Set<String> watchedKeys = watchKeysUtil.assembleAllWatchKeys(configReqDto.getAppId(), configReqDto.getClusterName(), configReqDto.getAppId(), configReqDto.getNamespace(), configReqDto.getDataCenter());
+        Set<String> watchedKeys = longNamespaceNameUtil.assembleLongNamespaceNameSet(configReqDto.getAppId(), configReqDto.getClusterName(), configReqDto.getAppId(), configReqDto.getNamespace(), configReqDto.getDataCenter());
 
         for (String watchedKey : watchedKeys) {
             watchedKeys2CacheKey.put(watchedKey, cacheKey);

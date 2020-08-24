@@ -2,7 +2,7 @@ package com.ctrip.framework.apollo.configservice.repo;
 
 import com.yofish.apollo.domain.Release;
 import com.yofish.apollo.pattern.listener.releasemessage.ReleaseMessageListener;
-import com.yofish.yyconfig.common.framework.apollo.core.dto.ApolloNotificationMessages;
+import com.yofish.yyconfig.common.framework.apollo.core.dto.LongNamespaceVersion;
 
 /**
  * @Author: xiongchengwei
@@ -16,12 +16,12 @@ public interface ReleaseRepo extends ReleaseMessageListener {
     /**
      * Find active release by id
      */
-    Release findActiveOne(long id, ApolloNotificationMessages clientMessages);
+    Release findActiveOne(long id, LongNamespaceVersion clientMessages);
 
     /**
      * Find active release by app id, cluster name and appNamespace name
      */
     Release findLatestActiveRelease(String configAppId, String configClusterName, String env,
-                                    String configNamespaceName, ApolloNotificationMessages clientMessages);
+                                    String configNamespaceName, LongNamespaceVersion clientMessages);
 
 }

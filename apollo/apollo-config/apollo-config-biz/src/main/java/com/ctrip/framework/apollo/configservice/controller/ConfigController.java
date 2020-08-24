@@ -15,8 +15,9 @@
  */
 package com.ctrip.framework.apollo.configservice.controller;
 
+import com.ctrip.framework.apollo.configservice.domain.ConfigClient4NamespaceReq;
 import com.ctrip.framework.apollo.configservice.pattern.pool.HeartBeatPool;
-import com.ctrip.framework.apollo.configservice.util.NamespaceUtil;
+import com.ctrip.framework.apollo.configservice.util.NamespaceNormalizer;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -44,7 +45,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 @RequestMapping("/configs")
 public class ConfigController {
     @Autowired
-    private NamespaceUtil namespaceUtil;
+    private NamespaceNormalizer namespaceNormalizer;
     @Autowired
     private HeartBeatPool heartBeatPool;
     @Autowired
@@ -59,18 +60,18 @@ public class ConfigController {
                                               @RequestParam(value = "dataCenter", required = false) String dataCenter,
                                               @RequestParam(value = "releaseKey", defaultValue = "-1") String clientSideReleaseKey,
                                               @RequestParam(value = "ip", required = false) String clientIp,
-                                              @RequestParam(value = "messages", required = false) String messagesAsString,
+                                              @RequestParam(value = "messages", required = false) String longNsVersionMapString,
                                               HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         String originalNamespace = namespace;
-        namespace = normalizeNamespaceName(appId, namespace);
+        namespace = namespaceNormalizer.normalizeNamespaceName(appId, namespace);
 
         if (isNullOrEmpty(clientIp)) {
             clientIp = tryToGetClientIp(request);
         }
 
 
-        ConfigClient configClient = new ConfigClient(appId, clusterName, env, namespace, dataCenter, clientIp, messagesAsString);
+        ConfigClient4NamespaceReq configClient = new ConfigClient4NamespaceReq(appId, clusterName, env, namespace, dataCenter, clientIp, longNsVersionMapString);
 
         List<Release> releases = configClient.findReleases4Client();
 
@@ -100,15 +101,6 @@ public class ConfigController {
     }
 
 
-    private String normalizeNamespaceName(@PathVariable String appId, @PathVariable String namespace) {
-        //strip out .properties suffix
-        namespace = namespaceUtil.subSuffix4Properties(namespace);
-        //fix the character case issue, such as FX.apollo <-> fx.apollo
-        namespace = namespaceUtil.fixCapsLook4NamespaceName(appId, namespace);
-        return namespace;
-    }
-
-
     /**
      * 生成发布配置：继承关系，需要多个Map进行合并
      */
@@ -130,6 +122,7 @@ public class ConfigController {
 
     /**
      * 发送心跳，刷新心跳实例
+     *
      * @param namespaceBo
      * @param clientIp
      * @param releases
