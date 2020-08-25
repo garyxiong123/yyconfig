@@ -63,7 +63,7 @@ public class LongNamespaceNameUtil {
                                                                  String dataCenter) {
         Multimap<String, String> watchedKeysMap = assembleWatchKeys(appId, clusterName, env, namespaces, dataCenter);
 
-        //Every app has an 'application' appNamespace
+        //Every app has an 'application' appNamespace  过滤调
         if (!(namespaces.size() == 1 && namespaces.contains(ConfigConsts.NAMESPACE_APPLICATION))) {
             Set<String> namespacesBelongToAppId = appNamespaceCache.namespacesBelongToAppId(appId, namespaces);
             Set<String> publicNamespaces = Sets.difference(namespaces, namespacesBelongToAppId);

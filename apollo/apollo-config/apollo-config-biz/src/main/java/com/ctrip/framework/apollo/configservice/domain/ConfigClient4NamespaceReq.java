@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass4Context;
+import static com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts.CLUSTER_NAME_DEFAULT;
 import static com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts.NO_APPID_PLACEHOLDER;
 
 /**
@@ -86,7 +87,7 @@ public class ConfigClient4NamespaceReq extends ConfigClient {
         if (Objects.isNull(appNamespace) || Objects.equals(clientAppId, appNamespace.getApp().getId())) {
             return null;
         }
-        AppEnvClusterNamespace clusterNamespace = appNamespace.getNamespaceByEnv(env, clusterName, "main");
+        AppEnvClusterNamespace clusterNamespace = appNamespace.getNamespaceByEnv(env, CLUSTER_NAME_DEFAULT, "main");
 
         return clusterNamespace.findLatestActiveRelease();
     }

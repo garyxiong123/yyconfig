@@ -42,7 +42,7 @@ public class VersionMonitor4Namespace {
      */
     public VersionMonitor4Namespace() {
         m_longPollingStopped = new AtomicBoolean(false);
-        m_longPollingService = Executors.newSingleThreadExecutor(ApolloThreadFactory.create("TimerTask4LongPollNewNamespaceVersions", true));
+        m_longPollingService = Executors.newSingleThreadExecutor(ApolloThreadFactory.create("VersionMonitor4Namespace", true));
         m_longPollStarted = new AtomicBoolean(false);
 
         clientConfig = ApolloInjector.getInstance(ClientConfig.class);

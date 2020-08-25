@@ -107,7 +107,7 @@ public class Client {
                 List<NamespaceVersion> newNamespaceVersions = response.getBody();
 
                 updateNamespaceVersionMap(newNamespaceVersions);
-                updateRemoteNotifications(newNamespaceVersions);
+                updateLongNamespaceVersionMap(newNamespaceVersions);
 
                 notify(lastServiceDto, newNamespaceVersions);
             }
@@ -146,13 +146,13 @@ public class Client {
             List<RemoteConfigRepository> toBeNotified = Lists.newArrayList(remoteConfigRepositoryMap.get(namespaceName));
 
             LongNamespaceVersion longNamespaceVersion = longNamespaceVersionMap.get(namespaceName);
-            LongNamespaceVersion remoteMessages = longNamespaceVersion == null ? null : longNamespaceVersion.clone();
+            LongNamespaceVersion longNsVersion4Remote = longNamespaceVersion == null ? null : longNamespaceVersion.clone();
             //since .properties are filtered out by default, so we need to check if there is any listener for it
             toBeNotified.addAll(remoteConfigRepositoryMap.get(String.format("%s.%s", namespaceName, ConfigFileFormat.Properties.getValue())));
 
             for (RemoteConfigRepository remoteConfigRepository : toBeNotified) {
                 try {
-                    remoteConfigRepository.onLongPollNotified(lastServiceDto, remoteMessages);
+                    remoteConfigRepository.onLongPollNotified(lastServiceDto, longNsVersion4Remote);
                 } catch (Throwable ex) {
                     Tracer.logError(ex);
                 }
@@ -183,7 +183,7 @@ public class Client {
         }
     }
 
-    private void updateRemoteNotifications(List<NamespaceVersion> namespaceVersions) {
+    private void updateLongNamespaceVersionMap(List<NamespaceVersion> namespaceVersions) {
         for (NamespaceVersion newNamespaceVersion : namespaceVersions) {
             if (Strings.isNullOrEmpty(newNamespaceVersion.getNamespaceName())) {
                 continue;

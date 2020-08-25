@@ -69,6 +69,11 @@ public class UserController implements ApplicationContextAware {
     @ApolloConfig("application")
     private Config config;
 
+    @ApolloConfig("DefaultDepartment.webdb")
+    private Config config1;
+    @ApolloConfig("DefaultDepartment.eurake")
+    private Config config2;
+
 //    @ApolloConfig("testJson")
 //    private Config testJsonConfig;
 
@@ -108,6 +113,10 @@ public class UserController implements ApplicationContextAware {
         System.out.println("redis:" + redis);
 
         System.out.println(config);
+        System.out.println(config1);
+        System.out.println(config2);
+
+
 
 
 //        System.out.println(testJsonConfig);
