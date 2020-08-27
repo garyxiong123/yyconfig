@@ -22,8 +22,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 定时任务： 客户端 建立config端的长连接:  b
  */
 @Slf4j
-public class VersionMonitor4Namespace {
-    private static final Logger logger = LoggerFactory.getLogger(VersionMonitor4Namespace.class);
+public class VersionMonitor {
+    private static final Logger logger = LoggerFactory.getLogger(VersionMonitor.class);
     //90 seconds, should be longer than server side's long polling timeout, which is now 60 seconds
 
     private final ExecutorService m_longPollingService;
@@ -40,7 +40,7 @@ public class VersionMonitor4Namespace {
     /**
      * Constructor.
      */
-    public VersionMonitor4Namespace() {
+    public VersionMonitor() {
         m_longPollingStopped = new AtomicBoolean(false);
         m_longPollingService = Executors.newSingleThreadExecutor(ApolloThreadFactory.create("VersionMonitor4Namespace", true));
         m_longPollStarted = new AtomicBoolean(false);

@@ -13,16 +13,8 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.ctrip.framework.apollo.configservice.config;
+package com.ctrip.framework.apollo.configservice.component.config;
 
-import com.ctrip.framework.apollo.configservice.pattern.strategy.loadRelease.ClientLoadReleaseStrategy;
-import com.ctrip.framework.apollo.configservice.pattern.strategy.loadRelease.ClientLoadReleaseStrategy4Normal;
-import com.ctrip.framework.apollo.configservice.repo.ReleaseRepo;
-import com.ctrip.framework.apollo.configservice.repo.ReleaseRepo4Cache;
-import com.ctrip.framework.apollo.configservice.repo.ReleaseRepo4NoCache;
-import com.yofish.apollo.service.PortalConfig;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -39,13 +31,7 @@ public class ConfigServiceAutoConfiguration {
 //    return new GrayReleaseRulesHolder();
 //  }
 
-    @Bean
-    public ReleaseRepo configService() {
-//        if (bizConfig.isConfigServiceCacheEnabled()) {
-            return new ReleaseRepo4Cache();
-//        }
-//        return new ReleaseRepo4NoCache();
-    }
+
 
 
 }

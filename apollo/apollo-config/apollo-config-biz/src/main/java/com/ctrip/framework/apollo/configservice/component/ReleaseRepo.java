@@ -1,4 +1,4 @@
-package com.ctrip.framework.apollo.configservice.repo;
+package com.ctrip.framework.apollo.configservice.component;
 
 import com.yofish.apollo.domain.Release;
 import com.yofish.apollo.pattern.listener.releasemessage.ReleaseMessageListener;

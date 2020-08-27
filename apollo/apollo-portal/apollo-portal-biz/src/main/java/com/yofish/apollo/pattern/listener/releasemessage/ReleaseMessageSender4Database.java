@@ -81,7 +81,7 @@ public class ReleaseMessageSender4Database implements ReleaseMessageSender {
                     if (rm != null) {
                         cleanMessage(rm);
                     } else {
-                        TimeUnit.SECONDS.sleep(5);
+                        TimeUnit.SECONDS.sleep(500);
                     }
                 } catch (Throwable ex) {
                     Tracer.logError(ex);

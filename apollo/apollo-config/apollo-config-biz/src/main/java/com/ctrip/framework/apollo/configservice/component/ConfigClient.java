@@ -1,21 +1,10 @@
-package com.ctrip.framework.apollo.configservice.domain;
+package com.ctrip.framework.apollo.configservice.component;
 
-import com.ctrip.framework.apollo.configservice.controller.timer.AppNamespaceCache;
-import com.ctrip.framework.apollo.configservice.pattern.strategy.loadRelease.ClientLoadReleaseStrategy;
-import com.google.common.collect.Lists;
-import com.yofish.apollo.domain.AppEnvClusterNamespace;
-import com.yofish.apollo.domain.AppNamespace;
-import com.yofish.apollo.domain.Release;
 import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
-import com.yofish.yyconfig.common.framework.apollo.core.dto.LongNamespaceVersion;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 import java.util.Objects;
-
-import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass4Context;
-import static com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts.NO_APPID_PLACEHOLDER;
 
 /**
  * @Author: xiongchengwei
@@ -43,6 +32,10 @@ public class ConfigClient {
 
     }
 
+
+    public boolean isDefaultCluster() {
+        return Objects.equals(ConfigConsts.CLUSTER_NAME_DEFAULT, clusterName);
+    }
 
 
 

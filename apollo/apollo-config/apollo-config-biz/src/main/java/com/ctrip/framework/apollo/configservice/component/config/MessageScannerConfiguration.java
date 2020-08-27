@@ -13,15 +13,15 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.ctrip.framework.apollo.configservice.config;
+package com.ctrip.framework.apollo.configservice.component.config;
 
 import com.ctrip.framework.apollo.configservice.controller.ConfigFileController;
-import com.ctrip.framework.apollo.configservice.controller.ClientWatchRegisterController;
-import com.ctrip.framework.apollo.configservice.controller.listener.ReleaseMessageListener4Registry;
-import com.ctrip.framework.apollo.configservice.controller.timer.ReleaseMessageServiceWithCache;
-import com.ctrip.framework.apollo.configservice.pattern.strategy.loadRelease.ClientLoadReleaseStrategy;
-import com.ctrip.framework.apollo.configservice.repo.ReleaseRepo4Cache;
-import com.yofish.apollo.controller.timer.ReleaseMessageScanner;
+import com.ctrip.framework.apollo.configservice.pattern.listener.ReleaseMessageListener4Registry;
+import com.ctrip.framework.apollo.configservice.cache.ReleaseMessageCache;
+import com.ctrip.framework.apollo.configservice.controller.timer.sync.TimerTask4SyncReleaseMessage2Cache;
+import com.ctrip.framework.apollo.configservice.component.ReleaseRepo;
+import com.ctrip.framework.apollo.configservice.cache.ReleaseCache;
+import com.ctrip.framework.apollo.configservice.controller.timer.ReleaseMessageScanner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,32 +36,30 @@ public class MessageScannerConfiguration {
 //        private NotificationController notificationController;
     @Autowired
     private ConfigFileController configFileController;
-    @Autowired
-    private ClientWatchRegisterController clientWatchRegisterController;
     //    @Autowired
 //    private GrayReleaseRulesHolder grayReleaseRulesHolder;
     @Autowired
-    private ReleaseMessageServiceWithCache releaseMessageServiceWithCache;
+    private TimerTask4SyncReleaseMessage2Cache timerTask4SyncReleaseMessage2Cache;
     @Autowired
-    private ClientLoadReleaseStrategy clientLoadReleaseStrategy;
+    private ReleaseMessageCache releaseMessageCache;
     @Autowired
     private ReleaseMessageListener4Registry releaseMessageListener4Registry;
     @Autowired
-    private ReleaseRepo4Cache releaseRepo4Cache;
+    private ReleaseCache releaseCache;
 
     @Bean
     public ReleaseMessageScanner releaseMessageScanner() {
         ReleaseMessageScanner releaseMessageScanner = new ReleaseMessageScanner();
         //0. handle release message cache
-        releaseMessageScanner.addMessageListener(releaseMessageServiceWithCache);
+        releaseMessageScanner.addMessageListener(releaseMessageCache);
 
 
         //1. handle gray release rule
 //      releaseMessageScanner.addMessageListener(grayReleaseRulesHolder);
 
 
-        //2. handle server cache
-        releaseMessageScanner.addMessageListener(releaseRepo4Cache);
+        //2. handle config server cache
+        releaseMessageScanner.addMessageListener(releaseCache);
         releaseMessageScanner.addMessageListener(configFileController);
 
 
@@ -69,5 +67,14 @@ public class MessageScannerConfiguration {
         releaseMessageScanner.addMessageListener(releaseMessageListener4Registry);
 //            releaseMessageScanner.addMessageListener(notificationController);
         return releaseMessageScanner;
+    }
+
+
+    @Bean
+    public ReleaseRepo configService() {
+//        if (bizConfig.isConfigServiceCacheEnabled()) {
+        return new ReleaseCache();
+//        }
+//        return new ReleaseRepo4NoCache();
     }
 }

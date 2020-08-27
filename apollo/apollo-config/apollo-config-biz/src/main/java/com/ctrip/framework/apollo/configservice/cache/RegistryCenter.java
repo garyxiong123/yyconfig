@@ -1,6 +1,7 @@
-package com.ctrip.framework.apollo.configservice.domain;
+package com.ctrip.framework.apollo.configservice.cache;
 
-import com.ctrip.framework.apollo.configservice.wrapper.ClientConnection;
+import com.ctrip.framework.apollo.configservice.component.wrapper.ClientConnection;
+import com.ctrip.framework.apollo.configservice.domain.ConfigClient4Version;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -68,7 +69,7 @@ public class RegistryCenter {
      * @param clientConnection
      * @param longNsNames
      */
-    public void registerWatchedLongNsNames(ClientConnection clientConnection, Set<String> longNsNames) {
+    public void registerConnByLongNsNames(ClientConnection clientConnection, Set<String> longNsNames) {
         //register all keys
         for (String longNsName : longNsNames) {
             this.put(longNsName, clientConnection);
@@ -135,5 +136,16 @@ public class RegistryCenter {
             Tracer.logEvent(eventName, watchedKey);
         }
     }
+
+    public void unregister(Set<String> longNsNames, ClientConnection clientConnection) {
+        for (String longNsName : longNsNames) {
+            remove(longNsName, clientConnection);
+        }
+        logWatchedKeys(longNsNames, "Apollo.LongPoll.CompletedKeys");
+        this.registerConnByLongNsNames(clientConnection, longNsNames);
+
+    }
+
+
 
 }

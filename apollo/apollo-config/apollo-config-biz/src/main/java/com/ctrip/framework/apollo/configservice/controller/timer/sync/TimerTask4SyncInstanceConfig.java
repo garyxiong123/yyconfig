@@ -13,16 +13,17 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.ctrip.framework.apollo.configservice.pattern.pool;
+package com.ctrip.framework.apollo.configservice.controller.timer.sync;
 
-import com.ctrip.framework.apollo.configservice.config.InstanceConfigRefreshModel;
+import com.ctrip.framework.apollo.configservice.domain.InstanceConfigRefresh;
+import com.ctrip.framework.apollo.configservice.cache.InstanceConfigCache;
 import com.google.common.collect.Queues;
 import com.yofish.yyconfig.common.common.NamespaceBo;
 import com.yofish.yyconfig.common.framework.apollo.core.utils.ApolloThreadFactory;
 import com.yofish.yyconfig.common.framework.apollo.tracer.Tracer;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -33,27 +34,27 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * 实例配置心跳池，放入队列
  */
-@Service
-public class HeartBeatPool implements InitializingBean {
+@Component
+public class TimerTask4SyncInstanceConfig implements InitializingBean {
     private static final int INSTANCE_CONFIG_AUDIT_MAX_SIZE = 10000;
 
 
     private final ExecutorService auditExecutorService;
     private final AtomicBoolean auditStopped;
-    private BlockingQueue<InstanceConfigRefreshModel> audits = Queues.newLinkedBlockingQueue(INSTANCE_CONFIG_AUDIT_MAX_SIZE);
+    private BlockingQueue<InstanceConfigRefresh> audits = Queues.newLinkedBlockingQueue(INSTANCE_CONFIG_AUDIT_MAX_SIZE);
 
     @Autowired
-    private InstanceConfigRepo instanceConfigRepo;
+    private InstanceConfigCache instanceConfigCache;
 
 
-    public HeartBeatPool() {
+    public TimerTask4SyncInstanceConfig() {
         auditExecutorService = Executors.newSingleThreadExecutor(ApolloThreadFactory.create("HeartBeatPool", true));
         auditStopped = new AtomicBoolean(false);
 
     }
 
     public boolean offerHeartBeat(NamespaceBo namespaceBo, String ip, String releaseKey) {
-        return this.audits.offer(new InstanceConfigRefreshModel(namespaceBo, ip, releaseKey));
+        return this.audits.offer(new InstanceConfigRefresh(namespaceBo, ip, releaseKey));
     }
 
 
@@ -62,12 +63,12 @@ public class HeartBeatPool implements InitializingBean {
         auditExecutorService.submit(() -> {
             while (!auditStopped.get() && !Thread.currentThread().isInterrupted()) {
                 try {
-                    InstanceConfigRefreshModel instanceConfigRefreshModel = audits.poll();
-                    if (instanceConfigRefreshModel == null) {
+                    InstanceConfigRefresh instanceConfigRefresh = audits.poll();
+                    if (instanceConfigRefresh == null) {
                         TimeUnit.SECONDS.sleep(1);
                         continue;
                     }
-                    instanceConfigRepo.doInstanceRefresh(instanceConfigRefreshModel);
+                    instanceConfigCache.doInstanceRefresh(instanceConfigRefresh);
                 } catch (Throwable ex) {
                     Tracer.logError(ex);
                 }

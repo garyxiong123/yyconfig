@@ -13,8 +13,9 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.ctrip.framework.apollo.configservice.controller.timer;
+package com.ctrip.framework.apollo.configservice.controller.timer.sync;
 
+import com.ctrip.framework.apollo.configservice.cache.AppNamespaceCache;
 import com.google.common.base.Joiner;
 import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.repository.AppNamespaceRepository;
@@ -39,8 +40,8 @@ import java.util.concurrent.TimeUnit;
  */
 @Getter
 @Component
-public class TimerTask4SyncAppNamespaceDB2Cache implements InitializingBean {
-    private static final Logger logger = LoggerFactory.getLogger(TimerTask4SyncAppNamespaceDB2Cache.class);
+public class TimerTask4SyncAppNamespace2Cache implements InitializingBean {
+    private static final Logger logger = LoggerFactory.getLogger(TimerTask4SyncAppNamespace2Cache.class);
     private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).skipNulls();
 
     @Autowired
@@ -59,7 +60,7 @@ public class TimerTask4SyncAppNamespaceDB2Cache implements InitializingBean {
     private AppNamespaceCache appNamespaceCache;
 
 
-    public TimerTask4SyncAppNamespaceDB2Cache() {
+    public TimerTask4SyncAppNamespace2Cache() {
         initialize();
     }
 

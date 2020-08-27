@@ -16,8 +16,8 @@
 package com.ctrip.framework.apollo.configservice.controller;
 
 import com.ctrip.framework.apollo.configservice.domain.ConfigClient4NamespaceReq;
-import com.ctrip.framework.apollo.configservice.pattern.pool.HeartBeatPool;
-import com.ctrip.framework.apollo.configservice.util.NamespaceNormalizer;
+import com.ctrip.framework.apollo.configservice.controller.timer.sync.TimerTask4SyncInstanceConfig;
+import com.ctrip.framework.apollo.configservice.component.util.NamespaceNormalizer;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.ctrip.framework.apollo.configservice.util.IpUtils.tryToGetClientIp;
+import static com.ctrip.framework.apollo.configservice.component.util.IpUtils.tryToGetClientIp;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 @RestController
@@ -47,7 +47,7 @@ public class ConfigController {
     @Autowired
     private NamespaceNormalizer namespaceNormalizer;
     @Autowired
-    private HeartBeatPool heartBeatPool;
+    private TimerTask4SyncInstanceConfig timerTask4SyncInstanceConfig;
     @Autowired
     private Gson gson;
 
@@ -134,7 +134,7 @@ public class ConfigController {
             return;
         }
         for (Release release : releases) {
-            heartBeatPool.offerHeartBeat(namespaceBo, clientIp, release.getReleaseKey());
+            timerTask4SyncInstanceConfig.offerHeartBeat(namespaceBo, clientIp, release.getReleaseKey());
         }
     }
 

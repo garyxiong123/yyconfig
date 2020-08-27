@@ -399,7 +399,7 @@ public class PortalConfig extends RefreshableConfig {
     }
 
     public TimeUnit releaseMessageCacheScanIntervalTimeUnit() {
-        return null;
+        return TimeUnit.SECONDS;
     }
 
     public int grayReleaseRuleScanInterval() {

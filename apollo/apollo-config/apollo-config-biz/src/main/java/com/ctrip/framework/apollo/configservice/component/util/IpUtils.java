@@ -1,4 +1,4 @@
-package com.ctrip.framework.apollo.configservice.util;
+package com.ctrip.framework.apollo.configservice.component.util;
 
 import com.google.common.base.Splitter;
 

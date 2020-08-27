@@ -1,17 +1,15 @@
 package com.ctrip.framework.apollo.configservice.domain;
 
-import com.ctrip.framework.apollo.configservice.util.LongNamespaceNameUtil;
-import com.ctrip.framework.apollo.configservice.util.NamespaceNormalizer;
-import com.ctrip.framework.apollo.configservice.wrapper.ClientConnection;
-import com.google.common.collect.Lists;
+import com.ctrip.framework.apollo.configservice.component.ConfigClient;
+import com.ctrip.framework.apollo.configservice.component.util.LongNamespaceNameUtil;
+import com.ctrip.framework.apollo.configservice.component.util.NamespaceNormalizer;
+import com.ctrip.framework.apollo.configservice.component.wrapper.ClientConnection;
+import com.ctrip.framework.apollo.configservice.pattern.strategy.VersionCompareStrategy;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.yofish.apollo.domain.ReleaseMessage;
-import com.yofish.apollo.service.ReleaseMessageService;
-import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
 import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceVersion;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
@@ -39,7 +37,7 @@ public class ConfigClient4Version extends ConfigClient {
     private Map<String, NamespaceVersion> normalizedNsVersionMap;
     private Set<String> namespaces4Client = new HashSet<>();
     private Multimap<String, String> clientWatchedKeysMap;
-    private Set<String> clientWatchedKeys;
+    private Set<String> longNsNames;
     private Map<String, Long> namespaceVersionMap = new HashMap<>();
 
     public ConfigClient4Version(String appId, String cluster, String env, String dataCenter, String clientIp, String clientNsVersionMapString) {
@@ -50,7 +48,7 @@ public class ConfigClient4Version extends ConfigClient {
 
         buildNsVersionIdMap();
 
-        buildMapAndSet();
+        buildLongNsNamesSet();
 
     }
 
@@ -86,9 +84,9 @@ public class ConfigClient4Version extends ConfigClient {
     }
 
 
-    public void buildMapAndSet() {
+    public void buildLongNsNamesSet() {
         clientWatchedKeysMap = getBeanByClass4Context(LongNamespaceNameUtil.class).assembleLongNamespaceNameMap(appId, clusterName, env, namespaces4Client, dataCenter);
-        clientWatchedKeys = Sets.newHashSet(clientWatchedKeysMap.values());
+        longNsNames = Sets.newHashSet(clientWatchedKeysMap.values());
     }
 
     /**
@@ -96,33 +94,7 @@ public class ConfigClient4Version extends ConfigClient {
      */
     public List<NamespaceVersion> calcNewNsVersions() {
         //查询最新的发布 版本
+        return getBeanByClass4Context(VersionCompareStrategy.class).calcNewNsVersions(this);
 
-        List<ReleaseMessage> latestReleaseMessages = getBeanByClass4Context(ReleaseMessageService.class).findLatestReleaseMessagesGroupByMessages(clientWatchedKeys);
-        if (isEmpty(latestReleaseMessages)) {
-            return null;
-        }
-
-        Map<String, Long> latestNotificationMap = Maps.newHashMap();
-        latestReleaseMessages.forEach((releaseMessage) -> latestNotificationMap.put(releaseMessage.getNamespaceKey(), releaseMessage.getId()));
-
-        List<NamespaceVersion> newNsVersions = Lists.newArrayList();
-        for (String namespace4Client : namespaces4Client) {
-            long clientSideId = namespaceVersionMap.get(namespace4Client);
-            long latestId = ConfigConsts.NOTIFICATION_ID_PLACEHOLDER;
-            Collection<String> namespaceWatchedKeys = clientWatchedKeysMap.get(namespace4Client);
-            for (String namespaceWatchedKey : namespaceWatchedKeys) {
-                long namespaceNotificationId = latestNotificationMap.getOrDefault(namespaceWatchedKey, ConfigConsts.NOTIFICATION_ID_PLACEHOLDER);
-                if (namespaceNotificationId > latestId) {
-                    latestId = namespaceNotificationId;
-                }
-            }
-            if (latestId > clientSideId) {
-                NamespaceVersion notification = new NamespaceVersion(namespace4Client, latestId);
-                namespaceWatchedKeys.stream().filter(latestNotificationMap::containsKey).forEach(namespaceWatchedKey ->
-                        notification.addMessage(namespaceWatchedKey, latestNotificationMap.get(namespaceWatchedKey)));
-                newNsVersions.add(notification);
-            }
-        }
-        return newNsVersions;
     }
 }

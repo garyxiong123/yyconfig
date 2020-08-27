@@ -13,9 +13,9 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.ctrip.framework.apollo.configservice.util;
+package com.ctrip.framework.apollo.configservice.component.util;
 
-import com.ctrip.framework.apollo.configservice.controller.timer.AppNamespaceCache;
+import com.ctrip.framework.apollo.configservice.cache.AppNamespaceCache;
 import com.google.common.collect.Maps;
 import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceVersion;

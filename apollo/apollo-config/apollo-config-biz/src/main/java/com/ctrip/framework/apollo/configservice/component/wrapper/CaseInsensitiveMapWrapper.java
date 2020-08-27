@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.ctrip.framework.apollo.configservice.wrapper;
+package com.ctrip.framework.apollo.configservice.component.wrapper;
 
 import java.util.Map;
 

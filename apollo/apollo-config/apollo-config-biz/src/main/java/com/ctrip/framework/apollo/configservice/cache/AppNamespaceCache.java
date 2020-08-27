@@ -1,6 +1,7 @@
-package com.ctrip.framework.apollo.configservice.controller.timer;
+package com.ctrip.framework.apollo.configservice.cache;
 
-import com.ctrip.framework.apollo.configservice.wrapper.CaseInsensitiveMapWrapper;
+import com.ctrip.framework.apollo.configservice.controller.timer.sync.TimerTask4SyncAppNamespace2Cache;
+import com.ctrip.framework.apollo.configservice.component.wrapper.CaseInsensitiveMapWrapper;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -37,8 +38,7 @@ public class AppNamespaceCache {
 
     @Autowired
     private AppNamespaceRepository appNamespaceRepository;
-    private static final Logger logger = LoggerFactory.getLogger(TimerTask4SyncAppNamespaceDB2Cache.class);
-
+    private static final Logger logger = LoggerFactory.getLogger(TimerTask4SyncAppNamespace2Cache.class);
 
     private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).skipNulls();
 

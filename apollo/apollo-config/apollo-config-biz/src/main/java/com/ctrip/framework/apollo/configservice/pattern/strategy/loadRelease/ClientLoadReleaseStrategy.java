@@ -16,6 +16,7 @@
 package com.ctrip.framework.apollo.configservice.pattern.strategy.loadRelease;
 
 
+import com.ctrip.framework.apollo.configservice.domain.ConfigClient4NamespaceReq;
 import com.yofish.apollo.domain.Release;
 import com.yofish.yyconfig.common.framework.apollo.core.dto.LongNamespaceVersion;
 
@@ -25,18 +26,6 @@ import com.yofish.yyconfig.common.framework.apollo.core.dto.LongNamespaceVersion
  */
 public interface ClientLoadReleaseStrategy {
 
-    /**
-     * Load config
-     *
-     * @param clientAppId       the client's app id
-     * @param clientIp          the client ip
-     * @param configAppId       the requested config's app id
-     * @param configClusterName the requested config's appEnvCluster name
-     * @param configNamespace   the requested config's appNamespace name
-     * @param dataCenter        the client data center
-     * @param clientMessages    the messages received in client side
-     * @return the Release
-     */
-    Release loadRelease4Client(String clientAppId, String clientIp, String configAppId, String
-            configClusterName, String env, String configNamespace, String dataCenter, LongNamespaceVersion clientMessages);
+
+    Release loadRelease4Client(ConfigClient4NamespaceReq configClient4NamespaceReq);
 }

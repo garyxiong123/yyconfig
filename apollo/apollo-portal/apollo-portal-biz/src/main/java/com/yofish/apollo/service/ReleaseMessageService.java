@@ -42,11 +42,11 @@ public class ReleaseMessageService {
     return releaseMessageRepository.findTopByNamespaceKeyInOrderByIdDesc(messages);
   }
 
-  public List<ReleaseMessage> findLatestReleaseMessagesGroupByMessages(Collection<String> messages) {
-    if (CollectionUtils.isEmpty(messages)) {
+  public List<ReleaseMessage> findLatestReleaseMessagesGroupByLongNsNames(Collection<String> longNsNames) {
+    if (CollectionUtils.isEmpty(longNsNames)) {
       return Collections.emptyList();
     }
-    List<Object[]> result = releaseMessageRepository.findLatestReleaseMessagesGroupByNamespaceKeys(messages);
+    List<Object[]> result = releaseMessageRepository.findLatestReleaseMessagesGroupByNamespaceKeys(longNsNames);
     List<ReleaseMessage> releaseMessages = Lists.newArrayList();
     for (Object[] o : result) {
       try {

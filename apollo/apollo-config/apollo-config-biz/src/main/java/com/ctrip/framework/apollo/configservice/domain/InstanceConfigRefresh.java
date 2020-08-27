@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.ctrip.framework.apollo.configservice.config;
+package com.ctrip.framework.apollo.configservice.domain;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -31,7 +31,7 @@ import java.util.List;
  * @Date: 2019/12/30 下午3:25
  */
 @Data
-public class InstanceConfigRefreshModel {
+public class InstanceConfigRefresh {
     private String ip;
     private String releaseKey;
     private LocalDateTime offerTime;
@@ -41,7 +41,7 @@ public class InstanceConfigRefreshModel {
     private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR);
 
 
-    public InstanceConfigRefreshModel(NamespaceBo namespaceBo, String clientIp, String releaseKey) {
+    public InstanceConfigRefresh(NamespaceBo namespaceBo, String clientIp, String releaseKey) {
         this.namespaceBo = namespaceBo;
         this.offerTime = LocalDateTime.now();
         this.ip = clientIp;
@@ -55,6 +55,11 @@ public class InstanceConfigRefreshModel {
 
     }
 
+    /**
+     * 实例Key ： 集群+ip索引
+     *
+     * @return
+     */
     public String assembleInstanceKey() {
         List<String> keyParts = Lists.newArrayList(namespaceBo.getAppCode(), namespaceBo.getEnv(), namespaceBo.getClusterName(), ip);
         if (!Strings.isNullOrEmpty(namespaceBo.getDataCenter())) {

@@ -20,7 +20,7 @@ import com.yofish.yyconfig.client.component.exceptions.ApolloConfigException;
 import com.yofish.yyconfig.client.lifecycle.preboot.inject.ApolloInjector;
 import com.yofish.yyconfig.client.lifecycle.preboot.internals.ClientConfig;
 import com.yofish.yyconfig.client.lifecycle.preboot.internals.ConfigServiceLocator;
-import com.yofish.yyconfig.client.timer.VersionMonitor4Namespace;
+import com.yofish.yyconfig.client.timer.VersionMonitor;
 import com.yofish.yyconfig.client.component.util.http.HttpRequest;
 import com.yofish.yyconfig.client.component.util.http.HttpResponse;
 import com.yofish.yyconfig.client.component.util.http.HttpUtil;
@@ -74,7 +74,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
     @Autowired
     private ClientConfig m_Client_config;
     @Autowired
-    private VersionMonitor4Namespace versionMonitor;
+    private VersionMonitor versionMonitor;
     private volatile AtomicReference<NamespaceConfig> namespaceConfigCache;
     private final String namespaceName;
     private final static ScheduledExecutorService m_executorService;
@@ -100,7 +100,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
         m_Client_config = ApolloInjector.getInstance(ClientConfig.class);
         m_httpUtil = ApolloInjector.getInstance(HttpUtil.class);
         m_serviceLocator = ApolloInjector.getInstance(ConfigServiceLocator.class);//通过Feign请求去处理
-        versionMonitor = ApolloInjector.getInstance(VersionMonitor4Namespace.class);
+        versionMonitor = ApolloInjector.getInstance(VersionMonitor.class);
         m_longPollServiceDto = new AtomicReference<>();
         longNamespaceVersion = new AtomicReference<>();
         m_loadConfigRateLimiter = RateLimiter.create(m_Client_config.getLoadConfigQPS());

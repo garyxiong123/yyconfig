@@ -1,12 +1,13 @@
-package com.ctrip.framework.apollo.configservice.controller.listener;
+package com.ctrip.framework.apollo.configservice.pattern.listener;
 
-import com.ctrip.framework.apollo.configservice.domain.RegistryCenter;
+import com.ctrip.framework.apollo.configservice.cache.RegistryCenter;
 import com.yofish.apollo.domain.ReleaseMessage;
 import com.yofish.apollo.pattern.listener.releasemessage.ReleaseMessageListener;
 import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceVersion;
 import com.yofish.yyconfig.common.framework.apollo.tracer.Tracer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
  * @Date: 2020/4/16 上午11:24
  */
 @Slf4j
-@Service
+@Component
 public class ReleaseMessageListener4Registry implements ReleaseMessageListener {
 
 

@@ -13,9 +13,9 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.ctrip.framework.apollo.configservice.util;
+package com.ctrip.framework.apollo.configservice.component.util;
 
-import com.ctrip.framework.apollo.configservice.controller.timer.AppNamespaceCache;
+import com.ctrip.framework.apollo.configservice.cache.AppNamespaceCache;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
@@ -61,18 +61,25 @@ public class LongNamespaceNameUtil {
     public Multimap<String, String> assembleLongNamespaceNameMap(String appId, String clusterName, String env,
                                                                  Set<String> namespaces,
                                                                  String dataCenter) {
-        Multimap<String, String> watchedKeysMap = assembleWatchKeys(appId, clusterName, env, namespaces, dataCenter);
 
+        Multimap<String, String> watchedKeysMap = HashMultimap.create();
+        Set<String> namespacesBelongToAppId = null;
+        Set<String> publicNamespaces = null;
         //Every app has an 'application' appNamespace  过滤调
         if (!(namespaces.size() == 1 && namespaces.contains(ConfigConsts.NAMESPACE_APPLICATION))) {
-            Set<String> namespacesBelongToAppId = appNamespaceCache.namespacesBelongToAppId(appId, namespaces);
-            Set<String> publicNamespaces = Sets.difference(namespaces, namespacesBelongToAppId);
+            namespacesBelongToAppId = appNamespaceCache.namespacesBelongToAppId(appId, namespaces);
+            publicNamespaces = Sets.difference(namespaces, namespacesBelongToAppId);
 
-            //Listen on more namespaces if it's a public appNamespace
+            //Listen on more namespaces if it's a public appNamespace  放入 共有命名
             if (!publicNamespaces.isEmpty()) {
                 watchedKeysMap.putAll(findPublicConfigWatchKeys(appId, clusterName, env, publicNamespaces, dataCenter));
             }
+            //放入
+            if (!namespacesBelongToAppId.isEmpty()) {
+                watchedKeysMap.putAll(assembleLongNsNames(appId, clusterName, env, namespaces, dataCenter));
+            }
         }
+
 
         return watchedKeysMap;
     }
@@ -92,7 +99,7 @@ public class LongNamespaceNameUtil {
 
             String publicAppCode = appNamespace.getApp().getAppCode();
 
-            watchedKeysMap.putAll(appNamespace.getName(), assembleWatchKeys(publicAppCode, clusterName, env, appNamespace.getName(), dataCenter));
+            watchedKeysMap.putAll(appNamespace.getName(), assembleLongNsNames(publicAppCode, clusterName, env, appNamespace.getName(), dataCenter));
         }
 
         return watchedKeysMap;
@@ -102,8 +109,8 @@ public class LongNamespaceNameUtil {
         return STRING_JOINER.join(appId, cluster, env, namespace);
     }
 
-    private Set<String> assembleWatchKeys(String appId, String clusterName, String env, String namespace,
-                                          String dataCenter) {
+    private Set<String> assembleLongNsNames(String appId, String clusterName, String env, String namespace,
+                                            String dataCenter) {
         if (ConfigConsts.NO_APPID_PLACEHOLDER.equalsIgnoreCase(appId)) {
             return Collections.emptySet();
         }
@@ -125,12 +132,12 @@ public class LongNamespaceNameUtil {
         return watchedKeys;
     }
 
-    private Multimap<String, String> assembleWatchKeys(String appId, String clusterName, String env, Set<String> namespaces, String dataCenter) {
+    private Multimap<String, String> assembleLongNsNames(String appId, String clusterName, String env, Set<String> namespaces, String dataCenter) {
         Multimap<String, String> watchedKeysMap = HashMultimap.create();
-
         for (String namespace : namespaces) {
-            watchedKeysMap.putAll(namespace, assembleWatchKeys(appId, clusterName, env, namespace, dataCenter));
+            watchedKeysMap.putAll(namespace, assembleLongNsNames(appId, clusterName, env, namespace, dataCenter));
         }
+
 
         return watchedKeysMap;
     }

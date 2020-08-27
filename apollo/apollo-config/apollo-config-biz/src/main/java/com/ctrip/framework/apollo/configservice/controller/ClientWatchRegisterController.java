@@ -16,9 +16,9 @@
 package com.ctrip.framework.apollo.configservice.controller;
 
 import com.ctrip.framework.apollo.configservice.domain.ConfigClient4Version;
-import com.ctrip.framework.apollo.configservice.domain.RegistryCenter;
-import com.ctrip.framework.apollo.configservice.util.EntityManagerUtil;
-import com.ctrip.framework.apollo.configservice.wrapper.ClientConnection;
+import com.ctrip.framework.apollo.configservice.cache.RegistryCenter;
+import com.ctrip.framework.apollo.configservice.component.util.EntityManagerUtil;
+import com.ctrip.framework.apollo.configservice.component.wrapper.ClientConnection;
 import com.google.common.collect.*;
 import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceVersion;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 
 import java.util.*;
 
-import static com.ctrip.framework.apollo.configservice.domain.RegistryCenter.logWatchedKeys;
+import static com.ctrip.framework.apollo.configservice.cache.RegistryCenter.logWatchedKeys;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 /**
@@ -58,7 +58,7 @@ public class ClientWatchRegisterController {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public DeferredResult<ResponseEntity<List<NamespaceVersion>>> namespaceVersionsCompare(
+    public DeferredResult<ResponseEntity<List<NamespaceVersion>>> getNewNsVersion(
             @RequestParam(value = "appId") String appId,
             @RequestParam(value = "cluster") String cluster,
             @RequestParam(value = "env") String env,
@@ -71,17 +71,19 @@ public class ClientWatchRegisterController {
         ClientConnection clientConnection = new ClientConnection();
         Set<String> namespaces4Client = Sets.newHashSet();
 
-//        entityManagerUtil.closeEntityManager(); ？？为什么要关闭
-
         List<NamespaceVersion> newNsVersions = client4Version.calcNewNsVersions();
 
-        if (isNotEmpty(newNsVersions)) {
+        if (hasNewNsVersion(newNsVersions)) {
             doSyncResponse(clientConnection, newNsVersions);
             return clientConnection.getResponse();   // TODO 返回后断开连接，客户端继续连接
         }
 
-        doAsyncResponseAndWactchedKeyRegistry(appId, cluster, dataCenter, clientConnection, namespaces4Client, client4Version.getClientWatchedKeys());
+        doAsyncRespons(appId, cluster, dataCenter, clientConnection, namespaces4Client, client4Version.getLongNsNames());
         return clientConnection.getResponse();
+    }
+
+    private boolean hasNewNsVersion(List<NamespaceVersion> newNsVersions) {
+        return isNotEmpty(newNsVersions);
     }
 
 
@@ -89,22 +91,15 @@ public class ClientWatchRegisterController {
         clientConnection.setResult(newServerNotifications);
     }
 
-    private void doAsyncResponseAndWactchedKeyRegistry(String appId, String cluster, String dataCenter, ClientConnection clientConnection, Set<String> namespaces, Set<String> clientWatchedKeys) {
-        clientConnection.onTimeout(() -> logWatchedKeys(clientWatchedKeys, "Apollo.LongPoll.TimeOutKeys"));
+    private void doAsyncRespons(String appId, String cluster, String dataCenter, ClientConnection clientConnection, Set<String> namespaces, Set<String> longNsNames) {
+        clientConnection.onTimeout(() -> logWatchedKeys(longNsNames, "Apollo.LongPoll.TimeOutKeys"));
 
         clientConnection.onCompletion(() -> {
-            //unregister all keys
-            for (String clientWatchedKey : clientWatchedKeys) {
-                registryCenter.remove(clientWatchedKey, clientConnection);
-            }
-            logWatchedKeys(clientWatchedKeys, "Apollo.LongPoll.CompletedKeys");
+
+            registryCenter.unregister(longNsNames, clientConnection);//unregister all keys
+
+            log.debug("Listening {} from appCode: {}, cluster: {}, appNamespace: {}, datacenter: {}", longNsNames, appId, cluster, namespaces, dataCenter);
         });
-
-        this.registryCenter.registerWatchedLongNsNames(clientConnection, clientWatchedKeys);
-
-        log.debug("Listening {} from appCode: {}, cluster: {}, appNamespace: {}, datacenter: {}", clientWatchedKeys, appId, cluster, namespaces, dataCenter);
     }
 
-
 }
-

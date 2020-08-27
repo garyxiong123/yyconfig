@@ -1,6 +1,6 @@
-package com.ctrip.framework.apollo.configservice.pattern.pool;
+package com.ctrip.framework.apollo.configservice.cache;
 
-import com.ctrip.framework.apollo.configservice.config.InstanceConfigRefreshModel;
+import com.ctrip.framework.apollo.configservice.domain.InstanceConfigRefresh;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.yofish.apollo.domain.AppEnvCluster;
@@ -15,7 +15,7 @@ import com.yofish.apollo.service.InstanceService;
 import com.yofish.yyconfig.common.common.NamespaceBo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -28,14 +28,14 @@ import java.util.concurrent.TimeUnit;
  * @Description: 心跳执行器
  * @Date: 2020/4/14 上午11:46
  */
-@Service
-public class InstanceConfigRepo {
+@Component
+public class InstanceConfigCache {
     /**
      * 10 minutes
      **/
     private static final long OFFER_TIME_LAST_MODIFIED_TIME_THRESHOLD_IN_MILLI = TimeUnit.MINUTES.toMillis(10);
-    private Cache<String, Long> instanceCache;
-    private Cache<String, String> instanceConfigReleaseKeyCache;
+    private Cache<String, Long> instanceIdCache;
+    private Cache<String, String> releaseKeyCache;
     private static final int INSTANCE_CACHE_MAX_SIZE = 50000;
     private static final int INSTANCE_CONFIG_CACHE_MAX_SIZE = 50000;
 
@@ -50,9 +50,9 @@ public class InstanceConfigRepo {
     @Autowired
     private AppEnvClusterNamespaceRepository namespaceRepository;
 
-    public InstanceConfigRepo() {
-        instanceCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).maximumSize(INSTANCE_CACHE_MAX_SIZE).build();
-        instanceConfigReleaseKeyCache = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.DAYS).maximumSize(INSTANCE_CONFIG_CACHE_MAX_SIZE).build();
+    public InstanceConfigCache() {
+        instanceIdCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).maximumSize(INSTANCE_CACHE_MAX_SIZE).build();
+        releaseKeyCache = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.DAYS).maximumSize(INSTANCE_CONFIG_CACHE_MAX_SIZE).build();
     }
 
 
@@ -61,13 +61,13 @@ public class InstanceConfigRepo {
      * 1： 刷新实例
      * 2： 刷新实例配置
      *
-     * @param instanceConfigRefreshModel
+     * @param instanceConfigRefresh
      */
-    void doInstanceRefresh(InstanceConfigRefreshModel instanceConfigRefreshModel) {
+    public void doInstanceRefresh(InstanceConfigRefresh instanceConfigRefresh) {
 
-        Long instanceId = refreshInstance(instanceConfigRefreshModel);
+        Long instanceId = refreshInstance(instanceConfigRefresh);
 
-        refreshInstanceConfig(instanceConfigRefreshModel, instanceId);
+        refreshInstanceConfig(instanceConfigRefresh, instanceId);
     }
 
 
@@ -77,7 +77,7 @@ public class InstanceConfigRepo {
      * @param instanceConfigModel
      * @return
      */
-    private Long refreshInstance(InstanceConfigRefreshModel instanceConfigModel) {
+    private Long refreshInstance(InstanceConfigRefresh instanceConfigModel) {
 
         String instanceKey = instanceConfigModel.assembleInstanceKey();
 
@@ -89,7 +89,7 @@ public class InstanceConfigRepo {
 
         Instance instance = createInstanceByModel(instanceConfigModel);
 
-        instanceCache.put(instanceKey, instance.getId());
+        instanceIdCache.put(instanceKey, instance.getId());
 
         return instance.getId();
     }
@@ -100,22 +100,22 @@ public class InstanceConfigRepo {
      * @param auditModel
      * @param instanceId
      */
-    private void refreshInstanceConfig(InstanceConfigRefreshModel auditModel, Long instanceId) {
+    private void refreshInstanceConfig(InstanceConfigRefresh auditModel, Long instanceId) {
         if (isNewRelease(auditModel, instanceId)) {
             createOrUpdateInstanceConfig(auditModel, instanceId);
         }
     }
 
 
-    private boolean isNewRelease(InstanceConfigRefreshModel auditModel, Long instanceId) {
+    private boolean isNewRelease(InstanceConfigRefresh auditModel, Long instanceId) {
         String instanceConfigCacheKey = loadConfigKeyInCacheIfReleaseKeyIsNew(auditModel, instanceId);
         if (instanceConfigCacheKey == null) return false;
 
-        instanceConfigReleaseKeyCache.put(instanceConfigCacheKey, auditModel.getReleaseKey());
+        releaseKeyCache.put(instanceConfigCacheKey, auditModel.getReleaseKey());
         return true;
     }
 
-    private void createOrUpdateInstanceConfig(InstanceConfigRefreshModel auditModel, Long instanceId) {
+    private void createOrUpdateInstanceConfig(InstanceConfigRefresh auditModel, Long instanceId) {
         //if release key is not the same or cannot find in cache, then do offerHeartBeat
         NamespaceBo namespaceBo = auditModel.getNamespaceBo();
         InstanceConfig instanceConfig = instanceService.findInstanceConfig(instanceId, namespaceBo.getAppCode(), namespaceBo.getEnv(), namespaceBo.getNamespaceName());
@@ -144,7 +144,7 @@ public class InstanceConfigRepo {
         }
     }
 
-    private boolean ifReleaseKeyIsSameAndRecentBuild(InstanceConfigRefreshModel auditModel, InstanceConfig instanceConfig) {
+    private boolean ifReleaseKeyIsSameAndRecentBuild(InstanceConfigRefresh auditModel, InstanceConfig instanceConfig) {
         return Objects.equals(instanceConfig.getReleaseKey(), auditModel.getReleaseKey()) && offerTimeAndLastModifiedTimeCloseEnough(auditModel.getOfferTime(), instanceConfig.getUpdateTime());
     }
 
@@ -156,11 +156,11 @@ public class InstanceConfigRepo {
      * @param instanceId
      * @return
      */
-    private String loadConfigKeyInCacheIfReleaseKeyIsNew(InstanceConfigRefreshModel auditModel, Long instanceId) {
+    private String loadConfigKeyInCacheIfReleaseKeyIsNew(InstanceConfigRefresh auditModel, Long instanceId) {
         //load instance config release key from cache, and check if release key is the same
         String instanceConfigCacheKey = auditModel.assembleInstanceConfigKey(instanceId);
 
-        String cacheReleaseKey = instanceConfigReleaseKeyCache.getIfPresent(instanceConfigCacheKey);
+        String cacheReleaseKey = releaseKeyCache.getIfPresent(instanceConfigCacheKey);
 
         //if release key is the same, then skip offerHeartBeat
         if (cacheReleaseKey != null && Objects.equals(cacheReleaseKey, auditModel.getReleaseKey())) {
@@ -170,7 +170,7 @@ public class InstanceConfigRepo {
     }
 
 
-    private Instance createInstanceByModel(InstanceConfigRefreshModel auditModel) {
+    private Instance createInstanceByModel(InstanceConfigRefresh auditModel) {
         NamespaceBo namespaceBo = auditModel.getNamespaceBo();
         AppEnvCluster appEnvCluster = appEnvClusterRepository.findByApp_AppCodeAndEnvAndName(namespaceBo.getAppCode(), namespaceBo.getEnv(), namespaceBo.getClusterName());
 
@@ -191,10 +191,10 @@ public class InstanceConfigRepo {
 
 
     private Long loadFromMemory(String instanceKey) {
-        return instanceCache.getIfPresent(instanceKey);
+        return instanceIdCache.getIfPresent(instanceKey);
     }
 
-    private InstanceConfig createInstanceConfig(InstanceConfigRefreshModel auditModel, Long instanceId) {
+    private InstanceConfig createInstanceConfig(InstanceConfigRefresh auditModel, Long instanceId) {
         NamespaceBo namespaceBo = auditModel.getNamespaceBo();
         InstanceConfig instanceConfig = new InstanceConfig();
 
@@ -219,7 +219,7 @@ public class InstanceConfigRepo {
         return duration.getSeconds() < OFFER_TIME_LAST_MODIFIED_TIME_THRESHOLD_IN_MILLI;
     }
 
-    private Long loadFromDb(InstanceConfigRefreshModel auditModel) {
+    private Long loadFromDb(InstanceConfigRefresh auditModel) {
         NamespaceBo namespaceBo = auditModel.getNamespaceBo();
         Instance instance = instanceService.findInstance(namespaceBo.getAppCode(), namespaceBo.getEnv(), namespaceBo.getClusterName(), namespaceBo.getDataCenter(), auditModel.getIp());
         if (instance != null) {
