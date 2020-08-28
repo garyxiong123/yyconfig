@@ -55,6 +55,8 @@ public class LongNamespaceNameUtil {
 
     /**
      * Assemble watch keys for the given appCode, appEnvCluster, namespaces, dataCenter combination
+     * <p>
+     * 按照Namespace 纬度 来组装 LongNamesapceKey， 但是会存在 公共命名空间+关联命名空间
      *
      * @return a multimap with appNamespace as the key and watch keys as the value
      */
@@ -63,33 +65,39 @@ public class LongNamespaceNameUtil {
                                                                 String dataCenter) {
 
         Multimap<String, String> watchedKeysMap = HashMultimap.create();
-        Set<String> namespacesBelongToAppId = null;
-        Set<String> publicNamespaces = null;
-        //Every app has an 'application' appNamespace  过滤调
-        if (!(namespaces.size() == 1 && namespaces.contains(ConfigConsts.NAMESPACE_APPLICATION))) {
-            namespacesBelongToAppId = appNamespaceCache.namespacesBelongToAppId(appId, namespaces);
-            publicNamespaces = Sets.difference(namespaces, namespacesBelongToAppId);
+
+        if (checkNamespace(namespaces)) {
+            Set<String> namespacesBelongToAppId = appNamespaceCache.namespacesBelongToAppId(appId, namespaces);
+            Set<String> publicNamespaces = Sets.difference(namespaces, namespacesBelongToAppId);
 
             //Listen on more namespaces if it's a public appNamespace  放入 共有命名
             if (!publicNamespaces.isEmpty()) {
                 watchedKeysMap.putAll(findPublicConfigWatchKeys(appId, clusterName, env, publicNamespaces, dataCenter));
             }
-            //放入
-            if (!namespacesBelongToAppId.isEmpty()) {
-                watchedKeysMap.putAll(assembleLongNsNames(appId, clusterName, env, namespacesBelongToAppId, dataCenter));
-            }
+            // 无论是 共有 还是 私有 都应该放入 watchKey = 原因是 关联配置 AppCode+ AppCode（public）
+                watchedKeysMap.putAll(assembleLongNsNames(appId, clusterName, env, namespaces, dataCenter));
         }
 
 
         return watchedKeysMap;
     }
 
+    /**
+     * //Every app has an 'application' appNamespace
+     *
+     * @param namespaces
+     * @return
+     */
+    private boolean checkNamespace(Set<String> namespaces) {
+        return !(namespaces.size() == 1 && namespaces.contains(ConfigConsts.NAMESPACE_APPLICATION));
+    }
+
     private Multimap<String, String> findPublicConfigWatchKeys(String applicationId,
                                                                String clusterName, String env,
-                                                               Set<String> namespaces,
+                                                               Set<String> publicNamespaces,
                                                                String dataCenter) {
         Multimap<String, String> watchedKeysMap = HashMultimap.create();
-        List<AppNamespace> appNamespaces = appNamespaceCache.findPublicNamespacesByNames(namespaces);
+        List<AppNamespace> appNamespaces = appNamespaceCache.findPublicNamespacesByNames(publicNamespaces);
 
         for (AppNamespace appNamespace : appNamespaces) {
             //check whether the appNamespace's appCode equals to current one

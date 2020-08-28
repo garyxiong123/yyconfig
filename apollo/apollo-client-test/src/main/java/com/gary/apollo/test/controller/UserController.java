@@ -71,6 +71,8 @@ public class UserController implements ApplicationContextAware {
 
     @ApolloConfig("DBA.equity-promotion")
     private Config config1;
+    @ApolloConfig("redis-config")
+    private Config config2;
 //    @ApolloConfig("DefaultDepartment.eurake")
 //    private Config config2;
 
@@ -114,6 +116,7 @@ public class UserController implements ApplicationContextAware {
 
         System.out.println(config);
         System.out.println(config1);
+        System.out.println(config2);
 //        System.out.println(config2);
 
 

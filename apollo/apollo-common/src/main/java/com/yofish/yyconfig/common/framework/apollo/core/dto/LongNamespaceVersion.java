@@ -35,6 +35,7 @@ public class LongNamespaceVersion {
 
     /**
      * key = 项目+集群+环境+namespace，   value id
+     * 这里之所以用Map去管理，核心原因=》   如果是 关联的命名空间  就需要存在 appCode + appCode(public) 中的release， 所以要记录 两者的releaseMsgId
      */
     private Map<String, Long> longNsVersionMap;
 

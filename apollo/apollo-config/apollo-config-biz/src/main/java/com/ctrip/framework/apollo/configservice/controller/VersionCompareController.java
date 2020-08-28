@@ -62,11 +62,11 @@ public class VersionCompareController {
             @RequestParam(value = "appId") String appId,
             @RequestParam(value = "cluster") String cluster,
             @RequestParam(value = "env") String env,
-            @RequestParam(value = "notifications") String clientNsVersionMapString,
+            @RequestParam(value = "notifications") String clientNsVersionMapStr,
             @RequestParam(value = "dataCenter", required = false) String dataCenter,
             @RequestParam(value = "ip", required = false) String clientIp) {
 
-        ConfigClient4Version client4Version = new ConfigClient4Version(appId, cluster, env, dataCenter, clientIp, clientNsVersionMapString);
+        ConfigClient4Version client4Version = new ConfigClient4Version(appId, cluster, env, dataCenter, clientIp, clientNsVersionMapStr);
 
         ClientConnection clientConnection = new ClientConnection();
         Set<String> namespaces4Client = Sets.newHashSet();
@@ -78,7 +78,7 @@ public class VersionCompareController {
             return clientConnection.getResponse();   // TODO 返回后断开连接，客户端继续连接
         }
 
-        doAsyncRespons(appId, cluster, dataCenter, clientConnection, namespaces4Client, client4Version.getLongNsNames());
+        doAsyncResponse(appId, cluster, dataCenter, clientConnection, namespaces4Client, client4Version.getLongNsNames());
         return clientConnection.getResponse();
     }
 
@@ -91,11 +91,13 @@ public class VersionCompareController {
         clientConnection.setResult(newServerNotifications);
     }
 
-    private void doAsyncRespons(String appId, String cluster, String dataCenter, ClientConnection clientConnection, Set<String> namespaces, Set<String> longNsNames) {
+    private void doAsyncResponse(String appId, String cluster, String dataCenter, ClientConnection clientConnection, Set<String> namespaces, Set<String> longNsNames) {
+        registryCenter.registerConnByLongNsNames(clientConnection, longNsNames);
+
         clientConnection.onTimeout(() -> logWatchedKeys(longNsNames, "Apollo.LongPoll.TimeOutKeys"));
 
         clientConnection.onCompletion(() -> {
-
+            //TODO  by wangsongjun
             registryCenter.unregister(longNsNames, clientConnection);//unregister all keys
 
             log.debug("Listening {} from appCode: {}, cluster: {}, appNamespace: {}, datacenter: {}", longNsNames, appId, cluster, namespaces, dataCenter);

@@ -33,23 +33,23 @@ import static org.springframework.util.StringUtils.isEmpty;
  */
 @Data
 public class ConfigClient4Version extends ConfigClient {
-    private String clientNsVersionMapString;
+    private String clientNsVersionMapStr;
     private static final Type notificationsTypeReference = new TypeToken<List<NamespaceVersion>>() {
     }.getType();
     private ClientConnection clientConnection;
-    private Map<String, NamespaceVersion> normalizedNsVersionMap;
+    private Map<String, NamespaceVersion> normalized_Ns_NsVersion;
     private Set<String> namespaceSet = new HashSet<>();
-    private Multimap<String, String> namespace2LongNsMap;   //namespace, 和 全命名空间 LongNs
+    private Multimap<String, String> namespace_LongNs;   //namespace, 和 全命名空间 LongNs
     private Set<String> longNsNames;
     private Map<String, Long> ns2ReleaseMsgIdMap = new HashMap<>();
 
     private List<NamespaceVersion> clientNsVersions;
 
-    private Map<String, Long> latestLongNs2ReleaseMsgIdMap;//最新的ns版本
+    private Map<String, Long> latest_LongNs_ReleaseMsgId;//最新的ns版本
 
-    public ConfigClient4Version(String appId, String cluster, String env, String dataCenter, String clientIp, String clientNsVersionMapString) {
+    public ConfigClient4Version(String appId, String cluster, String env, String dataCenter, String clientIp, String clientNsVersionMapStr) {
         super(appId, cluster, env, dataCenter, clientIp);
-        this.clientNsVersionMapString = clientNsVersionMapString;
+        this.clientNsVersionMapStr = clientNsVersionMapStr;
         clientConnection = new ClientConnection();
         buildNormalizedNsVersionMap();
 
@@ -57,22 +57,23 @@ public class ConfigClient4Version extends ConfigClient {
 
         buildLongNsNamesSet();
 
-        latestLongNs2ReleaseMsgIdMap = getLastLNs2ReleaseMsgIdMap();
+        latest_LongNs_ReleaseMsgId = getLastLNs2ReleaseMsgIdMap();
 
     }
 
     public void buildNormalizedNsVersionMap() {
-        clientNsVersions = getBeanByClass4Context(Gson.class).fromJson(clientNsVersionMapString, notificationsTypeReference);
+        clientNsVersions = getBeanByClass4Context(Gson.class).fromJson(clientNsVersionMapStr, notificationsTypeReference);
         if (isEmpty(clientNsVersions)) {
 //      throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "Invalid format of notifications: " + notificationsAsString);
         }
-        normalizedNsVersionMap = getBeanByClass4Context(NamespaceNormalizer.class).normalizeNsVersions2Map(appId, clientNsVersions);
+        //TODO fix wangsongjun 加上 clientNsVersions = null 的场景，默认返回最新的版本数据
+        normalized_Ns_NsVersion = getBeanByClass4Context(NamespaceNormalizer.class).normalizeNsVersions2Map(appId, clientNsVersions);
 
     }
 
 
     public Map<String, Long> buildNsVersionIdMap() {
-        for (Map.Entry<String, NamespaceVersion> namespaceVersionEntry : normalizedNsVersionMap.entrySet()) {
+        for (Map.Entry<String, NamespaceVersion> namespaceVersionEntry : normalized_Ns_NsVersion.entrySet()) {
             String namespaceName = namespaceVersionEntry.getKey();
             NamespaceVersion clientNsVersion = namespaceVersionEntry.getValue();
             namespaceSet.add(namespaceName);
@@ -84,7 +85,7 @@ public class ConfigClient4Version extends ConfigClient {
         }
 
         if (isEmpty(namespaceSet)) {
-            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "Invalid format of notifications: " + clientNsVersionMapString);
+            throw new BizException(BaseResultCode.REQUEST_PARAMS_WRONG, "Invalid format of notifications: " + clientNsVersionMapStr);
         }
 
         return ns2ReleaseMsgIdMap;
@@ -92,8 +93,8 @@ public class ConfigClient4Version extends ConfigClient {
 
 
     public void buildLongNsNamesSet() {
-        namespace2LongNsMap = getBeanByClass4Context(LongNamespaceNameUtil.class).assembleNamespace2LongNsMap(appId, clusterName, env, namespaceSet, dataCenter);
-        longNsNames = Sets.newHashSet(namespace2LongNsMap.values());
+        namespace_LongNs = getBeanByClass4Context(LongNamespaceNameUtil.class).assembleNamespace2LongNsMap(appId, clusterName, env, namespaceSet, dataCenter);
+        longNsNames = Sets.newHashSet(namespace_LongNs.values());
     }
 
     /**
@@ -105,10 +106,19 @@ public class ConfigClient4Version extends ConfigClient {
     }
 
     public String getLongNs(String namespace) {
-        return namespace2LongNsMap.get(namespace).iterator().next();
+        return namespace_LongNs.get(namespace).iterator().next();
     }
 
+
+    /**
+     * 这里存在两个纬度 ，一个是私有， 一个是 公共关联（两个Id相加）
+     *
+     * @param namespace
+     * @return
+     */
     public boolean isNewVersion(NamespaceVersion namespace) {
+
+        //两组Id比价 每组两个Id
 
         long latestId = getLatestReleaseMsgId(namespace.getNamespaceName());
 
@@ -120,9 +130,9 @@ public class ConfigClient4Version extends ConfigClient {
 
         long latestId = ConfigConsts.NOTIFICATION_ID_PLACEHOLDER;
 
-        Collection<String> longNsKeys = this.getNamespace2LongNsMap().get(namespace);
+        Collection<String> longNsKeys = this.getNamespace_LongNs().get(namespace);
         for (String longNs : longNsKeys) {
-            long releaseMessageId = latestLongNs2ReleaseMsgIdMap.getOrDefault(longNs, ConfigConsts.NOTIFICATION_ID_PLACEHOLDER);
+            long releaseMessageId = latest_LongNs_ReleaseMsgId.getOrDefault(longNs, ConfigConsts.NOTIFICATION_ID_PLACEHOLDER);
             if (releaseMessageId > latestId) {
                 latestId = releaseMessageId;
             }
