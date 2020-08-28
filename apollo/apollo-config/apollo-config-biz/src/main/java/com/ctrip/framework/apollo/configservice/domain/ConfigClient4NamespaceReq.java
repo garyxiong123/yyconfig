@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.configservice.domain;
 
+import com.ctrip.framework.apollo.configservice.cache.ReleaseCache;
 import com.ctrip.framework.apollo.configservice.component.ConfigClient;
 import com.ctrip.framework.apollo.configservice.cache.AppNamespaceCache;
 import com.ctrip.framework.apollo.configservice.pattern.strategy.loadRelease.ClientLoadReleaseStrategy;
@@ -15,6 +16,7 @@ import com.yofish.yyconfig.common.framework.apollo.core.dto.LongNamespaceVersion
 import java.util.List;
 import java.util.Objects;
 
+import static com.ctrip.framework.apollo.configservice.cache.ReleaseCache.STRING_SPLITTER;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass;
 import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass4Context;
@@ -33,7 +35,7 @@ public class ConfigClient4NamespaceReq extends ConfigClient {
     public LongNamespaceVersion clientMessages;
     public String configAppId;
     public String configClusterName;
-    public String configNamespace;
+    public String configNamespace;//the requested config's appNamespace name
 
     public ConfigClient4NamespaceReq() {
     }
@@ -46,14 +48,11 @@ public class ConfigClient4NamespaceReq extends ConfigClient {
     }
 
     private void parseClientMsg(LongNamespaceVersion clientMessages) {
-        if (clientMessages != null) {
-            String longNsNameString = clientMessages.getLongNsVersionMap().keySet().iterator().next();
-            String regex = "'+'";
-            String[] longNsSet = longNsNameString.split(regex);
-            configAppId = longNsSet[0];
-            configClusterName = longNsSet[1];
-            configNamespace = longNsSet[3];
-        }
+        String longNsNameString = clientMessages.getLongNsVersionMap().keySet().iterator().next();
+        List<String> longNsSet = STRING_SPLITTER.splitToList(longNsNameString);
+        configAppId = longNsSet.get(0);
+        configClusterName = longNsSet.get(1);
+        configNamespace = longNsSet.get(3);
     }
 
     /**
@@ -142,11 +141,11 @@ public class ConfigClient4NamespaceReq extends ConfigClient {
         Release release = null;
 
         if (grayReleaseId != null) {
-            release = getBeanByClass(ReleaseRepo.class).findActiveOne(grayReleaseId, clientMessages);
+            release = getBeanByClass(ReleaseCache.class).findActiveOne(grayReleaseId, clientMessages);
         }
 
         if (release == null) {
-            release = getBeanByClass(ReleaseRepo.class).findLatestActiveRelease(configAppId, env, configClusterName, configNamespace, clientMessages);
+            release = getBeanByClass(ReleaseCache.class).findLatestActiveRelease(configAppId, env, configClusterName, configNamespace, clientMessages);
         }
 
         return release;

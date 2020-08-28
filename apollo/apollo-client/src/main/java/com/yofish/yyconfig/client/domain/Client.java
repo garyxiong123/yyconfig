@@ -1,4 +1,4 @@
-package com.yofish.yyconfig.client.timer;
+package com.yofish.yyconfig.client.domain;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -14,6 +14,7 @@ import com.yofish.yyconfig.client.component.util.http.HttpUtil;
 import com.yofish.yyconfig.client.lifecycle.preboot.inject.ApolloInjector;
 import com.yofish.yyconfig.client.lifecycle.preboot.internals.ClientConfig;
 import com.yofish.yyconfig.client.repository.RemoteConfigRepository;
+import com.yofish.yyconfig.client.timer.VersionMonitor;
 import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
 import com.yofish.yyconfig.common.framework.apollo.core.dto.LongNamespaceVersion;
 import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceVersion;

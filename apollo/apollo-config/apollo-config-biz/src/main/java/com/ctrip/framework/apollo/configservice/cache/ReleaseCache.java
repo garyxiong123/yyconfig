@@ -42,7 +42,7 @@ public class ReleaseCache implements ReleaseRepo {
     private static final String TRACER_EVENT_CACHE_LOAD_ID = "ConfigCache.LoadFromDBById";
     private static final String TRACER_EVENT_CACHE_GET = "ConfigCache.Get";
     private static final String TRACER_EVENT_CACHE_GET_ID = "ConfigCache.GetById";
-    private static final Splitter STRING_SPLITTER = Splitter.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).omitEmptyStrings();
+    public static final Splitter STRING_SPLITTER = Splitter.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).omitEmptyStrings();
 
     @Autowired
     private ReleaseService releaseService;

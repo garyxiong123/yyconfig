@@ -78,7 +78,7 @@ public class TimerTask4SyncReleaseMessage2Cache implements InitializingBean {
                 } finally {
                 }
                 try {
-                    scanIntervalTimeUnit.sleep(scanInterval);
+                    scanIntervalTimeUnit.sleep(5);
                 } catch (InterruptedException e) {
                     //ignore
                 }

@@ -25,39 +25,40 @@ import static org.springframework.util.StringUtils.isEmpty;
 @Component
 public class VersionCompareStrategy {
 
-
+    /**
+     * 计算新的namespaceVersion：
+     * <p>
+     * 1： 是否是新的 ns
+     * 2： 新的计算，并且加入
+     *
+     * @param configClient4Version
+     * @return
+     */
     public List<NamespaceVersion> calcNewNsVersions(ConfigClient4Version configClient4Version) {
 
-        List<ReleaseMessage> latestReleaseMessages = getBeanByClass4Context(ReleaseMessageService.class).findLatestReleaseMessagesGroupByLongNsNames(configClient4Version.getLongNsNames());
-        if (isEmpty(latestReleaseMessages)) {
-            return null;
-        }
+        List<NamespaceVersion> newNsVersionsRsp = Lists.newArrayList();
 
-        List<NamespaceVersion> newNsVersions = Lists.newArrayList();
+        for (NamespaceVersion namespaceVersion : configClient4Version.getClientNsVersions()) {
+            //如果有的发布
+            if (configClient4Version.isNewVersion(namespaceVersion)) {
 
-        Map<String, Long> latestNotificationMap = Maps.newHashMap();
-        latestReleaseMessages.forEach(
-                (releaseMessage) -> latestNotificationMap.put(releaseMessage.getNamespaceKey(), releaseMessage.getId())
-        );
-
-
-        for (String namespace4Client : configClient4Version.getNamespaces4Client()) {
-            long clientSideId = configClient4Version.getNamespaceVersionMap().get(namespace4Client);
-            long latestId = ConfigConsts.NOTIFICATION_ID_PLACEHOLDER;
-            Collection<String> namespaceWatchedKeys = configClient4Version.getClientWatchedKeysMap().get(namespace4Client);
-            for (String namespaceWatchedKey : namespaceWatchedKeys) {
-                long namespaceNotificationId = latestNotificationMap.getOrDefault(namespaceWatchedKey, ConfigConsts.NOTIFICATION_ID_PLACEHOLDER);
-                if (namespaceNotificationId > latestId) {
-                    latestId = namespaceNotificationId;
-                }
-            }
-            if (latestId > clientSideId) {
-                NamespaceVersion notification = new NamespaceVersion(namespace4Client, latestId);
-                namespaceWatchedKeys.stream().filter(latestNotificationMap::containsKey).forEach(namespaceWatchedKey ->
-                        notification.addMessage(namespaceWatchedKey, latestNotificationMap.get(namespaceWatchedKey)));
-                newNsVersions.add(notification);
+                NamespaceVersion newNsVersion = buildNewNsVersion(namespaceVersion, configClient4Version);
+                newNsVersionsRsp.add(newNsVersion);
             }
         }
-        return newNsVersions;
+        return newNsVersionsRsp;
     }
+
+
+    private NamespaceVersion buildNewNsVersion(NamespaceVersion namespaceVersion4Client, ConfigClient4Version configClient4Version) {
+        String namespace = namespaceVersion4Client.getNamespaceName();
+        long latestId = configClient4Version.getLatestReleaseMsgId(namespace);
+        String longNs = configClient4Version.getLongNs(namespace);
+
+        NamespaceVersion namespaceVersion = new NamespaceVersion(namespace, latestId);
+        namespaceVersion.addMessage(longNs, latestId);
+        return namespaceVersion;
+    }
+
+
 }

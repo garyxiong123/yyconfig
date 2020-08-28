@@ -42,7 +42,7 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 @Controller
 @RequestMapping("/notifications/v2")
 @Slf4j
-public class ClientWatchRegisterController {
+public class VersionCompareController {
 
 
     @Autowired

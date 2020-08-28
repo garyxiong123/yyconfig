@@ -111,9 +111,11 @@ public class AppNamespaceCache {
      */
     public void addNewAppNamespacesToCache(List<AppNamespace> appNamespaces) {
         for (AppNamespace appNamespace : appNamespaces) {
-            appNamespaceCache4Private.put(assembleAppNamespaceKey(appNamespace), appNamespace);
+            if (appNamespace.isPrivate()) {
+                appNamespaceCache4Private.put(assembleAppNamespaceKey(appNamespace), appNamespace);
+            }
             appNamespaceIdCache.put(appNamespace.getId(), appNamespace);
-            if (appNamespace.isPublic()) {
+            if (appNamespace.isPublicOrProtect()) {
                 appNamespaceCache4PublicProtect.put(appNamespace.getName(), appNamespace);
             }
         }
@@ -206,6 +208,7 @@ public class AppNamespaceCache {
 
     /**
      * 命名空间所属namespeace
+     *
      * @param appId
      * @param namespaces
      * @return

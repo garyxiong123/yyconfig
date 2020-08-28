@@ -3,6 +3,7 @@ package com.yofish.yyconfig.client.timer;
 import com.google.common.util.concurrent.RateLimiter;
 import com.yofish.yyconfig.client.component.exceptions.ApolloConfigException;
 import com.yofish.yyconfig.client.component.util.ExceptionUtil;
+import com.yofish.yyconfig.client.domain.Client;
 import com.yofish.yyconfig.client.lifecycle.preboot.inject.ApolloInjector;
 import com.yofish.yyconfig.client.lifecycle.preboot.internals.ClientConfig;
 import com.yofish.yyconfig.client.lifecycle.preboot.internals.ConfigServiceLocator;

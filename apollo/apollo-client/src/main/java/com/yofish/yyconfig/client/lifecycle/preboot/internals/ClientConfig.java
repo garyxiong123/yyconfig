@@ -17,7 +17,7 @@ package com.yofish.yyconfig.client.lifecycle.preboot.internals;
 
 import com.google.common.base.Strings;
 import com.yofish.yyconfig.client.component.util.EnvironmentContext;
-import com.yofish.yyconfig.client.timer.Client;
+import com.yofish.yyconfig.client.domain.Client;
 import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
 import com.yofish.yyconfig.common.framework.apollo.core.MetaDomainConsts;
 import com.yofish.yyconfig.common.framework.apollo.core.dto.ServiceDTO;
@@ -28,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;

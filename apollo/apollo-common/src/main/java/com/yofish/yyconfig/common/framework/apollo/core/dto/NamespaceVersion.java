@@ -42,7 +42,7 @@ public class NamespaceVersion implements Serializable {
         this.releaseMessageId = releaseMessageId;
     }
 
-    public void addMessage(String key, long notificationId) {
+    public void addMessage(String longNsKey, long releaseMessageId) {
         if (this.longNamespaceVersion == null) {
             synchronized (this) {
                 if (this.longNamespaceVersion == null) {
@@ -50,7 +50,7 @@ public class NamespaceVersion implements Serializable {
                 }
             }
         }
-        this.longNamespaceVersion.put(key, notificationId);
+        this.longNamespaceVersion.put(longNsKey, releaseMessageId);
     }
 
     @Override

@@ -152,7 +152,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
     @Override
     protected synchronized void sync() {
         NamespaceConfig previous = namespaceConfigCache.get() == null ? new NamespaceConfig() : namespaceConfigCache.get();
-        NamespaceConfig current = loadNamespaceConfig();
+        NamespaceConfig current = loadRemoteNamespaceConfig();
 
         //reference equals means HTTP 304
         if (previous.getReleaseKey() != current.getReleaseKey()) {
@@ -175,7 +175,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
 
 
     //TODO fix it to feign 读取新的配置
-    private NamespaceConfig loadNamespaceConfig() {
+    private NamespaceConfig loadRemoteNamespaceConfig() {
         if (!m_loadConfigRateLimiter.tryAcquire(5, TimeUnit.SECONDS)) {
             //wait at most 5 seconds
             try {

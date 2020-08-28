@@ -140,4 +140,8 @@ public class AppNamespace extends BaseEntity {
     public boolean hasChange(LocalDateTime updateTime) {
         return !this.getUpdateTime().isEqual(updateTime);
     }
+
+    public boolean isPrivate() {
+        return !isPublicOrProtect();
+    }
 }

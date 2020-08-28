@@ -66,7 +66,7 @@ public class TimerTask4SyncAppNamespace2Cache implements InitializingBean {
 
     private void initialize() {
         maxIdScanned = 0;
-        scheduledExecutorService = Executors.newScheduledThreadPool(1, ApolloThreadFactory.create("AppNamespaceServiceWithCache", true));
+        scheduledExecutorService = Executors.newScheduledThreadPool(1, ApolloThreadFactory.create("TimerTask4SyncAppNamespace2Cache", true));
     }
 
 
@@ -79,10 +79,10 @@ public class TimerTask4SyncAppNamespace2Cache implements InitializingBean {
         //1：扫描新增
         scanNewAppNamespaces(); //block the startup process until load finished
 
-        //2：同步 修改和删除
-        scheduledExecutorService.scheduleAtFixedRate(() -> {
-            appNamespaceCache.pollUpdateAndDelete2Cache();
-        }, rebuildInterval, rebuildInterval, rebuildIntervalTimeUnit);
+        //2：同步 修改和删除 TODO fix 数据读取量太大 暂时不加
+//        scheduledExecutorService.scheduleAtFixedRate(() -> {
+//            appNamespaceCache.pollUpdateAndDelete2Cache();
+//        }, rebuildInterval, rebuildInterval, rebuildIntervalTimeUnit);
 
         //3：扫描新增
         scheduledExecutorService.scheduleWithFixedDelay(this::scanNewAppNamespaces, scanInterval,

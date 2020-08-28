@@ -49,7 +49,7 @@ public class LongNamespaceNameUtil {
      */
     public Set<String> assembleLongNamespaceNameSet(String appId, String clusterName, String env, String namespace,
                                                     String dataCenter) {
-        Multimap<String, String> watchedKeysMap = assembleLongNamespaceNameMap(appId, clusterName, env, Sets.newHashSet(namespace), dataCenter);
+        Multimap<String, String> watchedKeysMap = assembleNamespace2LongNsMap(appId, clusterName, env, Sets.newHashSet(namespace), dataCenter);
         return Sets.newHashSet(watchedKeysMap.get(namespace));
     }
 
@@ -58,9 +58,9 @@ public class LongNamespaceNameUtil {
      *
      * @return a multimap with appNamespace as the key and watch keys as the value
      */
-    public Multimap<String, String> assembleLongNamespaceNameMap(String appId, String clusterName, String env,
-                                                                 Set<String> namespaces,
-                                                                 String dataCenter) {
+    public Multimap<String, String> assembleNamespace2LongNsMap(String appId, String clusterName, String env,
+                                                                Set<String> namespaces,
+                                                                String dataCenter) {
 
         Multimap<String, String> watchedKeysMap = HashMultimap.create();
         Set<String> namespacesBelongToAppId = null;
@@ -76,7 +76,7 @@ public class LongNamespaceNameUtil {
             }
             //放入
             if (!namespacesBelongToAppId.isEmpty()) {
-                watchedKeysMap.putAll(assembleLongNsNames(appId, clusterName, env, namespaces, dataCenter));
+                watchedKeysMap.putAll(assembleLongNsNames(appId, clusterName, env, namespacesBelongToAppId, dataCenter));
             }
         }
 
@@ -125,10 +125,10 @@ public class LongNamespaceNameUtil {
         if (!Strings.isNullOrEmpty(dataCenter) && !Objects.equals(dataCenter, clusterName)) {
             watchedKeys.add(assembleKey(appId, dataCenter, env, namespace));
         }
-
-        //watch default appEnvCluster config change
-        watchedKeys.add(assembleKey(appId, ConfigConsts.CLUSTER_NAME_DEFAULT, env, namespace));
-
+        if (watchedKeys.isEmpty()) {
+            //watch default appEnvCluster config change   默认肯定有 default集群，所以都会添加
+            watchedKeys.add(assembleKey(appId, ConfigConsts.CLUSTER_NAME_DEFAULT, env, namespace));
+        }
         return watchedKeys;
     }
 

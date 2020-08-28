@@ -50,8 +50,7 @@ public abstract class AbstractConfigFile implements ConfigFile, RepositoryChange
   private volatile ConfigSourceType m_sourceType = ConfigSourceType.NONE;
 
   static {
-    m_executorService = Executors.newCachedThreadPool(ApolloThreadFactory
-        .create("ConfigFile", true));
+    m_executorService = Executors.newCachedThreadPool(ApolloThreadFactory.create("AbstractConfigFile", true));
   }
 
   public AbstractConfigFile(String namespace, ConfigRepository configRepository) {
@@ -67,8 +66,7 @@ public abstract class AbstractConfigFile implements ConfigFile, RepositoryChange
       m_sourceType = m_configRepository.getSourceType();
     } catch (Throwable ex) {
       Tracer.logError(ex);
-      logger.warn("Init Apollo Config File failed - appNamespace: {}, reason: {}.",
-          m_namespace, ExceptionUtil.getDetailMessage(ex));
+      logger.warn("Init Apollo Config File failed - appNamespace: {}, reason: {}.", m_namespace, ExceptionUtil.getDetailMessage(ex));
     } finally {
       //register the change listener no matter config repository is working or not
       //so that whenever config repository is recovered, config could get changed
