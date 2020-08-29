@@ -286,7 +286,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
      * 提交给 长连接版本控制
      */
     private void add2VersionControl() {
-        versionMonitor.add2VersionControl(namespaceName, this);
+        versionMonitor.add2VersionMonitor(namespaceName, this);
     }
 
     /**

@@ -48,15 +48,16 @@ import java.util.concurrent.TimeUnit;
 public class Client {
     private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR);
     private static final long INIT_NOTIFICATION_ID = ConfigConsts.NOTIFICATION_ID_PLACEHOLDER;
-    private SchedulePolicy m_longPollFailSchedulePolicyInSecond;
     private static final Joiner.MapJoiner MAP_JOINER = Joiner.on("&").withKeyValueSeparator("=");
     private static final Escaper queryParamEscaper = UrlEscapers.urlFormParameterEscaper();
     private static final Logger logger = LoggerFactory.getLogger(VersionMonitor.class);
     private static final int LONG_POLLING_READ_TIMEOUT = 90 * 1000;
-    private final Map<String, LongNamespaceVersion> longNamespaceVersionMap;//namespaceName -> watchedKey -> notificationId
-    private Type m_responseType;
+
     private final Multimap<String, RemoteConfigRepository> remoteConfigRepositoryMap;
+    private final Map<String, LongNamespaceVersion> key_longNamespaceVersion;//namespaceName -> watchedKey -> notificationId
     private final ConcurrentMap<String, Long> namespaceVersionMap;
+
+    private Type m_responseType;
     private HttpUtil m_httpUtil;
     private Gson gson;
 
@@ -65,16 +66,17 @@ public class Client {
     private String env;
     private String dataCenter;
     private ClientConfig clientConfig;
+    private String url;
 
 
     public Client() {
-        m_longPollFailSchedulePolicyInSecond = new ExponentialSchedulePolicy(1, 120); //in second
 
-        longNamespaceVersionMap = Maps.newConcurrentMap();
-        m_responseType = new TypeToken<List<NamespaceVersion>>() {}.getType();
+        key_longNamespaceVersion = Maps.newConcurrentMap();
+        m_responseType = new TypeToken<List<NamespaceVersion>>() {
+        }.getType();
+
         remoteConfigRepositoryMap = Multimaps.synchronizedSetMultimap(HashMultimap.<String, RemoteConfigRepository>create());
         namespaceVersionMap = Maps.newConcurrentMap();
-
         clientConfig = ApolloInjector.getInstance(ClientConfig.class);
 
         m_httpUtil = ApolloInjector.getInstance(HttpUtil.class);
@@ -82,62 +84,58 @@ public class Client {
     }
 
 
-    public void nsVersionCompareAndSyncConfig() {
-        final Random random = new Random();
+    public String versionCompareAndSync() {
 
-        String url = null;
-        ServiceDTO lastServiceDto = null;
-        try {
+        final HttpResponse<List<NamespaceVersion>> versionCompareRsp = versionCompare();
 
-            lastServiceDto = clientConfig.buildServiceDTO();
+        if (hasNewVersion(versionCompareRsp)) {
+            //如果有版本变更 ，
+            List<NamespaceVersion> newNamespaceVersions = versionCompareRsp.getBody();
 
-            url = assembleLongPollRefreshUrl();
+            updateLocalCache(newNamespaceVersions); //更新本地缓存
 
-            logger.debug("Long polling from {}", url);
-            HttpRequest request = new HttpRequest(url);
-            request.setReadTimeout(LONG_POLLING_READ_TIMEOUT);
 
-            /**
-             * 获取 变更的版本
-             */
-            final HttpResponse<List<NamespaceVersion>> response = m_httpUtil.doGet(request, m_responseType);
-
-            logger.debug("Long polling response: {}, url: {}", response.getStatusCode(), url);
-            if (response.getStatusCode() == 200 && response.getBody() != null) {
-                //如果有版本变更 ，
-                List<NamespaceVersion> newNamespaceVersions = response.getBody();
-
-                updateNamespaceVersionMap(newNamespaceVersions);
-                updateLongNamespaceVersionMap(newNamespaceVersions);
-
-                notify(lastServiceDto, newNamespaceVersions);
-            }
-
-            //try to load balance
-            if (response.getStatusCode() == 304 && random.nextBoolean()) {
-                lastServiceDto = null;
-            }
-
-            m_longPollFailSchedulePolicyInSecond.success();
-        } catch (Throwable ex) {
-            lastServiceDto = null;
-            Tracer.logEvent("ApolloConfigException", ExceptionUtil.getDetailMessage(ex));
-            long sleepTimeInSecond = m_longPollFailSchedulePolicyInSecond.fail();
-            logger.warn(
-                    "Long polling failed, will retry in {} seconds. appCode: {}, appEnvCluster: {}, namespaces: {}, long polling url: {}, reason: {}",
-                    sleepTimeInSecond, appId, cluster, assembleNamespaces(), url, ExceptionUtil.getDetailMessage(ex));
-            try {
-                TimeUnit.SECONDS.sleep(sleepTimeInSecond);
-            } catch (InterruptedException ie) {
-                //ignore
-            }
-        } finally {
-
+            notify(newNamespaceVersions);
         }
+
+        final Random random = new Random();
+        //try to load balance
+        if (versionCompareRsp.getStatusCode() == 304 && random.nextBoolean()) {
+//            lastServiceDto = null;
+        }
+
+        m_longPollFailSchedulePolicyInSecond.success();
+        return url;
+    }
+
+    private void updateLocalCache(List<NamespaceVersion> newNamespaceVersions) {
+        updateNamespaceVersionMap(newNamespaceVersions);
+        updateLongNamespaceVersionMap(newNamespaceVersions);
+    }
+
+    private boolean hasNewVersion(HttpResponse<List<NamespaceVersion>> versionCompareResult) {
+        return versionCompareResult.getStatusCode() == 200 && versionCompareResult.getBody() != null;
+    }
+
+    private HttpResponse<List<NamespaceVersion>> versionCompare() {
+        url = assembleLongPollRefreshUrl();
+        logger.debug("Long polling from {}", url);
+        HttpRequest request = new HttpRequest(url);
+        request.setReadTimeout(LONG_POLLING_READ_TIMEOUT);
+
+        /**
+         * 获取 变更的版本
+         */
+        final HttpResponse<List<NamespaceVersion>> response = m_httpUtil.doGet(request, m_responseType);
+
+        logger.debug("Long polling response: {}, url: {}", response.getStatusCode(), url);
+        return response;
     }
 
 
-    private void notify(ServiceDTO lastServiceDto, List<NamespaceVersion> newNamespaceVersions) {
+    private void notify(List<NamespaceVersion> newNamespaceVersions) {
+
+        ServiceDTO lastServiceDto = clientConfig.buildServiceDTO();
         if (newNamespaceVersions == null || newNamespaceVersions.isEmpty()) {
             return;
         }
@@ -146,7 +144,7 @@ public class Client {
             //create a new list to avoid ConcurrentModificationException
             List<RemoteConfigRepository> toBeNotified = Lists.newArrayList(remoteConfigRepositoryMap.get(namespaceName));
 
-            LongNamespaceVersion longNamespaceVersion = longNamespaceVersionMap.get(namespaceName);
+            LongNamespaceVersion longNamespaceVersion = key_longNamespaceVersion.get(namespaceName);
             LongNamespaceVersion longNsVersion4Remote = longNamespaceVersion == null ? null : longNamespaceVersion.clone();
             //since .properties are filtered out by default, so we need to check if there is any listener for it
             toBeNotified.addAll(remoteConfigRepositoryMap.get(String.format("%s.%s", namespaceName, ConfigFileFormat.Properties.getValue())));
@@ -194,11 +192,11 @@ public class Client {
                 continue;
             }
 
-            LongNamespaceVersion localRemoteMessages = longNamespaceVersionMap.get(newNamespaceVersion.getNamespaceName());
+            LongNamespaceVersion localRemoteMessages = key_longNamespaceVersion.get(newNamespaceVersion.getNamespaceName());
 
             if (localRemoteMessages == null) {
                 localRemoteMessages = new LongNamespaceVersion();
-                longNamespaceVersionMap.put(newNamespaceVersion.getNamespaceName(), localRemoteMessages);
+                key_longNamespaceVersion.put(newNamespaceVersion.getNamespaceName(), localRemoteMessages);
             }
 
             localRemoteMessages.mergeFrom(newNamespaceVersion.getLongNamespaceVersion());
@@ -211,7 +209,7 @@ public class Client {
         queryParams.put("appId", queryParamEscaper.escape(appId));
         queryParams.put("cluster", queryParamEscaper.escape(cluster));
         queryParams.put("env", queryParamEscaper.escape(env));
-        queryParams.put("notifications", queryParamEscaper.escape(assembleNsVersionsMapString()));
+        queryParams.put("notifications", queryParamEscaper.escape(assembleNsVersionsMapStr()));
 
         if (!Strings.isNullOrEmpty(dataCenter)) {
             queryParams.put("dataCenter", queryParamEscaper.escape(dataCenter));
@@ -231,12 +229,12 @@ public class Client {
     }
 
 
-    private String assembleNamespaces() {
+    public String assembleNamespaces() {
         return STRING_JOINER.join(remoteConfigRepositoryMap.keySet());
     }
 
 
-    String assembleNsVersionsMapString() {
+    String assembleNsVersionsMapStr() {
         List<NamespaceVersion> namespaceVersions = Lists.newArrayList();
         for (Map.Entry<String, Long> entry : namespaceVersionMap.entrySet()) {
             NamespaceVersion nsVersion = new NamespaceVersion(entry.getKey(), entry.getValue());
