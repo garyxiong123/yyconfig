@@ -7,34 +7,27 @@ import com.google.common.escape.Escaper;
 import com.google.common.net.UrlEscapers;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import com.yofish.yyconfig.client.component.util.ExceptionUtil;
 import com.yofish.yyconfig.client.component.util.http.HttpRequest;
 import com.yofish.yyconfig.client.component.util.http.HttpResponse;
 import com.yofish.yyconfig.client.component.util.http.HttpUtil;
 import com.yofish.yyconfig.client.lifecycle.preboot.inject.ApolloInjector;
 import com.yofish.yyconfig.client.lifecycle.preboot.internals.ClientConfig;
 import com.yofish.yyconfig.client.repository.RemoteConfigRepository;
-import com.yofish.yyconfig.client.timer.VersionMonitor;
 import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
 import com.yofish.yyconfig.common.framework.apollo.core.dto.LongNamespaceVersion;
 import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceVersion;
-import com.yofish.yyconfig.common.framework.apollo.core.dto.ServiceDTO;
 import com.yofish.yyconfig.common.framework.apollo.core.enums.ConfigFileFormat;
-import com.yofish.yyconfig.common.framework.apollo.core.schedule.ExponentialSchedulePolicy;
-import com.yofish.yyconfig.common.framework.apollo.core.schedule.SchedulePolicy;
 import com.yofish.yyconfig.common.framework.apollo.tracer.Tracer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: xiongchengwei
@@ -42,6 +35,7 @@ import java.util.concurrent.TimeUnit;
  * @Description: 类的主要职责说明
  * @Date: 2020/8/21 上午9:11
  */
+@Slf4j
 @Data
 @AllArgsConstructor
 @Builder
@@ -50,11 +44,10 @@ public class Client {
     private static final long INIT_NOTIFICATION_ID = ConfigConsts.NOTIFICATION_ID_PLACEHOLDER;
     private static final Joiner.MapJoiner MAP_JOINER = Joiner.on("&").withKeyValueSeparator("=");
     private static final Escaper queryParamEscaper = UrlEscapers.urlFormParameterEscaper();
-    private static final Logger logger = LoggerFactory.getLogger(VersionMonitor.class);
     private static final int LONG_POLLING_READ_TIMEOUT = 90 * 1000;
 
     private final Multimap<String, RemoteConfigRepository> remoteConfigRepositoryMap;
-    private final Map<String, LongNamespaceVersion> key_longNamespaceVersion;//namespaceName -> watchedKey -> notificationId
+    private final Map<String, LongNamespaceVersion> namespaceName_longNamespaceVersion;//namespaceName -> watchedKey -> notificationId
     private final ConcurrentMap<String, Long> namespaceVersionMap;
 
     private Type m_responseType;
@@ -71,7 +64,7 @@ public class Client {
 
     public Client() {
 
-        key_longNamespaceVersion = Maps.newConcurrentMap();
+        namespaceName_longNamespaceVersion = Maps.newConcurrentMap();
         m_responseType = new TypeToken<List<NamespaceVersion>>() {
         }.getType();
 
@@ -83,7 +76,11 @@ public class Client {
         gson = new Gson();
     }
 
-
+    /**
+     * 版本比较 和 同步
+     *
+     * @return
+     */
     public String versionCompareAndSync() {
 
         final HttpResponse<List<NamespaceVersion>> versionCompareRsp = versionCompare();
@@ -103,8 +100,6 @@ public class Client {
         if (versionCompareRsp.getStatusCode() == 304 && random.nextBoolean()) {
 //            lastServiceDto = null;
         }
-
-        m_longPollFailSchedulePolicyInSecond.success();
         return url;
     }
 
@@ -119,7 +114,7 @@ public class Client {
 
     private HttpResponse<List<NamespaceVersion>> versionCompare() {
         url = assembleLongPollRefreshUrl();
-        logger.debug("Long polling from {}", url);
+        log.debug("Long polling from {}", url);
         HttpRequest request = new HttpRequest(url);
         request.setReadTimeout(LONG_POLLING_READ_TIMEOUT);
 
@@ -128,30 +123,29 @@ public class Client {
          */
         final HttpResponse<List<NamespaceVersion>> response = m_httpUtil.doGet(request, m_responseType);
 
-        logger.debug("Long polling response: {}, url: {}", response.getStatusCode(), url);
+        log.debug("Long polling response: {}, url: {}", response.getStatusCode(), url);
         return response;
     }
 
 
     private void notify(List<NamespaceVersion> newNamespaceVersions) {
-
-        ServiceDTO lastServiceDto = clientConfig.buildServiceDTO();
         if (newNamespaceVersions == null || newNamespaceVersions.isEmpty()) {
             return;
         }
+
         for (NamespaceVersion newNamespaceVersion : newNamespaceVersions) {
             String namespaceName = newNamespaceVersion.getNamespaceName();
             //create a new list to avoid ConcurrentModificationException
             List<RemoteConfigRepository> toBeNotified = Lists.newArrayList(remoteConfigRepositoryMap.get(namespaceName));
 
-            LongNamespaceVersion longNamespaceVersion = key_longNamespaceVersion.get(namespaceName);
+            LongNamespaceVersion longNamespaceVersion = namespaceName_longNamespaceVersion.get(namespaceName);
             LongNamespaceVersion longNsVersion4Remote = longNamespaceVersion == null ? null : longNamespaceVersion.clone();
             //since .properties are filtered out by default, so we need to check if there is any listener for it
             toBeNotified.addAll(remoteConfigRepositoryMap.get(String.format("%s.%s", namespaceName, ConfigFileFormat.Properties.getValue())));
 
             for (RemoteConfigRepository remoteConfigRepository : toBeNotified) {
                 try {
-                    remoteConfigRepository.onLongPollNotified(lastServiceDto, longNsVersion4Remote);
+                    remoteConfigRepository.onReceiveNewVersion(longNsVersion4Remote);
                 } catch (Throwable ex) {
                     Tracer.logError(ex);
                 }
@@ -192,11 +186,11 @@ public class Client {
                 continue;
             }
 
-            LongNamespaceVersion localRemoteMessages = key_longNamespaceVersion.get(newNamespaceVersion.getNamespaceName());
+            LongNamespaceVersion localRemoteMessages = namespaceName_longNamespaceVersion.get(newNamespaceVersion.getNamespaceName());
 
             if (localRemoteMessages == null) {
                 localRemoteMessages = new LongNamespaceVersion();
-                key_longNamespaceVersion.put(newNamespaceVersion.getNamespaceName(), localRemoteMessages);
+                namespaceName_longNamespaceVersion.put(newNamespaceVersion.getNamespaceName(), localRemoteMessages);
             }
 
             localRemoteMessages.mergeFrom(newNamespaceVersion.getLongNamespaceVersion());

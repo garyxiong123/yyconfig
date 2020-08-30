@@ -348,9 +348,17 @@ public class ClientConfig implements EnvironmentAware {
     }
 
     public Client getOrCreateClient() {
-        if(client == null){
-            client =  buildClient();
+        if (client == null) {
+            client = buildClient();
         }
         return client;
+    }
+
+    public String getConfigServerUrlWithSlash() {
+
+        if (!configServerUrl.endsWith("/")) {
+            return configServerUrl += "/";
+        }
+        return configServerUrl;
     }
 }

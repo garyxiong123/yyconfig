@@ -99,6 +99,7 @@ public class ConfigClient4Version extends ConfigClient {
 
     /**
      * 计算得出 新的 命名空间版本
+     * 计算方法    每个nsversion 重的 map进行比对， 如果map中有变化，则 更新整个ns的map
      */
     public List<NamespaceVersion> calcNewNsVersions() {
         //查询最新的发布 版本

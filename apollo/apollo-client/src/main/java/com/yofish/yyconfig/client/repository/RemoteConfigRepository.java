@@ -48,7 +48,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -75,15 +74,17 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
     private ClientConfig m_Client_config;
     @Autowired
     private VersionMonitor versionMonitor;
-    private volatile AtomicReference<NamespaceConfig> namespaceConfigCache;
     private final String namespaceName;
     private final static ScheduledExecutorService m_executorService;
     private final AtomicReference<ServiceDTO> m_longPollServiceDto;
-    private final AtomicReference<LongNamespaceVersion> longNamespaceVersion;
     private final RateLimiter m_loadConfigRateLimiter;
     private final AtomicBoolean m_configNeedForceRefresh;
     private final SchedulePolicy m_loadConfigFailSchedulePolicy;
     private final Gson gson;
+
+    private final AtomicReference<LongNamespaceVersion> longNamespaceVersion;
+    private volatile AtomicReference<NamespaceConfig> namespaceConfigCache;
+
 
     static {
         m_executorService = Executors.newScheduledThreadPool(1, ApolloThreadFactory.create("RemoteConfigRepository", true));
@@ -176,90 +177,48 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
 
     //TODO fix it to feign 读取新的配置
     private NamespaceConfig loadRemoteNamespaceConfig() {
-        if (!m_loadConfigRateLimiter.tryAcquire(5, TimeUnit.SECONDS)) {
-            //wait at most 5 seconds
-            try {
-                TimeUnit.SECONDS.sleep(5);
-            } catch (InterruptedException e) {
-            }
+
+
+        String url = assembleQueryConfigUrl(namespaceName);
+
+        logger.debug("Loading config from {}", url);
+        HttpRequest request = new HttpRequest(url);
+
+        HttpResponse<NamespaceConfig> response = m_httpUtil.doGet(request, NamespaceConfig.class);
+        m_configNeedForceRefresh.set(false);
+        m_loadConfigFailSchedulePolicy.success();
+
+        if (response.getStatusCode() == 304) {
+            logger.debug("Config server responds with 304 HTTP status code.");
+            return namespaceConfigCache.get();
         }
-        String appId = m_Client_config.getAppId();
-        String cluster = m_Client_config.getCluster();
-        String dataCenter = m_Client_config.getDataCenter();
-        Tracer.logEvent("Apollo.Client.ConfigMeta", STRING_JOINER.join(appId, cluster, namespaceName));
-        int maxRetries = m_configNeedForceRefresh.get() ? 2 : 1;
-        long onErrorSleepTime = 0; // 0 means no sleep
-        Throwable exception = null;
 
-        List<ServiceDTO> configServices = getConfigServices();
-        String url = null;
-        for (int i = 0; i < maxRetries; i++) {
-            List<ServiceDTO> randomConfigServices = Lists.newLinkedList(configServices);
-            Collections.shuffle(randomConfigServices);
-            //Access the server which notifies the client first
-            if (m_longPollServiceDto.get() != null) {
-                randomConfigServices.add(0, m_longPollServiceDto.getAndSet(null));
-            }
-
-            for (ServiceDTO configService : randomConfigServices) {
-                if (onErrorSleepTime > 0) {
-                    logger.warn(
-                            "Load config failed, will retry in {} {}. appCode: {}, appEnvCluster: {}, namespaces: {}",
-                            onErrorSleepTime, m_Client_config.getOnErrorRetryIntervalTimeUnit(), appId, cluster, namespaceName);
-
-                    try {
-                        m_Client_config.getOnErrorRetryIntervalTimeUnit().sleep(onErrorSleepTime);
-                    } catch (InterruptedException e) {
-                        //ignore
-                    }
-                }
-
-                url = assembleQueryConfigUrl(configService.getHomepageUrl(), appId, System.getenv("ENV").toLowerCase(), cluster, namespaceName,
-                        dataCenter, longNamespaceVersion.get(), namespaceConfigCache.get());
-
-                logger.debug("Loading config from {}", url);
-                HttpRequest request = new HttpRequest(url);
-
-
-                HttpResponse<NamespaceConfig> response = m_httpUtil.doGet(request, NamespaceConfig.class);
-                m_configNeedForceRefresh.set(false);
-                m_loadConfigFailSchedulePolicy.success();
-
-
-                if (response.getStatusCode() == 304) {
-                    logger.debug("Config server responds with 304 HTTP status code.");
-                    return namespaceConfigCache.get();
-                }
-
-                NamespaceConfig namespaceConfig = response.getBody();
-
-                logger.debug("Loaded config for {}: {}", namespaceName, namespaceConfig);
-
-                return namespaceConfig;
-
-                // if force refresh, do normal sleep, if normal config load, do exponential sleep
-//                onErrorSleepTime = m_configNeedForceRefresh.get() ? m_configUtil.getOnErrorRetryInterval() :
-//                        m_loadConfigFailSchedulePolicy.fail();
-            }
-
-        }
-        String message = String.format("Load Apollo Config failed - appCode: %s, appEnvCluster: %s, appNamespace: %s, url: %s", appId, cluster, namespaceName, url);
-        throw new ApolloConfigException(message, exception);
+        NamespaceConfig namespaceConfig = response.getBody();
+        logger.debug("Loaded config for {}: {}", namespaceName, namespaceConfig);
+        return namespaceConfig;
     }
 
-    String assembleQueryConfigUrl(String uri, String appId, String cluster, String env, String namespace,
-                                  String dataCenter, LongNamespaceVersion remoteMessages, NamespaceConfig previousConfig) {
+    public String assembleQueryConfigUrl(String namespace) {
 
+        String configServerUrl = m_Client_config.getConfigServerUrlWithSlash();
+        String pathExpanded = assemblePathExpanded(namespace);
+
+        return configServerUrl + pathExpanded;
+    }
+
+    private String assemblePathExpanded(String namespace) {
         String path = "configs/%s/%s/%s/%s";
-        List<String> pathParams = Lists.newArrayList(pathEscaper.escape(appId), pathEscaper.escape(cluster), pathEscaper.escape(env), pathEscaper.escape(namespace));
+        List<String> pathParams = Lists.newArrayList(pathEscaper.escape(m_Client_config.getAppId()), pathEscaper.escape(m_Client_config.getCluster()), pathEscaper.escape(m_Client_config.getApolloEnv().name().toLowerCase()), pathEscaper.escape(namespace));
         Map<String, String> queryParams = Maps.newHashMap();
 
+
+        NamespaceConfig previousConfig = namespaceConfigCache.get();
         if (previousConfig != null) {
             queryParams.put("releaseKey", queryParamEscaper.escape(previousConfig.getReleaseKey()));
         }
 
-        if (!Strings.isNullOrEmpty(dataCenter)) {
-            queryParams.put("dataCenter", queryParamEscaper.escape(dataCenter));
+        if (!Strings.isNullOrEmpty(m_Client_config.getDataCenter())) {
+            queryParams.put("dataCenter", queryParamEscaper.escape(m_Client_config.getDataCenter()));
         }
 
         String localIp = m_Client_config.getLocalIp();
@@ -267,6 +226,8 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
             queryParams.put("ip", queryParamEscaper.escape(localIp));
         }
 
+
+        LongNamespaceVersion remoteMessages = longNamespaceVersion.get();
         if (remoteMessages != null) {
             queryParams.put("messages", queryParamEscaper.escape(gson.toJson(remoteMessages)));
         }
@@ -276,10 +237,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
         if (!queryParams.isEmpty()) {
             pathExpanded += "?" + MAP_JOINER.join(queryParams);
         }
-        if (!uri.endsWith("/")) {
-            uri += "/";
-        }
-        return uri + pathExpanded;
+        return pathExpanded;
     }
 
     /**
@@ -292,12 +250,12 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
     /**
      * 拉取 config端的 版本变更通知， 然后再 拉取 最新的配置
      *
-     * @param longPollNotifiedServiceDto
      * @param longNamespaceVersion
      */
-    public void onLongPollNotified(ServiceDTO longPollNotifiedServiceDto, LongNamespaceVersion longNamespaceVersion) {
-        m_longPollServiceDto.set(longPollNotifiedServiceDto);
+    public void onReceiveNewVersion(LongNamespaceVersion longNamespaceVersion) {
+        m_longPollServiceDto.set(m_Client_config.buildServiceDTO());
         this.longNamespaceVersion.set(longNamespaceVersion);
+
         m_executorService.submit(new Runnable() {
             @Override
             public void run() {
