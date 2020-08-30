@@ -121,9 +121,44 @@ public class ConfigClient4Version extends ConfigClient {
 
         //两组Id比价 每组两个Id
 
-        long latestId = getLatestReleaseMsgId(namespace.getNamespaceName());
+        return twoMapCompare(namespace);
+    }
 
-        return latestId > namespace.getReleaseMessageId();
+    /**
+     * 新旧版本的map进行比价
+     *
+     * @param namespace
+     * @return
+     */
+    private boolean twoMapCompare(NamespaceVersion namespace) {
+        if (namespace.getLongNamespaceVersion() == null) {
+            return true;
+        }
+        Map<String, Long> oldMap = namespace.getLongNamespaceVersion().getLongNsVersionMap();
+        Map<String, Long> newMap = getNewMap(namespace.getNamespaceName());
+        Iterator<Map.Entry<String, Long>> oldMapIter = oldMap.entrySet().iterator();
+        while (oldMapIter.hasNext()) {
+            Map.Entry<String, Long> oldEntry = oldMapIter.next();
+            Long oldValue = oldEntry.getValue() == null ? -1L : oldEntry.getValue();
+            Long newValue = newMap.get(oldEntry.getKey()) == null ? -1L : newMap.get(oldEntry.getKey());
+
+            if (!oldValue.equals(newValue)) {//若两个map中相同key对应的value不相等
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Map<String, Long> getNewMap(String namespaceName) {
+        Map<String, Long> newMap = new HashMap<>();
+        Collection<String> longNsKeys = this.getNamespace_LongNs().get(namespaceName);
+        for (String longNs : longNsKeys) {
+            long releaseMessageId = latest_LongNs_ReleaseMsgId.getOrDefault(longNs, ConfigConsts.NOTIFICATION_ID_PLACEHOLDER);
+            if (releaseMessageId > ConfigConsts.NOTIFICATION_ID_PLACEHOLDER) {
+                newMap.put(longNs, releaseMessageId);
+            }
+        }
+        return newMap;
     }
 
 

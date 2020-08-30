@@ -6,10 +6,13 @@ import com.ctrip.framework.apollo.configservice.cache.AppNamespaceCache;
 import com.ctrip.framework.apollo.configservice.pattern.strategy.loadRelease.ClientLoadReleaseStrategy;
 import com.ctrip.framework.apollo.configservice.component.ReleaseRepo;
 import com.google.common.collect.Lists;
+import com.yofish.apollo.domain.AppEnvCluster;
 import com.yofish.apollo.domain.AppEnvClusterNamespace;
 import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.domain.Release;
 import com.yofish.apollo.pattern.listener.releasemessage.GrayReleaseRulesHolder;
+import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
+import com.yofish.apollo.repository.AppEnvClusterRepository;
 import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
 import com.yofish.yyconfig.common.framework.apollo.core.dto.LongNamespaceVersion;
 
@@ -70,13 +73,24 @@ public class ConfigClient4NamespaceReq extends ConfigClient {
 
         //if appNamespace does not belong to this appCode, should check if there is a public configuration
         if (isPublicNamespace()) {
-            Release publicRelease = findPublicConfig();
-            if (!Objects.isNull(publicRelease)) {
-                releases.add(publicRelease);
+//            Release publicRelease = findPublicConfig();
+//            if (!Objects.isNull(publicRelease)) {
+//                releases.add(publicRelease);
+//            }
+
+            Release associateRelease = findAssociateRelease();
+            if (!Objects.isNull(associateRelease)) {
+                releases.add(associateRelease);
             }
+
+//            如果是公共的配置，查看是否存在关联的release
+
         }
+
+
         return releases;
     }
+
 
     private boolean isAppIdValid() {
         return !NO_APPID_PLACEHOLDER.equalsIgnoreCase(appId);
@@ -115,6 +129,23 @@ public class ConfigClient4NamespaceReq extends ConfigClient {
         AppEnvClusterNamespace clusterNamespace = appNamespace.getNamespaceByEnv(env, clusterName, "main");
         if (clusterNamespace == null) {
             clusterNamespace = appNamespace.getNamespaceByEnv(env, CLUSTER_NAME_DEFAULT, "main");
+        }
+
+        return clusterNamespace.findLatestActiveRelease();
+    }
+
+    /**
+     * 关联配置读取规则：  读取  本项目+ 公共命名空间 的release
+     *
+     * @return
+     */
+    private Release findAssociateRelease() {
+        AppNamespace appNamespace = getBeanByClass4Context(AppNamespaceCache.class).findPublicNamespaceByName(namespace);
+        //找到   新的  公共ns +  新的 app-env-cluster
+        AppEnvCluster appEnvCluster = getBeanByClass4Context(AppEnvClusterRepository.class).findByApp_AppCodeAndEnvAndName(appId, env, clusterName);
+        AppEnvClusterNamespace clusterNamespace = getBeanByClass4Context(AppEnvClusterNamespaceRepository.class).findByAppEnvClusterAndAppNamespace(appEnvCluster, appNamespace);
+        if (clusterNamespace == null) {
+            return null;
         }
 
         return clusterNamespace.findLatestActiveRelease();

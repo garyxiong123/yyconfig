@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.yofish.apollo.domain.ReleaseMessage;
 import com.yofish.apollo.service.ReleaseMessageService;
 import com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts;
+import com.yofish.yyconfig.common.framework.apollo.core.dto.LongNamespaceVersion;
 import com.yofish.yyconfig.common.framework.apollo.core.dto.NamespaceVersion;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +38,6 @@ public class VersionCompareStrategy {
     public List<NamespaceVersion> calcNewNsVersions(ConfigClient4Version configClient4Version) {
 
         List<NamespaceVersion> newNsVersionsRsp = Lists.newArrayList();
-
         for (NamespaceVersion namespaceVersion : configClient4Version.getClientNsVersions()) {
             //如果有的发布
             if (configClient4Version.isNewVersion(namespaceVersion)) {
@@ -53,10 +53,10 @@ public class VersionCompareStrategy {
     private NamespaceVersion buildNewNsVersion(NamespaceVersion namespaceVersion4Client, ConfigClient4Version configClient4Version) {
         String namespace = namespaceVersion4Client.getNamespaceName();
         long latestId = configClient4Version.getLatestReleaseMsgId(namespace);
-        String longNs = configClient4Version.getLongNs(namespace);
 
         NamespaceVersion namespaceVersion = new NamespaceVersion(namespace, latestId);
-        namespaceVersion.addMessage(longNs, latestId);
+        LongNamespaceVersion longNamespaceVersion = new LongNamespaceVersion(configClient4Version.getNewMap(namespaceVersion4Client.getNamespaceName()));
+        namespaceVersion.setLongNamespaceVersion(longNamespaceVersion);
         return namespaceVersion;
     }
 

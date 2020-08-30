@@ -41,6 +41,7 @@ import com.yofish.yyconfig.common.framework.apollo.core.schedule.ExponentialSche
 import com.yofish.yyconfig.common.framework.apollo.core.schedule.SchedulePolicy;
 import com.yofish.yyconfig.common.framework.apollo.core.utils.ApolloThreadFactory;
 import com.yofish.yyconfig.common.framework.apollo.tracer.Tracer;
+import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * 2： 内存数据更新，通过定时任务去远程服务拉取版本，进行更新
  * 3：只管理该namespace的数据，  一个namespace一个线程？
  */
+@Data
 public class RemoteConfigRepository extends AbstractConfigRepository {
     private static final Logger logger = LoggerFactory.getLogger(RemoteConfigRepository.class);
     private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR);

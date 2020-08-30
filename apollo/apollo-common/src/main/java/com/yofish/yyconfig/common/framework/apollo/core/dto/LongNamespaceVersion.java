@@ -43,7 +43,7 @@ public class LongNamespaceVersion {
         this(Maps.<String, Long>newHashMap());
     }
 
-    private LongNamespaceVersion(Map<String, Long> longNsVersionMap) {
+    public LongNamespaceVersion(Map<String, Long> longNsVersionMap) {
         this.longNsVersionMap = longNsVersionMap;
     }
 

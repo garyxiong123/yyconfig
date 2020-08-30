@@ -32,6 +32,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import static com.yofish.yyconfig.common.common.utils.YyStringUtils.notEqual;
+import static com.yofish.yyconfig.common.framework.apollo.core.ConfigConsts.CLUSTER_NAME_DEFAULT;
 
 /**
  * Namespace的 全名 组合
@@ -75,7 +76,7 @@ public class LongNamespaceNameUtil {
                 watchedKeysMap.putAll(findPublicConfigWatchKeys(appId, clusterName, env, publicNamespaces, dataCenter));
             }
             // 无论是 共有 还是 私有 都应该放入 watchKey = 原因是 关联配置 AppCode+ AppCode（public）
-                watchedKeysMap.putAll(assembleLongNsNames(appId, clusterName, env, namespaces, dataCenter));
+                watchedKeysMap.putAll(assembleLongNsNames(appId, clusterName, env, namespacesBelongToAppId, dataCenter));
         }
 
 
@@ -108,6 +109,7 @@ public class LongNamespaceNameUtil {
             String publicAppCode = appNamespace.getApp().getAppCode();
 
             watchedKeysMap.putAll(appNamespace.getName(), assembleLongNsNames(publicAppCode, clusterName, env, appNamespace.getName(), dataCenter));
+            watchedKeysMap.putAll(appNamespace.getName(), assembleLongNsNames(publicAppCode, CLUSTER_NAME_DEFAULT, env, appNamespace.getName(), dataCenter));
         }
 
         return watchedKeysMap;
@@ -125,7 +127,7 @@ public class LongNamespaceNameUtil {
         Set<String> watchedKeys = Sets.newHashSet();
 
         //watch specified appEnvCluster config change
-        if (notEqual(ConfigConsts.CLUSTER_NAME_DEFAULT, clusterName)) {
+        if (notEqual(CLUSTER_NAME_DEFAULT, clusterName)) {
             watchedKeys.add(assembleKey(appId, clusterName, env, namespace));
         }
 
@@ -135,7 +137,7 @@ public class LongNamespaceNameUtil {
         }
         if (watchedKeys.isEmpty()) {
             //watch default appEnvCluster config change   默认肯定有 default集群，所以都会添加
-            watchedKeys.add(assembleKey(appId, ConfigConsts.CLUSTER_NAME_DEFAULT, env, namespace));
+            watchedKeys.add(assembleKey(appId, CLUSTER_NAME_DEFAULT, env, namespace));
         }
         return watchedKeys;
     }

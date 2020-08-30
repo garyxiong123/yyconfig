@@ -27,6 +27,7 @@ public interface AppEnvClusterNamespaceRepository extends JpaRepository<AppEnvCl
 
     AppEnvClusterNamespace findByAppEnvClusterAndAppNamespaceAndBranchName(AppEnvCluster appEnvCluster, AppNamespace appNamespace, String branchName);
 
+    AppEnvClusterNamespace findByAppEnvClusterAndAppNamespace(AppEnvCluster appEnvCluster, AppNamespace appNamespace);
 
     @Query(nativeQuery = true, value = "select aecn.*\n" +
             "from app_env_cluster_namespace aecn\n" +

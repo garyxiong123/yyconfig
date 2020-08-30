@@ -232,6 +232,10 @@ public class Client {
         List<NamespaceVersion> namespaceVersions = Lists.newArrayList();
         for (Map.Entry<String, Long> entry : namespaceVersionMap.entrySet()) {
             NamespaceVersion nsVersion = new NamespaceVersion(entry.getKey(), entry.getValue());
+            RemoteConfigRepository remoteConfigRepository = remoteConfigRepositoryMap.get(nsVersion.getNamespaceName()).iterator().next();
+            if (remoteConfigRepository != null && remoteConfigRepository.getLongNamespaceVersion() != null) {
+                nsVersion.setLongNamespaceVersion(remoteConfigRepository.getLongNamespaceVersion().get());
+            }
             namespaceVersions.add(nsVersion);
         }
         return gson.toJson(namespaceVersions);

@@ -54,7 +54,7 @@ public class ConfigController {
     private static final Type configurationTypeReference = new TypeToken<Map<String, String>>() {
     }.getType();
 
-    @RequestMapping(value = "/{appId}/{env}/{clusterName}/{namespace:.+}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{appId}/{clusterName}/{env}/{namespace:.+}", method = RequestMethod.GET)
     public NamespaceConfig queryConfig4Client(@PathVariable String appId, @PathVariable String clusterName, @PathVariable String env,
                                               @PathVariable String namespace,
                                               @RequestParam(value = "dataCenter", required = false) String dataCenter,
@@ -106,7 +106,7 @@ public class ConfigController {
      */
     Map<String, String> mergeReleaseConfigurations(List<Release> releases) {
         Map<String, String> result = Maps.newHashMap();
-        for (Release release : Lists.reverse(releases)) {
+        for (Release release : releases) {
             result.putAll(gson.fromJson(release.getConfigurations(), configurationTypeReference));
         }
         return result;
