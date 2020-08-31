@@ -43,16 +43,14 @@ public enum NamespaceType {
     Associate;
 
     public static <T extends AppNamespace> NamespaceType getNamespaceTypeByInstance(T t) {
-//        if (t instanceof AppNamespace4Private) {
-//            return Private;
-//        } else if (t instanceof AppNamespace4Protect) {
-//            return Protect;
-//        } else if (t instanceof AppNamespace4Public) {
-//            return Public;
-//        } else {
-//            return null;
-//        }
-        return null;
-
+        if (AppNamespaceType.Private.equals(t.getAppNamespaceType())) {
+            return Private;
+        } else if (AppNamespaceType.Protect.equals(t.getAppNamespaceType())) {
+            return Protect;
+        } else if (AppNamespaceType.Public.equals(t.getAppNamespaceType())) {
+            return Public;
+        } else {
+            return null;
+        }
     }
 }
