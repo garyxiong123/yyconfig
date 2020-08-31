@@ -64,7 +64,7 @@ public class AppNamespaceCache {
         appNamespaceIdCache = Maps.newConcurrentMap();
     }
 
-    public AppNamespace findByAppIdAndNamespace(String appId, String namespaceName) {
+    public AppNamespace findByAppIdAndNamespace4Private(String appId, String namespaceName) {
         Preconditions.checkArgument(!YyStringUtils.isContainEmpty(appId, namespaceName), "appCode and namespaceName must not be empty");
         return appNamespaceCache4Private.get(STRING_JOINER.join(appId, namespaceName));
     }
@@ -217,8 +217,7 @@ public class AppNamespaceCache {
         if (ConfigConsts.NO_APPID_PLACEHOLDER.equalsIgnoreCase(appId)) {
             return Collections.emptySet();
         }
-        List<AppNamespace> appNamespaces =
-                this.findByAppIdAndNamespaces(appId, namespaces);
+        List<AppNamespace> appNamespaces = this.findByAppIdAndNamespaces(appId, namespaces);
 
         if (appNamespaces == null || appNamespaces.isEmpty()) {
             return Collections.emptySet();
@@ -228,4 +227,18 @@ public class AppNamespaceCache {
     }
 
 
+    /**
+     * @param namespace //有可能是 私有   +  共有的 关联的
+     * @param appId
+     * @return
+     */
+    public String getAppCodeByNamespace(String namespace, String appId) {
+        AppNamespace appNamespace = findByAppIdAndNamespace4Private(appId, namespace);
+        if (appNamespace != null) {
+            return appNamespace.getApp().getAppCode();
+        }
+        AppNamespace publicNamespaceByName = findPublicNamespaceByName(namespace);
+
+        return publicNamespaceByName.getApp().getAppCode();
+    }
 }

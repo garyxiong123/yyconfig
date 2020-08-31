@@ -4,7 +4,6 @@ import com.ctrip.framework.apollo.configservice.cache.ReleaseCache;
 import com.ctrip.framework.apollo.configservice.component.ConfigClient;
 import com.ctrip.framework.apollo.configservice.cache.AppNamespaceCache;
 import com.ctrip.framework.apollo.configservice.pattern.strategy.loadRelease.ClientLoadReleaseStrategy;
-import com.ctrip.framework.apollo.configservice.component.ReleaseRepo;
 import com.google.common.collect.Lists;
 import com.yofish.apollo.domain.AppEnvCluster;
 import com.yofish.apollo.domain.AppEnvClusterNamespace;
@@ -51,11 +50,19 @@ public class ConfigClient4NamespaceReq extends ConfigClient {
     }
 
     private void parseClientMsg(LongNamespaceVersion clientMessages) {
-        String longNsNameString = clientMessages.getLongNsVersionMap().keySet().iterator().next();
-        List<String> longNsSet = STRING_SPLITTER.splitToList(longNsNameString);
-        configAppId = longNsSet.get(0);
-        configClusterName = longNsSet.get(1);
-        configNamespace = longNsSet.get(3);
+
+        if(clientMessages == null){ //初始化的时候 clientMessages == null
+            configAppId = getBeanByClass4Context(AppNamespaceCache.class).getAppCodeByNamespace(namespace, appId);
+            configClusterName = clusterName;
+            configNamespace = namespace;
+        }else {
+            String longNsNameString = clientMessages.getLongNsVersionMap().keySet().iterator().next();
+            List<String> longNsSet = STRING_SPLITTER.splitToList(longNsNameString);
+            configAppId = longNsSet.get(0);
+            configClusterName = longNsSet.get(1);
+            configNamespace = longNsSet.get(3);
+        }
+
     }
 
     /**
@@ -111,7 +118,7 @@ public class ConfigClient4NamespaceReq extends ConfigClient {
             return true;
         }
 
-        AppNamespace appNamespace = getBeanByClass4Context(AppNamespaceCache.class).findByAppIdAndNamespace(appId, namespace);
+        AppNamespace appNamespace = getBeanByClass4Context(AppNamespaceCache.class).findByAppIdAndNamespace4Private(appId, namespace);
 
         return appNamespace == null;
     }

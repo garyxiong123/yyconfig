@@ -73,10 +73,10 @@ public class LongNamespaceNameUtil {
 
             //Listen on more namespaces if it's a public appNamespace  放入 共有命名
             if (!publicNamespaces.isEmpty()) {
-                watchedKeysMap.putAll(findPublicConfigWatchKeys(appId, clusterName, env, publicNamespaces, dataCenter));
+                watchedKeysMap.putAll(findPublicConfigWatchKeys(appId, clusterName, env.toLowerCase(), publicNamespaces, dataCenter));
             }
             // 无论是 共有 还是 私有 都应该放入 watchKey = 原因是 关联配置 AppCode+ AppCode（public）
-                watchedKeysMap.putAll(assembleLongNsNames(appId, clusterName, env, namespacesBelongToAppId, dataCenter));
+                watchedKeysMap.putAll(assembleLongNsNames(appId, clusterName, env.toLowerCase(), namespacesBelongToAppId, dataCenter));
         }
 
 

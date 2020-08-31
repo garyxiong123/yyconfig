@@ -63,7 +63,7 @@ public class NamespaceNormalizer {
      * @return
      */
     public String fixCapsLook4NamespaceName(String appId, String namespaceName) {
-        AppNamespace appNamespace = appNamespaceCache.findByAppIdAndNamespace(appId, namespaceName);
+        AppNamespace appNamespace = appNamespaceCache.findByAppIdAndNamespace4Private(appId, namespaceName);
         if (appNamespace != null) {
             return appNamespace.getName();
         }

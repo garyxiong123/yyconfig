@@ -355,7 +355,7 @@ public class ClientConfig implements EnvironmentAware {
     }
 
     public String getConfigServerUrlWithSlash() {
-
+        this.getConfigServerUrl();
         if (!configServerUrl.endsWith("/")) {
             return configServerUrl += "/";
         }

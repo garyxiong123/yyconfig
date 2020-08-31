@@ -70,7 +70,6 @@ public class ConfigController {
             clientIp = tryToGetClientIp(request);
         }
 
-
         ConfigClient4NamespaceReq configClient = new ConfigClient4NamespaceReq(appId, clusterName, env, namespace, dataCenter, clientIp, longNsVersionMapString);
 
         List<Release> releases = configClient.findReleases4Client();
