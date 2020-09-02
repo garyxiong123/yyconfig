@@ -54,3 +54,4 @@ upms-permissonFramework/upms-permissonFramework-shiro/src/test/
 # umi
 .umi
 .umi-production
+/apollo_mini_cache/
