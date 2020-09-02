@@ -47,7 +47,6 @@ public class VersionCompareController {
 
     @Autowired
     private EntityManagerUtil entityManagerUtil;
-
     @Autowired
     private RegistryCenter registryCenter;
 

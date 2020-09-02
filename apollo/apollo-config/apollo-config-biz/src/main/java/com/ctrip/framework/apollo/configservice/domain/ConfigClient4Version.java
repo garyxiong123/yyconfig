@@ -34,6 +34,7 @@ import static org.springframework.util.StringUtils.isEmpty;
 @Data
 public class ConfigClient4Version extends ConfigClient {
     private String clientNsVersionMapStr;
+
     private static final Type notificationsTypeReference = new TypeToken<List<NamespaceVersion>>() {
     }.getType();
     private ClientConnection clientConnection;
@@ -42,22 +43,20 @@ public class ConfigClient4Version extends ConfigClient {
     private Multimap<String, String> namespace_LongNs;   //namespace, 和 全命名空间 LongNs
     private Set<String> longNsNames;
     private Map<String, Long> ns2ReleaseMsgIdMap = new HashMap<>();
-
     private List<NamespaceVersion> clientNsVersions;
-
     private Map<String, Long> latest_LongNs_ReleaseMsgId;//最新的ns版本
 
     public ConfigClient4Version(String appId, String cluster, String env, String dataCenter, String clientIp, String clientNsVersionMapStr) {
         super(appId, cluster, env, dataCenter, clientIp);
         this.clientNsVersionMapStr = clientNsVersionMapStr;
+
         clientConnection = new ClientConnection();
+
         buildNormalizedNsVersionMap();
-
         buildNsVersionIdMap();
-
         buildLongNsNamesSet();
 
-        latest_LongNs_ReleaseMsgId = getLastLNs2ReleaseMsgIdMap();
+        latest_LongNs_ReleaseMsgId = getBeanByClass4Context(ReleaseMessageService.class).getLastLNs2ReleaseMsgIdMap(this.getLongNsNames());
 
     }
 
@@ -106,10 +105,6 @@ public class ConfigClient4Version extends ConfigClient {
         return getBeanByClass4Context(VersionCompareStrategy.class).calcNewNsVersions(this);
     }
 
-    public String getLongNs(String namespace) {
-        return namespace_LongNs.get(namespace).iterator().next();
-    }
-
 
     /**
      * 这里存在两个纬度 ，一个是私有， 一个是 公共关联（两个Id相加）
@@ -118,9 +113,6 @@ public class ConfigClient4Version extends ConfigClient {
      * @return
      */
     public boolean isNewVersion(NamespaceVersion namespace) {
-
-        //两组Id比价 每组两个Id
-
         return twoMapCompare(namespace);
     }
 
@@ -149,6 +141,11 @@ public class ConfigClient4Version extends ConfigClient {
         return false;
     }
 
+    /**
+     * 新的 versionMap 计算   通过  namespaceName =》 longNsKeys =》 id Map
+     * @param namespaceName
+     * @return
+     */
     public Map<String, Long> getNewMap(String namespaceName) {
         Map<String, Long> newMap = new HashMap<>();
         Collection<String> longNsKeys = this.getNamespace_LongNs().get(namespaceName);
@@ -162,6 +159,13 @@ public class ConfigClient4Version extends ConfigClient {
     }
 
 
+    /**
+     * 取出 namespace 最新 也是 最大的releaseMessageId
+     *  namespace 可能存在 ns+ clusterA 配置： 继承
+     *
+     * @param namespace
+     * @return
+     */
     public long getLatestReleaseMsgId(String namespace) {
 
         long latestId = ConfigConsts.NOTIFICATION_ID_PLACEHOLDER;
@@ -176,19 +180,5 @@ public class ConfigClient4Version extends ConfigClient {
         return latestId;
     }
 
-
-    private Map<String, Long> getLastLNs2ReleaseMsgIdMap() {
-        List<ReleaseMessage> latestReleaseMessages = getBeanByClass4Context(ReleaseMessageService.class).findLatestReleaseMessagesGroupByLongNsNames(this.getLongNsNames());
-        if (isEmpty(latestReleaseMessages)) {
-            return null;
-        }
-
-
-        Map<String, Long> latestLongNs2ReleaseMsgIdMap = Maps.newHashMap();
-        latestReleaseMessages.forEach(
-                (releaseMessage) -> latestLongNs2ReleaseMsgIdMap.put(releaseMessage.getNamespaceKey(), releaseMessage.getId())
-        );
-        return latestLongNs2ReleaseMsgIdMap;
-    }
 
 }

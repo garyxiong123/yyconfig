@@ -16,6 +16,7 @@
 package com.yofish.apollo.service;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.yofish.apollo.domain.ReleaseMessage;
 import com.yofish.apollo.repository.ReleaseMessageRepository;
 import com.yofish.yyconfig.common.framework.apollo.tracer.Tracer;
@@ -23,40 +24,54 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+
+import static com.yofish.gary.bean.StrategyNumBean.getBeanByClass4Context;
+import static org.springframework.util.StringUtils.isEmpty;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 @Service
 public class ReleaseMessageService {
-  @Autowired
-  private ReleaseMessageRepository releaseMessageRepository;
+    @Autowired
+    private ReleaseMessageRepository releaseMessageRepository;
 
-  public ReleaseMessage findLatestReleaseMessageForMessages(Collection<String> messages) {
-    if (CollectionUtils.isEmpty(messages)) {
-      return null;
+    public ReleaseMessage findLatestReleaseMessageForMessages(Collection<String> messages) {
+        if (CollectionUtils.isEmpty(messages)) {
+            return null;
+        }
+        return releaseMessageRepository.findTopByNamespaceKeyInOrderByIdDesc(messages);
     }
-    return releaseMessageRepository.findTopByNamespaceKeyInOrderByIdDesc(messages);
-  }
 
-  public List<ReleaseMessage> findLatestReleaseMessagesGroupByLongNsNames(Collection<String> longNsNames) {
-    if (CollectionUtils.isEmpty(longNsNames)) {
-      return Collections.emptyList();
+    public List<ReleaseMessage> findLatestReleaseMessagesGroupByLongNsNames(Collection<String> longNsNames) {
+        if (CollectionUtils.isEmpty(longNsNames)) {
+            return Collections.emptyList();
+        }
+        List<Object[]> result = releaseMessageRepository.findLatestReleaseMessagesGroupByNamespaceKeys(longNsNames);
+        List<ReleaseMessage> releaseMessages = Lists.newArrayList();
+        for (Object[] o : result) {
+            try {
+                ReleaseMessage releaseMessage = new ReleaseMessage((String) o[0]);
+                releaseMessage.setId((Long) o[1]);
+                releaseMessages.add(releaseMessage);
+            } catch (Exception ex) {
+                Tracer.logError("Parsing LatestReleaseMessagesGroupByMessages failed", ex);
+            }
+        }
+        return releaseMessages;
     }
-    List<Object[]> result = releaseMessageRepository.findLatestReleaseMessagesGroupByNamespaceKeys(longNsNames);
-    List<ReleaseMessage> releaseMessages = Lists.newArrayList();
-    for (Object[] o : result) {
-      try {
-        ReleaseMessage releaseMessage = new ReleaseMessage((String) o[0]);
-        releaseMessage.setId((Long) o[1]);
-        releaseMessages.add(releaseMessage);
-      } catch (Exception ex) {
-        Tracer.logError("Parsing LatestReleaseMessagesGroupByMessages failed", ex);
-      }
+
+    public Map<String, Long> getLastLNs2ReleaseMsgIdMap(Set<String> longNsNames) {
+        List<ReleaseMessage> latestReleaseMessages = findLatestReleaseMessagesGroupByLongNsNames(longNsNames);
+        if (isEmpty(latestReleaseMessages)) {
+            return null;
+        }
+
+        Map<String, Long> latestLongNs2ReleaseMsgIdMap = Maps.newHashMap();
+        latestReleaseMessages.forEach(
+                (releaseMessage) -> latestLongNs2ReleaseMsgIdMap.put(releaseMessage.getNamespaceKey(), releaseMessage.getId())
+        );
+        return latestLongNs2ReleaseMsgIdMap;
     }
-    return releaseMessages;
-  }
 }

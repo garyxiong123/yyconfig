@@ -241,8 +241,9 @@ public class AppEnvClusterNamespaceService {
         NamespaceDTO namespaceDTO = namespace.getBaseInfo();
         //先从当前appId下面找,包含私有的和公共的
         AppNamespace appNamespace = appNamespaceService.findByAppCodeAndName(namespaceDTO.getAppCode(), namespaceDTO.getNamespaceName());
-        namespace.setNamespaceType(NamespaceType.getNamespaceTypeByInstance(appNamespace));
-
+        if (appNamespace != null) {
+            namespace.setNamespaceType(NamespaceType.getNamespaceTypeByInstance(appNamespace));
+        }
         //再从公共的app namespace里面找,这里找到就是关联了公共命名空间
         if (appNamespace == null) {
             appNamespace = appNamespaceService.findAppNamespace(namespaceDTO.getNamespaceName());

@@ -48,8 +48,7 @@ public class LongNamespaceNameUtil {
     /**
      * Assemble watch keys for the given appCode, appEnvCluster, appNamespace, dataCenter combination
      */
-    public Set<String> assembleLongNamespaceNameSet(String appId, String clusterName, String env, String namespace,
-                                                    String dataCenter) {
+    public Set<String> assembleLongNamespaceNameSet(String appId, String clusterName, String env, String namespace, String dataCenter) {
         Multimap<String, String> watchedKeysMap = assembleNamespace2LongNsMap(appId, clusterName, env, Sets.newHashSet(namespace), dataCenter);
         return Sets.newHashSet(watchedKeysMap.get(namespace));
     }
@@ -61,22 +60,20 @@ public class LongNamespaceNameUtil {
      *
      * @return a multimap with appNamespace as the key and watch keys as the value
      */
-    public Multimap<String, String> assembleNamespace2LongNsMap(String appId, String clusterName, String env,
-                                                                Set<String> namespaces,
-                                                                String dataCenter) {
+    public Multimap<String, String> assembleNamespace2LongNsMap(String appId, String clusterName, String env, Set<String> namespaces, String dataCenter) {
 
         Multimap<String, String> watchedKeysMap = HashMultimap.create();
 
         if (checkNamespace(namespaces)) {
-            Set<String> namespacesBelongToAppId = appNamespaceCache.namespacesBelongToAppId(appId, namespaces);
-            Set<String> publicNamespaces = Sets.difference(namespaces, namespacesBelongToAppId);
+            Set<String> namespaces4private = appNamespaceCache.namespacesBelongToAppId(appId, namespaces);
+            Set<String> namespaces4publicOrProtect = Sets.difference(namespaces, namespaces4private);
 
             //Listen on more namespaces if it's a public appNamespace  放入 共有命名
-            if (!publicNamespaces.isEmpty()) {
-                watchedKeysMap.putAll(findPublicConfigWatchKeys(appId, clusterName, env.toLowerCase(), publicNamespaces, dataCenter));
+            if (!namespaces4publicOrProtect.isEmpty()) {
+                watchedKeysMap.putAll(assembleLongNsNames4PublicOrPrivate(appId, clusterName, env.toLowerCase(), namespaces4publicOrProtect, dataCenter));
             }
             // 无论是 共有 还是 私有 都应该放入 watchKey = 原因是 关联配置 AppCode+ AppCode（public）
-                watchedKeysMap.putAll(assembleLongNsNames(appId, clusterName, env.toLowerCase(), namespacesBelongToAppId, dataCenter));
+            watchedKeysMap.putAll(assembleLongNsNames(appId, clusterName, env.toLowerCase(), namespaces4private, dataCenter));
         }
 
 
@@ -93,10 +90,7 @@ public class LongNamespaceNameUtil {
         return !(namespaces.size() == 1 && namespaces.contains(ConfigConsts.NAMESPACE_APPLICATION));
     }
 
-    private Multimap<String, String> findPublicConfigWatchKeys(String applicationId,
-                                                               String clusterName, String env,
-                                                               Set<String> publicNamespaces,
-                                                               String dataCenter) {
+    private Multimap<String, String> assembleLongNsNames4PublicOrPrivate(String applicationId, String clusterName, String env, Set<String> publicNamespaces, String dataCenter) {
         Multimap<String, String> watchedKeysMap = HashMultimap.create();
         List<AppNamespace> appNamespaces = appNamespaceCache.findPublicNamespacesByNames(publicNamespaces);
 
@@ -107,9 +101,8 @@ public class LongNamespaceNameUtil {
             }
 
             String publicAppCode = appNamespace.getApp().getAppCode();
-
             watchedKeysMap.putAll(appNamespace.getName(), assembleLongNsNames(publicAppCode, clusterName, env, appNamespace.getName(), dataCenter));
-            watchedKeysMap.putAll(appNamespace.getName(), assembleLongNsNames(publicAppCode, CLUSTER_NAME_DEFAULT, env, appNamespace.getName(), dataCenter));
+//            watchedKeysMap.putAll(appNamespace.getName(), assembleLongNsNames(publicAppCode, CLUSTER_NAME_DEFAULT, env, appNamespace.getName(), dataCenter));
         }
 
         return watchedKeysMap;
@@ -119,8 +112,7 @@ public class LongNamespaceNameUtil {
         return STRING_JOINER.join(appId, cluster, env, namespace);
     }
 
-    private Set<String> assembleLongNsNames(String appId, String clusterName, String env, String namespace,
-                                            String dataCenter) {
+    private Set<String> assembleLongNsNames(String appId, String clusterName, String env, String namespace, String dataCenter) {
         if (ConfigConsts.NO_APPID_PLACEHOLDER.equalsIgnoreCase(appId)) {
             return Collections.emptySet();
         }
@@ -135,8 +127,8 @@ public class LongNamespaceNameUtil {
         if (!Strings.isNullOrEmpty(dataCenter) && !Objects.equals(dataCenter, clusterName)) {
             watchedKeys.add(assembleKey(appId, dataCenter, env, namespace));
         }
+        //如果没有，走默认集群 ：
         if (watchedKeys.isEmpty()) {
-            //watch default appEnvCluster config change   默认肯定有 default集群，所以都会添加
             watchedKeys.add(assembleKey(appId, CLUSTER_NAME_DEFAULT, env, namespace));
         }
         return watchedKeys;
@@ -147,8 +139,6 @@ public class LongNamespaceNameUtil {
         for (String namespace : namespaces) {
             watchedKeysMap.putAll(namespace, assembleLongNsNames(appId, clusterName, env, namespace, dataCenter));
         }
-
-
         return watchedKeysMap;
     }
 

@@ -39,9 +39,7 @@ public class VersionCompareStrategy {
 
         List<NamespaceVersion> newNsVersionsRsp = Lists.newArrayList();
         for (NamespaceVersion namespaceVersion : configClient4Version.getClientNsVersions()) {
-            //如果有的发布
             if (configClient4Version.isNewVersion(namespaceVersion)) {
-
                 NamespaceVersion newNsVersion = buildNewNsVersion(namespaceVersion, configClient4Version);
                 newNsVersionsRsp.add(newNsVersion);
             }
