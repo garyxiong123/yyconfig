@@ -210,7 +210,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
 
     private String assemblePathExpanded(String namespace) {
         String path = "configs/%s/%s/%s/%s";
-        List<String> pathParams = Lists.newArrayList(pathEscaper.escape(m_Client_config.getAppId()), pathEscaper.escape(m_Client_config.getCluster()), pathEscaper.escape(m_Client_config.getApolloEnv().name().toLowerCase()), pathEscaper.escape(namespace));
+        List<String> pathParams = Lists.newArrayList(pathEscaper.escape(m_Client_config.getAppId()), pathEscaper.escape(m_Client_config.getApolloEnv().name().toLowerCase()), pathEscaper.escape(m_Client_config.getCluster()), pathEscaper.escape(namespace));
         Map<String, String> queryParams = Maps.newHashMap();
 
 

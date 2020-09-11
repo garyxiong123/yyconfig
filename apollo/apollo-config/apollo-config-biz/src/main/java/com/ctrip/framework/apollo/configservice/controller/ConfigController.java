@@ -54,8 +54,8 @@ public class ConfigController {
     private static final Type configurationTypeReference = new TypeToken<Map<String, String>>() {
     }.getType();
 
-    @RequestMapping(value = "/{appId}/{clusterName}/{env}/{namespace:.+}", method = RequestMethod.GET)
-    public NamespaceConfig queryConfig4Client(@PathVariable String appId, @PathVariable String clusterName, @PathVariable String env,
+    @RequestMapping(value = "/{appId}/{env}/{clusterName}/{namespace:.+}", method = RequestMethod.GET)
+    public NamespaceConfig queryConfig4Client(@PathVariable String appId, @PathVariable String env, @PathVariable String clusterName,
                                               @PathVariable String namespace,
                                               @RequestParam(value = "dataCenter", required = false) String dataCenter,
                                               @RequestParam(value = "releaseKey", defaultValue = "-1") String clientSideReleaseKey,
