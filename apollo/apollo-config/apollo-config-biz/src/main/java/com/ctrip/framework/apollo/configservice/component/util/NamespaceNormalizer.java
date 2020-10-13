@@ -87,7 +87,7 @@ public class NamespaceNormalizer {
 
         namespaceName = subSuffix4Properties(namespaceName);
 
-        fixCapsLook4NamespaceName(appId, namespaceName);
+        namespaceName = fixCapsLook4NamespaceName(appId, namespaceName);
         return namespaceName;
 
     }
