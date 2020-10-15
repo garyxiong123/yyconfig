@@ -15,9 +15,9 @@
  */
 package com.ctrip.framework.apollo.configservice.controller;
 
-import com.ctrip.framework.apollo.configservice.domain.ConfigClient4NamespaceReq;
-import com.ctrip.framework.apollo.configservice.controller.timer.sync.TimerTask4SyncInstanceConfig;
 import com.ctrip.framework.apollo.configservice.component.util.NamespaceNormalizer;
+import com.ctrip.framework.apollo.configservice.controller.timer.sync.TimerTask4SyncInstanceConfig;
+import com.ctrip.framework.apollo.configservice.domain.ConfigClient4NamespaceReq;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -64,27 +64,34 @@ public class ConfigController {
                                               HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         String originalNamespace = namespace;
+        // 剔除 .properties 结尾，并忽略大小写拿到标准化的 namespace 的名称
         namespace = namespaceNormalizer.normalizeNamespaceName(appId, namespace);
 
+        // 若 clientIp 未提交，从 Request 中获取。
         if (isNullOrEmpty(clientIp)) {
             clientIp = tryToGetClientIp(request);
         }
 
+        // 解析 messagesAsString 参数，创建 ApolloNotificationMessages 对象。
         ConfigClient4NamespaceReq configClient = new ConfigClient4NamespaceReq(appId, clusterName, env, namespace, dataCenter, clientIp, longNsVersionMapString);
 
+        // 获得 Namespace 对应的 Release 对象
         List<Release> releases = configClient.findReleases4Client();
 
+        // 若获得不到 Release ，返回状态码为 404 的响应
         if (releases.isEmpty()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, String.format(
                     "Could not load configurations with appCode: %s, clusterName: %s, appNamespace: %s", appId, clusterName, originalNamespace));
             return null;
         }
+
         NamespaceBo namespaceBo = NamespaceBo.builder().appCode(appId).env(env).clusterName(clusterName).namespaceName(namespace).build();
 
         heartBeatReleases(namespaceBo, clientIp, releases);
 
-        //配置是否 有变化
+        // 计算 Config Service 的合并 ReleaseKey
         String mergedReleaseKey = releases.stream().map(Release::getReleaseKey).collect(Collectors.joining(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR));
+        // 对比 Client 的合并 Release Key 。若相等，说明没有改变，返回状态码为 302 的响应
         if (mergedReleaseKey.equals(clientSideReleaseKey)) {
             // Client side configuration is the same with server side, return 304
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
