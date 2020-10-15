@@ -1,4 +1,4 @@
-FROM registry.gs.youyuwo.com/base/docker-java-base:jdk_8
+FROM registry.gs.youyuwo.com/base/docker-springboot-pinpoint:latest
 
 
 COPY yyconfig-main/target/yyconfig-main.jar /app.jar
