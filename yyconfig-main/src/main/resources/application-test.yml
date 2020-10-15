@@ -4,6 +4,10 @@ spring:
     username: apollo_mini
     password: apollo_mini
     driver-class-name: com.mysql.jdbc.Driver
+    # Hikari 连接池配置
+    hikari:
+      # 连接池最大连接数，默认是10
+      maximum-pool-size: 40
   jpa:
     properties:
       hibernate:
