@@ -15,14 +15,6 @@
  */
 package com.yofish.yyconfig.client.domain.config;
 
-import com.yofish.yyconfig.client.pattern.listener.config.ConfigChangeListener;
-import com.yofish.yyconfig.client.enums.PropertyChangeType;
-import com.yofish.yyconfig.client.component.exceptions.ApolloConfigException;
-import com.yofish.yyconfig.client.pattern.listener.config.ConfigChange;
-import com.yofish.yyconfig.client.pattern.listener.config.ConfigChangeEvent;
-import com.yofish.yyconfig.client.lifecycle.preboot.internals.ClientConfig;
-import com.yofish.yyconfig.client.component.util.function.Functions;
-import com.yofish.yyconfig.client.component.util.parser.Parsers;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.cache.Cache;
@@ -30,6 +22,15 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.yofish.yyconfig.client.component.exceptions.ApolloConfigException;
+import com.yofish.yyconfig.client.component.util.function.Functions;
+import com.yofish.yyconfig.client.component.util.parser.Parsers;
+import com.yofish.yyconfig.client.enums.PropertyChangeType;
+import com.yofish.yyconfig.client.lifecycle.preboot.inject.ApolloInjector;
+import com.yofish.yyconfig.client.lifecycle.preboot.internals.ClientConfig;
+import com.yofish.yyconfig.client.pattern.listener.config.ConfigChange;
+import com.yofish.yyconfig.client.pattern.listener.config.ConfigChangeEvent;
+import com.yofish.yyconfig.client.pattern.listener.config.ConfigChangeListener;
 import com.yofish.yyconfig.common.framework.apollo.core.utils.ApolloThreadFactory;
 import com.yofish.yyconfig.common.framework.apollo.tracer.Tracer;
 import com.yofish.yyconfig.common.framework.apollo.tracer.spi.Transaction;
@@ -73,6 +74,7 @@ public abstract class AbstractConfig implements Config {
     }
 
     public AbstractConfig() {
+        m_Client_config = ApolloInjector.getInstance(ClientConfig.class);
         m_configVersion = new AtomicLong();
         m_arrayCache = Maps.newConcurrentMap();
         allCaches = Lists.newArrayList();
