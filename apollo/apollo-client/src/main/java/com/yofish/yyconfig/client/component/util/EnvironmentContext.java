@@ -1,6 +1,5 @@
 package com.yofish.yyconfig.client.component.util;
 
-import lombok.Data;
 import org.springframework.core.env.Environment;
 
 /**

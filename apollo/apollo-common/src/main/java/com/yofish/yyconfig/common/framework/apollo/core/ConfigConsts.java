@@ -16,6 +16,8 @@
 package com.yofish.yyconfig.common.framework.apollo.core;
 
 public interface ConfigConsts {
+    String APOLLO_APP_ID = "app.id";
+    String APOLLO_CACHE_DIR = "apollo.cacheDir";
     String NAMESPACE_APPLICATION = "application";
     String CLUSTER_NAME_DEFAULT = "default";
     String CLUSTER_NAMESPACE_SEPARATOR = "+";

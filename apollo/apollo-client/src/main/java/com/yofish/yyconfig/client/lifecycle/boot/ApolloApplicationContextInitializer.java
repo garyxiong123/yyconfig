@@ -75,7 +75,7 @@ public class ApolloApplicationContextInitializer implements
         ApplicationContextInitializer<ConfigurableApplicationContext>, EnvironmentPostProcessor {
     private static final Logger logger = LoggerFactory.getLogger(ApolloApplicationContextInitializer.class);
     private static final Splitter NAMESPACE_SPLITTER = Splitter.on(",").omitEmptyStrings().trimResults();
-    private static final String[] APOLLO_SYSTEM_PROPERTIES = {"app.id", ConfigConsts.APOLLO_CLUSTER_KEY, "apollo.cacheDir", ConfigConsts.YYCONFIG_META_KEY};
+    private static final String[] APOLLO_SYSTEM_PROPERTIES = {ConfigConsts.APOLLO_APP_ID, ConfigConsts.APOLLO_CLUSTER_KEY, ConfigConsts.APOLLO_CACHE_DIR, ConfigConsts.YYCONFIG_META_KEY};
 
     private final ConfigPropertySourceFactory configPropertySourceFactory = SpringInjector
             .getInstance(ConfigPropertySourceFactory.class);
