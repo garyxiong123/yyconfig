@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.configservice.domain;
 
+import com.ctrip.framework.apollo.configservice.cache.ReleaseMessageCache;
 import com.ctrip.framework.apollo.configservice.component.ConfigClient;
 import com.ctrip.framework.apollo.configservice.component.util.LongNamespaceNameUtil;
 import com.ctrip.framework.apollo.configservice.component.util.NamespaceNormalizer;
@@ -45,10 +46,12 @@ public class ConfigClient4Version extends ConfigClient {
     private Map<String, Long> ns2ReleaseMsgIdMap = new HashMap<>();
     private List<NamespaceVersion> clientNsVersions;
     private Map<String, Long> latest_LongNs_ReleaseMsgId;//最新的ns版本
+    private final ReleaseMessageCache releaseMessageCache;
 
-    public ConfigClient4Version(String appId, String cluster, String env, String dataCenter, String clientIp, String clientNsVersionMapStr) {
+    public ConfigClient4Version(String appId, String cluster, String env, String dataCenter, String clientIp, String clientNsVersionMapStr, ReleaseMessageCache releaseMessageCache) {
         super(appId, cluster, env, dataCenter, clientIp);
         this.clientNsVersionMapStr = clientNsVersionMapStr;
+        this.releaseMessageCache = releaseMessageCache;
 
         clientConnection = new ClientConnection();
 
@@ -56,7 +59,7 @@ public class ConfigClient4Version extends ConfigClient {
         buildNsVersionIdMap();
         buildLongNsNamesSet();
 
-        latest_LongNs_ReleaseMsgId = getBeanByClass4Context(ReleaseMessageService.class).getLastLNs2ReleaseMsgIdMap(this.getLongNsNames());
+        latest_LongNs_ReleaseMsgId = this.getLastLNs2ReleaseMsgIdMap(this.getLongNsNames());
 
     }
 
@@ -180,5 +183,17 @@ public class ConfigClient4Version extends ConfigClient {
         return latestId;
     }
 
+    public Map<String, Long> getLastLNs2ReleaseMsgIdMap(Set<String> longNsNames) {
+        List<ReleaseMessage> latestReleaseMessages = releaseMessageCache.findLatestReleaseMessagesGroupByMessages(longNsNames);
+        if (isEmpty(latestReleaseMessages)) {
+            return null;
+        }
+
+        Map<String, Long> latestLongNs2ReleaseMsgIdMap = Maps.newHashMap();
+        latestReleaseMessages.forEach(
+                (releaseMessage) -> latestLongNs2ReleaseMsgIdMap.put(releaseMessage.getNamespaceKey(), releaseMessage.getId())
+        );
+        return latestLongNs2ReleaseMsgIdMap;
+    }
 
 }

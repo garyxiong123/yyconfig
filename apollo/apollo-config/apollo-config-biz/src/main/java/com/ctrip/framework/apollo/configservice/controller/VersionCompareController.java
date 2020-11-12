@@ -15,6 +15,7 @@
  */
 package com.ctrip.framework.apollo.configservice.controller;
 
+import com.ctrip.framework.apollo.configservice.cache.ReleaseMessageCache;
 import com.ctrip.framework.apollo.configservice.domain.ConfigClient4Version;
 import com.ctrip.framework.apollo.configservice.cache.RegistryCenter;
 import com.ctrip.framework.apollo.configservice.component.util.EntityManagerUtil;
@@ -49,6 +50,8 @@ public class VersionCompareController {
     private EntityManagerUtil entityManagerUtil;
     @Autowired
     private RegistryCenter registryCenter;
+    @Autowired
+    private ReleaseMessageCache releaseMessageCache;
 
 
     /**
@@ -65,7 +68,7 @@ public class VersionCompareController {
             @RequestParam(value = "dataCenter", required = false) String dataCenter,
             @RequestParam(value = "ip", required = false) String clientIp) {
 
-        ConfigClient4Version client4Version = new ConfigClient4Version(appId, cluster, env, dataCenter, clientIp, clientNsVersionMapStr);
+        ConfigClient4Version client4Version = new ConfigClient4Version(appId, cluster, env, dataCenter, clientIp, clientNsVersionMapStr, releaseMessageCache);
 
         ClientConnection clientConnection = new ClientConnection();
         Set<String> namespaces4Client = Sets.newHashSet();
@@ -74,7 +77,7 @@ public class VersionCompareController {
 
         if (hasNewNsVersion(newNsVersions)) {
             doSyncResponse(clientConnection, newNsVersions);
-            return clientConnection.getResponse();   // TODO 返回后断开连接，客户端继续连接
+            return clientConnection.getResponse();
         }
 
         doAsyncResponse(appId, cluster, dataCenter, clientConnection, namespaces4Client, client4Version.getLongNsNames());
