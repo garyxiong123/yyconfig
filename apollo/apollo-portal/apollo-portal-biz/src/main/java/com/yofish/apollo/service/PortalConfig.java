@@ -50,6 +50,7 @@ public class PortalConfig extends RefreshableConfig {
 
     private static final int DEFAULT_ITEM_KEY_LENGTH = 128;
     private static final int DEFAULT_ITEM_VALUE_LENGTH = 20000;
+    private static final int DEFAULT_RELEASE_MESSAGE_SCAN_INTERVAL_IN_MS = 30000;
 
     private static final String LIST_SEPARATOR = ",";
 
@@ -178,7 +179,8 @@ public class PortalConfig extends RefreshableConfig {
 
     @Override
     public int releaseMessageScanIntervalInMilli() {
-        return 10000;
+        int interval = getIntProperty("apollo.message-scan.interval", DEFAULT_RELEASE_MESSAGE_SCAN_INTERVAL_IN_MS);
+        return checkInt(interval, 1000, 86400000, DEFAULT_RELEASE_MESSAGE_SCAN_INTERVAL_IN_MS);
     }
 
     @Override
@@ -415,7 +417,10 @@ public class PortalConfig extends RefreshableConfig {
     }
 
     public int checkInt(int someInvalidValue, int someMin, int maxValue, int someDefaultValue) {
-        return 0;
+        if (someInvalidValue >= someMin && someInvalidValue <= maxValue) {
+            return someInvalidValue;
+        }
+        return someDefaultValue;
     }
 
     public int appNamespaceCacheRebuildInterval() {
