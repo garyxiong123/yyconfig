@@ -48,7 +48,7 @@ public interface AppNamespaceRepository extends JpaRepository<AppNamespace, Long
 
     List<AppNamespace> findFirst500ByIdGreaterThanOrderByIdAsc(long maxIdScanned);
 
-    AppNamespace findByApp_IdAndNameAndAppNamespaceType(Long appId, String namespaceName, NamespaceType namespaceType);
+    AppNamespace findByApp_IdAndNameAndAppNamespaceType(Long appId, String namespaceName, AppNamespaceType namespaceType);
 
 
     List<AppNamespace> findAllByAppNamespaceType(AppNamespaceType namespaceType);

@@ -109,7 +109,7 @@ public class AppNamespaceService {
     }
 
     public AppNamespace findProtectAppNamespaceByAppIdAndName(Long appId, String namespaceName) {
-        return appNamespaceRepository.findByApp_IdAndNameAndAppNamespaceType(appId, namespaceName, NamespaceType.Protect);
+        return appNamespaceRepository.findByApp_IdAndNameAndAppNamespaceType(appId, namespaceName, AppNamespaceType.Protect);
     }
 
     public <T extends AppNamespace> AppNamespace updateAppNamespace(T appNamespace) {
