@@ -16,3 +16,14 @@ MODIFY COLUMN `type` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL 
 
 -- 更新ReleaseMessage表的字段名 ;show FULL COLUMNs FROM release_message;
 ALTER TABLE release_message change message namespace_key varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+
+-- 更新命名空间授权应用关联表
+UPDATE `apollo_mini`.`app_namespace_authorized_app`
+SET `app_namespace_id` = app_namespace4protect_id
+WHERE
+	`app_namespace_id` = 0;
+
+ALTER TABLE `apollo_mini`.`app_namespace_authorized_app`
+MODIFY COLUMN `app_namespace4protect_id` bigint(20) NOT NULL DEFAULT 0 FIRST,
+DROP PRIMARY KEY,
+ADD PRIMARY KEY (`authorized_app_id`, `app_namespace_id`) USING BTREE;
