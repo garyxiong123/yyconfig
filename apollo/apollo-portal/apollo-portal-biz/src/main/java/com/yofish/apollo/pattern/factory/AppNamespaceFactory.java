@@ -12,6 +12,7 @@ import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class AppNamespaceFactory {
     @Autowired
     private AppEnvClusterRepository appEnvClusterRepository;
 
+    @Transactional(rollbackFor = Exception.class)
     public AppNamespace createAppNamespace(AppNamespaceModel appNamespaceModel) {
 
         AppNamespace appNamespace = new AppNamespace(appNamespaceModel);
