@@ -15,6 +15,7 @@
  */
 package com.gary.apollo.test.controller;
 
+import com.gary.apollo.test.property.AppProperties;
 import com.yofish.yyconfig.client.domain.config.Config;
 import com.yofish.yyconfig.client.pattern.listener.config.ConfigChange;
 import com.yofish.yyconfig.client.pattern.listener.config.ConfigChangeEvent;
@@ -32,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -65,6 +67,8 @@ public class UserController implements ApplicationContextAware {
     @Value("${redis:redis}")
     public String redis;
 
+    @Autowired
+    private AppProperties appProperties;
 
     @ApolloConfig("application")
     private Config config;
@@ -107,6 +111,10 @@ public class UserController implements ApplicationContextAware {
 //        return Result.ok(userService.getUserInfo(userInfoParam.getName()));
 //    }
 
+    @GetMapping
+    public ResponseEntity app() {
+        return ResponseEntity.ok(appProperties);
+    }
 
     @GetMapping("/getUserInfo1")
     public Result<String> getUserInfo1(String name, int age) {
