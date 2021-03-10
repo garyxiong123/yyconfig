@@ -55,3 +55,4 @@ upms-permissonFramework/upms-permissonFramework-shiro/src/test/
 .umi
 .umi-production
 /apollo_mini_cache/
+/yyconfig-main/src/main/resources/application-prod.yml

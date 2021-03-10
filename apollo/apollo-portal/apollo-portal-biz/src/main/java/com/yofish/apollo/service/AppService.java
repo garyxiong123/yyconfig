@@ -18,16 +18,16 @@ package com.yofish.apollo.service;
 
 import com.yofish.apollo.component.PermissionValidator;
 import com.yofish.apollo.domain.App;
-import com.yofish.apollo.model.bo.EnvClusterInfo;
 import com.yofish.apollo.model.AppModel;
+import com.yofish.apollo.model.bo.EnvClusterInfo;
 import com.yofish.apollo.pattern.factory.AppFactory;
 import com.yofish.apollo.repository.AppRepository;
 import com.yofish.gary.biz.repository.DepartmentRepository;
 import com.yofish.gary.biz.service.UserService;
+import com.yofish.yyconfig.common.common.utils.PageDataAdapter;
 import com.youyu.common.api.PageData;
 import com.youyu.common.enums.BaseResultCode;
 import com.youyu.common.exception.BizException;
-import com.yofish.yyconfig.common.common.utils.PageDataAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -104,7 +104,9 @@ public class AppService {
             return PageDataAdapter.toPageData(apps);
         } else {
             List<App> allWithAuthorize = findAllWithAuthorize();
-            List<App> appsByPage = allWithAuthorize.subList(Long.valueOf(pageable.getOffset()).intValue(), allWithAuthorize.size() > pageable.getPageSize() ? pageable.getPageSize() : allWithAuthorize.size());
+            int offset = Long.valueOf(pageable.getOffset()).intValue();
+            int offsetToIndex = Long.valueOf(Long.sum(pageable.getOffset(), pageable.getPageSize())).intValue();
+            List<App> appsByPage = allWithAuthorize.subList(offset, allWithAuthorize.size() > offsetToIndex ? offsetToIndex : allWithAuthorize.size());
             return PageDataAdapter.toPageData(pageable, appsByPage, allWithAuthorize.size());
         }
     }
