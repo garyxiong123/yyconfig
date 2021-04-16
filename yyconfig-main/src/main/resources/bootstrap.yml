@@ -4,7 +4,6 @@ spring:
   application:
     name: apollo-mini
   jpa:
-    show-sql: true
     properties:
       hibernate:
         enable_lazy_load_no_trans: true
@@ -14,14 +13,7 @@ spring:
   jackson:
     serialization:
       FAIL_ON_EMPTY_BEANS: false
-logging:
-  level:
-    org:
-      hibernate:
-        type:
-          descriptor:
-            sql:
-              BasicBinder: trace
+
 shiro:
   concurrentSessionStrategyNumber: 1
 
