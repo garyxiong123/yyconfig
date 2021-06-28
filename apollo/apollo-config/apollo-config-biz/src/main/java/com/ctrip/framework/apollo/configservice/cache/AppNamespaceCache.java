@@ -239,6 +239,11 @@ public class AppNamespaceCache {
         }
         AppNamespace publicNamespaceByName = findPublicNamespaceByName(namespace);
 
+        // bugfix：后台修改应用code后没有同步缓存信息，所以缓存里没有对应到appId信息。其二入参的appId貌似就是要找的appCode，所以直接返回了
+        if (publicNamespaceByName == null) {
+            return appId;
+        }
+
         return publicNamespaceByName.getApp().getAppCode();
     }
 }
