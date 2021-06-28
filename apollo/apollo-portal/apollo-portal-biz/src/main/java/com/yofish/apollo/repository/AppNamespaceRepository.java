@@ -37,6 +37,8 @@ public interface AppNamespaceRepository extends JpaRepository<AppNamespace, Long
 
     AppNamespace findByAppAppCodeAndName(String appCode, String namespaceName);
 
+    AppNamespace findByIdAndName(Long appId, String namespaceName);
+
     AppNamespace findByName(String namespaceName);
 
     AppNamespace findByNameAndAppNamespaceType(String namespaceName, AppNamespaceType appNamespaceType);
