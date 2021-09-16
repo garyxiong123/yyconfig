@@ -238,9 +238,10 @@ class RightContent extends React.Component {
     const { list, loading } = this.props;
     return (
       <div className={styles.detailRightBox}>
-        {
+        {/* {
           loading ?
             <Loading /> :
+            
             <Fragment>
               {
                 list.length ?
@@ -253,7 +254,21 @@ class RightContent extends React.Component {
                   <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
               }
             </Fragment>
-        }
+        } */}
+        <Spin spinning={loading || false}>
+          <Fragment>
+            {
+              list.length ?
+                <Fragment>
+                  {
+                    list.map((item, i) => this.renderItem(item, i))
+                  }
+                </Fragment>
+                :
+                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            }
+          </Fragment>
+        </Spin>
         {this.renderOpaModal()}
       </div>
     );

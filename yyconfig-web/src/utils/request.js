@@ -43,7 +43,8 @@ let SERVER_HOME = '.';
 // const SERVER_HOME = 'http://test.lb.gs.youyuwo.com:60008';
 
 if (process.env.NODE_ENV === 'development') {
-  SERVER_HOME = 'http://localhost:8080';
+  // SERVER_HOME = 'http://localhost:8080';
+  SERVER_HOME = 'http://10.254.254.247';
 }
 
 const request = extend({
