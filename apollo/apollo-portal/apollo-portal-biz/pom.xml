@@ -5,7 +5,7 @@
     <parent>
         <artifactId>apollo-portal</artifactId>
         <groupId>com.yofish.platform</groupId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>3.1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <artifactId>apollo-portal-api</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
+            <version>3.1.0-SNAPSHOT</version>
             <groupId>com.yofish.platform</groupId>
         </dependency>
         <dependency>
@@ -48,7 +48,7 @@
         <dependency>
             <groupId>com.yofish.platform</groupId>
             <artifactId>upms-permissonFramework-shiro</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
+            <version>3.1.0-SNAPSHOT</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>

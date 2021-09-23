@@ -16,44 +16,42 @@ import 'codemirror/addon/lint/lint.js';
 import 'codemirror/addon/lint/json-lint.js';
 import 'codemirror/addon/lint/yaml-lint.js';
 
-
-
 import styles from '../../index.less';
 import { Button, message, Row, Col } from 'antd';
 import { project } from '@/services/project';
 const mode = {
-  "JSON": 'application/json',
-  "Properties": 'properties',
-  "XML": 'xml',
-  "YAML": 'yaml'
-}
+  JSON: 'application/json',
+  Properties: 'properties',
+  XML: 'xml',
+  YAML: 'yaml',
+};
 class TextContent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: "",
-      oldValue: "",
+      value: '',
+      oldValue: '',
       options: {
         lineNumbers: true,
         mode: 'javascript',
         readOnly: true,
         theme: 'base16-light',
         gutters: ['CodeMirror-lint-markers'],
-        lint: true
-      }
+        lint: true,
+      },
     };
   }
   componentDidMount() {
     const { text } = this.props;
     this.onGetValue();
     this.onEditOption({
-      mode: mode[text.format]
-    })
-
+      mode: mode[text.format],
+    });
   }
   onGetValue = () => {
     const { text } = this.props;
-    let value = "", list = text.items || [];
+    let value = '',
+      list = text.items || [];
     list.map((vo, i) => {
       let item = vo.item || {};
       if (text.format === 'Properties') {
@@ -63,65 +61,64 @@ class TextContent extends React.Component {
       } else {
         value += this.onGetOther(item);
       }
-    })
+    });
     this.setState({
-      value
-    })
-  }
+      value,
+    });
+  };
   onGetProperties = (text, i, len) => {
-    let value = "";
+    let value = '';
     if (!text.key && !text.value && text.comment) {
-      value = `${text.comment}\n`
-      return value
+      value = `${text.comment}\n`;
+      return value;
     }
     if (!text.key && !text.value) {
-      value = '\n'
-      return value
+      value = '\n';
+      return value;
     }
     value = `${text.key} = ${text.value}\n`;
-    return value
-  }
-  onGetOther = (text) => {
-    let value = "", comment = "";
+    return value;
+  };
+  onGetOther = text => {
+    let value = '',
+      comment = '';
     if (value.comment) {
       comment = `// ${value.comment} \n`;
     }
     value = comment + `${text.value}`;
-    return value
-  }
+    return value;
+  };
   onChange = (editor, data, value) => {
     this.setState({
-      value
-    })
-  }
+      value,
+    });
+  };
   onEdit = () => {
     const { options, value } = this.state;
     this.setState({
-      oldValue: value
-    })
-    this.onEditOption({ readOnly: false, theme: 'eclipse' })
-  }
-  onEditOption = (data) => {
+      oldValue: value,
+    });
+    this.onEditOption({ readOnly: false, theme: 'eclipse' });
+  };
+  onEditOption = data => {
     const { options } = this.state;
     this.setState({
       options: {
         ...options,
-        ...data
-      }
-    })
-  }
+        ...data,
+      },
+    });
+  };
   //复制
   onCopy = (ele, e) => {
     e && e.preventDefault();
     let text = document.getElementById(ele);
     try {
       text.select();
-      document.execCommand('copy')
+      document.execCommand('copy');
       message.success('复制成功');
-    } catch (error) {
-
-    }
-  }
+    } catch (error) { }
+  };
   onSaveText = async () => {
     const { value } = this.state;
     const { text, onSuccess } = this.props;
@@ -129,51 +126,71 @@ class TextContent extends React.Component {
     let res = await project.modifyItemsByTexts({
       appEnvClusterNamespaceId: baseInfo.id,
       configText: value,
-      format: text.format
+      format: text.format,
     });
     if (res && res.code === '1') {
       onSuccess();
       this.onEditOption({
         readOnly: true,
-        theme: 'base16-light'
-      })
+        theme: 'base16-light',
+      });
     }
-  }
+  };
   onCanCel = () => {
     const { oldValue } = this.state;
     this.setState({
       value: oldValue,
       // oldValue: ''
-    })
-    this.onEditOption({ readOnly: true, theme: 'base16-light' })
-  }
+    });
+    this.onEditOption({ readOnly: true, theme: 'base16-light' });
+  };
   renderOpa() {
     const { text } = this.props;
     const { options } = this.state;
     let baseInfo = text.baseInfo || {};
     return (
       <div>
-        {
-          options.readOnly ?
-            <Row type="flex" justify="end" gutter={16} style={{ marginBottom: 15 }}>
-              <Col>
-                <Button onClick={(e) => this.onCopy(baseInfo.id, e)} size="small">复制</Button>
-              </Col>
-              <Col>
-                <Button size="small" type="primary" onClick={() => { this.onEdit() }}>编辑</Button>
-              </Col>
-            </Row> :
-            <Row type="flex" justify="end" gutter={16} style={{ marginBottom: 15 }}>
-              <Col>
-                <Button onClick={this.onCanCel} size="small">取消</Button>
-              </Col>
-              <Col>
-                <Button size="small" type="primary" onClick={() => { this.onSaveText() }}>确定</Button>
-              </Col>
-            </Row>
-        }
+        {options.readOnly ? (
+          <Row type="flex" justify="end" gutter={16} style={{ marginBottom: 15 }}>
+            <Col>
+              <Button onClick={e => this.onCopy(baseInfo.id, e)} size="small">
+                复制
+              </Button>
+            </Col>
+            <Col>
+              <Button
+                size="small"
+                type="primary"
+                onClick={() => {
+                  this.onEdit();
+                }}
+              >
+                编辑
+              </Button>
+            </Col>
+          </Row>
+        ) : (
+          <Row type="flex" justify="end" gutter={16} style={{ marginBottom: 15 }}>
+            <Col>
+              <Button onClick={this.onCanCel} size="small">
+                取消
+              </Button>
+            </Col>
+            <Col>
+              <Button
+                size="small"
+                type="primary"
+                onClick={() => {
+                  this.onSaveText();
+                }}
+              >
+                确定
+              </Button>
+            </Col>
+          </Row>
+        )}
       </div>
-    )
+    );
   }
   render() {
     const { value, options } = this.state;
@@ -181,16 +198,24 @@ class TextContent extends React.Component {
     let baseInfo = text.baseInfo || {};
     return (
       <div>
-        {
-          this.renderOpa()
-        }
-        <CodeMirror
-          value={value}
-          options={options}
-          onBeforeChange={this.onChange}
-        />
+        {this.renderOpa()}
+        <div>
+          <CodeMirror
+            value={value}
+            options={options}
+            onBeforeChange={this.onChange}
+            className={styles.codeBox}
+          />
+        </div>
+
         {/* 复制*/}
-        <textarea className={styles.copyInput} value={value} id={baseInfo.id} type='text' readOnly />
+        <textarea
+          className={styles.copyInput}
+          value={value}
+          id={baseInfo.id}
+          type="text"
+          readOnly
+        />
       </div>
     );
   }

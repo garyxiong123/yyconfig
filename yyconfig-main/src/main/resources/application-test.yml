@@ -1,8 +1,11 @@
 spring:
   datasource:
-    url: jdbc:mysql://192.168.1.193:3306/apollo_mini?useUnicode=true&characterEncoding=UTF-8
+#    url: jdbc:mysql://192.168.1.193:3306/apollo_mini?useUnicode=true&characterEncoding=UTF-8
+#    username: apollo_mini
+#    password: apollo_mini
+    url: jdbc:mysql://10.0.40.107:3306/apollo_mini?useUnicode=true&characterEncoding=UTF-8
     username: apollo_mini
-    password: apollo_mini
+    password: Hmsn2Lwi6xpws8fs
     driver-class-name: com.mysql.jdbc.Driver
     # Hikari 连接池配置
     hikari:
