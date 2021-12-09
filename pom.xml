@@ -16,15 +16,42 @@
         <module>yyconfig-main</module>
         <module>upms</module>
         <module>apollo</module>
+        <module>yyconfig-sentinel-datasource</module>
     </modules>
     <packaging>pom</packaging>
     <properties>
         <project-version>3.1.0-SNAPSHOT</project-version>
         <mybatis.version>3.4.6</mybatis.version>
+        <spring.boot.version>2.0.1.RELEASE</spring.boot.version>
+        <spring.cloud.version>Finchley.RELEASE</spring.cloud.version>
+        <spring.cloud.alibaba.version>2.0.4.RELEASE</spring.cloud.alibaba.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-parent</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring.cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring.cloud.alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <dependency>
                 <groupId>com.yofish.platform</groupId>
                 <artifactId>sword-api</artifactId>
