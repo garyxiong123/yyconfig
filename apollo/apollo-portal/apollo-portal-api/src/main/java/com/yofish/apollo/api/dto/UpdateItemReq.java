@@ -15,13 +15,17 @@
  */
 package com.yofish.apollo.api.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @Author: xiongchengwei
  * @Date: 2019/11/18 下午3:06
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UpdateItemReq {
     private Long itemId;
 

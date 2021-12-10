@@ -1,0 +1,112 @@
+/*
+ * Copyright 2021 Apollo Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+package com.yofish.apollo.openapi.service;
+
+//import com.ctrip.framework.apollo.common.dto.ItemDTO;
+//import com.ctrip.framework.apollo.openapi.api.ItemOpenApiService;
+//import com.ctrip.framework.apollo.openapi.dto.OpenItemDTO;
+//import com.ctrip.framework.apollo.openapi.util.OpenApiBeanUtils;
+//import com.ctrip.framework.apollo.portal.environment.Env;
+//import com.ctrip.framework.apollo.portal.service.ItemService;
+import com.yofish.apollo.api.dto.UpdateItemReq;
+import com.yofish.apollo.domain.AppEnvClusterNamespace;
+import com.yofish.apollo.domain.Item;
+import com.yofish.apollo.openapi.util.OpenApiBeanUtils;
+import com.yofish.apollo.service.ItemService;
+import com.yofish.platform.yyconfig.openapi.api.ItemOpenApiService;
+import com.yofish.platform.yyconfig.openapi.dto.OpenItemDTO;
+import com.yofish.yyconfig.common.common.dto.ItemDTO;
+import com.yofish.yyconfig.common.framework.apollo.core.enums.Env;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
+
+/**
+ * @author wxq
+ */
+@Service
+public class ServerItemOpenApiService implements ItemOpenApiService {
+
+  private final ItemService itemService;
+
+  public ServerItemOpenApiService(ItemService itemService) {
+    this.itemService = itemService;
+  }
+
+  @Override
+  public OpenItemDTO getItem(String appId, String env, String clusterName, String namespaceName,
+                             String key) {
+//    ItemDTO itemDTO = itemService.loadItem(Env.valueOf(env), appId, clusterName, namespaceName, key);
+    Item itemDTO = itemService.findOne(appId,Env.valueOf(env).name(), namespaceName, clusterName, AppEnvClusterNamespace.Type.Main.getValue(), key);
+    return itemDTO == null ? null : OpenApiBeanUtils.transformFromItemDTO(itemDTO);
+  }
+
+  @Override
+  public OpenItemDTO createItem(String appId, String env, String clusterName, String namespaceName,
+      OpenItemDTO itemDTO) {
+//
+//    ItemDTO toCreate = OpenApiBeanUtils.transformToItemDTO(itemDTO);
+//
+//    //protect
+//    toCreate.setLineNum(0);
+//    toCreate.setId(0);
+//    toCreate.setDataChangeLastModifiedBy(toCreate.getDataChangeCreatedBy());
+//    toCreate.setDataChangeLastModifiedTime(null);
+//    toCreate.setDataChangeCreatedTime(null);
+
+//    Item createdItem = itemService.createItem(appId, Env.valueOf(env), clusterName, namespaceName, null);
+    return OpenApiBeanUtils.transformFromItemDTO(null);
+  }
+
+  @Override
+  public void updateItem(String appId, String env, String clusterName, String namespaceName,
+      OpenItemDTO itemDTO) {
+    Item toUpdateItem = itemService.findOne(appId,Env.valueOf(env).name(), namespaceName, clusterName, AppEnvClusterNamespace.Type.Main.getValue(), itemDTO.getKey());
+    //protect. only value,comment,lastModifiedBy can be modified
+    toUpdateItem.setComment(itemDTO.getComment());
+    toUpdateItem.setValue(itemDTO.getValue());
+    toUpdateItem.setUpdateAuthor(itemDTO.getDataChangeLastModifiedBy());
+    UpdateItemReq updateItemReq = new UpdateItemReq();
+    updateItemReq.setItemId(toUpdateItem.getId());
+    updateItemReq.setValue(itemDTO.getValue());
+    itemService.updateItem(updateItemReq);
+  }
+
+  @Override
+  public void createOrUpdateItem(String appId, String env, String clusterName, String namespaceName,
+      OpenItemDTO itemDTO) {
+    try {
+      this.updateItem(appId, env, clusterName, namespaceName, itemDTO);
+    } catch (Throwable ex) {
+      if (ex instanceof HttpStatusCodeException) {
+        // check createIfNotExists
+        if (((HttpStatusCodeException) ex).getStatusCode().equals(HttpStatus.NOT_FOUND)) {
+          this.createItem(appId, env, clusterName, namespaceName, itemDTO);
+          return;
+        }
+      }
+      throw ex;
+    }
+  }
+
+  @Override
+  public void removeItem(String appId, String env, String clusterName, String namespaceName,
+      String key, String operator) {
+//    ItemDTO toDeleteItem = this.itemService.loadItem(Env.valueOf(env), appId, clusterName, namespaceName, key);
+//    this.itemService.deleteItem(Env.valueOf(env), toDeleteItem.getId(), operator);
+  }
+}

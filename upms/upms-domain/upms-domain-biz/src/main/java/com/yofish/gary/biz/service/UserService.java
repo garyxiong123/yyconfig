@@ -48,7 +48,7 @@ import java.util.Set;
  * @date 2019年6月27日 10:00:00
  * @work 用户service
  */
-public interface UserService{
+public interface UserService {
 
     /**
      * 登录
@@ -109,6 +109,9 @@ public interface UserService{
      * @return
      */
     PageData<UserQueryRspDTO> getPage(UserQueryReqDTO userQueryReqDTO);
+
+    User findByUserId(String userId);
+
 
     /**
      * 查询用户列表

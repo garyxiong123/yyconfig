@@ -15,7 +15,7 @@
  */
 package biz;
 
-import com.yofish.apollo.ApolloBizConfig;
+import com.yofish.apollo.openapi.ApolloBizConfig;
 import com.yofish.yyconfig.common.common.ApolloCommonConfig;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;

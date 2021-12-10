@@ -32,9 +32,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  */
 
 @ComponentScan(basePackages = {"com.yofish.gary", "com.yofish.apollo", "com.yofish.apollo.repository"})
-@EnableJpaRepositories(basePackages = {"com.yofish.gary", "com.yofish.apollo.repository"})
+@EnableJpaRepositories(basePackages = {"com.yofish.gary", "com.yofish.apollo.repository","com.yofish.apollo.openapi.repository"})
 @EnableJpaAuditing
-@EntityScan(basePackages = {"com.yofish.apollo.domain", "com.yofish.gary"})
+@EntityScan(basePackages = {"com.yofish.apollo.domain","com.yofish.apollo.openapi.entity", "com.yofish.gary"})
 @Configuration
 @SpringBootApplication
 public class PortalApplication {

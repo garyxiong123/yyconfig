@@ -17,6 +17,7 @@
         <module>upms</module>
         <module>apollo</module>
         <module>yyconfig-sentinel-datasource</module>
+        <module>yyconfig-openapi</module>
     </modules>
     <packaging>pom</packaging>
     <properties>

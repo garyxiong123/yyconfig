@@ -126,6 +126,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByUserId(String userId) {
+        return userRepository.findByUsername(userId);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public Long add(UserAddReqDTO userAddReqDTO) {
         checkUserAdd(userAddReqDTO);
