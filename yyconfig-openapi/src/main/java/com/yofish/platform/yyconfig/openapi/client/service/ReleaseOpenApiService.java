@@ -90,21 +90,4 @@ public class ReleaseOpenApiService extends AbstractOpenApiService implements com
                             clusterName, namespaceName, env), ex);
         }
     }
-
-    @Override
-    public void rollbackRelease(String env, long releaseId, String operator) {
-        checkNotEmpty(env, "Env");
-        checkNotEmpty(operator, "Operator");
-
-        OpenApiPathBuilder pathBuilder = OpenApiPathBuilder.newBuilder()
-                .envsPathVal(env)
-                .releasesPathVal(String.valueOf(releaseId))
-                .customResource("rollback")
-                .addParam("operator", operator);
-
-        try (CloseableHttpResponse ignored = put(pathBuilder, null)) {
-        } catch (Throwable ex) {
-            throw new RuntimeException(String.format("Rollback release: %s in env: %s failed", releaseId, env), ex);
-        }
-    }
 }

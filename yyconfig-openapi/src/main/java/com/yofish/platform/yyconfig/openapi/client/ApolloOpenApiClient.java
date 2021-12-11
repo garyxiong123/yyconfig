@@ -197,16 +197,6 @@ public class ApolloOpenApiClient {
     return releaseService.getLatestActiveRelease(appId, env, clusterName, namespaceName);
   }
 
-  /**
-   * Rollback the release
-   *
-   * @param operator the user who rollbacks the release
-   * @since 1.5.0
-   */
-  public void rollbackRelease(String env, long releaseId, String operator) {
-    releaseService.rollbackRelease(env, releaseId, operator);
-  }
-
 
   public String getPortalUrl() {
     return portalUrl;

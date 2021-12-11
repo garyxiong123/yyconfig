@@ -16,13 +16,6 @@
  */
 package com.yofish.apollo.openapi.util;
 
-//import com.ctrip.framework.apollo.common.dto.*;
-//import com.ctrip.framework.apollo.common.entity.App;
-//import com.ctrip.framework.apollo.common.entity.AppNamespace;
-//import com.ctrip.framework.apollo.common.utils.BeanUtils;
-//import com.ctrip.framework.apollo.openapi.dto.*;
-//import com.ctrip.framework.apollo.portal.entity.bo.ItemBO;
-//import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -30,7 +23,6 @@ import com.yofish.apollo.domain.App;
 import com.yofish.apollo.domain.AppNamespace;
 import com.yofish.apollo.domain.Item;
 import com.yofish.apollo.domain.Release;
-import com.yofish.apollo.model.bo.NamespaceVO;
 import com.yofish.platform.yyconfig.openapi.dto.*;
 import com.yofish.yyconfig.common.common.dto.ClusterDTO;
 import com.yofish.yyconfig.common.common.dto.ItemDTO;
@@ -39,7 +31,9 @@ import com.yofish.yyconfig.common.common.utils.BeanUtils;
 import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class OpenApiBeanUtils {
@@ -78,87 +72,16 @@ public class OpenApiBeanUtils {
     return openReleaseDTO;
   }
 
-//  public static OpenNamespaceDTO transformFromNamespaceBO(Namespace namespaceBO) {
-//    Preconditions.checkArgument(namespaceBO != null);
-//
-//    OpenNamespaceDTO openNamespaceDTO =
-//        BeanUtils.transform(OpenNamespaceDTO.class, namespaceBO.getBaseInfo());
-//
-//    // app namespace info
-//    openNamespaceDTO.setFormat(namespaceBO.getFormat());
-//    openNamespaceDTO.setComment(namespaceBO.getComment());
-//    openNamespaceDTO.setPublic(namespaceBO.isPublic());
-//
-//    // items
-//    List<OpenItemDTO> items = new LinkedList<>();
-//    List<ItemBO> itemBOs = namespaceBO.getItems();
-//    if (!CollectionUtils.isEmpty(itemBOs)) {
-//      items.addAll(itemBOs.stream().map(itemBO -> transformFromItemDTO(itemBO.getItem()))
-//              .collect(Collectors.toList()));
-//    }
-//    openNamespaceDTO.setItems(items);
-//    return openNamespaceDTO;
-//
-//  }
+  public static OpenReleaseDTO transformFromReleaseDTO(ReleaseDTO releaseDTO) {
+    Preconditions.checkArgument(releaseDTO != null);
 
-//  public static List<OpenNamespaceDTO> batchTransformFromNamespaceBOs(
-//      List<NamespaceVO> namespaceBOs) {
-//    if (CollectionUtils.isEmpty(namespaceBOs)) {
-//      return Collections.emptyList();
-//    }
-//
-//    return namespaceBOs.stream()
-//            .map(OpenApiBeanUtils::transformFromNamespaceBO)
-//            .collect(Collectors.toCollection(LinkedList::new));
-//  }
-//
-//  public static OpenNamespaceLockDTO transformFromNamespaceLockDTO(String namespaceName,
-//      NamespaceLockDTO namespaceLock) {
-//    OpenNamespaceLockDTO lock = new OpenNamespaceLockDTO();
-//
-//    lock.setNamespaceName(namespaceName);
-//
-//    if (namespaceLock == null) {
-//      lock.setLocked(false);
-//    } else {
-//      lock.setLocked(true);
-//      lock.setLockedBy(namespaceLock.getDataChangeCreatedBy());
-//    }
-//
-//    return lock;
-//  }
-//
-//  public static OpenGrayReleaseRuleDTO transformFromGrayReleaseRuleDTO(
-//      GrayReleaseRuleDTO grayReleaseRuleDTO) {
-//    Preconditions.checkArgument(grayReleaseRuleDTO != null);
-//
-//    return BeanUtils.transform(OpenGrayReleaseRuleDTO.class, grayReleaseRuleDTO);
-//  }
-//
-//  public static GrayReleaseRuleDTO transformToGrayReleaseRuleDTO(
-//      OpenGrayReleaseRuleDTO openGrayReleaseRuleDTO) {
-//    Preconditions.checkArgument(openGrayReleaseRuleDTO != null);
-//
-//    String appId = openGrayReleaseRuleDTO.getAppId();
-//    String branchName = openGrayReleaseRuleDTO.getBranchName();
-//    String clusterName = openGrayReleaseRuleDTO.getClusterName();
-//    String namespaceName = openGrayReleaseRuleDTO.getNamespaceName();
-//
-//    GrayReleaseRuleDTO grayReleaseRuleDTO =
-//        new GrayReleaseRuleDTO(appId, clusterName, namespaceName, branchName);
-//
-//    Set<OpenGrayReleaseRuleItemDTO> openGrayReleaseRuleItemDTOSet =
-//        openGrayReleaseRuleDTO.getRuleItems();
-//    openGrayReleaseRuleItemDTOSet.forEach(openGrayReleaseRuleItemDTO -> {
-//      String clientAppId = openGrayReleaseRuleItemDTO.getClientAppId();
-//      Set<String> clientIpList = openGrayReleaseRuleItemDTO.getClientIpList();
-//      Set<String> clientLabelList = openGrayReleaseRuleItemDTO.getClientLabelList();
-//      GrayReleaseRuleItemDTO ruleItem = new GrayReleaseRuleItemDTO(clientAppId, clientIpList, clientLabelList);
-//      grayReleaseRuleDTO.addRuleItem(ruleItem);
-//    });
-//
-//    return grayReleaseRuleDTO;
-//  }
+    OpenReleaseDTO openReleaseDTO = BeanUtils.transform(OpenReleaseDTO.class, releaseDTO);
+
+    Map<String, String> configs = GSON.fromJson(releaseDTO.getConfigurations(), TYPE);
+
+    openReleaseDTO.setConfigurations(configs);
+    return openReleaseDTO;
+  }
 
   public static List<OpenAppDTO> transformFromApps(final List<App> apps) {
     if (CollectionUtils.isEmpty(apps)) {

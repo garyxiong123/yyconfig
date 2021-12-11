@@ -16,24 +16,22 @@
  */
 package com.yofish.apollo.openapi.service;
 
-//import com.ctrip.framework.apollo.common.dto.ItemDTO;
-//import com.ctrip.framework.apollo.openapi.api.ItemOpenApiService;
-//import com.ctrip.framework.apollo.openapi.dto.OpenItemDTO;
-//import com.ctrip.framework.apollo.openapi.util.OpenApiBeanUtils;
-//import com.ctrip.framework.apollo.portal.environment.Env;
-//import com.ctrip.framework.apollo.portal.service.ItemService;
+import com.yofish.apollo.api.dto.CreateItemReq;
 import com.yofish.apollo.api.dto.UpdateItemReq;
 import com.yofish.apollo.domain.AppEnvClusterNamespace;
 import com.yofish.apollo.domain.Item;
 import com.yofish.apollo.openapi.util.OpenApiBeanUtils;
+import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
 import com.yofish.apollo.service.ItemService;
 import com.yofish.platform.yyconfig.openapi.api.ItemOpenApiService;
 import com.yofish.platform.yyconfig.openapi.dto.OpenItemDTO;
-import com.yofish.yyconfig.common.common.dto.ItemDTO;
+import com.yofish.yyconfig.common.common.utils.BeanUtils;
 import com.yofish.yyconfig.common.framework.apollo.core.enums.Env;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
+
+import java.util.Arrays;
 
 /**
  * @author wxq
@@ -42,15 +40,15 @@ import org.springframework.web.client.HttpStatusCodeException;
 public class ServerItemOpenApiService implements ItemOpenApiService {
 
   private final ItemService itemService;
+  private final AppEnvClusterNamespaceRepository appEnvClusterNamespaceRepository;
 
-  public ServerItemOpenApiService(ItemService itemService) {
+  public ServerItemOpenApiService(ItemService itemService, AppEnvClusterNamespaceRepository appEnvClusterNamespaceRepository) {
     this.itemService = itemService;
+    this.appEnvClusterNamespaceRepository = appEnvClusterNamespaceRepository;
   }
 
   @Override
-  public OpenItemDTO getItem(String appId, String env, String clusterName, String namespaceName,
-                             String key) {
-//    ItemDTO itemDTO = itemService.loadItem(Env.valueOf(env), appId, clusterName, namespaceName, key);
+  public OpenItemDTO getItem(String appId, String env, String clusterName, String namespaceName, String key) {
     Item itemDTO = itemService.findOne(appId,Env.valueOf(env).name(), namespaceName, clusterName, AppEnvClusterNamespace.Type.Main.getValue(), key);
     return itemDTO == null ? null : OpenApiBeanUtils.transformFromItemDTO(itemDTO);
   }
@@ -58,18 +56,11 @@ public class ServerItemOpenApiService implements ItemOpenApiService {
   @Override
   public OpenItemDTO createItem(String appId, String env, String clusterName, String namespaceName,
       OpenItemDTO itemDTO) {
-//
-//    ItemDTO toCreate = OpenApiBeanUtils.transformToItemDTO(itemDTO);
-//
-//    //protect
-//    toCreate.setLineNum(0);
-//    toCreate.setId(0);
-//    toCreate.setDataChangeLastModifiedBy(toCreate.getDataChangeCreatedBy());
-//    toCreate.setDataChangeLastModifiedTime(null);
-//    toCreate.setDataChangeCreatedTime(null);
+    AppEnvClusterNamespace appEnvClusterNamespace = appEnvClusterNamespaceRepository.findAppEnvClusterNamespace(appId, Env.valueOf(env).name(), namespaceName, clusterName, AppEnvClusterNamespace.Type.Main.getValue());
+    CreateItemReq createItemReq = new CreateItemReq(itemDTO.getKey(), itemDTO.getValue(), itemDTO.getComment(), Arrays.asList(appEnvClusterNamespace.getId()), null);
 
-//    Item createdItem = itemService.createItem(appId, Env.valueOf(env), clusterName, namespaceName, null);
-    return OpenApiBeanUtils.transformFromItemDTO(null);
+    itemService.createItem(createItemReq);
+    return BeanUtils.transform(OpenItemDTO.class, itemDTO);
   }
 
   @Override

@@ -29,8 +29,5 @@ public interface ReleaseOpenApiService {
                                   String namespaceName,
                                   NamespaceReleaseDTO releaseDTO);
 
-  OpenReleaseDTO getLatestActiveRelease(String appId, String env, String clusterName,
-      String namespaceName);
-
-  void rollbackRelease(String env, long releaseId, String operator);
+  OpenReleaseDTO getLatestActiveRelease(String appId, String env, String clusterName, String namespaceName);
 }

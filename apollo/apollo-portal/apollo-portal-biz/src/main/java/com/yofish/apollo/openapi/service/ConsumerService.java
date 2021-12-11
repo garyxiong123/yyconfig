@@ -16,24 +16,6 @@
  */
 package com.yofish.apollo.openapi.service;
 
-//import com.ctrip.framework.apollo.common.exception.BizException;
-//import com.ctrip.framework.apollo.openapi.entity.Consumer;
-//import com.ctrip.framework.apollo.openapi.entity.ConsumerAudit;
-//import com.ctrip.framework.apollo.openapi.entity.ConsumerRole;
-//import com.ctrip.framework.apollo.openapi.entity.ConsumerToken;
-//import com.ctrip.framework.apollo.openapi.repository.ConsumerAuditRepository;
-//import com.ctrip.framework.apollo.openapi.repository.ConsumerRepository;
-//import com.ctrip.framework.apollo.openapi.repository.ConsumerRoleRepository;
-//import com.ctrip.framework.apollo.openapi.repository.ConsumerTokenRepository;
-//import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
-//import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
-//import com.ctrip.framework.apollo.portal.entity.po.Role;
-//import com.ctrip.framework.apollo.portal.repository.RoleRepository;
-//import com.ctrip.framework.apollo.portal.service.RolePermissionService;
-//import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
-//import com.ctrip.framework.apollo.portal.spi.UserService;
-//import com.ctrip.framework.apollo.portal.util.RoleUtils;
-
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
@@ -151,69 +133,6 @@ public class ConsumerService {
   public Consumer getConsumerByConsumerId(long consumerId) {
     return consumerRepository.findById(consumerId).orElse(null);
   }
-//
-//  public List<ConsumerRole> assignNamespaceRoleToConsumer(String token, String appId, String namespaceName) {
-//    return assignNamespaceRoleToConsumer(token, appId, namespaceName, null);
-//  }
-
-//  @Transactional
-//  public List<ConsumerRole> assignNamespaceRoleToConsumer(String token, String appId, String namespaceName, String env) {
-//    Long consumerId = getConsumerIdByToken(token);
-//    if (consumerId == null) {
-//      throw new BizException("Token is Illegal");
-//    }
-//
-//    Role namespaceModifyRole =
-//        rolePermissionService.findRoleByRoleName(RoleUtils.buildModifyNamespaceRoleName(appId, namespaceName, env));
-//    Role namespaceReleaseRole =
-//        rolePermissionService.findRoleByRoleName(RoleUtils.buildReleaseNamespaceRoleName(appId, namespaceName, env));
-//
-//    if (namespaceModifyRole == null || namespaceReleaseRole == null) {
-//      throw new BizException("Namespace's role does not exist. Please check whether namespace has created.");
-//    }
-//
-//    long namespaceModifyRoleId = namespaceModifyRole.getId();
-//    long namespaceReleaseRoleId = namespaceReleaseRole.getId();
-//
-//    ConsumerRole managedModifyRole = consumerRoleRepository.findByConsumerIdAndRoleId(consumerId, namespaceModifyRoleId);
-//    ConsumerRole managedReleaseRole = consumerRoleRepository.findByConsumerIdAndRoleId(consumerId, namespaceReleaseRoleId);
-//    if (managedModifyRole != null && managedReleaseRole != null) {
-//      return Arrays.asList(managedModifyRole, managedReleaseRole);
-//    }
-//
-//    String operator = userInfoHolder.getUser().getUserId();
-//
-//    ConsumerRole namespaceModifyConsumerRole = createConsumerRole(consumerId, namespaceModifyRoleId, operator);
-//    ConsumerRole namespaceReleaseConsumerRole = createConsumerRole(consumerId, namespaceReleaseRoleId, operator);
-//
-//    ConsumerRole createdModifyConsumerRole = consumerRoleRepository.save(namespaceModifyConsumerRole);
-//    ConsumerRole createdReleaseConsumerRole = consumerRoleRepository.save(namespaceReleaseConsumerRole);
-//
-//    return Arrays.asList(createdModifyConsumerRole, createdReleaseConsumerRole);
-//  }
-
-//  @Transactional
-//  public ConsumerRole assignAppRoleToConsumer(String token, String appId) {
-//    Long consumerId = getConsumerIdByToken(token);
-//    if (consumerId == null) {
-//      throw new BizException("Token is Illegal");
-//    }
-//
-//    Role masterRole = rolePermissionService.findRoleByRoleName(RoleUtils.buildAppMasterRoleName(appId));
-//    if (masterRole == null) {
-//      throw new BizException("App's role does not exist. Please check whether app has created.");
-//    }
-//
-//    long roleId = masterRole.getId();
-//    ConsumerRole managedModifyRole = consumerRoleRepository.findByConsumerIdAndRoleId(consumerId, roleId);
-//    if (managedModifyRole != null) {
-//      return managedModifyRole;
-//    }
-//
-//    String operator = userInfoHolder.getUser().getUserId();
-//    ConsumerRole consumerRole = createConsumerRole(consumerId, roleId, operator);
-//    return consumerRoleRepository.save(consumerRole);
-//  }
 
   @Transactional
   public void createConsumerAudits(Iterable<ConsumerAudit> consumerAudits) {
@@ -229,16 +148,10 @@ public class ConsumerService {
 
   private ConsumerToken generateConsumerToken(Consumer consumer, Date expires) {
     long consumerId = consumer.getId();
-    String createdBy = YyRequestInfoHelper.getCurrentUserRealName();
-    Date createdTime = new Date();
 
     ConsumerToken consumerToken = new ConsumerToken();
     consumerToken.setConsumerId(consumerId);
     consumerToken.setExpires(expires);
-//    consumerToken.setDataChangeCreatedBy(createdBy);
-//    consumerToken.setDataChangeCreatedTime(createdTime);
-//    consumerToken.setDataChangeLastModifiedBy(createdBy);
-//    consumerToken.setDataChangeLastModifiedTime(createdTime);
 
     generateAndEnrichToken(consumer, consumerToken);
 
@@ -249,9 +162,6 @@ public class ConsumerService {
 
     Preconditions.checkArgument(consumer != null);
 
-//    if (consumerToken.getCreateTime() == null) {
-//      consumerToken.setDataChangeCreatedTime(new Date());
-//    }
     consumerToken.setToken(generateToken(consumer.getAppId(), new Date(), portalConfig.consumerTokenSalt()));
   }
 
@@ -260,43 +170,9 @@ public class ConsumerService {
     return Hashing.sha1().hashString(KEY_JOINER.join(consumerAppId, TIMESTAMP_FORMAT.format
         (generationTime), consumerTokenSalt), Charsets.UTF_8).toString();
   }
-//
-//    ConsumerRole createConsumerRole(Long consumerId, Long roleId, String operator) {
-//    ConsumerRole consumerRole = new ConsumerRole();
-//
-//    consumerRole.setConsumerId(consumerId);
-//    consumerRole.setRoleId(roleId);
-//    consumerRole.setDataChangeCreatedBy(operator);
-//    consumerRole.setDataChangeLastModifiedBy(operator);
-//
-//    return consumerRole;
-//  }
-//
+
   public Set<String> findAppIdsAuthorizedByConsumerId(long consumerId) {
-//    List<ConsumerRole> consumerRoles = this.findConsumerRolesByConsumerId(consumerId);
-//    List<Long> roleIds = consumerRoles.stream().map(ConsumerRole::getRoleId)
-//        .collect(Collectors.toList());
     Set<String> collect = appRepository.findAll().stream().map(App::getAppCode).collect(Collectors.toSet());
     return collect;
   }
-//
-//  private List<ConsumerRole> findConsumerRolesByConsumerId(long consumerId) {
-//    return this.consumerRoleRepository.findByConsumerId(consumerId);
-//  }
-//
-//  private Set<String> findAppIdsByRoleIds(List<Long> roleIds) {
-//    Iterable<Role> roleIterable = this.appRepository.findAllById(roleIds);
-//
-//    Set<String> appIds = new HashSet<>();
-//
-//    roleIterable.forEach(role -> {
-//      if (!role.isDeleted()) {
-//        String roleName = role.getRoleName();
-//        String appId = RoleUtils.extractAppIdFromRoleName(roleName);
-//        appIds.add(appId);
-//      }
-//    });
-//
-//    return appIds;
-//  }
 }

@@ -29,7 +29,7 @@ public class ConsumerPermissionValidator {
 
 //  private final ConsumerRolePermissionService permissionService;
 //  private final ConsumerAuthUtil consumerAuthUtil;
-
+//
 //  public ConsumerPermissionValidator(final ConsumerRolePermissionService permissionService,
 //      final ConsumerAuthUtil consumerAuthUtil) {
 //    this.permissionService = permissionService;

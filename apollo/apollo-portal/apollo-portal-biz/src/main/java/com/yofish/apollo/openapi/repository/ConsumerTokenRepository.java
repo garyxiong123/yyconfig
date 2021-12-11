@@ -16,9 +16,7 @@
  */
 package com.yofish.apollo.openapi.repository;
 
-//import com.ctrip.framework.apollo.openapi.entity.ConsumerToken;
 import com.yofish.apollo.openapi.entity.ConsumerToken;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.Date;
@@ -26,7 +24,7 @@ import java.util.Date;
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
-public interface ConsumerTokenRepository extends JpaRepository<ConsumerToken, Long> {
+public interface ConsumerTokenRepository extends PagingAndSortingRepository<ConsumerToken, Long> {
   /**
    * find consumer token by token
    *

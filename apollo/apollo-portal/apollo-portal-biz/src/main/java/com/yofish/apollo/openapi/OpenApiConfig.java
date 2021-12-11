@@ -15,13 +15,31 @@
  */
 package com.yofish.apollo.openapi;
 
+import com.yofish.apollo.openapi.filter.ConsumerAuthenticationFilter;
+import com.yofish.apollo.openapi.util.ConsumerAuditUtil;
+import com.yofish.apollo.openapi.util.ConsumerAuthUtil;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @EnableAutoConfiguration
 @Configuration
-@ComponentScan(basePackageClasses = ApolloBizConfig.class)
-public class ApolloBizConfig {
+@ComponentScan(basePackageClasses = OpenApiConfig.class)
+public class OpenApiConfig {
+
+    @Bean
+    public FilterRegistrationBean<ConsumerAuthenticationFilter> openApiAuthenticationFilter(
+            ConsumerAuthUtil consumerAuthUtil,
+            ConsumerAuditUtil consumerAuditUtil) {
+
+        FilterRegistrationBean<ConsumerAuthenticationFilter> openApiFilter = new FilterRegistrationBean<>();
+
+        openApiFilter.setFilter(new ConsumerAuthenticationFilter(consumerAuthUtil, consumerAuditUtil));
+        openApiFilter.addUrlPatterns("/openapi/*");
+
+        return openApiFilter;
+    }
 
 }
