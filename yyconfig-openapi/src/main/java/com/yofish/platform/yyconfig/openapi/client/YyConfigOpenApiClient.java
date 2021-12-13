@@ -37,7 +37,7 @@ import java.util.List;
  * For more information, please refer <a href="https://www.apolloconfig.com/#/zh/usage/apollo-open-api-platform">Apollo Wiki</a>.
  *
  */
-public class ApolloOpenApiClient {
+public class YyConfigOpenApiClient {
   private final String portalUrl;
   private final String token;
   private final AppOpenApiService appService;
@@ -47,7 +47,7 @@ public class ApolloOpenApiClient {
   private final ClusterOpenApiService clusterService;
   private static final Gson GSON = new GsonBuilder().setDateFormat(ApolloOpenApiConstants.JSON_DATE_FORMAT).create();
 
-  private ApolloOpenApiClient(String portalUrl, String token, RequestConfig requestConfig) {
+  private YyConfigOpenApiClient(String portalUrl, String token, RequestConfig requestConfig) {
     this.portalUrl = portalUrl;
     this.token = token;
     CloseableHttpClient client = HttpClients.custom().setDefaultRequestConfig(requestConfig)
@@ -249,7 +249,7 @@ public class ApolloOpenApiClient {
       return this;
     }
 
-    public ApolloOpenApiClient build() {
+    public YyConfigOpenApiClient build() {
       Preconditions.checkArgument(!Strings.isNullOrEmpty(portalUrl), "Portal url should not be null or empty!");
       Preconditions.checkArgument(portalUrl.startsWith("http://") || portalUrl.startsWith("https://"), "Portal url should start with http:// or https://" );
       Preconditions.checkArgument(!Strings.isNullOrEmpty(token), "Token should not be null or empty!");
@@ -265,7 +265,7 @@ public class ApolloOpenApiClient {
       RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(connectTimeout)
           .setSocketTimeout(readTimeout).build();
 
-      return new ApolloOpenApiClient(portalUrl, token, requestConfig);
+      return new YyConfigOpenApiClient(portalUrl, token, requestConfig);
     }
   }
 }

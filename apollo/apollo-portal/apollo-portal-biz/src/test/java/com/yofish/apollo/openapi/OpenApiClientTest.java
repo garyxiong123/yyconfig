@@ -1,7 +1,7 @@
 package com.yofish.apollo.openapi;
 
 import com.yofish.gary.utils.StringUtil;
-import com.yofish.platform.yyconfig.openapi.client.ApolloOpenApiClient;
+import com.yofish.platform.yyconfig.openapi.client.YyConfigOpenApiClient;
 import com.yofish.platform.yyconfig.openapi.dto.NamespaceReleaseDTO;
 import com.yofish.platform.yyconfig.openapi.dto.OpenItemDTO;
 import org.junit.Test;
@@ -58,8 +58,8 @@ public class OpenApiClientTest {
         apolloOpenApiClient().publishNamespace(appId, "DEV", "default", "application", namespaceReleaseDTO);
     }
 
-    public ApolloOpenApiClient apolloOpenApiClient() {
-        ApolloOpenApiClient client = ApolloOpenApiClient.newBuilder()
+    public YyConfigOpenApiClient apolloOpenApiClient() {
+        YyConfigOpenApiClient client = YyConfigOpenApiClient.newBuilder()
                 .withPortalUrl("http://localhost:8084")
                 .withToken("token")
                 .build();
