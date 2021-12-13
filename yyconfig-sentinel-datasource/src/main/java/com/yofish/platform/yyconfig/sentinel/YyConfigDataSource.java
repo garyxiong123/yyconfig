@@ -11,6 +11,7 @@ import com.yofish.yyconfig.client.pattern.listener.config.ConfigChange;
 import com.yofish.yyconfig.client.pattern.listener.config.ConfigChangeListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.ObjectUtils;
 
 /**
  * YyConfigDataSource
@@ -46,7 +47,7 @@ public class YyConfigDataSource<T> extends AbstractDataSource<String, T> {
     private void loadAndUpdateRules() {
         try {
             T newValue = this.loadConfig();
-            if (newValue == null) {
+            if (ObjectUtils.isEmpty(newValue)) {
                 logger.warn("[YyConfigDataSource] WARN: rule config is null, you may have to check your data source", new Object[0]);
             }
 
