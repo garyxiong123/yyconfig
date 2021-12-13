@@ -27,9 +27,8 @@ import com.yofish.platform.yyconfig.openapi.api.ItemOpenApiService;
 import com.yofish.platform.yyconfig.openapi.dto.OpenItemDTO;
 import com.yofish.yyconfig.common.common.utils.BeanUtils;
 import com.yofish.yyconfig.common.framework.apollo.core.enums.Env;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.util.ObjectUtils;
 
 import java.util.Arrays;
 
@@ -64,8 +63,7 @@ public class ServerItemOpenApiService implements ItemOpenApiService {
   }
 
   @Override
-  public void updateItem(String appId, String env, String clusterName, String namespaceName,
-      OpenItemDTO itemDTO) {
+  public void updateItem(String appId, String env, String clusterName, String namespaceName, OpenItemDTO itemDTO) {
     Item toUpdateItem = itemService.findOne(appId,Env.valueOf(env).name(), namespaceName, clusterName, AppEnvClusterNamespace.Type.Main.getValue(), itemDTO.getKey());
     //protect. only value,comment,lastModifiedBy can be modified
     toUpdateItem.setComment(itemDTO.getComment());
@@ -78,19 +76,12 @@ public class ServerItemOpenApiService implements ItemOpenApiService {
   }
 
   @Override
-  public void createOrUpdateItem(String appId, String env, String clusterName, String namespaceName,
-      OpenItemDTO itemDTO) {
-    try {
+  public void createOrUpdateItem(String appId, String env, String clusterName, String namespaceName, OpenItemDTO itemDTO) {
+    Item toUpdateItem = itemService.findOne(appId, Env.valueOf(env).name(), namespaceName, clusterName, AppEnvClusterNamespace.Type.Main.getValue(), itemDTO.getKey());
+    if (ObjectUtils.isEmpty(toUpdateItem)) {
+      this.createItem(appId, env, clusterName, namespaceName, itemDTO);
+    } else {
       this.updateItem(appId, env, clusterName, namespaceName, itemDTO);
-    } catch (Throwable ex) {
-      if (ex instanceof HttpStatusCodeException) {
-        // check createIfNotExists
-        if (((HttpStatusCodeException) ex).getStatusCode().equals(HttpStatus.NOT_FOUND)) {
-          this.createItem(appId, env, clusterName, namespaceName, itemDTO);
-          return;
-        }
-      }
-      throw ex;
     }
   }
 
