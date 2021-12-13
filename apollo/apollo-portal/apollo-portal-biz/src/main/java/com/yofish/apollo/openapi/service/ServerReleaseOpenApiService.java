@@ -18,8 +18,10 @@ package com.yofish.apollo.openapi.service;
 
 import com.yofish.apollo.domain.AppEnvClusterNamespace;
 import com.yofish.apollo.domain.Release;
+import com.yofish.apollo.domain.ReleaseMessage;
 import com.yofish.apollo.openapi.util.OpenApiBeanUtils;
 import com.yofish.apollo.repository.AppEnvClusterNamespaceRepository;
+import com.yofish.apollo.repository.ReleaseMessageRepository;
 import com.yofish.apollo.service.ReleaseService;
 import com.yofish.platform.yyconfig.openapi.api.ReleaseOpenApiService;
 import com.yofish.platform.yyconfig.openapi.dto.NamespaceReleaseDTO;
@@ -33,37 +35,39 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ServerReleaseOpenApiService implements ReleaseOpenApiService {
-  private final ReleaseService releaseService;
-  private final AppEnvClusterNamespaceRepository appEnvClusterNamespaceRepository;
+    private final ReleaseService releaseService;
+    private final AppEnvClusterNamespaceRepository appEnvClusterNamespaceRepository;
+    private final ReleaseMessageRepository messageRepository;
 
-  public ServerReleaseOpenApiService(
-          ReleaseService releaseService, AppEnvClusterNamespaceRepository appEnvClusterNamespaceRepository) {
-    this.releaseService = releaseService;
-      this.appEnvClusterNamespaceRepository = appEnvClusterNamespaceRepository;
-  }
-
-  @Override
-  public OpenReleaseDTO publishNamespace(String appId, String env, String clusterName,
-                                         String namespaceName, NamespaceReleaseDTO releaseDTO) {
-    AppEnvClusterNamespace appEnvClusterNamespace = appEnvClusterNamespaceRepository.findAppEnvClusterNamespace(appId, Env.valueOf(env).toString(), namespaceName, clusterName, AppEnvClusterNamespace.Type.Main.getValue());
-
-      Release publish = releaseService.publish(appEnvClusterNamespace, releaseDTO.getReleaseTitle(), releaseDTO.getReleaseComment(), releaseDTO.getReleasedBy(), releaseDTO.isEmergencyPublish());
-
-
-      return OpenApiBeanUtils.transformFromReleaseDTO(publish);
-  }
-
-  @Override
-  public OpenReleaseDTO getLatestActiveRelease(String appId, String env, String clusterName,
-      String namespaceName) {
-      AppEnvClusterNamespace appEnvClusterNamespace = appEnvClusterNamespaceRepository.findAppEnvClusterNamespace(appId, Env.valueOf(env).toString(), namespaceName, clusterName, AppEnvClusterNamespace.Type.Main.getValue());
-
-      ReleaseDTO releaseDTO = releaseService.loadLatestRelease(appEnvClusterNamespace);
-    if (releaseDTO == null) {
-      return null;
+    public ServerReleaseOpenApiService(ReleaseService releaseService, AppEnvClusterNamespaceRepository appEnvClusterNamespaceRepository, ReleaseMessageRepository messageRepository) {
+        this.releaseService = releaseService;
+        this.appEnvClusterNamespaceRepository = appEnvClusterNamespaceRepository;
+        this.messageRepository = messageRepository;
     }
 
-    return OpenApiBeanUtils.transformFromReleaseDTO(releaseDTO);
-  }
+    @Override
+    public OpenReleaseDTO publishNamespace(String appId, String env, String clusterName,
+                                           String namespaceName, NamespaceReleaseDTO releaseDTO) {
+        AppEnvClusterNamespace appEnvClusterNamespace = appEnvClusterNamespaceRepository.findAppEnvClusterNamespace(appId, Env.valueOf(env).toString(), namespaceName, clusterName, AppEnvClusterNamespace.Type.Main.getValue());
+
+        Release publish = releaseService.publish(appEnvClusterNamespace, releaseDTO.getReleaseTitle(), releaseDTO.getReleaseComment(), releaseDTO.getReleasedBy(), releaseDTO.isEmergencyPublish());
+
+        ReleaseMessage releaseMessage = new ReleaseMessage(appEnvClusterNamespace);
+        messageRepository.save(releaseMessage);
+        return OpenApiBeanUtils.transformFromReleaseDTO(publish);
+    }
+
+    @Override
+    public OpenReleaseDTO getLatestActiveRelease(String appId, String env, String clusterName,
+                                                 String namespaceName) {
+        AppEnvClusterNamespace appEnvClusterNamespace = appEnvClusterNamespaceRepository.findAppEnvClusterNamespace(appId, Env.valueOf(env).toString(), namespaceName, clusterName, AppEnvClusterNamespace.Type.Main.getValue());
+
+        ReleaseDTO releaseDTO = releaseService.loadLatestRelease(appEnvClusterNamespace);
+        if (releaseDTO == null) {
+            return null;
+        }
+
+        return OpenApiBeanUtils.transformFromReleaseDTO(releaseDTO);
+    }
 
 }
