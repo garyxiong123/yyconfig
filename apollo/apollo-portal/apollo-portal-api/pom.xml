@@ -5,7 +5,7 @@
     <parent>
         <artifactId>apollo-portal</artifactId>
         <groupId>com.yofish.platform</groupId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.1.0.RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <artifactId>apollo-common</artifactId>
-            <version>3.1.0-SNAPSHOT</version>
+            <version>3.1.0.RELEASE</version>
             <groupId>com.yofish.platform</groupId>
         </dependency>
     </dependencies>

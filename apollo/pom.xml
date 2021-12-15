@@ -5,7 +5,7 @@
     <parent>
         <artifactId>yyconfig</artifactId>
         <groupId>com.yofish.platform</groupId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.1.0.RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -20,5 +20,25 @@
     </modules>
 
 
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yofish.platform</groupId>
+            <artifactId>sword-api</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

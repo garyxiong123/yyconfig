@@ -1,0 +1,37 @@
+{
+  "properties": [
+    {
+      "name": "spring.cloud.sentinel.yyconfig.datasource",
+      "type": "java.util.Map<java.lang.String,com.yofish.platform.yyconfig.sentinel.YyConfigDataSourceProperties>",
+      "sourceType": "com.yofish.platform.yyconfig.sentinel.YyConfigProperties",
+      "description": "sentinel 配置 yyconfig 数据源."
+    },
+    {
+      "name": "spring.cloud.sentinel.yyconfig.datasource.param-rule.namespaceName",
+      "type": "java.lang.String",
+      "sourceType": "com.yofish.platform.yyconfig.sentinel.YyConfigProperties",
+      "description": "命名空间."
+    },
+    {
+      "name": "spring.cloud.sentinel.yyconfig.datasource.param-rule.rule-type",
+      "type": "java.lang.String",
+      "sourceType": "com.yofish.platform.yyconfig.sentinel.YyConfigProperties",
+      "description": "规则类型.",
+      "defaultValue": "FLOW,DEGRADE,PARAM_FLOW,SYSTEM,AUTHORITY,GW_FLOW,GW_API_GROUP"
+    },
+    {
+      "name": "spring.cloud.sentinel.yyconfig.datasource.param-rule.flowRulesKey",
+      "type": "java.lang.String",
+      "sourceType": "com.yofish.platform.yyconfig.sentinel.YyConfigProperties",
+      "description": "规则key值.",
+      "defaultValue": "${spring.application.name}.param-rule"
+    },
+    {
+      "name": "spring.cloud.sentinel.yyconfig.datasource.param-rule.data-type",
+      "type": "java.lang.String",
+      "sourceType": "com.yofish.platform.yyconfig.sentinel.YyConfigProperties",
+      "description": "数据格式类型.",
+      "defaultValue": "json"
+    }
+  ]
+}

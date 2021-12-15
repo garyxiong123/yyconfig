@@ -100,8 +100,7 @@ public class ReleaseService {
         checkLock(namespace, isEmergencyPublish, operator);
 
 
-        Release release = createRelease(namespace, releaseName, releaseComment, null, isEmergencyPublish
-        );
+        Release release = createRelease(namespace, releaseName, releaseComment, null, isEmergencyPublish);
         Release publishedRelease = release.publish();
         return publishedRelease;
     }
